@@ -1,17 +1,19 @@
-<?php namespace Zizaco\Entrust\Middleware;
+<?php 
+
+namespace Santigarcor\Laratrust\Middleware;
 
 /**
- * This file is part of Entrust,
+ * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Santigarcor\Laratrust
  */
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 
-class EntrustRole
+class LaratrustPermission
 {
 	protected $auth;
 
@@ -30,12 +32,12 @@ class EntrustRole
 	 *
 	 * @param  \Illuminate\Http\Request $request
 	 * @param  Closure $next
-	 * @param  $roles
+	 * @param  $permissions
 	 * @return mixed
 	 */
-	public function handle($request, Closure $next, $roles)
+	public function handle($request, Closure $next, $permissions)
 	{
-		if ($this->auth->guest() || !$request->user()->hasRole(explode('|', $roles))) {
+		if ($this->auth->guest() || !$request->user()->can(explode('|', $permissions))) {
 			abort(403);
 		}
 
