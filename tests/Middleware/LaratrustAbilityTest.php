@@ -1,11 +1,11 @@
 <?php
 
-use Zizaco\Entrust\Middleware\EntrustRole;
+use Santigarcor\Laratrust\Middleware\LaratrustAbility;
 use Mockery as m;
 
-class EntrustRoleTest extends MiddlewareTest
+class LaratrustAbilityTest extends MiddlewareTest
 {
-    public function testHandle_IsGuestWithMismatchingRole_ShouldAbort403()
+    public function testHandle_IsGuestWithNoAbility_ShouldAbort403()
     {
         /*
         |------------------------------------------------------------
@@ -15,7 +15,7 @@ class EntrustRoleTest extends MiddlewareTest
         $guard = m::mock('Illuminate\Contracts\Auth\Guard[guest]');
         $request = $this->mockRequest();
 
-        $middleware = new EntrustRole($guard);
+        $middleware = new LaratrustAbility($guard);
 
         /*
         |------------------------------------------------------------
@@ -23,7 +23,7 @@ class EntrustRoleTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(true);
-        $request->user()->shouldReceive('hasRole')->andReturn(false);
+        $request->user()->shouldReceive('ability')->andReturn(false);
 
         $middleware->handle($request, function () {}, null, null, true);
 
@@ -35,7 +35,7 @@ class EntrustRoleTest extends MiddlewareTest
         $this->assertAbortCode(403);
     }
 
-    public function testHandle_IsGuestWithMatchingRole_ShouldAbort403()
+    public function testHandle_IsGuestWithAbility_ShouldAbort403()
     {
         /*
         |------------------------------------------------------------
@@ -45,7 +45,7 @@ class EntrustRoleTest extends MiddlewareTest
         $guard = m::mock('Illuminate\Contracts\Auth\Guard');
         $request = $this->mockRequest();
 
-        $middleware = new EntrustRole($guard);
+        $middleware = new LaratrustAbility($guard);
 
         /*
         |------------------------------------------------------------
@@ -53,7 +53,7 @@ class EntrustRoleTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(true);
-        $request->user()->shouldReceive('hasRole')->andReturn(true);
+        $request->user()->shouldReceive('ability')->andReturn(true);
 
         $middleware->handle($request, function () {}, null, null);
 
@@ -65,7 +65,7 @@ class EntrustRoleTest extends MiddlewareTest
         $this->assertAbortCode(403);
     }
 
-    public function testHandle_IsLoggedInWithMismatchRole_ShouldAbort403()
+    public function testHandle_IsLoggedInWithNoAbility_ShouldAbort403()
     {
         /*
         |------------------------------------------------------------
@@ -75,7 +75,7 @@ class EntrustRoleTest extends MiddlewareTest
         $guard = m::mock('Illuminate\Contracts\Auth\Guard');
         $request = $this->mockRequest();
 
-        $middleware = new EntrustRole($guard);
+        $middleware = new LaratrustAbility($guard);
 
         /*
         |------------------------------------------------------------
@@ -83,7 +83,7 @@ class EntrustRoleTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('hasRole')->andReturn(false);
+        $request->user()->shouldReceive('ability')->andReturn(false);
 
         $middleware->handle($request, function () {}, null, null);
 
@@ -95,7 +95,7 @@ class EntrustRoleTest extends MiddlewareTest
         $this->assertAbortCode(403);
     }
 
-    public function testHandle_IsLoggedInWithMatchingRole_ShouldNotAbort()
+    public function testHandle_IsLoggedInWithAbility_ShouldNotAbort()
     {
         /*
         |------------------------------------------------------------
@@ -105,7 +105,7 @@ class EntrustRoleTest extends MiddlewareTest
         $guard = m::mock('Illuminate\Contracts\Auth\Guard');
         $request = $this->mockRequest();
 
-        $middleware = new EntrustRole($guard);
+        $middleware = new LaratrustAbility($guard);
 
         /*
         |------------------------------------------------------------
@@ -113,7 +113,7 @@ class EntrustRoleTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('hasRole')->andReturn(true);
+        $request->user()->shouldReceive('ability')->andReturn(true);
 
         $middleware->handle($request, function () {}, null, null);
 
@@ -123,5 +123,17 @@ class EntrustRoleTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $this->assertDidNotAbort();
+    }
+
+    protected function mockRequest()
+    {
+        $user = m::mock('_mockedUser')->makePartial();
+
+        $request = m::mock('Illuminate\Http\Request')
+            ->shouldReceive('user')
+            ->andReturn($user)
+            ->getMock();
+
+        return $request;
     }
 }
