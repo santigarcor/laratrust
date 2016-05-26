@@ -1,11 +1,13 @@
-<?php namespace Zizaco\Entrust\Traits;
+<?php
+
+namespace Santigarcor\Laratrust\Traits;
 
 /**
- * This file is part of Entrust,
+ * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Santigarcor\Laratrust
  */
 
 use Illuminate\Cache\TaggableStore;
@@ -13,15 +15,15 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
 
-trait EntrustUserTrait
+trait LaratrustUserTrait
 {
     //Big block of caching functionality.
     public function cachedRoles()
     {
         $userPrimaryKey = $this->primaryKey;
-        $cacheKey = 'entrust_roles_for_user_'.$this->$userPrimaryKey;
+        $cacheKey = 'laratrust_roles_for_user_'.$this->$userPrimaryKey;
         if(Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('entrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
+            return Cache::tags(Config::get('laratrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
                 return $this->roles()->get();
             });
         }
@@ -31,21 +33,21 @@ trait EntrustUserTrait
     {   //both inserts and updates
         parent::save($options);
         if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
+            Cache::tags(Config::get('laratrust.role_user_table'))->flush();
         }
     }
     public function delete(array $options = [])
     {   //soft or hard
         parent::delete($options);
         if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
+            Cache::tags(Config::get('laratrust.role_user_table'))->flush();
         }
     }
     public function restore()
     {   //soft delete undo's
         parent::restore();
         if(Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('entrust.role_user_table'))->flush();
+            Cache::tags(Config::get('laratrust.role_user_table'))->flush();
         }
     }
 
@@ -56,7 +58,7 @@ trait EntrustUserTrait
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('entrust.role'), Config::get('entrust.role_user_table'), Config::get('entrust.user_foreign_key'), Config::get('entrust.role_foreign_key'));
+        return $this->belongsToMany(Config::get('laratrust.role'), Config::get('laratrust.role_user_table'), Config::get('laratrust.user_foreign_key'), Config::get('laratrust.role_foreign_key'));
     }
 
     /**
