@@ -43,7 +43,7 @@ Please note that this fork is not used on Zizaco's page at this time, nor is it 
 
 In order to install Laravel 5 Laratrust, just add
 
-    "santigarcor/laratrust": "5.2.x-dev"
+    "santigarcor/laratrust": "dev-master"
 
 to your composer.json. Then run `composer install` or `composer update`.
 
@@ -398,7 +398,7 @@ It is possible to use pipe symbol as *OR* operator:
 
 To emulate *AND* functionality just use multiple instances of middleware
 ```php
-'middleware' => ['permission:owner', 'permission:writer']
+'middleware' => ['role:owner', 'role:writer']
 ```
 
 For more complex situations use `ability` middleware which accepts 3 parameters: roles, permissions, validate_all
