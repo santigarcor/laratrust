@@ -63,7 +63,7 @@ Please note that this fork is not used on Zizaco's page at this time, nor is it 
 
 ## Configuration
 
-Set the property values in the `config/auth.php`.
+Set the property values in the `config/auth.php`. And in the `users` provider add the users table name.
 These values will be used by laratrust to refer to the correct user table and model.
 
 You can also publish the configuration for this package to further customize table names and model namespaces.  
