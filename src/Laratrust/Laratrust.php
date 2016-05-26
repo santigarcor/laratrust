@@ -1,14 +1,16 @@
-<?php namespace Zizaco\Entrust;
+<?php 
+
+namespace Santigarcor\Laratrust;
 
 /**
- * This class is the main entry point of entrust. Usually this the interaction
- * with this class will be done through the Entrust Facade
+ * This class is the main entry point of laratrust. Usually this the interaction
+ * with this class will be done through the Laratrust Facade
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Santigarcor\Laratrust
  */
 
-class Entrust
+class Laratrust
 {
     /**
      * Laravel application

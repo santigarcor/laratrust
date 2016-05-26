@@ -1,16 +1,18 @@
-<?php namespace Zizaco\Entrust;
+<?php 
+
+namespace Santigarcor\Laratrust;
 
 /**
- * This file is part of Entrust,
+ * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Zizaco\Laratrust
  */
 
 use Illuminate\Support\ServiceProvider;
 
-class EntrustServiceProvider extends ServiceProvider
+class LaratrustServiceProvider extends ServiceProvider
 {
     /**
      * Indicates if loading of the provider is deferred.
@@ -28,11 +30,11 @@ class EntrustServiceProvider extends ServiceProvider
     {
         // Publish config files
         $this->publishes([
-            __DIR__.'/../config/config.php' => config_path('entrust.php'),
+            __DIR__.'/../config/config.php' => config_path('laratrust.php'),
         ]);
 
         // Register commands
-        $this->commands('command.entrust.migration');
+        $this->commands('command.laratrust.migration');
         
         // Register blade directives
         $this->bladeDirectives();
@@ -45,7 +47,7 @@ class EntrustServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->registerEntrust();
+        $this->registerLaratrust();
 
         $this->registerCommands();
 
@@ -59,31 +61,31 @@ class EntrustServiceProvider extends ServiceProvider
      */
     private function bladeDirectives()
     {
-        // Call to Entrust::hasRole
+        // Call to Laratrust::hasRole
         \Blade::directive('role', function($expression) {
-            return "<?php if (\\Entrust::hasRole{$expression}) : ?>";
+            return "<?php if (\\Laratrust::hasRole{$expression}) : ?>";
         });
 
         \Blade::directive('endrole', function($expression) {
-            return "<?php endif; // Entrust::hasRole ?>";
+            return "<?php endif; // Laratrust::hasRole ?>";
         });
 
-        // Call to Entrust::can
+        // Call to Laratrust::can
         \Blade::directive('permission', function($expression) {
-            return "<?php if (\\Entrust::can{$expression}) : ?>";
+            return "<?php if (\\Laratrust::can{$expression}) : ?>";
         });
 
         \Blade::directive('endpermission', function($expression) {
-            return "<?php endif; // Entrust::can ?>";
+            return "<?php endif; // Laratrust::can ?>";
         });
 
-        // Call to Entrust::ability
+        // Call to Laratrust::ability
         \Blade::directive('ability', function($expression) {
-            return "<?php if (\\Entrust::ability{$expression}) : ?>";
+            return "<?php if (\\Laratrust::ability{$expression}) : ?>";
         });
 
         \Blade::directive('endability', function($expression) {
-            return "<?php endif; // Entrust::ability ?>";
+            return "<?php endif; // Laratrust::ability ?>";
         });
     }
 
@@ -92,13 +94,13 @@ class EntrustServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    private function registerEntrust()
+    private function registerLaratrust()
     {
-        $this->app->bind('entrust', function ($app) {
-            return new Entrust($app);
+        $this->app->bind('laratrust', function ($app) {
+            return new Laratrust($app);
         });
         
-        $this->app->alias('entrust', 'Zizaco\Entrust\Entrust');
+        $this->app->alias('laratrust', 'Santigarcor\Laratrust\Laratrust');
     }
 
     /**
@@ -108,20 +110,20 @@ class EntrustServiceProvider extends ServiceProvider
      */
     private function registerCommands()
     {
-        $this->app->singleton('command.entrust.migration', function ($app) {
+        $this->app->singleton('command.laratrust.migration', function ($app) {
             return new MigrationCommand();
         });
     }
 
     /**
-     * Merges user's and entrust's configs.
+     * Merges user's and laratrust's configs.
      *
      * @return void
      */
     private function mergeConfig()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/config.php', 'entrust'
+            __DIR__.'/../config/config.php', 'laratrust'
         );
     }
 
@@ -133,7 +135,7 @@ class EntrustServiceProvider extends ServiceProvider
     public function provides()
     {
         return [
-            'command.entrust.migration'
+            'command.laratrust.migration'
         ];
     }
 }

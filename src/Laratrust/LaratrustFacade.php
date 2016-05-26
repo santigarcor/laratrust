@@ -1,16 +1,18 @@
-<?php namespace Zizaco\Entrust;
+<?php 
+
+namespace Santigarcor\Laratrust;
 
 /**
- * This file is part of Entrust,
+ * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Santigarcor\Laratrust
  */
 
 use Illuminate\Support\Facades\Facade;
 
-class EntrustFacade extends Facade
+class LaratrustFacade extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -19,6 +21,6 @@ class EntrustFacade extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'entrust';
+        return 'laratrust';
     }
 }

@@ -1,21 +1,23 @@
-<?php namespace Zizaco\Entrust;
+<?php 
+
+namespace Santigarcor\Laratrust;
 
 /**
- * This file is part of Entrust,
+ * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Santigarcor\Laratrust
  */
 
-use Zizaco\Entrust\Contracts\EntrustRoleInterface;
-use Zizaco\Entrust\Traits\EntrustRoleTrait;
+use Santigarcor\Laratrust\Contracts\LaratrustRoleInterface;
+use Santigarcor\Laratrust\Traits\LaratrustRoleTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 
-class EntrustRole extends Model implements EntrustRoleInterface
+class LaratrustRole extends Model implements LaratrustRoleInterface
 {
-    use EntrustRoleTrait;
+    use LaratrustRoleTrait;
 
     /**
      * The database table used by the model.
@@ -32,7 +34,7 @@ class EntrustRole extends Model implements EntrustRoleInterface
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->table = Config::get('entrust.roles_table');
+        $this->table = Config::get('laratrust.roles_table');
     }
 
 }
