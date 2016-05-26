@@ -45,6 +45,10 @@ Please note that this fork is not used on Zizaco's page at this time, nor is it 
 
     "santigarcor/laratrust": "dev-master"
 
+or you can run the `composer require` command from your terminal:
+ 
+    composer require santigarcor/laratrust:dev-master
+
 2) Then in your `config/app.php` add the following to the providers:
 ```php
     Santigarcor\Laratrust\LaratrustServiceProvider::class,
