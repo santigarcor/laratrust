@@ -1,14 +1,16 @@
-<?php namespace Zizaco\Entrust\Contracts;
+<?php 
+
+namespace Santigarcor\Laratrust\Contracts;
 
 /**
- * This file is part of Entrust,
+ * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Entrust
+ * @package Santigarcor\Laratrust
  */
 
-interface EntrustUserInterface
+interface LaratrustUserInterface
 {
     /**
      * Many-to-Many relations with Role.
