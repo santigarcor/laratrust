@@ -15,32 +15,38 @@ use Illuminate\Contracts\Auth\Guard;
 
 class LaratrustRole
 {
-	protected $auth;
+    const DELIMITER = '|';
 
-	/**
-	 * Creates a new instance of the middleware.
-	 *
-	 * @param Guard $auth
-	 */
-	public function __construct(Guard $auth)
-	{
-		$this->auth = $auth;
-	}
+    protected $auth;
 
-	/**
-	 * Handle an incoming request.
-	 *
-	 * @param  \Illuminate\Http\Request $request
-	 * @param  Closure $next
-	 * @param  $roles
-	 * @return mixed
-	 */
-	public function handle($request, Closure $next, $roles)
-	{
-		if ($this->auth->guest() || !$request->user()->hasRole(explode('|', $roles))) {
-			abort(403);
-		}
+    /**
+     * Creates a new instance of the middleware.
+     *
+     * @param Guard $auth
+     */
+    public function __construct(Guard $auth)
+    {
+        $this->auth = $auth;
+    }
 
-		return $next($request);
-	}
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  Closure $next
+     * @param  $roles
+     * @return mixed
+     */
+    public function handle($request, Closure $next, $roles)
+    {
+        if (!is_array($roles)) {
+            $roles = explode(self::DELIMITER, $roles);
+        }
+  
+        if ($this->auth->guest() || !$request->user()->hasRole($roles)) {
+            abort(403);
+        }
+
+        return $next($request);
+    }
 }
