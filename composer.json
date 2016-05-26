@@ -5,10 +5,6 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Zizaco Zizuini",
-            "email": "zizaco@gmail.com"
-        },
-        {
             "name": "Andrew Elkins",
             "homepage": "http://andrewelkins.com"
         },
@@ -17,12 +13,20 @@
             "homepage": "http://github.com/bbatsche"
         },
         {
+            "name": "Mateo Calle",
+            "email": "matecalle@gmail.com"
+        },
+        {
             "name": "Michele Angioni",
             "email": "michele.angioni@gmail.com"
         },
         {
             "name": "Santiago Garcia",
             "email": "santigarcor@gmail.com"
+        },
+        {
+            "name": "Zizaco Zizuini",
+            "email": "zizaco@gmail.com"
         }
     ],
     "require": {
