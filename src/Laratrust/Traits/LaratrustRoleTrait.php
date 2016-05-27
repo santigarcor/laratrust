@@ -22,9 +22,10 @@ trait LaratrustRoleTrait
         $rolePrimaryKey = $this->primaryKey;
         $cacheKey = 'laratrust_permissions_for_role_'.$this->$rolePrimaryKey;
         if (Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('laratrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl', 60), function () {
-                return $this->perms()->get();
-            });
+            return Cache::tags(Config::get('laratrust.permission_role_table'))
+                ->remember($cacheKey, Config::get('cache.ttl', 60), function () {
+                    return $this->perms()->get();
+                });
         } else {
             return $this->perms()->get();
         }
@@ -70,7 +71,12 @@ trait LaratrustRoleTrait
      */
     public function users()
     {
-        return $this->belongsToMany(Config::get('auth.providers.users.model'), Config::get('laratrust.role_user_table'), Config::get('laratrust.role_foreign_key'), Config::get('laratrust.user_foreign_key'));
+        return $this->belongsToMany(
+            Config::get('auth.providers.users.model'),
+            Config::get('laratrust.role_user_table'),
+            Config::get('laratrust.role_foreign_key'),
+            Config::get('laratrust.user_foreign_key')
+        );
        // return $this->belongsToMany(Config::get('auth.model'), Config::get('laratrust.role_user_table'));
     }
 
@@ -82,7 +88,12 @@ trait LaratrustRoleTrait
      */
     public function perms()
     {
-        return $this->belongsToMany(Config::get('laratrust.permission'), Config::get('laratrust.permission_role_table'), Config::get('laratrust.role_foreign_key'), Config::get('laratrust.permission_foreign_key'));
+        return $this->belongsToMany(
+            Config::get('laratrust.permission'),
+            Config::get('laratrust.permission_role_table'),
+            Config::get('laratrust.role_foreign_key'),
+            Config::get('laratrust.permission_foreign_key')
+        );
     }
 
     /**

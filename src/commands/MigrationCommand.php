@@ -46,8 +46,12 @@ class MigrationCommand extends Command
         $this->line('');
         $this->info("Tables: $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable");
 
-        $message = "A migration that creates '$rolesTable', '$roleUserTable', '$permissionsTable', '$permissionRoleTable'".
-        " tables will be created in database/migrations directory";
+        $message = $this->generateMigrationMessage(
+            $rolesTable,
+            $roleUserTable,
+            $permissionsTable,
+            $permissionRoleTable
+        );
 
         $this->comment($message);
         $this->line('');
@@ -84,7 +88,14 @@ class MigrationCommand extends Command
         $userModel   = Config::get('auth.providers.users.model');
         $userKeyName = (new $userModel())->getKeyName();
 
-        $data = compact('rolesTable', 'roleUserTable', 'permissionsTable', 'permissionRoleTable', 'usersTable', 'userKeyName');
+        $data = compact(
+            'rolesTable',
+            'roleUserTable',
+            'permissionsTable',
+            'permissionRoleTable',
+            'usersTable',
+            'userKeyName'
+        );
 
         $output = $this->laravel->view->make('laratrust::generators.migration')->with($data)->render();
 
@@ -95,5 +106,21 @@ class MigrationCommand extends Command
         }
 
         return false;
+    }
+
+    /**
+     * Generate the message to display when running the
+     * console command showing what tables are going
+     * to be created
+     * @param  string $rolesTable
+     * @param  string $roleUserTable
+     * @param  string $permissionsTable
+     * @param  string $permissionRoleTable
+     * @return string
+     */
+    public function generateMigrationMessage($rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)
+    {
+        return "A migration that creates '$rolesTable', '$roleUserTable', '$permissionsTable', '$permissionRoleTable'".
+        " tables will be created in database/migrations directory";
     }
 }

@@ -23,9 +23,10 @@ trait LaratrustUserTrait
         $userPrimaryKey = $this->primaryKey;
         $cacheKey = 'laratrust_roles_for_user_'.$this->$userPrimaryKey;
         if (Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('laratrust.role_user_table'))->remember($cacheKey, Config::get('cache.ttl'), function () {
-                return $this->roles()->get();
-            });
+            return Cache::tags(Config::get('laratrust.role_user_table'))
+                ->remember($cacheKey, Config::get('cache.ttl'), function () {
+                    return $this->roles()->get();
+                });
         } else {
             return $this->roles()->get();
         }
@@ -62,7 +63,12 @@ trait LaratrustUserTrait
      */
     public function roles()
     {
-        return $this->belongsToMany(Config::get('laratrust.role'), Config::get('laratrust.role_user_table'), Config::get('laratrust.user_foreign_key'), Config::get('laratrust.role_foreign_key'));
+        return $this->belongsToMany(
+            Config::get('laratrust.role'),
+            Config::get('laratrust.role_user_table'),
+            Config::get('laratrust.user_foreign_key'),
+            Config::get('laratrust.role_foreign_key')
+        );
     }
 
     /**
