@@ -47,7 +47,7 @@ Please note that this fork is not used on Zizaco's page at this time, nor is it 
 
 or you can run the `composer require` command from your terminal:
 
-    composer require santigarcor/laratrust:1.0.*
+    composer require "santigarcor/laratrust:1.0.*"
 
 2) Then in your `config/app.php` add the following to the providers:
 ```php
