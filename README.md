@@ -43,11 +43,11 @@ Please note that this fork is not used on Zizaco's page at this time, nor is it 
 
 1) In order to install Laravel 5 Laratrust, just add the following to your composer.json. Then run `composer update`:
 
-    "santigarcor/laratrust": "2.*"
+    "santigarcor/laratrust": "1.*"
 
 or you can run the `composer require` command from your terminal:
 
-    composer require santigarcor/laratrust:2.*
+    composer require santigarcor/laratrust:1.*
 
 2) Then in your `config/app.php` add the following to the providers:
 ```php

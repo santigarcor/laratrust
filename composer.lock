@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "32ae64d82399a505795eb5e4111ea5c5",
+    "hash": "915201563c6718b70783e012dfc1546c",
     "content-hash": "cbe8fb17eefba1f822ad75d810f02b9b",
     "packages": [
         {
@@ -374,12 +374,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "4b2f55e83f95f52eb17a0f0accd9bfac8ade6080"
+                "reference": "9fe4ae74a68e086459de46313c237f202718d0c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/4b2f55e83f95f52eb17a0f0accd9bfac8ade6080",
-                "reference": "4b2f55e83f95f52eb17a0f0accd9bfac8ade6080",
+                "url": "https://api.github.com/repos/symfony/console/zipball/9fe4ae74a68e086459de46313c237f202718d0c1",
+                "reference": "9fe4ae74a68e086459de46313c237f202718d0c1",
                 "shasum": ""
             },
             "require": {
@@ -426,7 +426,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2016-05-13 17:56:25"
+            "time": "2016-05-26 08:21:20"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -434,12 +434,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "dff51f72b0706335131b00a7f49606168c582594"
+                "reference": "67f0d2b927796648c5c38cedb7a2c8f1cf14e7dc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/dff51f72b0706335131b00a7f49606168c582594",
-                "reference": "dff51f72b0706335131b00a7f49606168c582594",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/67f0d2b927796648c5c38cedb7a2c8f1cf14e7dc",
+                "reference": "67f0d2b927796648c5c38cedb7a2c8f1cf14e7dc",
                 "shasum": ""
             },
             "require": {
@@ -485,7 +485,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2016-05-18 14:26:46"
+            "time": "2016-05-26 01:13:28"
         },
         {
             "name": "symfony/translation",
