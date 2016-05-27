@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Santigarcor\Laratrust\Traits;
 
@@ -21,39 +21,43 @@ trait LaratrustRoleTrait
     {
         $rolePrimaryKey = $this->primaryKey;
         $cacheKey = 'laratrust_permissions_for_role_'.$this->$rolePrimaryKey;
-        if(Cache::getStore() instanceof TaggableStore) {
+        if (Cache::getStore() instanceof TaggableStore) {
             return Cache::tags(Config::get('laratrust.permission_role_table'))->remember($cacheKey, Config::get('cache.ttl', 60), function () {
                 return $this->perms()->get();
             });
+        } else {
+            return $this->perms()->get();
         }
-        else return $this->perms()->get();
     }
     public function save(array $options = [])
-    {   //both inserts and updates
-        if(!parent::save($options)){
+    {
+        //both inserts and updates
+        if (!parent::save($options)) {
             return false;
         }
-        if(Cache::getStore() instanceof TaggableStore) {
+        if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('laratrust.permission_role_table'))->flush();
         }
         return true;
     }
     public function delete(array $options = [])
-    {   //soft or hard
-        if(!parent::delete($options)){
+    {
+        //soft or hard
+        if (!parent::delete($options)) {
             return false;
         }
-        if(Cache::getStore() instanceof TaggableStore) {
+        if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('laratrust.permission_role_table'))->flush();
         }
         return true;
     }
     public function restore()
-    {   //soft delete undo's
-        if(!parent::restore()){
+    {
+        //soft delete undo's
+        if (!parent::restore()) {
             return false;
         }
-        if(Cache::getStore() instanceof TaggableStore) {
+        if (Cache::getStore() instanceof TaggableStore) {
             Cache::tags(Config::get('laratrust.permission_role_table'))->flush();
         }
         return true;
@@ -66,7 +70,7 @@ trait LaratrustRoleTrait
      */
     public function users()
     {
-        return $this->belongsToMany(Config::get('auth.providers.users.model'), Config::get('laratrust.role_user_table'),Config::get('laratrust.role_foreign_key'),Config::get('laratrust.user_foreign_key'));
+        return $this->belongsToMany(Config::get('auth.providers.users.model'), Config::get('laratrust.role_user_table'), Config::get('laratrust.role_foreign_key'), Config::get('laratrust.user_foreign_key'));
        // return $this->belongsToMany(Config::get('auth.model'), Config::get('laratrust.role_user_table'));
     }
 
@@ -92,7 +96,7 @@ trait LaratrustRoleTrait
     {
         parent::boot();
 
-        static::deleting(function($role) {
+        static::deleting(function ($role) {
             if (!method_exists(Config::get('laratrust.role'), 'bootSoftDeletes')) {
                 $role->users()->sync([]);
                 $role->perms()->sync([]);
@@ -183,11 +187,13 @@ trait LaratrustRoleTrait
      */
     public function detachPermission($permission)
     {
-        if (is_object($permission))
+        if (is_object($permission)) {
             $permission = $permission->getKey();
+        }
 
-        if (is_array($permission))
+        if (is_array($permission)) {
             $permission = $permission['id'];
+        }
 
         $this->perms()->detach($permission);
     }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Santigarcor\Laratrust\Traits;
 
@@ -35,7 +35,7 @@ trait LaratrustPermissionTrait
     {
         parent::boot();
 
-        static::deleting(function($permission) {
+        static::deleting(function ($permission) {
             if (!method_exists(Config::get('laratrust.permission'), 'bootSoftDeletes')) {
                 $permission->roles()->sync([]);
             }

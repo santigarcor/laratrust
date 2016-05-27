@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Santigarcor\Laratrust;
 
@@ -36,5 +36,4 @@ class LaratrustPermission extends Model implements LaratrustPermissionInterface
         parent::__construct($attributes);
         $this->table = Config::get('laratrust.permissions_table');
     }
-
 }

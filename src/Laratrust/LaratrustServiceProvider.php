@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Santigarcor\Laratrust;
 
@@ -62,29 +62,29 @@ class LaratrustServiceProvider extends ServiceProvider
     private function bladeDirectives()
     {
         // Call to Laratrust::hasRole
-        \Blade::directive('role', function($expression) {
+        \Blade::directive('role', function ($expression) {
             return "<?php if (\\Laratrust::hasRole{$expression}) : ?>";
         });
 
-        \Blade::directive('endrole', function($expression) {
+        \Blade::directive('endrole', function ($expression) {
             return "<?php endif; // Laratrust::hasRole ?>";
         });
 
         // Call to Laratrust::can
-        \Blade::directive('permission', function($expression) {
+        \Blade::directive('permission', function ($expression) {
             return "<?php if (\\Laratrust::can{$expression}) : ?>";
         });
 
-        \Blade::directive('endpermission', function($expression) {
+        \Blade::directive('endpermission', function ($expression) {
             return "<?php endif; // Laratrust::can ?>";
         });
 
         // Call to Laratrust::ability
-        \Blade::directive('ability', function($expression) {
+        \Blade::directive('ability', function ($expression) {
             return "<?php if (\\Laratrust::ability{$expression}) : ?>";
         });
 
-        \Blade::directive('endability', function($expression) {
+        \Blade::directive('endability', function ($expression) {
             return "<?php endif; // Laratrust::ability ?>";
         });
     }
@@ -123,7 +123,8 @@ class LaratrustServiceProvider extends ServiceProvider
     private function mergeConfig()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/config.php', 'laratrust'
+            __DIR__.'/../config/config.php',
+            'laratrust'
         );
     }
 

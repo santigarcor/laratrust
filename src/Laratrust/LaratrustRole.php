@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Santigarcor\Laratrust;
 
@@ -36,5 +36,4 @@ class LaratrustRole extends Model implements LaratrustRoleInterface
         parent::__construct($attributes);
         $this->table = Config::get('laratrust.roles_table');
     }
-
 }
