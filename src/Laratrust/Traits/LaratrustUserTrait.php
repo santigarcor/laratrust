@@ -17,7 +17,12 @@ use InvalidArgumentException;
 
 trait LaratrustUserTrait
 {
-    //Big block of caching functionality.
+    /**
+     * Tries to return all the cached roles of the user
+     * and if it can't bring the roles from the cache,
+     * it would bring them back from the DB
+     * @return Illuminate\Database\Eloquent\Collection
+     */
     public function cachedRoles()
     {
         $userPrimaryKey = $this->primaryKey;
@@ -116,11 +121,11 @@ trait LaratrustUserTrait
             // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
             // Return the value of $requireAll;
             return $requireAll;
-        } else {
-            foreach ($this->cachedRoles() as $role) {
-                if ($role->name == $name) {
-                    return true;
-                }
+        }
+
+        foreach ($this->cachedRoles() as $role) {
+            if ($role->name == $name) {
+                return true;
             }
         }
 
@@ -152,13 +157,13 @@ trait LaratrustUserTrait
             // If we've made it this far and $requireAll is TRUE, then ALL of the perms were found.
             // Return the value of $requireAll;
             return $requireAll;
-        } else {
-            foreach ($this->cachedRoles() as $role) {
-                // Validate against the Permission table
-                foreach ($role->cachedPermissions() as $perm) {
-                    if (str_is($permission, $perm->name)) {
-                        return true;
-                    }
+        }
+
+        foreach ($this->cachedRoles() as $role) {
+            // Validate against the Permission table
+            foreach ($role->cachedPermissions() as $perm) {
+                if (str_is($permission, $perm->name)) {
+                    return true;
                 }
             }
         }

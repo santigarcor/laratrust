@@ -30,6 +30,7 @@ class LaratrustPermission extends Model implements LaratrustPermissionInterface
      * Creates a new instance of the model.
      *
      * @param array $attributes
+     * @return void
      */
     public function __construct(array $attributes = [])
     {

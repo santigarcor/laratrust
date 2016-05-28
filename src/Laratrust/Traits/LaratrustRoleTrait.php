@@ -16,7 +16,10 @@ use Illuminate\Support\Facades\Cache;
 
 trait LaratrustRoleTrait
 {
-    //Big block of caching functionality.
+    /**
+     * Big block of caching functionality
+     * @return Illuminate\Database\Eloquent\Collection
+     */
     public function cachedPermissions()
     {
         $rolePrimaryKey = $this->primaryKey;
@@ -30,6 +33,13 @@ trait LaratrustRoleTrait
             return $this->perms()->get();
         }
     }
+    
+    /**
+     * Saves a role to the database and flush the
+     * cache of the roles table
+     * @param  array  $options
+     * @return bool
+     */
     public function save(array $options = [])
     {
         //both inserts and updates
@@ -41,6 +51,12 @@ trait LaratrustRoleTrait
         }
         return true;
     }
+
+    /**
+     * Deletes a role from the database using soft or hard delete
+     * @param  array  $options
+     * @return bool
+     */
     public function delete(array $options = [])
     {
         //soft or hard
@@ -52,6 +68,11 @@ trait LaratrustRoleTrait
         }
         return true;
     }
+
+    /**
+     * Undo the delete made using soft delete
+     * @return bool
+     */
     public function restore()
     {
         //soft delete undo's
@@ -77,7 +98,6 @@ trait LaratrustRoleTrait
             Config::get('laratrust.role_foreign_key'),
             Config::get('laratrust.user_foreign_key')
         );
-       // return $this->belongsToMany(Config::get('auth.model'), Config::get('laratrust.role_user_table'));
     }
 
     /**
@@ -142,11 +162,11 @@ trait LaratrustRoleTrait
             // If we've made it this far and $requireAll is TRUE, then ALL of the permissions were found.
             // Return the value of $requireAll;
             return $requireAll;
-        } else {
-            foreach ($this->cachedPermissions() as $permission) {
-                if ($permission->name == $name) {
-                    return true;
-                }
+        }
+
+        foreach ($this->cachedPermissions() as $permission) {
+            if ($permission->name == $name) {
+                return true;
             }
         }
 
