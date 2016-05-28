@@ -178,15 +178,12 @@ trait LaratrustRoleTrait
      *
      * @param mixed $inputPermissions
      *
-     * @return void
+     * @return array
      */
     public function savePermissions($inputPermissions)
     {
-        if (!empty($inputPermissions)) {
-            $this->perms()->sync($inputPermissions);
-        } else {
-            $this->perms()->detach();
-        }
+        // If the inputPermissions ist empty it will delete all associations
+        return $this->perms()->sync($inputPermissions);
     }
 
     /**
