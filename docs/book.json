@@ -1,12 +1,9 @@
 {
-  "plugins": ["edit-link", "prism", "-highlight", "github"],
+  "gitbook": "2.x.x",
+  "plugins": ["github"],
   "pluginsConfig": {
-    "edit-link": {
-      "base": "https://github.com/santigarcor/laratrust/tree/master/docs",
-      "label": "Edit This Page"
-    },
     "github": {
-      "url": "https://github.com/santigarcor/laratrust"
+      "url": "https://github.com/santigarcor/laratrust/"
     }
   },
   "links": {
