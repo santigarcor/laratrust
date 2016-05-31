@@ -38,63 +38,6 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Saves the user to the database and flush the
-     * cache of the role_user table
-     * @param  array  $options
-     * @return bool
-     */
-    public function save(array $options = [])
-    {
-        //both inserts and updates
-        if (!parent::save($options)) {
-            return false;
-        }
-
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('laratrust.role_user_table'))->flush();
-        }
-
-        return true;
-    }
-
-    /**
-     * Deletes the user from the database using soft or hard delete
-     * @param  array  $options
-     * @return bool
-     */
-    public function delete(array $options = [])
-    {
-        //soft or hard
-        if (!parent::delete($options)) {
-            return false;
-        }
-
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('laratrust.role_user_table'))->flush();
-        }
-
-        return true;
-    }
-    
-    /**
-     * Undo the delete made using soft delete
-     * @return bool
-     */
-    public function restore()
-    {
-        //soft delete undo's
-        if (!parent::restore()) {
-            return false;
-        }
-
-        if (Cache::getStore() instanceof TaggableStore) {
-            Cache::tags(Config::get('laratrust.role_user_table'))->flush();
-        }
-
-        return true;
-    }
-
-    /**
      * Many-to-Many relations with Role.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -119,6 +62,16 @@ trait LaratrustUserTrait
     public static function boot()
     {
         parent::boot();
+
+        $flushCache = function () {
+            if (Cache::getStore() instanceof TaggableStore) {
+                Cache::tags(Config::get('laratrust.role_user_table'))->flush();
+            }
+        };
+
+        static::restored($flushCache);
+        static::deleted($flushCache);
+        static::saved($flushCache);
 
         static::deleting(function ($user) {
             if (!method_exists(Config::get('auth.model'), 'bootSoftDeletes')) {
