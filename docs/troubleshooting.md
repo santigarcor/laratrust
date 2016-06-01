@@ -22,17 +22,3 @@ First of all check that you have the `laratrust.php` file in your `app/config` d
 If you don't, then try `php artisan vendor:publish` and, if it does not appear, manually copy the `/vendor/santigarcor/laratrust/src/config/config.php` file in your config directory and rename it `laratrust.php`.
 
 ---
-
-If you are using SoftDeletes and get this error:
-
-    Trait method restore has not been applied, because there are collisions with other trait methods on App\User
-
-Please add the following to your respective Model (User, Role):
-
-```php
-    use LaratrustModelTrait {
-        LaratrustModelTrait::restore insteadof SoftDeletes;
-    }
-```
-
-But remember to change the `LaratrustModelTrait` for `LaratrustUserTrait` or `LaratrustRoleTrait`
