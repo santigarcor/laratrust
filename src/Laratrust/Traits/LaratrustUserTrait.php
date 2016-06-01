@@ -69,12 +69,16 @@ trait LaratrustUserTrait
             }
         };
 
-        static::restored($flushCache);
+        // If the user doesn't use SoftDeletes
+        if (method_exists(Config::get('auth.providers.users.model'), 'restored')) {
+            static::restored($flushCache);
+        }
+
         static::deleted($flushCache);
         static::saved($flushCache);
 
         static::deleting(function ($user) {
-            if (!method_exists(Config::get('auth.model'), 'bootSoftDeletes')) {
+            if (!method_exists(Config::get('auth.providers.users.model'), 'bootSoftDeletes')) {
                 $user->roles()->sync([]);
             }
 

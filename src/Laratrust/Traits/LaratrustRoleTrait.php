@@ -81,8 +81,12 @@ trait LaratrustRoleTrait
                 Cache::tags(Config::get('laratrust.permission_role_table'))->flush();
             }
         };
+        
+        // If the role doesn't use SoftDeletes
+        if (method_exists(Config::get('laratrust.role'), 'restored')) {
+            static::restored($flushCache);
+        }
 
-        static::restored($flushCache);
         static::deleted($flushCache);
         static::saved($flushCache);
 
