@@ -10,7 +10,6 @@ namespace Santigarcor\Laratrust\Traits;
  * @package Santigarcor\Laratrust
  */
 
-use Illuminate\Cache\TaggableStore;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
 
@@ -22,16 +21,11 @@ trait LaratrustRoleTrait
      */
     public function cachedPermissions()
     {
-        $rolePrimaryKey = $this->primaryKey;
-        $cacheKey = 'laratrust_permissions_for_role_'.$this->$rolePrimaryKey;
-        if (Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('laratrust.permission_role_table'))
-                ->remember($cacheKey, Config::get('cache.ttl', 60), function () {
-                    return $this->perms()->get();
-                });
-        } else {
+        $cacheKey = 'laratrust_permissions_for_role_' . $this->getKey();
+
+        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
             return $this->perms()->get();
-        }
+        });
     }
 
     /**
@@ -76,10 +70,9 @@ trait LaratrustRoleTrait
     {
         parent::boot();
 
-        $flushCache = function () {
-            if (Cache::getStore() instanceof TaggableStore) {
-                Cache::tags(Config::get('laratrust.permission_role_table'))->flush();
-            }
+        $flushCache = function ($role) {
+            $role->flushCache();
+            return true;
         };
         
         // If the role doesn't use SoftDeletes
@@ -146,7 +139,10 @@ trait LaratrustRoleTrait
     public function savePermissions($inputPermissions)
     {
         // If the inputPermissions ist empty it will delete all associations
-        return $this->perms()->sync($inputPermissions);
+        $changes = $this->perms()->sync($inputPermissions);
+        $this->flushCache();
+
+        return $changes;
     }
 
     /**
@@ -167,6 +163,7 @@ trait LaratrustRoleTrait
         }
 
         $this->perms()->attach($permission);
+        $this->flushCache();
     }
 
     /**
@@ -187,6 +184,7 @@ trait LaratrustRoleTrait
         }
 
         $this->perms()->detach($permission);
+        $this->flushCache();
     }
 
     /**
@@ -215,5 +213,14 @@ trait LaratrustRoleTrait
         foreach ($permissions as $permission) {
             $this->detachPermission($permission);
         }
+    }
+
+    /**
+     * Flush the role's cache
+     * @return void
+     */
+    public function flushCache()
+    {
+        Cache::forget('laratrust_permissions_for_role_' . $this->getKey());
     }
 }

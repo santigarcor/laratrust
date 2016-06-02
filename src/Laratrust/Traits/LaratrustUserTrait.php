@@ -10,7 +10,6 @@ namespace Santigarcor\Laratrust\Traits;
  * @package Santigarcor\Laratrust
  */
 
-use Illuminate\Cache\TaggableStore;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
@@ -25,16 +24,11 @@ trait LaratrustUserTrait
      */
     public function cachedRoles()
     {
-        $userPrimaryKey = $this->primaryKey;
-        $cacheKey = 'laratrust_roles_for_user_'.$this->$userPrimaryKey;
-        if (Cache::getStore() instanceof TaggableStore) {
-            return Cache::tags(Config::get('laratrust.role_user_table'))
-                ->remember($cacheKey, Config::get('cache.ttl'), function () {
-                    return $this->roles()->get();
-                });
-        } else {
+        $cacheKey = 'laratrust_roles_for_user_' . $this->getKey();
+
+        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
             return $this->roles()->get();
-        }
+        });
     }
 
     /**
@@ -63,10 +57,9 @@ trait LaratrustUserTrait
     {
         parent::boot();
 
-        $flushCache = function () {
-            if (Cache::getStore() instanceof TaggableStore) {
-                Cache::tags(Config::get('laratrust.role_user_table'))->flush();
-            }
+        $flushCache = function ($user) {
+            $user->flushCache();
+            return true;
         };
 
         // If the user doesn't use SoftDeletes
@@ -246,6 +239,7 @@ trait LaratrustUserTrait
         }
 
         $this->roles()->attach($role);
+        $this->flushCache();
     }
 
     /**
@@ -264,6 +258,7 @@ trait LaratrustUserTrait
         }
 
         $this->roles()->detach($role);
+        $this->flushCache();
     }
 
     /**
@@ -292,5 +287,14 @@ trait LaratrustUserTrait
         foreach ($roles as $role) {
             $this->detachRole($role);
         }
+    }
+
+    /**
+     * Flush the user's cache
+     * @return void
+     */
+    public function flushCache()
+    {
+        Cache::forget('laratrust_roles_for_user_' . $this->getKey());
     }
 }
