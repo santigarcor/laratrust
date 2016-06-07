@@ -5,7 +5,6 @@
 [![Build Status](https://travis-ci.org/santigarcor/laratrust.svg?branch=master)](https://travis-ci.org/santigarcor/laratrust)
 [![Latest Stable Version](https://poser.pugx.org/santigarcor/laratrust/v/stable)](https://packagist.org/packages/santigarcor/laratrust)
 [![Total Downloads](https://poser.pugx.org/santigarcor/laratrust/downloads)](https://packagist.org/packages/santigarcor/laratrust)
-[![Latest Unstable Version](https://poser.pugx.org/santigarcor/laratrust/v/unstable)](https://packagist.org/packages/santigarcor/laratrust)
 [![License](https://poser.pugx.org/santigarcor/laratrust/license)](https://packagist.org/packages/santigarcor/laratrust)
 
 <!--[![SensioLabsInsight](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e/small.png)](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e)  -->
