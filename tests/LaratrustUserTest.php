@@ -938,9 +938,12 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $user->attachRole($roleObject);
-        $user->attachRole($roleArray);
-        $user->attachRole(3);
+        $result = $user->attachRole($roleObject);
+        $this->assertInstanceOf('HasRoleUser', $result);
+        $result = $user->attachRole($roleArray);
+        $this->assertInstanceOf('HasRoleUser', $result);
+        $result = $user->attachRole(3);
+        $this->assertInstanceOf('HasRoleUser', $result);
     }
 
     public function testDetachRole()
@@ -978,15 +981,17 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         Cache::shouldReceive('forget')
             ->times(3);
 
-
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $user->detachRole($roleObject);
-        $user->detachRole($roleArray);
-        $user->detachRole(3);
+        $result = $user->detachRole($roleObject);
+        $this->assertInstanceOf('HasRoleUser', $result);
+        $result = $user->detachRole($roleArray);
+        $this->assertInstanceOf('HasRoleUser', $result);
+        $result = $user->detachRole(3);
+        $this->assertInstanceOf('HasRoleUser', $result);
     }
 
     public function testAttachRoles()
@@ -1018,7 +1023,8 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $user->attachRoles([1, 2, 3]);
+        $result = $user->attachRoles([1, 2, 3]);
+        $this->assertInstanceOf('HasRoleUser', $result);
     }
 
     public function testDetachRoles()
@@ -1050,7 +1056,8 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $user->detachRoles([1, 2, 3]);
+        $result = $user->detachRoles([1, 2, 3]);
+        $this->assertInstanceOf('HasRoleUser', $result);
     }
 
     public function testDetachAllRoles()

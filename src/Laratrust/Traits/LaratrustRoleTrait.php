@@ -164,6 +164,8 @@ trait LaratrustRoleTrait
 
         $this->perms()->attach($permission);
         $this->flushCache();
+
+        return $this;
     }
 
     /**
@@ -185,6 +187,8 @@ trait LaratrustRoleTrait
 
         $this->perms()->detach($permission);
         $this->flushCache();
+
+        return $this;
     }
 
     /**
@@ -199,6 +203,8 @@ trait LaratrustRoleTrait
         foreach ($permissions as $permission) {
             $this->attachPermission($permission);
         }
+
+        return $this;
     }
 
     /**
@@ -213,6 +219,8 @@ trait LaratrustRoleTrait
         foreach ($permissions as $permission) {
             $this->detachPermission($permission);
         }
+
+        return $this;
     }
 
     /**

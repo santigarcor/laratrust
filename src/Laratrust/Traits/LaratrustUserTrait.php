@@ -227,6 +227,7 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed $role
+     * @return Illuminate\Database\Eloquent\Model
      */
     public function attachRole($role)
     {
@@ -240,12 +241,15 @@ trait LaratrustUserTrait
 
         $this->roles()->attach($role);
         $this->flushCache();
+
+        return $this;
     }
 
     /**
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $role
+     * @return Illuminate\Database\Eloquent\Model
      */
     public function detachRole($role)
     {
@@ -259,24 +263,30 @@ trait LaratrustUserTrait
 
         $this->roles()->detach($role);
         $this->flushCache();
+
+        return $this;
     }
 
     /**
      * Attach multiple roles to a user
      *
      * @param mixed $roles
+     * @return Illuminate\Database\Eloquent\Model
      */
     public function attachRoles($roles)
     {
         foreach ($roles as $role) {
             $this->attachRole($role);
         }
+
+        return $this;
     }
 
     /**
      * Detach multiple roles from a user
      *
      * @param mixed $roles
+     * @return Illuminate\Database\Eloquent\Model
      */
     public function detachRoles($roles = null)
     {
@@ -287,6 +297,8 @@ trait LaratrustUserTrait
         foreach ($roles as $role) {
             $this->detachRole($role);
         }
+
+        return $this;
     }
 
     /**
