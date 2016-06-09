@@ -34,10 +34,8 @@ trait LaratrustPermissionTrait
      *
      * @return void|bool
      */
-    public static function boot()
+    public static function bootLaratrustPermissionTrait()
     {
-        parent::boot();
-
         static::deleting(function ($permission) {
             if (!method_exists(Config::get('laratrust.permission'), 'bootSoftDeletes')) {
                 $permission->roles()->sync([]);

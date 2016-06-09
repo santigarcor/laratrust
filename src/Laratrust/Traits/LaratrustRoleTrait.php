@@ -66,10 +66,8 @@ trait LaratrustRoleTrait
      *
      * @return void|bool
      */
-    public static function boot()
+    public static function bootLaratrustRoleTrait()
     {
-        parent::boot();
-
         $flushCache = function ($role) {
             $role->flushCache();
             return true;

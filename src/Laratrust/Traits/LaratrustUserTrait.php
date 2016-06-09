@@ -53,10 +53,8 @@ trait LaratrustUserTrait
      *
      * @return void|bool
      */
-    public static function boot()
+    public static function bootLaratrustUserTrait()
     {
-        parent::boot();
-
         $flushCache = function ($user) {
             $user->flushCache();
             return true;
