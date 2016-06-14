@@ -1,0 +1,10 @@
+<?php
+
+namespace App;
+
+use Santigarcor\Laratrust\LaratrustRole;
+
+class Role extends LaratrustRole
+{
+    //
+}
