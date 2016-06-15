@@ -80,29 +80,29 @@ class LaratrustServiceProvider extends ServiceProvider
 
         // Call to Laratrust::hasRole
         $bladeCompiler->directive('role', function ($expression) {
-            return "<?php if (\\Laratrust::hasRole{$expression}) : ?>";
+            return "<?php if (app('laratrust')->hasRole{$expression}) : ?>";
         });
 
         $bladeCompiler->directive('endrole', function () {
-            return "<?php endif; // Laratrust::hasRole ?>";
+            return "<?php endif; // app('laratrust')->hasRole ?>";
         });
 
         // Call to Laratrust::can
         $bladeCompiler->directive('permission', function ($expression) {
-            return "<?php if (\\Laratrust::can{$expression}) : ?>";
+            return "<?php if (app('laratrust')->can{$expression}) : ?>";
         });
 
         $bladeCompiler->directive('endpermission', function () {
-            return "<?php endif; // Laratrust::can ?>";
+            return "<?php endif; // app('laratrust')->can ?>";
         });
 
         // Call to Laratrust::ability
         $bladeCompiler->directive('ability', function ($expression) {
-            return "<?php if (\\Laratrust::ability{$expression}) : ?>";
+            return "<?php if (app('laratrust')->ability{$expression}) : ?>";
         });
 
         $bladeCompiler->directive('endability', function () {
-            return "<?php endif; // Laratrust::ability ?>";
+            return "<?php endif; // app('laratrust')->ability ?>";
         });
     }
 
