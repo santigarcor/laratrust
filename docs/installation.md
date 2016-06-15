@@ -16,7 +16,7 @@ or you can run the `composer require` command from your terminal:
     'Laratrust'   => Santigarcor\Laratrust\LaratrustFacade::class,
 ```
 
-4) If you are going to use [Middleware](middleware.md) (requires Laravel 5.1 or later) you also need to add the folliwong to `routeMiddleware` array in `app/Http/Kernel.php`.
+4) If you are going to use [Middleware](middleware.md) (requires Laravel 5.1 or later) you also need to add the following to `routeMiddleware` array in `app/Http/Kernel.php`.
 ```php
     'role' => \Santigarcor\Laratrust\Middleware\LaratrustRole::class,
     'permission' => \Santigarcor\Laratrust\Middleware\LaratrustPermission::class,
