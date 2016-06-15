@@ -11,6 +11,7 @@ namespace Santigarcor\Laratrust;
  */
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\Factory;
 
 class LaratrustServiceProvider extends ServiceProvider
 {
@@ -22,22 +23,32 @@ class LaratrustServiceProvider extends ServiceProvider
     protected $defer = false;
 
     /**
+     * The commands to be registered.
+     *
+     * @var array
+     */
+    protected $commands = [
+        'Migration' => 'command.laratrust.migration',
+        'MakeRole' => 'command.laratrust.make-role',
+        'MakePermission' => 'command.laratrust.make-permission',
+        'AddLaratrustUserTraitUse' => 'command.laratrust.add-trait',
+        'Setup' => 'command.laratrust.setup'
+    ];
+
+    /**
      * Bootstrap the application events.
      *
+     * @param  Factory $view
      * @return void
      */
-    public function boot()
+    public function boot(Factory $view)
     {
-        // Publish config files
+        // Register published configuration.
         $this->publishes([
             __DIR__.'/../config/config.php' => config_path('laratrust.php'),
         ]);
 
-        // Register commands
-        $this->commands('command.laratrust.migration');
-        
-        // Register blade directives
-        $this->bladeDirectives();
+        $this->registerBladeDirectives($view);
     }
 
     /**
@@ -57,35 +68,41 @@ class LaratrustServiceProvider extends ServiceProvider
     /**
      * Register the blade directives
      *
+     * @param  Factory $view
      * @return void
      */
-    private function bladeDirectives()
+    private function registerBladeDirectives(Factory $view)
     {
+        // Fetch Blade Compiler off of the View\Factory
+        $bladeCompiler = $view->getEngineResolver()
+                              ->resolve('blade')
+                              ->getCompiler();
+
         // Call to Laratrust::hasRole
-        \Blade::directive('role', function ($expression) {
-            return "<?php if (\\Laratrust::hasRole{$expression}) : ?>";
+        $bladeCompiler->directive('role', function ($expression) {
+            return "<?php if (app('laratrust')->hasRole{$expression}) : ?>";
         });
 
-        \Blade::directive('endrole', function ($expression) {
-            return "<?php endif; // Laratrust::hasRole ?>";
+        $bladeCompiler->directive('endrole', function () {
+            return "<?php endif; // app('laratrust')->hasRole ?>";
         });
 
         // Call to Laratrust::can
-        \Blade::directive('permission', function ($expression) {
-            return "<?php if (\\Laratrust::can{$expression}) : ?>";
+        $bladeCompiler->directive('permission', function ($expression) {
+            return "<?php if (app('laratrust')->can{$expression}) : ?>";
         });
 
-        \Blade::directive('endpermission', function ($expression) {
-            return "<?php endif; // Laratrust::can ?>";
+        $bladeCompiler->directive('endpermission', function () {
+            return "<?php endif; // app('laratrust')->can ?>";
         });
 
         // Call to Laratrust::ability
-        \Blade::directive('ability', function ($expression) {
-            return "<?php if (\\Laratrust::ability{$expression}) : ?>";
+        $bladeCompiler->directive('ability', function ($expression) {
+            return "<?php if (app('laratrust')->ability{$expression}) : ?>";
         });
 
-        \Blade::directive('endability', function ($expression) {
-            return "<?php endif; // Laratrust::ability ?>";
+        $bladeCompiler->directive('endability', function () {
+            return "<?php endif; // app('laratrust')->ability ?>";
         });
     }
 
@@ -99,19 +116,58 @@ class LaratrustServiceProvider extends ServiceProvider
         $this->app->bind('laratrust', function ($app) {
             return new Laratrust($app);
         });
-        
+
         $this->app->alias('laratrust', 'Santigarcor\Laratrust\Laratrust');
     }
 
     /**
-     * Register the artisan commands.
+     * Register the given commands.
      *
      * @return void
      */
-    private function registerCommands()
+    protected function registerCommands()
     {
-        $this->app->singleton('command.laratrust.migration', function ($app) {
+        foreach (array_keys($this->commands) as $command) {
+            $method = "register{$command}Command";
+
+            call_user_func_array([$this, $method], []);
+        }
+
+        $this->commands(array_values($this->commands));
+    }
+    
+    protected function registerMigrationCommand()
+    {
+        $this->app->singleton('command.laratrust.migration', function () {
             return new MigrationCommand();
+        });
+    }
+    
+    protected function registerMakeRoleCommand()
+    {
+        $this->app->singleton('command.laratrust.make-role', function ($app) {
+            return new MakeRoleCommand($app['files']);
+        });
+    }
+    
+    protected function registerMakePermissionCommand()
+    {
+        $this->app->singleton('command.laratrust.make-permission', function ($app) {
+            return new MakePermissionCommand($app['files']);
+        });
+    }
+    
+    protected function registerAddLaratrustUserTraitUseCommand()
+    {
+        $this->app->singleton('command.laratrust.add-trait', function () {
+            return new AddLaratrustUserTraitUseCommand();
+        });
+    }
+    
+    protected function registerSetupCommand()
+    {
+        $this->app->singleton('command.laratrust.setup', function () {
+            return new SetupCommand();
         });
     }
 
@@ -135,8 +191,6 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return [
-            'command.laratrust.migration'
-        ];
+        return array_values($this->commands);
     }
 }
