@@ -7,7 +7,7 @@ namespace Santigarcor\Laratrust;
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Zizaco\Laratrust
+ * @package Santigarcor\Laratrust
  */
 
 use Illuminate\Support\ServiceProvider;

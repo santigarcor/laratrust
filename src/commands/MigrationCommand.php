@@ -90,7 +90,6 @@ class MigrationCommand extends Command
         }
 
         $this->line('');
-
     }
 
     /**
@@ -106,9 +105,10 @@ class MigrationCommand extends Command
     {
         $migrationPath = $this->getMigrationPath();
 
-        $usersTable  = Config::get('auth.providers.users.table') ?: 'users';
         $userModel   = Config::get('auth.providers.users.model');
-        $userKeyName = (new $userModel())->getKeyName();
+        $user = new $userModel;
+        $userKeyName = $user->getKeyName();
+        $usersTable = $user->getTable();
 
         $data = compact(
             'rolesTable',

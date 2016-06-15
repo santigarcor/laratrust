@@ -24,7 +24,7 @@ trait LaratrustRoleTrait
         $cacheKey = 'laratrust_permissions_for_role_' . $this->getKey();
 
         return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
-            return $this->perms()->get();
+            return $this->permissions()->get();
         });
     }
 
@@ -45,11 +45,10 @@ trait LaratrustRoleTrait
 
     /**
      * Many-to-Many relations with the permission model.
-     * Named "perms" for backwards compatibility. Also because "perms" is short and sweet.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function perms()
+    public function permissions()
     {
         return $this->belongsToMany(
             Config::get('laratrust.permission'),
@@ -84,7 +83,7 @@ trait LaratrustRoleTrait
         static::deleting(function ($role) {
             if (!method_exists(Config::get('laratrust.role'), 'bootSoftDeletes')) {
                 $role->users()->sync([]);
-                $role->perms()->sync([]);
+                $role->permissions()->sync([]);
             }
 
             return true;
@@ -137,7 +136,7 @@ trait LaratrustRoleTrait
     public function savePermissions($inputPermissions)
     {
         // If the inputPermissions ist empty it will delete all associations
-        $changes = $this->perms()->sync($inputPermissions);
+        $changes = $this->permissions()->sync($inputPermissions);
         $this->flushCache();
 
         return $changes;
@@ -160,7 +159,7 @@ trait LaratrustRoleTrait
             $permission = $permission['id'];
         }
 
-        $this->perms()->attach($permission);
+        $this->permissions()->attach($permission);
         $this->flushCache();
 
         return $this;
@@ -183,7 +182,7 @@ trait LaratrustRoleTrait
             $permission = $permission['id'];
         }
 
-        $this->perms()->detach($permission);
+        $this->permissions()->detach($permission);
         $this->flushCache();
 
         return $this;
