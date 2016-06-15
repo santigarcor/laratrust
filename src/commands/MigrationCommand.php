@@ -64,7 +64,7 @@ class MigrationCommand extends Command
 
         $existingMigrations = $this->alreadyExistingMigrations();
 
-        if($existingMigrations) {
+        if ($existingMigrations) {
             $this->line('');
             
             $this->warn($this->getExistingMigrationsWarning($existingMigrations));
@@ -162,7 +162,7 @@ class MigrationCommand extends Command
             $base = "Laratrust migration already exists.\nFollowing file was found: ";
         }
 
-        return $base . array_reduce($existingMigrations, function($carry, $fileName) {
+        return $base . array_reduce($existingMigrations, function ($carry, $fileName) {
             return $carry . "\n - " . $fileName;
         });
     }
@@ -177,7 +177,7 @@ class MigrationCommand extends Command
     {
         $matchingFiles = glob($this->getMigrationPath('*'));
 
-        return array_map(function($path) {
+        return array_map(function ($path) {
             return basename($path);
         }, $matchingFiles);
     }

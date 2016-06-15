@@ -2,11 +2,15 @@
 
 namespace Santigarcor\Laratrust;
 
-use App\User;
+/**
+ * This file is part of Laratrust,
+ * a role & permission management solution for Laravel.
+ *
+ * @license MIT
+ * @package Santigarcor\Laratrust
+ */
+
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
-use Santigarcor\Laratrust\Traits\LaratrustUserTrait;
-use Traitor\Traitor;
 
 class SetupCommand extends Command
 {
@@ -43,10 +47,9 @@ class SetupCommand extends Command
      */
     public function fire()
     {
-        foreach($this->calls as $command => $info) {
+        foreach ($this->calls as $command => $info) {
             $this->line(PHP_EOL . $info);
             $this->call($command);
         }
     }
-
 }

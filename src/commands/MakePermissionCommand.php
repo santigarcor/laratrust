@@ -2,9 +2,15 @@
 
 namespace Santigarcor\Laratrust;
 
-use Illuminate\Support\Str;
+/**
+ * This file is part of Laratrust,
+ * a role & permission management solution for Laravel.
+ *
+ * @license MIT
+ * @package Santigarcor\Laratrust
+ */
+
 use Illuminate\Console\GeneratorCommand;
-use Symfony\Component\Console\Input\InputOption;
 
 class MakePermissionCommand extends GeneratorCommand
 {
@@ -79,5 +85,4 @@ class MakePermissionCommand extends GeneratorCommand
     {
         return [];
     }
-
 }

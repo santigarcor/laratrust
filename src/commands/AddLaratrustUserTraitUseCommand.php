@@ -2,6 +2,14 @@
 
 namespace Santigarcor\Laratrust;
 
+/**
+ * This file is part of Laratrust,
+ * a role & permission management solution for Laravel.
+ *
+ * @license MIT
+ * @package Santigarcor\Laratrust
+ */
+
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Santigarcor\Laratrust\Traits\LaratrustUserTrait;
@@ -70,5 +78,4 @@ class AddLaratrustUserTraitUseCommand extends Command
     {
         return Config::get('auth.providers.users.model', 'App\User');
     }
-
 }
