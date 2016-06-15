@@ -21,11 +21,10 @@ interface LaratrustRoleInterface
     
     /**
      * Many-to-Many relations with the permission model.
-     * Named "perms" for backwards compatibility. Also because "perms" is short and sweet.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function perms();
+    public function permissions();
     
     /**
      * Save the inputted permissions.
