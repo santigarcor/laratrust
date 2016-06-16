@@ -88,7 +88,6 @@ trait LaratrustUserTrait
     public function hasRole($name, $requireAll = false)
     {
         if (is_array($name)) {
-
             if (empty($name)) {
                 return true;
             }
@@ -129,7 +128,6 @@ trait LaratrustUserTrait
     public function can($permission, $requireAll = false)
     {
         if (is_array($permission)) {
-            
             if (empty($permission)) {
                 return true;
             }
