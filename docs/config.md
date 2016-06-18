@@ -2,7 +2,7 @@
 
 ## Configuration Files
 Set the property values in the `config/auth.php`.
-These values will be used by laratrust to refer to the correct user table and model.
+These values will be used by laratrust to refer to the correct user model.
 
 You can also publish the configuration for this package to further customize table names and model namespaces.
 
@@ -15,9 +15,15 @@ If you want to let laratrust to setup by itselft, just run the following command
 php artisan laratrust:setup
 ```
 
-This command will generate the migrations, create the `Role` and `Permission` models and add the trait to the `User` model.
+This command will generate the migrations, create the `Role` and `Permission` models and will add the trait to the `User` model.
 
 > The user trait will be added to the Model configured in the `auth.php` file.
+
+And then don't forget to run:
+
+```bash
+composer dump-autoload
+```
 
 ###_If you did the steps above you are done with the configuration, if not, please read and follow the whole configuration process_
 
@@ -39,5 +45,5 @@ php artisan migrate
 After the migration, four new tables will be present:
 - `roles` &mdash; stores role records
 - `permissions` &mdash; stores permission records
-- `role_user` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and users
-- `permission_role` &mdash; stores [many-to-many](http://laravel.com/docs/4.2/eloquent#many-to-many) relations between roles and permissions
+- `role_user` &mdash; stores [many-to-many](https://laravel.com/docs/eloquent-relationships#many-to-many) relations between roles and users
+- `permission_role` &mdash; stores [many-to-many](https://laravel.com/docs/eloquent-relationships#many-to-many) relations between roles and permissions
