@@ -7,7 +7,7 @@ Next, use the `LaratrustUserTrait` trait in your existing `User` model. For exam
 
 use Santigarcor\Laratrust\Traits\LaratrustUserTrait;
 
-class User extends Eloquent
+class User extends Model
 {
     use LaratrustUserTrait; // add this trait to your user model
 

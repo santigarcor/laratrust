@@ -1,12 +1,25 @@
 # After Installation
 
 ## Configuration Files
-Set the property values in the `config/auth.php`. And in the `users` provider add the users table name.
+Set the property values in the `config/auth.php`.
 These values will be used by laratrust to refer to the correct user table and model.
 
 You can also publish the configuration for this package to further customize table names and model namespaces.
 
 Just use `php artisan vendor:publish` and a `laratrust.php` file will be created in your app/config directory.
+
+## Automatic setup
+If you want to let laratrust to setup by itselft, just run the following command:
+
+```bash
+php artisan laratrust:setup
+```
+
+This command will generate the migrations, create the `Role` and `Permission` models and add the trait to the `User` model.
+
+> The user trait will be added to the Model configured in the `auth.php` file.
+
+###_If you did the steps above you are done with the configuration, if not, please read and follow the whole configuration process_
 
 ## Migrations
 
