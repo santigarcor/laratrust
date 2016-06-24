@@ -11,6 +11,7 @@ namespace Santigarcor\Laratrust;
  */
 
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Facades\Config;
 
 class MakeRoleCommand extends GeneratorCommand
 {
@@ -62,7 +63,7 @@ class MakeRoleCommand extends GeneratorCommand
      */
     protected function getNameInput()
     {
-        return 'Role';
+        return Config::get('laratrust.role', 'Role');
     }
 
     /**

@@ -11,6 +11,7 @@ namespace Santigarcor\Laratrust;
  */
 
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Facades\Config;
 
 class MakePermissionCommand extends GeneratorCommand
 {
@@ -62,7 +63,7 @@ class MakePermissionCommand extends GeneratorCommand
      */
     protected function getNameInput()
     {
-        return 'Permission';
+        return Config::get('laratrust.permission', 'Permission');
     }
 
     /**
