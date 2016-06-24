@@ -308,6 +308,19 @@ trait LaratrustUserTrait
     }
 
     /**
+     * This scope allows to retrive users with an specific role
+     * @param  Illuminate\Database\Eloquent\Builder $query
+     * @param  string $role
+     * @return Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWhereRoleIs($query, $role = '')
+    {
+        return $query->whereHas('roles', function ($roleQuery) use ($role) {
+            $roleQuery->where('name', $role);
+        });
+    }
+
+    /**
      * Flush the user's cache
      * @return void
      */
