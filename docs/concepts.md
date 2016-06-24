@@ -47,10 +47,10 @@ $editUser->description  = 'edit existing users'; // optional
 $editUser->save();
 
 $admin->attachPermission($createPost);
-// equivalent to $admin->perms()->sync(array($createPost->id));
+// equivalent to $admin->perms()->sync([$createPost->id]);
 
-$owner->attachPermissions(array($createPost, $editUser));
-// equivalent to $owner->perms()->sync(array($createPost->id, $editUser->id));
+$owner->attachPermissions([$createPost, $editUser]);
+// equivalent to $owner->perms()->sync([$createPost->id, $editUser->id]);
 ```
 
 ## Checking for Roles & Permissions
@@ -116,7 +116,7 @@ It takes in three parameters (roles, permissions, options):
 Either of the roles or permissions variable can be a comma separated string or array:
 
 ```php
-$user->ability(array('admin', 'owner'), array('create-post', 'edit-user'));
+$user->ability(['admin', 'owner'], ['create-post', 'edit-user']);
 
 // or
 
@@ -129,10 +129,10 @@ In this case it will return true since the user is an `admin` and has the `creat
 The third parameter is an options array:
 
 ```php
-$options = array(
+$options = [
     'validate_all' => true | false (Default: false),
     'return_type'  => boolean | array | both (Default: boolean)
-);
+];
 ```
 
 - `validate_all` is a boolean flag to set whether to check all the values for true, or to return true if at least one role or permission is matched.
@@ -141,14 +141,14 @@ $options = array(
 Here is an example output:
 
 ```php
-$options = array(
+$options = [
     'validate_all' => true,
     'return_type' => 'both'
-);
+];
 
 list($validate, $allValidations) = $user->ability(
-    array('admin', 'owner'),
-    array('create-post', 'edit-user'),
+    ['admin', 'owner'],
+    ['create-post', 'edit-user'],
     $options
 );
 

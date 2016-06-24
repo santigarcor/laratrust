@@ -8,7 +8,7 @@ You can also publish the configuration for this package to further customize tab
 
 Just use `php artisan vendor:publish` and a `laratrust.php` file will be created in your app/config directory.
 
-## Automatic setup
+## Automatic setup (Recommended)
 If you want to let laratrust to setup by itselft, just run the following command:
 
 ```bash
