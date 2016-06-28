@@ -48,7 +48,9 @@ class LaratrustServiceProvider extends ServiceProvider
             __DIR__.'/../config/config.php' => app()->basePath() . '/config/laratrust.php',
         ]);
 
-        $this->registerBladeDirectives($view);
+        if (class_exists('\Blade')) {
+            $this->registerBladeDirectives($view);
+        }
     }
 
     /**
