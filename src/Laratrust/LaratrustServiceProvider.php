@@ -31,7 +31,7 @@ class LaratrustServiceProvider extends ServiceProvider
         'Migration' => 'command.laratrust.migration',
         'MakeRole' => 'command.laratrust.make-role',
         'MakePermission' => 'command.laratrust.make-permission',
-        'AddLaratrustUserTraitUse' => 'command.laratrust.add-trait',
+        //'AddLaratrustUserTraitUse' => 'command.laratrust.add-trait',
         'Setup' => 'command.laratrust.setup'
     ];
 

@@ -33,8 +33,8 @@
         "php": ">=5.5.0",
         "illuminate/console": "~5.0",
         "illuminate/support": "~5.0",
-        "illuminate/cache": "~5.0",
-        "kkszymanowski/traitor": "^0.2.0"
+        "illuminate/cache": "~5.0"
+        //"kkszymanowski/traitor": "^0.2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.1",
