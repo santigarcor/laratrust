@@ -6,7 +6,7 @@
     "authors": [
         {
             "name": "Santiago Garcia",
-            "email": "santigarcor@gmail.com"
+            "homepage": "http://santigarcor.me"
         },
         {
             "name": "Mateo Calle",
@@ -34,7 +34,6 @@
         "illuminate/console": "~5.0",
         "illuminate/support": "~5.0",
         "illuminate/cache": "~5.0"
-        //"kkszymanowski/traitor": "^0.2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.1",
