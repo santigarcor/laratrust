@@ -1,13 +1,13 @@
 <?php
 
-namespace Santigarcor\Laratrust\Middleware;
+namespace Laratrust\Middleware;
 
 /**
  * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Santigarcor\Laratrust
+ * @package Laratrust
  */
 
 use Closure;

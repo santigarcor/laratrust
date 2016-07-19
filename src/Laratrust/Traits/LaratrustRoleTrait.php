@@ -1,13 +1,13 @@
 <?php
 
-namespace Santigarcor\Laratrust\Traits;
+namespace Laratrust\Traits;
 
 /**
  * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Santigarcor\Laratrust
+ * @package Laratrust
  */
 
 use Illuminate\Support\Facades\Config;

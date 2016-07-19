@@ -1,13 +1,13 @@
 <?php
 
-namespace Santigarcor\Laratrust;
+namespace Laratrust;
 
 /**
  * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Santigarcor\Laratrust
+ * @package Laratrust
  */
 
 use Illuminate\Support\ServiceProvider;
@@ -119,7 +119,7 @@ class LaratrustServiceProvider extends ServiceProvider
             return new Laratrust($app);
         });
 
-        $this->app->alias('laratrust', 'Santigarcor\Laratrust\Laratrust');
+        $this->app->alias('laratrust', 'Laratrust\Laratrust');
     }
 
     /**

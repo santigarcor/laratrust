@@ -47,7 +47,7 @@
             "src/commands"
         ],
         "psr-4": {
-            "Santigarcor\\Laratrust\\": "src/Laratrust/"
+            "Laratrust\\": "src/Laratrust/"
         }
     },
     "autoload-dev": {

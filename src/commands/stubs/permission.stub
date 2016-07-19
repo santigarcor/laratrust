@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Santigarcor\Laratrust\LaratrustPermission;
+use Laratrust\LaratrustPermission;
 
 class DummyClass extends LaratrustPermission
 {

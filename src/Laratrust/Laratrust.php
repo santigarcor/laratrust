@@ -1,13 +1,13 @@
 <?php
 
-namespace Santigarcor\Laratrust;
+namespace Laratrust;
 
 /**
  * This class is the main entry point of laratrust. Usually this the interaction
  * with this class will be done through the Laratrust Facade
  *
  * @license MIT
- * @package Santigarcor\Laratrust
+ * @package Laratrust
  */
 
 class Laratrust

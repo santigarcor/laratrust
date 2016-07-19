@@ -1,18 +1,18 @@
 <?php
 
-namespace Santigarcor\Laratrust;
+namespace Laratrust;
 
 /**
  * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Santigarcor\Laratrust
+ * @package Laratrust
  */
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
-use Santigarcor\Laratrust\Traits\LaratrustUserTrait;
+use Laratrust\Traits\LaratrustUserTrait;
 use Traitor\Traitor;
 
 class AddLaratrustUserTraitUseCommand extends Command

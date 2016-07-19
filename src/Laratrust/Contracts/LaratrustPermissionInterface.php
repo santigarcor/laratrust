@@ -1,13 +1,13 @@
 <?php
 
-namespace Santigarcor\Laratrust\Contracts;
+namespace Laratrust\Contracts;
 
 /**
  * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Santigarcor\Laratrust
+ * @package Laratrust
  */
 
 interface LaratrustPermissionInterface

@@ -1,17 +1,17 @@
 <?php
 
-namespace Santigarcor\Laratrust;
+namespace Laratrust;
 
 /**
  * This file is part of Laratrust,
  * a role & permission management solution for Laravel.
  *
  * @license MIT
- * @package Santigarcor\Laratrust
+ * @package Laratrust
  */
 
-use Santigarcor\Laratrust\Contracts\LaratrustPermissionInterface;
-use Santigarcor\Laratrust\Traits\LaratrustPermissionTrait;
+use Laratrust\Contracts\LaratrustPermissionInterface;
+use Laratrust\Traits\LaratrustPermissionTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 
