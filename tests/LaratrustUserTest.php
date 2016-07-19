@@ -1,13 +1,13 @@
 <?php
 
-use Santigarcor\Laratrust\Contracts\LaratrustUserInterface;
-use Santigarcor\Laratrust\Traits\LaratrustUserTrait;
+use Laratrust\Contracts\LaratrustUserInterface;
+use Laratrust\Traits\LaratrustUserTrait;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
-use Santigarcor\Laratrust\Permission;
-use Santigarcor\Laratrust\Role;
+use Laratrust\Permission;
+use Laratrust\Role;
 use Mockery as m;
 
 class LaratrustUserTest extends PHPUnit_Framework_TestCase
@@ -1104,7 +1104,7 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
 
     protected function mockPermission($permName)
     {
-        $permMock = m::mock('Santigarcor\Laratrust\Permission');
+        $permMock = m::mock('Laratrust\Permission');
         $permMock->name = $permName;
         $permMock->display_name = ucwords(str_replace('_', ' ', $permName));
         $permMock->id = 1;
@@ -1114,7 +1114,7 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
 
     protected function mockRole($roleName)
     {
-        $roleMock = m::mock('Santigarcor\Laratrust\Role');
+        $roleMock = m::mock('Laratrust\Role');
         $roleMock->name = $roleName;
         $roleMock->perms = [];
         $roleMock->permissions = [];

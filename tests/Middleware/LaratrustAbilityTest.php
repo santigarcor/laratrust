@@ -1,6 +1,6 @@
 <?php
 
-use Santigarcor\Laratrust\Middleware\LaratrustAbility;
+use Laratrust\Middleware\LaratrustAbility;
 use Mockery as m;
 
 class LaratrustAbilityTest extends MiddlewareTest

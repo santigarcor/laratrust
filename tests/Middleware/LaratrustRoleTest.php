@@ -1,6 +1,6 @@
 <?php
 
-use Santigarcor\Laratrust\Middleware\LaratrustRole;
+use Laratrust\Middleware\LaratrustRole;
 use Mockery as m;
 
 class LaratrustRoleTest extends MiddlewareTest

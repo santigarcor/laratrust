@@ -1,6 +1,6 @@
 <?php
 
-use Santigarcor\Laratrust\Laratrust;
+use Laratrust\Laratrust;
 use Illuminate\Support\Facades\Facade;
 use Mockery as m;
 
@@ -67,7 +67,7 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $app = new stdClass();
-        $laratrust = m::mock('Santigarcor\Laratrust\Laratrust[user]', [$app]);
+        $laratrust = m::mock('Laratrust\Laratrust[user]', [$app]);
         $user = m::mock('_mockedUser');
 
         /*
@@ -111,7 +111,7 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $app = new stdClass();
-        $laratrust = m::mock('Santigarcor\Laratrust\Laratrust[user]', [$app]);
+        $laratrust = m::mock('Laratrust\Laratrust[user]', [$app]);
         $user = m::mock('_mockedUser');
 
         /*
@@ -351,7 +351,7 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
         // Mock Objects
         $app         = m::mock('Illuminate\Foundation\Application');
         $app->router = m::mock('Route');
-        $laratrust     = m::mock("Santigarcor\Laratrust\Laratrust[$mockedMethod]", [$app]);
+        $laratrust     = m::mock("Laratrust\Laratrust[$mockedMethod]", [$app]);
 
         // Static values
         $route       = 'route';
@@ -401,7 +401,7 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
     ) {
         $app         = m::mock('Illuminate\Foundation\Application');
         $app->router = m::mock('Route');
-        $laratrust     = m::mock('Santigarcor\Laratrust\Laratrust[hasRole, can]', [$app]);
+        $laratrust     = m::mock('Laratrust\Laratrust[hasRole, can]', [$app]);
 
         // Static values
         $route      = 'route';
