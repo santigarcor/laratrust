@@ -5,7 +5,7 @@ Next, use the `LaratrustUserTrait` trait in your existing `User` model. For exam
 ```php
 <?php
 
-use Santigarcor\Laratrust\Traits\LaratrustUserTrait;
+use Laratrust\Traits\LaratrustUserTrait;
 
 class User extends Model
 {

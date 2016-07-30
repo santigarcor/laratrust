@@ -4,7 +4,7 @@ Create a Role model inside `app/models/Role.php` using the following example:
 ```php
 <?php namespace App;
 
-use Santigarcor\Laratrust\LaratrustRole;
+use Laratrust\LaratrustRole;
 
 class Role extends LaratrustRole
 {

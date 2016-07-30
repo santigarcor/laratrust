@@ -5,7 +5,7 @@ Create a Permission model inside `app/models/Permission.php` using the following
 ```php
 <?php namespace App;
 
-use Santigarcor\Laratrust\LaratrustPermission;
+use Laratrust\LaratrustPermission;
 
 class Permission extends LaratrustPermission
 {
