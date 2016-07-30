@@ -1141,7 +1141,7 @@ class HasRoleUser extends Model implements LaratrustUserInterface
         return $this->id;
     }
 
-    public function belongsToMany($role, $assignedRolesTable)
+    public function belongsToMany($related, $table = NULL, $foreignKey = NULL, $otherKey = NULL, $relation = NULL)
     {
 
     }
