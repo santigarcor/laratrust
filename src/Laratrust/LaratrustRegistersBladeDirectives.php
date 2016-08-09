@@ -6,7 +6,6 @@ namespace Laratrust;
  * This class is the one in charge of registering
  * the blade directives making a difference
  * between the version 5.2 and 5.3
- * 
  */
 class LaratrustRegistersBladeDirectives
 {
