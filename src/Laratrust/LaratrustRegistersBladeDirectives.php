@@ -24,7 +24,7 @@ class LaratrustRegistersBladeDirectives
      */
     public function handle($laravelVersion = '5.3.0')
     {
-        if (version_compare($laravelVersion, '5.3.0-dev', '>=')) {
+        if (version_compare(strtolower($laravelVersion), '5.3.0-dev', '>=')) {
             $this->registerWithParenthesis();
         } else {
             $this->registerWithoutParenthesis();
