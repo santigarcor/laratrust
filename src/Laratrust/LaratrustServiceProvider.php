@@ -47,6 +47,8 @@ class LaratrustServiceProvider extends ServiceProvider
         // Register published configuration.
         $this->publishes([
             __DIR__.'/../config/config.php' => app()->basePath() . '/config/laratrust.php',
+            __DIR__.'/../config/laratrust_acl.php' => app()->basePath() . '/config/laratrust_acl.php',
+            __DIR__.'/../database/seeds/LaratrustSeeder.php' => app()->basePath() . '/database/seeds/LaratrustSeeder.php',
         ]);
 
         if (class_exists('\Blade')) {
