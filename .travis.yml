@@ -16,5 +16,5 @@ before_script:
   - travis_retry composer install --no-interaction --prefer-source
 
 script:
-  - php vendor/bin/phpcs --standard=PSR2 src
+  - php vendor/bin/phpcs --standard=PSR2 --ignore=src/database/seeds/LaratrustSeeder.php src
   - vendor/bin/phpunit --verbose

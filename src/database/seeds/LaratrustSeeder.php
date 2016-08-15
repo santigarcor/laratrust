@@ -16,10 +16,10 @@ class LaratrustSeeder extends Seeder
     {
         User::truncate();
         Role::truncate();
-    	Permission::truncate();
-    	
-    	DB::table('permission_role')->truncate();
-    	DB::table('role_user')->truncate();
+        Permission::truncate();
+        
+        DB::table('permission_role')->truncate();
+        DB::table('role_user')->truncate();
 
         $config = config('laratrust_acl');
 
@@ -31,12 +31,11 @@ class LaratrustSeeder extends Seeder
         ];
 
         foreach ($config as $key => $value) {
-
             // Create a new role
             $role = new Role();
             $role->name         = $key;
             $role->display_name = 'User '.ucfirst($key);
-            $role->description  = ucfirst($key); 
+            $role->description  = ucfirst($key);
             $role->save();
 
             $this->command->info('Creating Role '. strtoupper($key));
@@ -44,11 +43,9 @@ class LaratrustSeeder extends Seeder
             // Reading role permission modules
             $modules = $value;
             foreach ($modules as $module => $permissions) {
-
                 $_permissions = explode(',', $permissions);
 
                 foreach ($_permissions as $p => $perm) {
-
                     $permission = Permission::firstOrCreate([
                         'name' => $module . '-' . $map_permission[$perm],
                         'display_name' => ucfirst($map_permission[$perm]) . ' ' . ucfirst($module),
@@ -57,9 +54,12 @@ class LaratrustSeeder extends Seeder
 
                     $this->command->info('Creating Permission to '.$map_permission[$perm].' for '. $module);
 
-                    $exist = DB::table('permission_role')->where('role_id',$role->id)->where('permission_id', $permission->id)->first();
+                    $exist = DB::table('permission_role')
+                        ->where('role_id', $role->id)
+                        ->where('permission_id', $permission->id)
+                        ->first();
                     
-                    if(!$exist) {
+                    if (!$exist) {
                         $role->attachPermission($permission);
                     } else {
                         $this->command->info($key . ': ' . $p . ' ' . $map_permission[$perm] . ' already exist');
