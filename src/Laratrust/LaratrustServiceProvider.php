@@ -82,7 +82,7 @@ class LaratrustServiceProvider extends ServiceProvider
                               ->getCompiler();
 
         $directivesRegistrator = new LaratrustRegistersBladeDirectives($bladeCompiler);
-        $directivesRegistrator->handle($this->app::VERSION);
+        $directivesRegistrator->handle($this->app->version());
     }
 
     /**
