@@ -33,7 +33,8 @@ class LaratrustServiceProvider extends ServiceProvider
         'MakeRole' => 'command.laratrust.make-role',
         'MakePermission' => 'command.laratrust.make-permission',
         'AddLaratrustUserTraitUse' => 'command.laratrust.add-trait',
-        'Setup' => 'command.laratrust.setup'
+        'Setup' => 'command.laratrust.setup',
+        'MakeSeeder' => 'command.laratrust.seeder'
     ];
 
     /**
@@ -47,9 +48,7 @@ class LaratrustServiceProvider extends ServiceProvider
         // Register published configuration.
         $this->publishes([
             __DIR__.'/../config/config.php' => app()->basePath() . '/config/laratrust.php',
-            __DIR__.'/../config/laratrust_acl.php' => app()->basePath() . '/config/laratrust_acl.php',
-            __DIR__.'/../database/seeds/LaratrustSeeder.php' =>
-            app()->basePath() . '/database/seeds/LaratrustSeeder.php',
+            __DIR__.'/../config/laratrust_seeder.php' => app()->basePath() . '/config/laratrust_seeder.php',
         ]);
 
         if (class_exists('\Blade')) {
@@ -150,6 +149,13 @@ class LaratrustServiceProvider extends ServiceProvider
     {
         $this->app->singleton('command.laratrust.setup', function () {
             return new SetupCommand();
+        });
+    }
+
+    protected function registerMakeSeederCommand()
+    {
+        $this->app->singleton('command.laratrust.seeder', function () {
+            return new MakeSeederCommand();
         });
     }
 

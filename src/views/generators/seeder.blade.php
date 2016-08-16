@@ -1,4 +1,5 @@
-<?php
+<?php echo '<?php' ?>
+
 
 use Illuminate\Database\Seeder;
 use App\User;
@@ -14,14 +15,14 @@ class LaratrustSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('permission_role')->truncate();
+        DB::table('role_user')->truncate();
+        
         User::truncate();
         Role::truncate();
         Permission::truncate();
         
-        DB::table('permission_role')->truncate();
-        DB::table('role_user')->truncate();
-
-        $config = config('laratrust_acl');
+        $config = config('laratrust_seeder');
 
         $map_permission = [
             'c' => 'create',
