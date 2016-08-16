@@ -22,14 +22,8 @@ class LaratrustSeeder extends Seeder
         Role::truncate();
         Permission::truncate();
         
-        $config = config('laratrust_seeder');
-
-        $map_permission = [
-            'c' => 'create',
-            'r' => 'read',
-            'u' => 'update',
-            'd' => 'delete'
-        ];
+        $config = config('laratrust_seeder.role_structure');
+        $map_permission = config('laratrust_seeder.permissions_map');
 
         foreach ($config as $key => $value) {
             // Create a new role
