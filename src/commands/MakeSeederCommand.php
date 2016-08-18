@@ -56,8 +56,22 @@ class MakeSeederCommand extends Command
      */
     protected function createSeeder()
     {
+        $permission = Config::get('laratrust.permission', 'App\Permission');
+        $role = Config::get('laratrust.role', 'App\Role');
+        $rolePermissions = Config::get('laratrust.permission_role_table');
+        $roleUsers = Config::get('laratrust.role_user_table');
+        $user   = Config::get('auth.providers.users.model', 'App\User');
+
         $migrationPath = $this->getMigrationPath();
-        $output = $this->laravel->view->make('laratrust::generators.seeder')->render();
+        $output = $this->laravel->view->make('laratrust::generators.seeder')
+            ->with(compact([
+                'role',
+                'permission',
+                'user',
+                'rolePermissions',
+                'roleUsers',
+            ]))
+            ->render();
 
         if (!file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
             fwrite($fs, $output);

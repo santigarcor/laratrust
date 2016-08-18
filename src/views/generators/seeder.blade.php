@@ -2,9 +2,7 @@
 
 
 use Illuminate\Database\Seeder;
-use App\User;
-use App\Role;
-use App\Permission;
+use Illuminate\Support\Facades\DB;
 
 class LaratrustSeeder extends Seeder
 {
@@ -15,63 +13,67 @@ class LaratrustSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('permission_role')->truncate();
-        DB::table('role_user')->truncate();
-        
-        User::truncate();
-        Role::truncate();
-        Permission::truncate();
+        $this->truncateLaratrustTables();
         
         $config = config('laratrust_seeder.role_structure');
-        $map_permission = config('laratrust_seeder.permissions_map');
+        $mapPermission = collect(config('laratrust_seeder.permissions_map'));
 
-        foreach ($config as $key => $value) {
+        foreach ($config as $key => $modules) {
             // Create a new role
-            $role = new Role();
-            $role->name         = $key;
-            $role->display_name = 'User '.ucfirst($key);
-            $role->description  = ucfirst($key);
-            $role->save();
+            $role = \{{ $role }}::create([
+                'name' => $key,
+                'display_name' => ucfirst($key),
+                'description' => ucfirst($key)
+            ]);
 
             $this->command->info('Creating Role '. strtoupper($key));
 
             // Reading role permission modules
-            $modules = $value;
-            foreach ($modules as $module => $permissions) {
-                $_permissions = explode(',', $permissions);
+            foreach ($modules as $module => $value) {
+                $permissions = explode(',', $value);
 
-                foreach ($_permissions as $p => $perm) {
-                    $permission = Permission::firstOrCreate([
-                        'name' => $module . '-' . $map_permission[$perm],
-                        'display_name' => ucfirst($map_permission[$perm]) . ' ' . ucfirst($module),
-                        'description' => ucfirst($map_permission[$perm]) . ' ' . ucfirst($module),
+                foreach ($permissions as $p => $perm) {
+                    $permissionValue = $mapPermission->get($perm);
+
+                    $permission = \{{ $permission }}::firstOrCreate([
+                        'name' => $module . '-' . $permissionValue,
+                        'display_name' => ucfirst($permissionValue) . ' ' . ucfirst($module),
+                        'description' => ucfirst($permissionValue) . ' ' . ucfirst($module),
                     ]);
 
-                    $this->command->info('Creating Permission to '.$map_permission[$perm].' for '. $module);
-
-                    $exist = DB::table('permission_role')
-                        ->where('role_id', $role->id)
-                        ->where('permission_id', $permission->id)
-                        ->first();
+                    $this->command->info('Creating Permission to '.$permissionValue.' for '. $module);
                     
-                    if (!$exist) {
+                    if (!$role->hasPermission($permission->name)) {
                         $role->attachPermission($permission);
                     } else {
-                        $this->command->info($key . ': ' . $p . ' ' . $map_permission[$perm] . ' already exist');
+                        $this->command->info($key . ': ' . $p . ' ' . $permissionValue . ' already exist');
                     }
                 }
             }
 
             // Create default user for each role
-            $user = new User();
-
-            $user->name = ucfirst($key);
-            $user->email = $key.'@app.com';
-            $user->password = bcrypt('password');
-            $user->remember_token = str_random(10);
-            $user->save();
-            
+            $user = \{{ $user }}::create([
+                'name' => ucfirst($key),
+                'email' => $key.'@app.com',
+                'password' => bcrypt('password'),
+                'remember_token' => str_random(10),
+            ]);
             $user->attachRole($role);
         }
+    }
+
+    /**
+     * Truncates all the laratrust tables and the users table
+     * @return  void
+     */
+    public function truncateLaratrustTables()
+    {
+        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
+        DB::table('permission_role')->truncate();
+        DB::table('role_user')->truncate();
+        \App\User::truncate();
+        \App\Role::truncate();
+        \App\Permission::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }
