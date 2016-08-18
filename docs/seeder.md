@@ -1,8 +1,8 @@
 # Seeder
 
-Laratrust comes with a seeder, this seeder helps you filling the permissions for each role depending on the module, and creates one user for each role.
+Laratrust comes with a database seeder, this seeder helps you filling the permissions for each role depending on the module, and creates one user for each role.
 
-In order to use the seeder, if you haven't run `php artisan vendor:publish` you should run it in order to customize the roles, modules and permissions in each case.
+If you haven't run `php artisan vendor:publish` you should run it in order to customize the roles, modules and permissions in each case.
 
 After you run `php artisan vendor:publish`, you will have a `config/laratrust_seeder.php` file and it looks like this:
 
@@ -26,10 +26,10 @@ return [
 ];
 ```
 
-So you should have in mind:
+To understand the file you must know:
 - The first level is the roles.
 - The second level is the modules.
-- The second level assignation is the permissions
+- The second level assignments are the permissions.
 
 With that in mind, you should arrange your roles, modules and permissions like this:
 
