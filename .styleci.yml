@@ -3,7 +3,7 @@ preset: psr2
 linting: true
 
 finder:
-  exlcude: 
+  exclude:
     - "tests"
   name:
     - "*.php"
