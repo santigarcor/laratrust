@@ -9,7 +9,6 @@ namespace Laratrust;
  */
 class LaratrustRegistersBladeDirectives
 {
-    
     protected $bladeCompiler;
 
     public function __construct($bladeCompiler)
