@@ -1,0 +1,9 @@
+preset: psr2
+
+linting: true
+
+finder:
+  exlcude: 
+    - "tests"
+  name:
+    - "*.php"

@@ -12,7 +12,7 @@
        - [Role](role.md)
        - [Permission](permission.md)
        - [User](user.md)
-   - [_Seeder (Optional)_](seeder.md)
+   - [Seeder (Optional)](seeder.md)
 - Usage 
   - [Concepts](concepts.md)
   - [Soft Deleting](soft-deleting.md)
