@@ -12,6 +12,7 @@ namespace Laratrust\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Config;
 
 class LaratrustPermission
 {
@@ -44,7 +45,7 @@ class LaratrustPermission
         }
 
         if ($this->auth->guest() || !$request->user()->can($permissions)) {
-            abort(403);
+            return call_user_func(Config::get('laratrust.middleware_handling'), Config::get('middleware_params'));
         }
 
         return $next($request);

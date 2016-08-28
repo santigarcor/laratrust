@@ -12,6 +12,7 @@ namespace Laratrust\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Config;
 
 class LaratrustAbility
 {
@@ -55,7 +56,7 @@ class LaratrustAbility
 
         if ($this->auth->guest() ||
              !$request->user()->ability($roles, $permissions, [ 'validate_all' => $validateAll ])) {
-            abort(403);
+            return call_user_func(Config::get('laratrust.middleware_handling'), Config::get('middleware_params'));
         }
 
         return $next($request);

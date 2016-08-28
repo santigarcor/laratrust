@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
 use Laratrust\Middleware\LaratrustRole;
 use Mockery as m;
 
@@ -24,6 +25,11 @@ class LaratrustRoleTest extends MiddlewareTest
         */
         $guard->shouldReceive('guest')->andReturn(true);
         $request->user()->shouldReceive('hasRole')->andReturn(false);
+
+        Config::shouldReceive('get')->once()->with('laratrust.middleware_handling')
+            ->andReturn('abort');
+        Config::shouldReceive('get')->once()->with('middleware_params')
+            ->andReturn('403');
 
         $middleware->handle($request, function () {}, null, null, true);
 
@@ -54,6 +60,10 @@ class LaratrustRoleTest extends MiddlewareTest
         */
         $guard->shouldReceive('guest')->andReturn(true);
         $request->user()->shouldReceive('hasRole')->andReturn(true);
+        Config::shouldReceive('get')->once()->with('laratrust.middleware_handling')
+            ->andReturn('abort');
+        Config::shouldReceive('get')->once()->with('middleware_params')
+            ->andReturn('403');
 
         $middleware->handle($request, function () {}, null, null);
 
@@ -84,6 +94,10 @@ class LaratrustRoleTest extends MiddlewareTest
         */
         $guard->shouldReceive('guest')->andReturn(false);
         $request->user()->shouldReceive('hasRole')->andReturn(false);
+        Config::shouldReceive('get')->once()->with('laratrust.middleware_handling')
+            ->andReturn('abort');
+        Config::shouldReceive('get')->once()->with('middleware_params')
+            ->andReturn('403');
 
         $middleware->handle($request, function () {}, null, null);
 

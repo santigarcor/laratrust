@@ -1,10 +1,23 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
 use Mockery as m;
 
 abstract class MiddlewareTest extends PHPUnit_Framework_TestCase
 {
 	public static $abortCode = null;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $app = m::mock('app')->shouldReceive('instance')->getMock();
+
+        $this->facadeMocks['config'] = m::mock('config');
+
+        Config::setFacadeApplication($app);
+        Config::swap($this->facadeMocks['config']);
+    }
 
 	public static function setupBeforeClass()
 	{
@@ -12,10 +25,9 @@ abstract class MiddlewareTest extends PHPUnit_Framework_TestCase
 		    /**
 		     * Mimicks Laravel5's abort() helper function.
 		     *
-		     * Instead of calling \Illuminate\Foundation\Application::abort(), this function keeps track of 
-		     * the last abort called, so the abort can be retrieved for test assertions.
-		     *
-		     * @see https://github.com/laravel/framework/blob/master/src/Illuminate/Foundation/helpers.php#L7-L23
+		     * Instead of calling \Illuminate\Foundation\Application::abort(),
+             * this function keeps track of the last abort called,
+             * so the abort can be retrieved for test assertions.
 		     *
 		     * @param  int     $code
 		     * @param  string  $message
@@ -27,6 +39,27 @@ abstract class MiddlewareTest extends PHPUnit_Framework_TestCase
 		        MiddlewareTest::$abortCode = $code;
 		    }
 		}
+
+        if (! function_exists('redirect')) {
+            /**
+             * Mimicks Laravel5's redirect() helper function.
+             *
+             * This function keeps track of the last abort called,
+             * so the abort can be retrieved for test assertions.
+             *
+             * @see https://github.com/laravel/framework/blob/master/src/Illuminate/Foundation/helpers.php
+             *
+             * @param  string  $to
+             * @param  int     $status
+             * @param  array   $headers
+             * @param  bool    $secure
+             * @return void
+             */
+            function redirect($to = null, $status = 302, $headers = [], $secure = null)
+            {
+                MiddlewareTest::$abortCode = $url;
+            }
+        }
 	}
 
 	public function tearDown()

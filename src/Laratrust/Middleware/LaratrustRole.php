@@ -12,6 +12,7 @@ namespace Laratrust\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Config;
 
 class LaratrustRole
 {
@@ -44,7 +45,7 @@ class LaratrustRole
         }
   
         if ($this->auth->guest() || !$request->user()->hasRole($roles)) {
-            abort(403);
+            return call_user_func(Config::get('laratrust.middleware_handling'), Config::get('middleware_params'));
         }
 
         return $next($request);
