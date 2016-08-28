@@ -45,7 +45,10 @@ class LaratrustRole
         }
   
         if ($this->auth->guest() || !$request->user()->hasRole($roles)) {
-            return call_user_func(Config::get('laratrust.middleware_handling'), Config::get('middleware_params'));
+            return call_user_func(
+                Config::get('laratrust.middleware_handling', 'abort'),
+                Config::get('middleware_params', '403')
+            );
         }
 
         return $next($request);

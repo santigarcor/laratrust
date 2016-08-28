@@ -45,7 +45,10 @@ class LaratrustPermission
         }
 
         if ($this->auth->guest() || !$request->user()->can($permissions)) {
-            return call_user_func(Config::get('laratrust.middleware_handling'), Config::get('middleware_params'));
+            return call_user_func(
+                Config::get('laratrust.middleware_handling', 'abort'),
+                Config::get('middleware_params', '403')
+            );
         }
 
         return $next($request);
