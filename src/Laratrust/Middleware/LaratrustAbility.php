@@ -58,7 +58,7 @@ class LaratrustAbility
              !$request->user()->ability($roles, $permissions, [ 'validate_all' => $validateAll ])) {
             return call_user_func(
                 Config::get('laratrust.middleware_handling', 'abort'),
-                Config::get('middleware_params', '403')
+                Config::get('laratrust.middleware_params', '403')
             );
         }
 
