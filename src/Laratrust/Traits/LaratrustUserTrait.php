@@ -235,7 +235,7 @@ trait LaratrustUserTrait
      * @param mixed $role
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function attachRole($role)
+    public function attachRole($role, $group = null)
     {
         if (is_object($role)) {
             $role = $role->getKey();
@@ -245,7 +245,16 @@ trait LaratrustUserTrait
             $role = $role['id'];
         }
 
-        $this->roles()->attach($role);
+        if (!is_object($group) && $group != null) {
+            throw new InvalidArgumentException;
+        }
+        
+        if (!is_null($group)) {
+            $group = $group->getKey();
+        }
+        
+        $this->roles()->wherePivot(Config::get('laratrust.group_foreign_key'), $group)->detach($role);
+        $this->roles()->attach($role, [Config::get('laratrust.group_foreign_key') => $group]);
         $this->flushCache();
 
         return $this;
@@ -257,7 +266,7 @@ trait LaratrustUserTrait
      * @param mixed $role
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function detachRole($role)
+    public function detachRole($role, $group = null)
     {
         if (is_object($role)) {
             $role = $role->getKey();
@@ -267,7 +276,16 @@ trait LaratrustUserTrait
             $role = $role['id'];
         }
 
-        $this->roles()->detach($role);
+        if (!is_object($group) && $group != null) {
+            throw new InvalidArgumentException;
+        }
+
+        if (!is_null($group)) {
+            $group = $group->getKey();
+        }
+
+        $this->roles()->wherePivot(Config::get('laratrust.group_foreign_key'), $group)
+            ->detach($role);
         $this->flushCache();
 
         return $this;
@@ -279,10 +297,10 @@ trait LaratrustUserTrait
      * @param mixed $roles
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function attachRoles($roles)
+    public function attachRoles($roles, $group = null)
     {
         foreach ($roles as $role) {
-            $this->attachRole($role);
+            $this->attachRole($role, $group);
         }
 
         return $this;
@@ -294,14 +312,14 @@ trait LaratrustUserTrait
      * @param mixed $roles
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function detachRoles($roles = null)
+    public function detachRoles($roles = null, $group = null)
     {
         if (!$roles) {
             $roles = $this->roles()->get();
         }
         
         foreach ($roles as $role) {
-            $this->detachRole($role);
+            $this->detachRole($role, $group);
         }
 
         return $this;
