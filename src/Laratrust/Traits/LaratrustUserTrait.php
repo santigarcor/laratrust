@@ -43,7 +43,7 @@ trait LaratrustUserTrait
             Config::get('laratrust.role_user_table'),
             Config::get('laratrust.user_foreign_key'),
             Config::get('laratrust.role_foreign_key')
-        );
+        )->withPivot(Config::get('laratrust.group_foreign_key'));
     }
 
     /**
@@ -109,7 +109,7 @@ trait LaratrustUserTrait
         }
 
         if (!is_null($group)) {
-            $group = Config::get('laratrust.group')->where('name', $group)->first();
+            $group = Config::get('laratrust.group')::where('name', $group)->first();
             $group = is_null($group) ? $group : $group->getKey();
         }
 
@@ -154,7 +154,7 @@ trait LaratrustUserTrait
         }
 
         if (!is_null($group)) {
-            $group = Config::get('laratrust.group')->where('name', $group)->first();
+            $group = Config::get('laratrust.group')::where('name', $group)->first();
             $group = is_null($group) ? $group : $group->getKey();
         }
 

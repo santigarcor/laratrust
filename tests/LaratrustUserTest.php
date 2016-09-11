@@ -42,7 +42,7 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         | Set
         |------------------------------------------------------------
         */
-        $belongsToMany = new stdClass();
+        $belongsToMany = m::mock(new stdClass());
         $user = m::mock('HasRoleUser')->makePartial();
 
         /*
@@ -55,6 +55,11 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
             ->andReturn($belongsToMany)
             ->once();
 
+        $belongsToMany->shouldReceive('withPivot')
+            ->with('group_id')
+            ->andReturn($belongsToMany)
+            ->once();
+
         Config::shouldReceive('get')->once()->with('laratrust.role')
             ->andReturn('role_table_name');
         Config::shouldReceive('get')->once()->with('laratrust.role_user_table')
@@ -63,6 +68,8 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
             ->andReturn('user_id');
         Config::shouldReceive('get')->once()->with('laratrust.role_foreign_key')
             ->andReturn('role_id');
+        Config::shouldReceive('get')->once()->with('laratrust.group_foreign_key')
+            ->andReturn('group_id');
 
         /*
         |------------------------------------------------------------
@@ -1422,12 +1429,15 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         Config::shouldReceive('get')->with('laratrust.role_user_table')->once()->andReturn('role_user');
         Config::shouldReceive('get')->with('laratrust.user_foreign_key')->once()->andReturn('user_id');
         Config::shouldReceive('get')->with('laratrust.role_foreign_key')->once()->andReturn('role_id');
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->once()->andReturn('group_id');
 
         $relationship->shouldReceive('get')
                      ->andReturn($user->roles)->once();
 
         $user->shouldReceive('belongsToMany')
                     ->andReturn($relationship)->once();
+        $relationship->shouldReceive('withPivot')
+                     ->andReturn($relationship)->once();
 
         $user->shouldReceive('detachRole')->twice();
 
