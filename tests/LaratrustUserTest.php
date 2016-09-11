@@ -72,7 +72,7 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         $this->assertSame($belongsToMany, $user->roles());
     }
 
-    public function testHasRole()
+    public function testHasRoleWithoutGroup()
     {
         /*
         |------------------------------------------------------------
@@ -104,11 +104,52 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($user->hasRole(['RoleA', 'RoleB']));
         $this->assertTrue($user->hasRole(['RoleA', 'RoleC']));
-        $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], true));
+        $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], null, true));
         $this->assertFalse($user->hasRole(['RoleC', 'RoleD']));
     }
 
-    public function testCan()
+    public function testHasRoleWithGroup()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $group = $this->mockGroup('GroupA');
+        $roleA = $this->mockRole('RoleA', $group->id);
+        $roleB = $this->mockRole('RoleB', $group->id);
+
+        $user = new HasRoleUser();
+        $user->roles = [$roleA, $roleB];
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Config::shouldReceive('get')->with('laratrust.group')->times(9)->andReturn($group);
+        $group->shouldReceive('where')->with('name', 'GroupA')->times(9)->andReturn($group);
+        $group->shouldReceive('first')->times(9)->andReturn($group);
+        $group->shouldReceive('getKey')->times(9)->andReturn($group->id);
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(9)->andReturn('1440');
+        Cache::shouldReceive('remember')->times(9)->andReturn($user->roles);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->hasRole('RoleA', $group->name));
+        $this->assertTrue($user->hasRole('RoleB', $group->name));
+        $this->assertFalse($user->hasRole('RoleC', $group->name));
+
+        $this->assertTrue($user->hasRole(['RoleA', 'RoleB'], $group->name));
+        $this->assertTrue($user->hasRole(['RoleA', 'RoleC'], $group->name));
+        $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], $group->name, true));
+        $this->assertFalse($user->hasRole(['RoleC', 'RoleD'], $group->name));
+    }
+
+    public function testCanWithoutGroups()
     {
         /*
         |------------------------------------------------------------
@@ -150,12 +191,63 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($user->can(['manage_a', 'manage_b', 'manage_c']));
         $this->assertTrue($user->can(['manage_a', 'manage_b', 'manage_d']));
-        $this->assertFalse($user->can(['manage_a', 'manage_b', 'manage_d'], true));
+        $this->assertFalse($user->can(['manage_a', 'manage_b', 'manage_d'], null, true));
         $this->assertFalse($user->can(['manage_d', 'manage_e']));
     }
 
+    public function testCanWithGroups()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $permA = $this->mockPermission('manage_a');
+        $permB = $this->mockPermission('manage_b');
+        $permC = $this->mockPermission('manage_c');
 
-    public function testCanWithPlaceholderSupport ()
+        $group = $this->mockGroup('GroupA');
+        $roleA = $this->mockRole('RoleA', $group->id);
+        $roleB = $this->mockRole('RoleB', $group->id);
+
+        $roleA->perms = [$permA];
+        $roleB->perms = [$permB, $permC];
+
+        $user = new HasRoleUser();
+        $user->roles = [$roleA, $roleB];
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Config::shouldReceive('get')->with('laratrust.group')->times(11)->andReturn($group);
+        $group->shouldReceive('where')->with('name', 'GroupA')->times(11)->andReturn($group);
+        $group->shouldReceive('first')->times(11)->andReturn($group);
+        $group->shouldReceive('getKey')->times(11)->andReturn($group->id);
+
+        $roleA->shouldReceive('cachedPermissions')->times(11)->andReturn($roleA->perms);
+        $roleB->shouldReceive('cachedPermissions')->times(7)->andReturn($roleB->perms);
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(11)->andReturn('1440');
+        Cache::shouldReceive('remember')->times(11)->andReturn($user->roles);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->can('manage_a', $group->name));
+        $this->assertTrue($user->can('manage_b', $group->name));
+        $this->assertTrue($user->can('manage_c', $group->name));
+        $this->assertFalse($user->can('manage_d', $group->name));
+
+        $this->assertTrue($user->can(['manage_a', 'manage_b', 'manage_c'], $group->name));
+        $this->assertTrue($user->can(['manage_a', 'manage_b', 'manage_d'], $group->name));
+        $this->assertFalse($user->can(['manage_a', 'manage_b', 'manage_d'], $group->name, true));
+        $this->assertFalse($user->can(['manage_d', 'manage_e'], $group->name));
+    }
+
+    public function testCanWithPlaceholderSupportWithoutGroups ()
     {
         /*
         |------------------------------------------------------------
@@ -194,6 +286,53 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($user->can(['admin.*']));
         $this->assertFalse($user->can(['site.*']));
+    }
+
+    public function testCanWithPlaceholderSupportWithGroups ()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $permA = $this->mockPermission('admin.posts');
+        $permB = $this->mockPermission('admin.pages');
+        $permC = $this->mockPermission('admin.users');
+
+        $group = $this->mockGroup('GroupA');
+        $role = $this->mockRole('Role', $group->id);
+
+        $role->perms = [$permA, $permB, $permC];
+
+        $user = new HasRoleUser();
+        $user->roles = [$role];
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Config::shouldReceive('get')->with('laratrust.group')->times(6)->andReturn($group);
+        $group->shouldReceive('where')->with('name', 'GroupA')->times(6)->andReturn($group);
+        $group->shouldReceive('first')->times(6)->andReturn($group);
+        $group->shouldReceive('getKey')->times(6)->andReturn($group->id);
+
+        $role->shouldReceive('cachedPermissions')->times(6)->andReturn($role->perms);
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(6)->andReturn('1440');
+        Cache::shouldReceive('remember')->times(6)->andReturn($user->roles);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->can('admin.posts', $group->name));
+        $this->assertTrue($user->can('admin.pages', $group->name));
+        $this->assertTrue($user->can('admin.users', $group->name));
+        $this->assertFalse($user->can('admin.config', $group->name));
+
+        $this->assertTrue($user->can(['admin.*'], $group->name));
+        $this->assertFalse($user->can(['site.*'], $group->name));
     }
 
 
@@ -1311,15 +1450,27 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         return $permMock;
     }
 
-    protected function mockRole($roleName)
+    protected function mockRole($roleName, $group_id = null)
     {
         $roleMock = m::mock('Laratrust\Role');
         $roleMock->name = $roleName;
         $roleMock->perms = [];
         $roleMock->permissions = [];
         $roleMock->id = 1;
+        $pivot = new stdClass();
+        $pivot->group_id = $group_id;
+        $roleMock->pivot = $pivot;
 
         return $roleMock;
+    }
+
+    protected function mockGroup($groupName)
+    {
+        $groupMock = m::mock('Laratrust\Group');
+        $groupMock->name = $groupName;
+        $groupMock->id = 1;
+
+        return $groupMock;
     }
 }
 
