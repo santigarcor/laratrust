@@ -109,7 +109,10 @@ trait LaratrustUserTrait
         }
 
         if (!is_null($group)) {
-            $group = Config::get('laratrust.group')::where('name', $group)->first();
+            $group = call_user_func_array(
+                        [Config::get('laratrust.group'), 'where'],
+                        ['name', $group]
+                    )->first();
             $group = is_null($group) ? $group : $group->getKey();
         }
 
@@ -154,7 +157,10 @@ trait LaratrustUserTrait
         }
 
         if (!is_null($group)) {
-            $group = Config::get('laratrust.group')::where('name', $group)->first();
+            $group = call_user_func_array(
+                    [Config::get('laratrust.group'), 'where'],
+                    ['name', $group]
+                )->first();
             $group = is_null($group) ? $group : $group->getKey();
         }
 
