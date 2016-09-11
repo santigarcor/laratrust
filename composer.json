@@ -31,9 +31,9 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "illuminate/console": "~5.1",
-        "illuminate/support": "~5.1",
-        "illuminate/cache": "~5.1",
+        "illuminate/console": "~5.1.0",
+        "illuminate/support": "~5.1.0",
+        "illuminate/cache": "~5.1.0",
         "kkszymanowski/traitor": "^0.2.0"
     },
     "require-dev": {
