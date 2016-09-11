@@ -167,7 +167,7 @@ trait LaratrustUserTrait
         foreach ($this->cachedRoles() as $role) {
             // Validate against the Permission table
             if ($role->pivot->group_id != $group) {
-                return false;
+                continue;
             }
 
             foreach ($role->cachedPermissions() as $perm) {
