@@ -23,7 +23,9 @@ trait LaratrustGroupTrait
     {
         return $this->belongsToMany(
             Config::get('laratrust.role'),
-            Config::get('laratrust.role_user_table')
+            Config::get('laratrust.role_user_table'),
+            Config::get('laratrust.group_foreign_key'),
+            Config::get('laratrust.role_foreign_key')
         );
     }
 
@@ -36,7 +38,9 @@ trait LaratrustGroupTrait
     {
         return $this->belongsToMany(
             Config::get('laratrust.user'),
-            Config::get('laratrust.role_user_table')
+            Config::get('laratrust.role_user_table'),
+            Config::get('laratrust.group_foreign_key'),
+            Config::get('laratrust.user_foreign_key')
         );
     }
 
