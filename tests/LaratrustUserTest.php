@@ -123,7 +123,7 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $group = $this->mockGroup('GroupA');
-        $roleA = $this->mockRole('RoleA', $group->id);
+        $roleA = $this->mockRole('RoleA');
         $roleB = $this->mockRole('RoleB', $group->id);
 
         $user = new HasRoleUser();
@@ -134,25 +134,25 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         | Expectation
         |------------------------------------------------------------
         */
-        Config::shouldReceive('get')->with('laratrust.group')->times(9)->andReturn($group);
-        $group->shouldReceive('where')->with('name', 'GroupA')->times(9)->andReturn($group);
-        $group->shouldReceive('first')->times(9)->andReturn($group);
-        $group->shouldReceive('getKey')->times(9)->andReturn($group->id);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(9)->andReturn('1440');
-        Cache::shouldReceive('remember')->times(9)->andReturn($user->roles);
+        Config::shouldReceive('get')->with('laratrust.group')->times(10)->andReturn($group);
+        $group->shouldReceive('where')->with('name', 'GroupA')->times(10)->andReturn($group);
+        $group->shouldReceive('first')->times(10)->andReturn($group);
+        $group->shouldReceive('getKey')->times(10)->andReturn($group->id);
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(10)->andReturn('1440');
+        Cache::shouldReceive('remember')->times(10)->andReturn($user->roles);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertTrue($user->hasRole('RoleA', $group->name));
+        $this->assertFalse($user->hasRole('RoleA', $group->name));
         $this->assertTrue($user->hasRole('RoleB', $group->name));
         $this->assertFalse($user->hasRole('RoleC', $group->name));
 
         $this->assertTrue($user->hasRole(['RoleA', 'RoleB'], $group->name));
-        $this->assertTrue($user->hasRole(['RoleA', 'RoleC'], $group->name));
-        $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], $group->name, true));
+        $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], $group->name));
+        $this->assertFalse($user->hasRole(['RoleA', 'RoleB'], $group->name, true));
         $this->assertFalse($user->hasRole(['RoleC', 'RoleD'], $group->name));
     }
 
@@ -214,7 +214,7 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         $permC = $this->mockPermission('manage_c');
 
         $group = $this->mockGroup('GroupA');
-        $roleA = $this->mockRole('RoleA', $group->id);
+        $roleA = $this->mockRole('RoleA');
         $roleB = $this->mockRole('RoleB', $group->id);
 
         $roleA->perms = [$permA];
@@ -233,8 +233,8 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         $group->shouldReceive('first')->times(11)->andReturn($group);
         $group->shouldReceive('getKey')->times(11)->andReturn($group->id);
 
-        $roleA->shouldReceive('cachedPermissions')->times(11)->andReturn($roleA->perms);
-        $roleB->shouldReceive('cachedPermissions')->times(7)->andReturn($roleB->perms);
+        $roleA->shouldReceive('cachedPermissions')->times(0);
+        $roleB->shouldReceive('cachedPermissions')->times(11)->andReturn($roleB->perms);
         Config::shouldReceive('get')->with('cache.ttl', 60)->times(11)->andReturn('1440');
         Cache::shouldReceive('remember')->times(11)->andReturn($user->roles);
 
@@ -243,7 +243,7 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertTrue($user->can('manage_a', $group->name));
+        $this->assertFalse($user->can('manage_a', $group->name));
         $this->assertTrue($user->can('manage_b', $group->name));
         $this->assertTrue($user->can('manage_c', $group->name));
         $this->assertFalse($user->can('manage_d', $group->name));
