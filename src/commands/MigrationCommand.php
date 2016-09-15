@@ -80,7 +80,7 @@ class MigrationCommand extends Command
 
         $this->info("Creating migration...");
 
-        if ($this->createMigration($rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)) {
+        if ($this->createMigration()) {
             $this->info("Migration successfully created!");
         } else {
             $this->error(
@@ -101,22 +101,17 @@ class MigrationCommand extends Command
      * @param  string $permissionRoleTable
      * @return bool
      */
-    protected function createMigration($rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable)
+    protected function createMigration()
     {
         $migrationPath = $this->getMigrationPath();
 
         $userModel   = Config::get('auth.providers.users.model');
         $user = new $userModel;
-        $userKeyName = $user->getKeyName();
-        $usersTable = $user->getTable();
+        $laratrust = Config::get('laratrust');
 
         $data = compact(
-            'rolesTable',
-            'roleUserTable',
-            'permissionsTable',
-            'permissionRoleTable',
-            'usersTable',
-            'userKeyName'
+            'user',
+            'laratrust'
         );
 
         $output = $this->laravel->view->make('laratrust::generators.migration')->with($data)->render();

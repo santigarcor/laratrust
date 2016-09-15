@@ -43,7 +43,7 @@ trait LaratrustUserTrait
             Config::get('laratrust.role_user_table'),
             Config::get('laratrust.user_foreign_key'),
             Config::get('laratrust.role_foreign_key')
-        );
+        )->withPivot(Config::get('laratrust.group_foreign_key'));
     }
 
     /**
@@ -85,7 +85,7 @@ trait LaratrustUserTrait
      *
      * @return bool
      */
-    public function hasRole($name, $requireAll = false)
+    public function hasRole($name, $group = null, $requireAll = false)
     {
         if (is_array($name)) {
             if (empty($name)) {
@@ -93,7 +93,7 @@ trait LaratrustUserTrait
             }
 
             foreach ($name as $roleName) {
-                $hasRole = $this->hasRole($roleName);
+                $hasRole = $this->hasRole($roleName, $group);
 
                 if ($hasRole && !$requireAll) {
                     return true;
@@ -108,8 +108,16 @@ trait LaratrustUserTrait
             return $requireAll;
         }
 
+        if (!is_null($group)) {
+            $group = call_user_func_array(
+                        [Config::get('laratrust.group'), 'where'],
+                        ['name', $group]
+                    )->first();
+            $group = is_null($group) ? $group : $group->getKey();
+        }
+
         foreach ($this->cachedRoles() as $role) {
-            if ($role->name == $name) {
+            if ($role->name == $name && $role->pivot->group_id == $group) {
                 return true;
             }
         }
@@ -125,7 +133,7 @@ trait LaratrustUserTrait
      *
      * @return bool
      */
-    public function can($permission, $requireAll = false)
+    public function can($permission, $group = null, $requireAll = false)
     {
         if (is_array($permission)) {
             if (empty($permission)) {
@@ -133,7 +141,7 @@ trait LaratrustUserTrait
             }
 
             foreach ($permission as $permName) {
-                $hasPerm = $this->can($permName);
+                $hasPerm = $this->can($permName, $group);
 
                 if ($hasPerm && !$requireAll) {
                     return true;
@@ -148,8 +156,20 @@ trait LaratrustUserTrait
             return $requireAll;
         }
 
+        if (!is_null($group)) {
+            $group = call_user_func_array(
+                    [Config::get('laratrust.group'), 'where'],
+                    ['name', $group]
+                )->first();
+            $group = is_null($group) ? $group : $group->getKey();
+        }
+
         foreach ($this->cachedRoles() as $role) {
             // Validate against the Permission table
+            if ($role->pivot->group_id != $group) {
+                continue;
+            }
+
             foreach ($role->cachedPermissions() as $perm) {
                 if (str_is($permission, $perm->name)) {
                     return true;
@@ -235,7 +255,7 @@ trait LaratrustUserTrait
      * @param mixed $role
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function attachRole($role)
+    public function attachRole($role, $group = null)
     {
         if (is_object($role)) {
             $role = $role->getKey();
@@ -245,7 +265,16 @@ trait LaratrustUserTrait
             $role = $role['id'];
         }
 
-        $this->roles()->attach($role);
+        if (!is_object($group) && $group != null) {
+            throw new InvalidArgumentException;
+        }
+        
+        if (!is_null($group)) {
+            $group = $group->getKey();
+        }
+
+        $this->roles()->wherePivot(Config::get('laratrust.group_foreign_key'), $group)->detach($role);
+        $this->roles()->attach($role, [Config::get('laratrust.group_foreign_key') => $group]);
         $this->flushCache();
 
         return $this;
@@ -257,7 +286,7 @@ trait LaratrustUserTrait
      * @param mixed $role
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function detachRole($role)
+    public function detachRole($role, $group = null)
     {
         if (is_object($role)) {
             $role = $role->getKey();
@@ -267,7 +296,16 @@ trait LaratrustUserTrait
             $role = $role['id'];
         }
 
-        $this->roles()->detach($role);
+        if (!is_object($group) && $group != null) {
+            throw new InvalidArgumentException;
+        }
+
+        if (!is_null($group)) {
+            $group = $group->getKey();
+        }
+
+        $this->roles()->wherePivot(Config::get('laratrust.group_foreign_key'), $group)
+            ->detach($role);
         $this->flushCache();
 
         return $this;
@@ -279,10 +317,10 @@ trait LaratrustUserTrait
      * @param mixed $roles
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function attachRoles($roles)
+    public function attachRoles($roles, $group = null)
     {
         foreach ($roles as $role) {
-            $this->attachRole($role);
+            $this->attachRole($role, $group);
         }
 
         return $this;
@@ -294,14 +332,14 @@ trait LaratrustUserTrait
      * @param mixed $roles
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function detachRoles($roles = null)
+    public function detachRoles($roles = null, $group = null)
     {
         if (!$roles) {
             $roles = $this->roles()->get();
         }
         
         foreach ($roles as $role) {
-            $this->detachRole($role);
+            $this->detachRole($role, $group);
         }
 
         return $this;
