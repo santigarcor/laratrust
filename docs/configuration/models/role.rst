@@ -1,8 +1,9 @@
 Role
 ====
 
-Create a Role model inside ``app/models/Role.php`` using the following example::
+Create a Role model inside ``app/models/Role.php`` using the following example:
 
+.. code-block:: php
 
     <?php namespace App;
 

@@ -11,14 +11,18 @@ and::
 
     composer dump-autoload
 
-And in the ``database/seeds/DatabaseSeeder.php`` file you have to add to the ``run`` method::
+And in the ``database/seeds/DatabaseSeeder.php`` file you have to add to the ``run`` method:
+
+.. code-block:: php
 
     $this->call(LaratrustSeeder::class);
 
 .. NOTE::
     If you haven't run ``php artisan vendor:publish`` you should run it in order to customize the roles, modules and permissions in each case.
 
-After you run ``php artisan vendor:publish``, you will have a ``config/laratrust_seeder.php`` file and it looks like this::
+After you run ``php artisan vendor:publish``, you will have a ``config/laratrust_seeder.php`` file and it looks like this:
+
+.. code-block:: php
 
     return [
        'role_structure' => [
@@ -44,7 +48,9 @@ To understand the file you must know:
 * The second level is the modules.
 * The second level assignments are the permissions.
 
-With that in mind, you should arrange your roles, modules and permissions like this::
+With that in mind, you should arrange your roles, modules and permissions like this:
+
+.. code-block:: php
 
     return [
        'role' => [

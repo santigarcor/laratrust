@@ -1,7 +1,9 @@
 User
 ====
 
-Next, use the ``LaratrustUserTrait`` trait in your existing ``User`` model. For example::
+Next, use the ``LaratrustUserTrait`` trait in your existing ``User`` model. For example:
+
+.. code-block:: php
 
     <?php
 
