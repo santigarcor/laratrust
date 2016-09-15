@@ -1,11 +1,17 @@
-Laratrust
-=======
-. . . 
+Laratrust Docs
+==============
 
-Table of contents
------------------
+.. image:: img/laratrust.png
+
+Table of Contents:
+===============
+.. NOTE::
+   Please read all the sections in order
 
 .. toctree::
-    :hidden:
+   :numbered:
 
-    installation
+   installation
+   configuration/index
+   usage/index
+

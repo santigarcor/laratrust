@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Laratrust Docs documentation build configuration file, created by
-# sphinx-quickstart on Wed Sep 14 18:05:37 2016.
+# sphinx-quickstart on Wed Sep 14 18:52:54 2016.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
