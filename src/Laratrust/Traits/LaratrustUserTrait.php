@@ -81,6 +81,7 @@ trait LaratrustUserTrait
      * Checks if the user has a role by its name.
      *
      * @param string|array $name       Role name or array of role names.
+     * @param string|bool  $group      Group name or requiredAll roles.
      * @param bool         $requireAll All roles in the array are required.
      *
      * @return bool
@@ -132,6 +133,7 @@ trait LaratrustUserTrait
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
+     * @param string|bool  $group      Group name or requiredAll roles.
      * @param bool         $requireAll All permissions in the array are required.
      *
      * @return bool
@@ -140,7 +142,7 @@ trait LaratrustUserTrait
     {
         $requireAll = is_bool($group) ? $group : $requireAll;
         $group = is_bool($group) ? null : $group;
-        
+
         if (is_array($permission)) {
             if (empty($permission)) {
                 return true;
