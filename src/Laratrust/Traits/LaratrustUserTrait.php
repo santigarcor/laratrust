@@ -47,6 +47,21 @@ trait LaratrustUserTrait
     }
 
     /**
+     * Many-to-Many relations with Group.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function groups()
+    {
+        return $this->belongsToMany(
+            Config::get('laratrust.group'),
+            Config::get('laratrust.role_user_table'),
+            Config::get('laratrust.user_foreign_key'),
+            Config::get('laratrust.group_foreign_key')
+        )->withPivot(Config::get('laratrust.role_foreign_key'));
+    }
+
+    /**
      * Boot the user model
      * Attach event listener to remove the many-to-many records when trying to delete
      * Will NOT delete any records if the user model uses soft deletes.

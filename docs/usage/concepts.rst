@@ -1,6 +1,9 @@
 Concepts
 ========
 
+Without Groups
+--------------
+
 Let's start by creating the following \ ``Role``\s and \ ``Permission``\s:
 
 .. code-block:: php
@@ -176,3 +179,7 @@ The ``Laratrust`` class has a shortcut to ``ability()`` for the currently logged
    // is identical to
 
    Auth::user()->ability('admin,owner', 'create-post,edit-user');
+
+
+With Groups
+-----------
