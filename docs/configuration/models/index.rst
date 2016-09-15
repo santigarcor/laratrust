@@ -2,7 +2,6 @@ Models
 ======
 
 .. toctree::
-   :numbered:
 
    user
    role

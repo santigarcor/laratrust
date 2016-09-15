@@ -9,7 +9,6 @@ Table of Contents:
    Please read all the sections in order
 
 .. toctree::
-   :numbered:
 
    installation
    configuration/index

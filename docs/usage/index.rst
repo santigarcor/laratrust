@@ -2,7 +2,6 @@ Usage
 =====
 
 .. toctree::
-   :numbered:
 
    concepts
    soft_deleting
