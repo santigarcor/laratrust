@@ -111,7 +111,7 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($user->hasRole(['RoleA', 'RoleB']));
         $this->assertTrue($user->hasRole(['RoleA', 'RoleC']));
-        $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], null, true));
+        $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], true));
         $this->assertFalse($user->hasRole(['RoleC', 'RoleD']));
     }
 
@@ -198,7 +198,7 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($user->can(['manage_a', 'manage_b', 'manage_c']));
         $this->assertTrue($user->can(['manage_a', 'manage_b', 'manage_d']));
-        $this->assertFalse($user->can(['manage_a', 'manage_b', 'manage_d'], null, true));
+        $this->assertFalse($user->can(['manage_a', 'manage_b', 'manage_d'], true));
         $this->assertFalse($user->can(['manage_d', 'manage_e']));
     }
 

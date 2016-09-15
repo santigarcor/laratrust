@@ -87,6 +87,9 @@ trait LaratrustUserTrait
      */
     public function hasRole($name, $group = null, $requireAll = false)
     {
+        $requireAll = is_bool($group) ? $group : $requireAll;
+        $group = is_bool($group) ? null : $group;
+
         if (is_array($name)) {
             if (empty($name)) {
                 return true;
@@ -135,6 +138,9 @@ trait LaratrustUserTrait
      */
     public function can($permission, $group = null, $requireAll = false)
     {
+        $requireAll = is_bool($group) ? $group : $requireAll;
+        $group = is_bool($group) ? null : $group;
+        
         if (is_array($permission)) {
             if (empty($permission)) {
                 return true;
