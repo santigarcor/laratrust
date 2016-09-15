@@ -1,7 +1,9 @@
 Concepts
 ========
 
-Let's start by creating the following \ ``Role``\s and \ ``Permission``\s::
+Let's start by creating the following \ ``Role``\s and \ ``Permission``\s:
+
+.. code-block:: php
 
    $owner = new Role();
    $owner->name         = 'owner';
@@ -16,7 +18,9 @@ Let's start by creating the following \ ``Role``\s and \ ``Permission``\s::
    $admin->save();
 
 Next, with both roles created let's assign them to the users.
-Thanks to the ``LaratrustUserTrait`` this is as easy as::
+Thanks to the ``LaratrustUserTrait`` this is as easy as:
+
+.. code-block:: php
 
    $user = User::where('username', '=', 'michele')->first();
 
@@ -26,7 +30,9 @@ Thanks to the ``LaratrustUserTrait`` this is as easy as::
    // or eloquent's original technique
    $user->roles()->attach($admin->id); // id only
 
-Now we just need to add permissions to those Roles::
+Now we just need to add permissions to those Roles:
+
+.. code-block:: php
 
    $createPost = new Permission();
    $createPost->name         = 'create-post';
@@ -51,20 +57,26 @@ Now we just need to add permissions to those Roles::
 Checking for Roles & Permissions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Now we can check for roles and permissions simply by doing::
+Now we can check for roles and permissions simply by doing:
+
+.. code-block:: php
 
    $user->hasRole('owner');   // false
    $user->hasRole('admin');   // true
    $user->can('edit-user');   // false
    $user->can('create-post'); // true
 
-Both ``hasRole()`` and ``can()`` can receive an array of roles & permissions to check::
+Both ``hasRole()`` and ``can()`` can receive an array of roles & permissions to check:
+
+.. code-block:: php
 
    $user->hasRole(['owner', 'admin']);       // true
    $user->can(['edit-user', 'create-post']); // true
 
 By default, if any of the roles or permissions are present for a user then the method will return true.
-Passing ``true`` as a second parameter instructs the method to require **all** of the items::
+Passing ``true`` as a second parameter instructs the method to require **all** of the items:
+
+.. code-block:: php
 
    $user->hasRole(['owner', 'admin']);             // true
    $user->hasRole(['owner', 'admin'], true);       // false, user does not have admin role
@@ -73,7 +85,9 @@ Passing ``true`` as a second parameter instructs the method to require **all** o
 
 You can have as many \ ``Role``\s as you want for each ``User`` and vice versa.
 
-The ``Laratrust`` class has shortcuts to both ``can()`` and ``hasRole()`` for the currently logged in user::
+The ``Laratrust`` class has shortcuts to both ``can()`` and ``hasRole()`` for the currently logged in user:
+
+.. code-block:: php
 
    Laratrust::hasRole('role-name');
    Laratrust::can('permission-name');
@@ -81,9 +95,11 @@ The ``Laratrust`` class has shortcuts to both ``can()`` and ``hasRole()`` for th
    // is identical to
 
    Auth::user()->hasRole('role-name');
-   Auth::user()->can('permission-name);
+   Auth::user()->can('permission-name');
 
-You can also use placeholders (wildcards) to check any matching permission by doing::
+You can also use placeholders (wildcards) to check any matching permission by doing:
+
+.. code-block:: php
 
    // match any admin permission
    $user->can('admin.*'); // true
@@ -100,7 +116,9 @@ It takes in three parameters (roles, permissions, options):
 * ``roles`` is a set of roles to check.
 * ``permissions`` is a set of permissions to check.
 
-Either of the roles or permissions variable can be a comma separated string or array::
+Either of the roles or permissions variable can be a comma separated string or array:
+
+.. code-block:: php
 
    $user->ability(['admin', 'owner'], ['create-post', 'edit-user']);
 
@@ -111,7 +129,9 @@ Either of the roles or permissions variable can be a comma separated string or a
 This will check whether the user has any of the provided roles and permissions.
 In this case it will return true since the user is an ``admin`` and has the ``create-post`` permission.
 
-The third parameter is an options array::
+The third parameter is an options array:
+
+.. code-block:: php
 
    $options = [
        'validate_all' => true | false (Default: false),
@@ -121,7 +141,9 @@ The third parameter is an options array::
 * ``validate_all`` is a boolean flag to set whether to check all the values for true, or to return true if at least one role or permission is matched.
 * ``return_type`` specifies whether to return a boolean, array of checked values, or both in an array.
 
-Here is an example output::
+Here is an example output:
+
+.. code-block:: php
 
    $options = [
        'validate_all' => true,
@@ -145,7 +167,9 @@ Here is an example output::
    //     ['edit-user'] => bool(false)
    // }
 
-The ``Laratrust`` class has a shortcut to ``ability()`` for the currently logged in user::
+The ``Laratrust`` class has a shortcut to ``ability()`` for the currently logged in user:
+
+.. code-block:: php
 
    Laratrust::ability('admin,owner', 'create-post,edit-user');
 

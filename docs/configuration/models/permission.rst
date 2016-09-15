@@ -1,9 +1,11 @@
 Permission
 ==========
 
-Create a Permission model inside ``app/models/Permission.php`` using the following example::
+Create a Permission model inside ``app/models/Permission.php`` using the following example:
 
-    <?php namespace App;
+.. code-block:: php
+
+    namespace App;
 
     use Laratrust\LaratrustPermission;
 
