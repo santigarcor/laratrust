@@ -9,18 +9,22 @@ Installation
 
         composer require "santigarcor/laratrust:3.0.*"
 
-.. highlight:: php
+2. Then in your ``config/app.php`` add the following to the providers array:
 
-2. Then in your ``config/app.php`` add the following to the providers array::
-    
-    Laratrust\LaratrustServiceProvider::class,
+.. code-block:: php
+        
+        Laratrust\LaratrustServiceProvider::class,
 
-3. In the same ```config/app.php`` and add the following to the ``aliases`` array::
+3. In the same ```config/app.php`` and add the following to the ``aliases`` array:
 
-    'Laratrust'   => Laratrust\LaratrustFacade::class,
+.. code-block:: php
 
-4. If you are going to use :doc:`usage/middleware` (requires Laravel 5.1 or later) you also need to add the following to ``routeMiddleware`` array in ``app/Http/Kernel.php``::
+        'Laratrust'   => Laratrust\LaratrustFacade::class,
 
-    'role' => \Laratrust\Middleware\LaratrustRole::class,
-    'permission' => \Laratrust\Middleware\LaratrustPermission::class,
-    'ability' => \Laratrust\Middleware\LaratrustAbility::class,
+4. If you are going to use :doc:`usage/middleware` (requires Laravel 5.1 or later) you also need to add the following to ``routeMiddleware`` array in ``app/Http/Kernel.php``:
+
+.. code-block:: php
+
+        'role' => \Laratrust\Middleware\LaratrustRole::class,
+        'permission' => \Laratrust\Middleware\LaratrustPermission::class,
+        'ability' => \Laratrust\Middleware\LaratrustAbility::class,
