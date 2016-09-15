@@ -8,4 +8,3 @@ Usage
    blade_templates
    middleware
    short_syntax_route_filter
-   route_filter

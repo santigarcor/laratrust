@@ -15,34 +15,35 @@ Automatic setup (Recommended)
 
 If you want to let laratrust to setup by itselft, just run the following command::
 
-   php artisan laratrust:setup
+    php artisan laratrust:setup
 
 This command will generate the migrations, create the ``Role`` and ``Permission`` models and will add the trait to the ``User`` model.
 
 .. NOTE::
-   The user trait will be added to the Model configured in the ``auth.php`` file.
+    The user trait will be added to the Model configured in the ``auth.php`` file.
 
 And then don't forget to run::
 
-   composer dump-autoload
+    composer dump-autoload
 
 .. IMPORTANT::
-   If you did the steps above you are done with the configuration, if not, please read and follow the whole configuration process
+    If you did the steps above you are done with the configuration, if not, please read and follow the whole configuration process
 
 Migrations
 ^^^^^^^^^^
 
 Now generate the Laratrust migration::
 
-   php artisan laratrust:migration
+    php artisan laratrust:migration
 
 It will generate the ``<timestamp>_laratrust_setup_tables.php`` migration.
 You may now run it with the artisan migrate command::
 
-   php artisan migrate
+    php artisan migrate
 
 After the migration, four new tables will be present:
-   * ``roles`` — stores role records
-   * ``permissions`` — stores permission records
-   * ``role_user`` — stores `many-to-many <https://laravel.com/docs/eloquent-relationships#many-to-many>`_ relations between roles and users
-   * ``permission_role`` — stores `many-to-many <https://laravel.com/docs/eloquent-relationships#many-to-many>`_ relations between roles and permissions
+
+* ``roles`` — stores role records
+* ``permissions`` — stores permission records
+* ``role_user`` — stores `many-to-many <https://laravel.com/docs/eloquent-relationships#many-to-many>`_ relations between roles and users
+* ``permission_role`` — stores `many-to-many <https://laravel.com/docs/eloquent-relationships#many-to-many>`_ relations between roles and permissions

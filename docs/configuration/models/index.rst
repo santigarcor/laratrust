@@ -3,6 +3,6 @@ Models
 
 .. toctree::
 
-   user
-   role
-   permission
+    role
+    permission
+    user
