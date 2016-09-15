@@ -9,6 +9,8 @@ Installation
 
         composer require "santigarcor/laratrust:3.0.*"
 
+.. highlight:: php
+
 2. Then in your ``config/app.php`` add the following to the providers array::
     
     Laratrust\LaratrustServiceProvider::class,

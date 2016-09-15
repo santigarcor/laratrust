@@ -27,7 +27,7 @@ And then don't forget to run::
     composer dump-autoload
 
 .. IMPORTANT::
-    If you did the steps above you are done with the configuration, if not, please read and follow the whole configuration process
+    **If you did the steps above you are done with the configuration, if not, please read and follow the whole configuration process**
 
 Migrations
 ^^^^^^^^^^
