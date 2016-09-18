@@ -1,10 +1,10 @@
 Concepts
 ========
 
-Without Groups
+Set things up
 --------------
 
-Let's start by creating the following \ ``Role``\s and \ ``Permission``\s:
+Let's start by creating the following \ ``Role``\s:
 
 .. code-block:: php
 
@@ -20,20 +20,7 @@ Let's start by creating the following \ ``Role``\s and \ ``Permission``\s:
    $admin->description  = 'User is allowed to manage and edit other users'; // optional
    $admin->save();
 
-Next, with both roles created let's assign them to the users.
-Thanks to the ``LaratrustUserTrait`` this is as easy as:
-
-.. code-block:: php
-
-   $user = User::where('username', '=', 'michele')->first();
-
-   // role attach alias
-   $user->attachRole($admin); // parameter can be an Role object, array, or id
-
-   // or eloquent's original technique
-   $user->roles()->attach($admin->id); // id only
-
-Now we just need to add permissions to those Roles:
+Now we just need to add \ ``Permission``\s to those \ ``Role``\s:
 
 .. code-block:: php
 
@@ -56,6 +43,25 @@ Now we just need to add permissions to those Roles:
 
    $owner->attachPermissions([$createPost, $editUser]);
    // equivalent to $owner->perms()->sync([$createPost->id, $editUser->id]);
+
+Without Groups
+--------------
+
+Roles Assignment
+^^^^^^^^^^^^^^^^
+
+With both roles created let's assign them to the users.
+Thanks to the ``LaratrustUserTrait`` this is as easy as:
+
+.. code-block:: php
+
+   $user = User::where('username', '=', 'michele')->first();
+
+   // role attach alias
+   $user->attachRole($admin); // parameter can be an Role object, array, or id
+
+   // or eloquent's original technique
+   $user->roles()->attach($admin->id); // id only
 
 Checking for Roles & Permissions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -183,3 +189,81 @@ The ``Laratrust`` class has a shortcut to ``ability()`` for the currently logged
 
 With Groups
 -----------
+
+First we need to create a group in order to use it in the following steps:
+
+.. code-block:: php
+   
+   $group = Group::create([
+      'name' => 'my-great-team',
+      'display_name' => 'My Great Team'
+   ]);
+
+Roles Assignment
+^^^^^^^^^^^^^^^^
+
+With the group created to attach it to a user is as easy as:
+
+.. code-block:: php
+
+   $user = User::where('username', '=', 'michele')->first();
+
+   // First parameter can be a Role or an id
+   // Second parameter must be a Group
+   $user->attachRole($admin, $group);
+
+Checking for Roles & Permissions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Now we can check for roles and permissions inside a group simply by doing:
+
+.. code-block:: php
+
+   $user->hasRole('admin');                    // false
+   $user->hasRole('admin', 'my-great-team');   // true
+   $user->hasRole('owner', 'my-great-team');   // false
+   $user->can('edit-user', 'my-great-team');   // false
+   $user->can('create-post', 'my-great-team'); // true
+
+Both ``hasRole()`` and ``can()`` can receive an array of roles & permissions to check:
+
+.. code-block:: php
+
+   $user->hasRole(['owner', 'admin'], 'my-great-team');       // true
+   $user->can(['edit-user', 'create-post'], 'my-great-team'); // true
+   $user->hasRole(['owner', 'admin']);                        // false
+   $user->can(['edit-user', 'create-post']);                  // false
+
+By default, if any of the roles or permissions are present for a user then the method will return true.
+Passing ``true`` as a third parameter instructs the method to require **all** of the items within that group:
+
+.. code-block:: php
+
+   $user->hasRole(['owner', 'admin'], 'my-great-team');             // true
+   $user->hasRole(['owner', 'admin'], 'my-great-team', true);       // false, user does not have owner role
+   $user->can(['edit-user', 'create-post'], 'my-great-team');       // true
+   $user->can(['edit-user', 'create-post'], 'my-great-team', true); // false, user does not have edit-user permission
+
+You can have as many \ ``Role``\s as you want for each ``User`` and vice versa.
+
+The ``Laratrust`` class has shortcuts to both ``can()`` and ``hasRole()`` for the currently logged in user:
+
+.. code-block:: php
+
+   Laratrust::hasRole('role-name', 'my-great-team');
+   Laratrust::can('permission-name', 'my-great-team');
+
+   // is identical to
+
+   Auth::user()->hasRole('role-name', 'my-great-team');
+   Auth::user()->can('permission-name', 'my-great-team');
+
+You can also use placeholders (wildcards) to check any matching permission by doing:
+
+.. code-block:: php
+
+   // match any admin permission
+   $user->can('admin.*', 'my-great-team'); // true
+
+   // match any permission about users
+   $user->can('*_users', 'my-great-team'); // false
