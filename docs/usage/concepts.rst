@@ -267,3 +267,75 @@ You can also use placeholders (wildcards) to check any matching permission by do
 
    // match any permission about users
    $user->can('*_users', 'my-great-team'); // false
+
+User ability
+^^^^^^^^^^^^
+
+More advanced checking can be done using the awesome ``ability`` function.
+It takes in four parameters (roles, permissions, group, options):
+   
+* ``roles`` is a set of roles to check.
+* ``permissions`` is a set of permissions to check.
+* ``group`` is the name of the group to have in mind when checking the roles and permissions.
+
+Either of the roles or permissions variable can be a comma separated string or array:
+
+.. code-block:: php
+
+   $user->ability(['admin', 'owner'], ['create-post', 'edit-user'], 'my-great-team');
+
+   // or
+
+   $user->ability('admin,owner', 'create-post,edit-user', 'my-great-team');
+
+This will check whether the user has any of the provided roles and permissions within ``my-great-team`` group.
+In this case it will return true since the user is an ``admin`` and has the ``create-post`` permission.
+
+The fourth parameter is an options array:
+
+.. code-block:: php
+
+   $options = [
+       'validate_all' => true | false (Default: false),
+       'return_type'  => boolean | array | both (Default: boolean)
+   ];
+
+* ``validate_all`` is a boolean flag to set whether to check all the values for true, or to return true if at least one role or permission is matched.
+* ``return_type`` specifies whether to return a boolean, array of checked values, or both in an array.
+
+Here is an example output:
+
+.. code-block:: php
+
+   $options = [
+       'validate_all' => true,
+       'return_type' => 'both'
+   ];
+
+   list($validate, $allValidations) = $user->ability(
+       ['admin', 'owner'],
+       ['create-post', 'edit-user'],
+       'my-great-team'
+       $options
+   );
+
+   var_dump($validate);
+   // bool(false)
+
+   var_dump($allValidations);
+   // array(4) {
+   //     ['role'] => bool(true)
+   //     ['role_2'] => bool(false)
+   //     ['create-post'] => bool(true)
+   //     ['edit-user'] => bool(false)
+   // }
+
+The ``Laratrust`` class has a shortcut to ``ability()`` for the currently logged in user:
+
+.. code-block:: php
+
+   Laratrust::ability('admin,owner', 'create-post,edit-user', 'my-great-team');
+
+   // is identical to
+
+   Auth::user()->ability('admin,owner', 'create-post,edit-user', 'my-great-team');
