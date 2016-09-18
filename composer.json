@@ -30,17 +30,16 @@
         }
     ],
     "require": {
-        "php": ">=5.5.0",
-        "illuminate/console": "~5.0",
-        "illuminate/support": "~5.0",
-        "illuminate/cache": "~5.0",
+        "php": ">=5.5.9",
+        "illuminate/console": "~5.1.0",
+        "illuminate/support": "~5.1.0",
+        "illuminate/cache": "~5.1.0",
         "kkszymanowski/traitor": "^0.2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.1",
         "mockery/mockery": "dev-master",
-        "illuminate/database": "~5.0",
-        "squizlabs/php_codesniffer": "2.*"
+        "illuminate/database": "~5.1"
     },
     "autoload": {
         "classmap": [
@@ -52,7 +51,8 @@
     },
     "autoload-dev": {
         "classmap": [
-            "tests/Middleware/MiddlewareTest.php"
+            "tests/Middleware/MiddlewareTest.php",
+            "tests/UserTest.php"
         ]
     },
     "minimum-stability": "dev"

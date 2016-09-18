@@ -21,17 +21,29 @@ class LaratrustSetupTables extends Migration
             $table->timestamps();
         });
 
+        // Create table for storing groups
+        Schema::create('{{ $laratrust['groups_table'] }}', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name')->unique();
+            $table->string('display_name')->nullable();
+            $table->string('description')->nullable();
+            $table->timestamps();
+        });
+
         // Create table for associating roles to users (Many-to-Many)
         Schema::create('{{ $laratrust['role_user_table'] }}', function (Blueprint $table) {
             $table->integer('{{ $laratrust['user_foreign_key'] }}')->unsigned();
             $table->integer('{{ $laratrust['role_foreign_key'] }}')->unsigned();
+            $table->integer('{{ $laratrust['group_foreign_key'] }}')->unsigned()->nullable();
 
             $table->foreign('{{ $laratrust['user_foreign_key'] }}')->references('{{ $user->getKeyName() }}')->on('{{ $user->getTable() }}')
                 ->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('{{ $laratrust['role_foreign_key'] }}')->references('id')->on('{{ $laratrust['roles_table'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('{{ $laratrust['group_foreign_key'] }}')->references('id')->on('{{ $laratrust['groups_table'] }}')
+                ->onUpdate('cascade')->onDelete('cascade');
 
-            $table->primary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}']);
+            $table->unique(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}', '{{ $laratrust['group_foreign_key'] }}']);
         });
 
         // Create table for storing permissions
@@ -55,6 +67,7 @@ class LaratrustSetupTables extends Migration
 
             $table->primary(['{{ $laratrust['permission_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}']);
         });
+
     }
 
     /**
@@ -68,5 +81,6 @@ class LaratrustSetupTables extends Migration
         Schema::drop('{{ $laratrust['permissions_table'] }}');
         Schema::drop('{{ $laratrust['role_user_table'] }}');
         Schema::drop('{{ $laratrust['roles_table'] }}');
+        Schema::drop('{{ $laratrust['groups_table'] }}');
     }
 }

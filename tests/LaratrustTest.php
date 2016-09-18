@@ -84,12 +84,12 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
             ->once()->ordered();
 
         $user->shouldReceive('hasRole')
-            ->with('UserRole', false)
+            ->with('UserRole', false, false)
             ->andReturn(true)
             ->once();
 
         $user->shouldReceive('hasRole')
-            ->with('NonUserRole', false)
+            ->with('NonUserRole', false, false)
             ->andReturn(false)
             ->once();
 
@@ -128,12 +128,12 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
             ->once()->ordered();
 
         $user->shouldReceive('can')
-            ->with('user_can', false)
+            ->with('user_can', false, false)
             ->andReturn(true)
             ->once();
 
         $user->shouldReceive('can')
-            ->with('user_cannot', false)
+            ->with('user_cannot', false, false)
             ->andReturn(false)
             ->once();
 

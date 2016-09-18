@@ -1,6 +1,9 @@
 Seeder
 ======
 
+.. NOTE::
+    The seeder doesn't support the groups feature yet.
+
 Laratrust comes with a database seeder, this seeder helps you filling the permissions for each role depending on the module, and creates one user for each role.
 
 To generate the seeder you have to run::
