@@ -214,8 +214,11 @@ trait LaratrustUserTrait
      *
      * @return array|bool
      */
-    public function ability($roles, $permissions, $options = [])
+    public function ability($roles, $permissions, $group = null, $options = [])
     {
+        $options = is_array($group) ? $group : $options;
+        $group = is_array($group) ? null : $group;
+
         // Convert string to array if that's what is passed in.
         if (!is_array($roles)) {
             $roles = explode(',', $roles);
@@ -246,10 +249,10 @@ trait LaratrustUserTrait
         $checkedRoles = [];
         $checkedPermissions = [];
         foreach ($roles as $role) {
-            $checkedRoles[$role] = $this->hasRole($role);
+            $checkedRoles[$role] = $this->hasRole($role, $group);
         }
         foreach ($permissions as $permission) {
-            $checkedPermissions[$permission] = $this->can($permission);
+            $checkedPermissions[$permission] = $this->can($permission, $group);
         }
 
         // If validate all and there is a false in either

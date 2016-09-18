@@ -72,7 +72,7 @@ class Laratrust
      *
      * @return bool
      */
-    public function ability($roles, $permissions, $options = [])
+    public function ability($roles, $permissions, $group, $options = [])
     {
         if ($user = $this->user()) {
             return $user->ability($roles, $permissions, $options);
