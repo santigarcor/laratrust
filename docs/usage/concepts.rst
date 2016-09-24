@@ -176,3 +176,18 @@ The ``Laratrust`` class has a shortcut to ``ability()`` for the currently logged
    // is identical to
 
    Auth::user()->ability('admin,owner', 'create-post,edit-user');
+
+Model's Ownership
+^^^^^^^^^^^^^^^^^
+
+If you need to check if the user owns a model you can use the user function ``owns``:
+
+.. code-block:: php
+   
+   public function update (Post $post) {
+      if ($user->owns($post)) {
+         abort(403);
+      }
+
+      ...
+   }

@@ -1102,6 +1102,19 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
 
     }
 
+    function testUserOwnsaPostModel()
+    {
+        $user = m::mock('HasRoleUser')->makePartial();
+        $post = new stdClass();
+        $post->mockery_11__has_role_user_id = $user->getKey();
+
+        $post2 = new stdClass();
+        $post2->mockery_11__has_role_user_id = 9;
+
+        $this->assertTrue($user->owns($post));
+        $this->assertFalse($user->owns($post2));
+    }
+
     protected function mockPermission($permName)
     {
         $permMock = m::mock('Laratrust\Permission');
