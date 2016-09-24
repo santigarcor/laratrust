@@ -372,6 +372,18 @@ trait LaratrustUserTrait
     }
 
     /**
+     * Checks if the user owns the thing
+     * @param  Model $thing
+     * @return boolean
+     */
+    public function owns($thing)
+    {
+        $foreignKeyName = snake_case(get_class($this). 'Id');
+
+        return $thing->$foreignKeyName == $this->getKey();
+    }
+
+    /**
      * This scope allows to retrive users with an specific role
      * @param  Illuminate\Database\Eloquent\Builder $query
      * @param  string $role

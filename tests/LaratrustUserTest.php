@@ -726,4 +726,17 @@ class LaratrustUserTest extends UserTest
         $user->detachRoles();
 
     }
+
+    function testUserOwnsaPostModel()
+    {
+        $user = m::mock('HasRoleUser')->makePartial();
+        $post = new stdClass();
+        $post->mockery_13__has_role_user_id = $user->getKey();
+
+        $post2 = new stdClass();
+        $post2->mockery_13__has_role_user_id = 9;
+
+        $this->assertTrue($user->owns($post));
+        $this->assertFalse($user->owns($post2));
+    }
 }
