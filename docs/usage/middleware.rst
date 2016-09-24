@@ -1,6 +1,9 @@
 Middleware
 ==========
 
+Concepts
+^^^^^^^^
+
 You can use a middleware to filter routes and route groups by permission or role:
 
 .. code-block:: php
@@ -27,3 +30,23 @@ For more complex situations use ``ability`` middleware which accepts 3 parameter
 .. code-block:: php
 
     'middleware' => ['ability:admin|owner,create-post|edit-user,true']
+
+Middleware Return
+^^^^^^^^^^^^^^^^^
+
+The middleware supports two kinds of returns in case the check fails. You can configure the return type and the value in the ``config/laratrust.php`` file.
+
+Abort
+-----
+
+By default the middleware aborts with a code ``403`` but you can customize it changing the ``middleware_params`` value.
+
+Redirect
+--------
+
+To make a redirection in case the middleware check fails. You will need to change the ``middleware_handling`` value to ``redirect`` and the ``middleware_params`` to the route you need to be redirected. Leaving the configuration like this:
+
+.. code-block:: php
+
+    'middleware_handling' => 'redirect',
+    'middleware_params'   => 'home',       // Change this to the route you need
