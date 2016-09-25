@@ -39,10 +39,10 @@ Now we just need to add \ ``Permission``\s to those \ ``Role``\s:
    $editUser->save();
 
    $admin->attachPermission($createPost);
-   // equivalent to $admin->perms()->sync([$createPost->id]);
+   // equivalent to $admin->permissions()->sync([$createPost->id]);
 
    $owner->attachPermissions([$createPost, $editUser]);
-   // equivalent to $owner->perms()->sync([$createPost->id, $editUser->id]);
+   // equivalent to $owner->permissions()->sync([$createPost->id, $editUser->id]);
 
 Without Groups
 --------------
