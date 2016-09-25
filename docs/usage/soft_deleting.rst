@@ -12,6 +12,6 @@ The default migration takes advantage of ``onDelete('cascade')`` clauses within 
 
     // Force Delete
     $role->users()->sync([]); // Delete relationship data
-    $role->perms()->sync([]); // Delete relationship data
+    $role->permissions()->sync([]); // Delete relationship data
 
     $role->forceDelete(); // Now force delete will work regardless of whether the pivot table has cascading delete
