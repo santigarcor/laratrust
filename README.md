@@ -17,4 +17,4 @@ This is a fork of Zizaco's [original code](https://github.com/Zizaco/entrust); t
 Please note that this fork is not used on Zizaco's page at this time, nor is it maintained or contributed to by him.
 
 ## Installation, Configuration and Usage
-To install, configure and learn how to use laratrust please go to the [Documentation](http://laratrust.readthedocs.io/en/stable/).
+To install, configure and learn how to use laratrust please go to the [Documentation](http://laratrust.readthedocs.io/).
