@@ -58,8 +58,6 @@ trait LaratrustGroupTrait
                 $group->roles()->sync([]);
                 $group->users()->sync([]);
             }
-
-            return true;
         });
     }
 }
