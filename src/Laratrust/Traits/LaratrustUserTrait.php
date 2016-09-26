@@ -72,8 +72,6 @@ trait LaratrustUserTrait
             if (!method_exists(Config::get('auth.providers.users.model'), 'bootSoftDeletes')) {
                 $user->roles()->sync([]);
             }
-
-            return true;
         });
     }
 

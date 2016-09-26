@@ -42,8 +42,6 @@ trait LaratrustPermissionTrait
             if (!method_exists(Config::get('laratrust.permission'), 'bootSoftDeletes')) {
                 $permission->roles()->sync([]);
             }
-
-            return true;
         });
     }
 }

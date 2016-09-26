@@ -85,8 +85,6 @@ trait LaratrustRoleTrait
                 $role->users()->sync([]);
                 $role->permissions()->sync([]);
             }
-
-            return true;
         });
     }
     
