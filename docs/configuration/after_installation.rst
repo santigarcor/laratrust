@@ -22,7 +22,7 @@ This command will generate the migrations, create the ``Role``, ``Group`` and ``
 .. NOTE::
     The user trait will be added to the Model configured in the ``auth.php`` file.
 
-And then don't forget to run::
+And then do not forget to run::
 
     composer dump-autoload
 
@@ -45,5 +45,5 @@ After the migration, four new tables will be present:
 
 * ``roles`` — stores role records.
 * ``permissions`` — stores permission records.
-* ``role_user`` — stores `many-to-many <https://laravel.com/docs/eloquent-relationships#many-to-many>`_ relations between roles, users and groups (*Laravel doesn't support ternary relationships so the user-role, user-group and role-group relationships are treated like many to many*).
+* ``role_user`` — stores `many-to-many <https://laravel.com/docs/eloquent-relationships#many-to-many>`_ relations between roles, users and groups (*Laravel does not support ternary relationships so the user-role, user-group and role-group relationships are treated like many to many*).
 * ``permission_role`` — stores `many-to-many <https://laravel.com/docs/eloquent-relationships#many-to-many>`_ relations between roles and permissions.

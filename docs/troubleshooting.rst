@@ -16,7 +16,7 @@ When trying to use the LaratrustUserTrait methods, you encounter the error which
 
     Class name must be a valid object or a string
 
-Then probably you don't have published Laratrust assets or something went wrong when you did it.
+Then probably you do not have published Laratrust assets or something went wrong when you did it.
 First of all check that you have the ``laratrust.php`` file in your ``app/config`` directory.
 If you don't, then try ``php artisan vendor:publish`` and, if it does not appear, manually copy the ``/vendor/santigarcor/laratrust/src/config/config.php`` file in your config directory and rename it ``laratrust.php``.
 

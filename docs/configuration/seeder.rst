@@ -2,7 +2,7 @@ Seeder
 ======
 
 .. NOTE::
-    The seeder doesn't support the groups feature yet.
+    The seeder does not support the groups feature yet.
 
 Laratrust comes with a database seeder, this seeder helps you filling the permissions for each role depending on the module, and creates one user for each role.
 
@@ -21,7 +21,7 @@ And in the ``database/seeds/DatabaseSeeder.php`` file you have to add to the ``r
     $this->call(LaratrustSeeder::class);
 
 .. NOTE::
-    If you haven't run ``php artisan vendor:publish`` you should run it in order to customize the roles, modules and permissions in each case.
+    If you **have not** run ``php artisan vendor:publish`` you should run it in order to customize the roles, modules and permissions in each case.
 
 After you run ``php artisan vendor:publish``, you will have a ``config/laratrust_seeder.php`` file and it looks like this:
 
