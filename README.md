@@ -19,4 +19,4 @@ Please note that this fork is not used on Zizaco's page at this time, nor is it 
 ## Installation, Configuration and Usage
 To install, configure and learn how to use laratrust please go to the [Documentation](http://laratrust.readthedocs.io/).
 
-> Laratrust now supports a groups implementation where roles can be attached to users within a group. I has not been released yet, but if you want to try it out that feature, please go to the dev-master version right [here](http://laratrust.readthedocs.io/en/master/index.html).
+> Laratrust now supports a groups implementation where roles can be attached to users within a group. It has not been released yet, but if you want to try it out that feature, please go to the dev-master version right [here](http://laratrust.readthedocs.io/en/master/index.html).
