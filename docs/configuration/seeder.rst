@@ -18,7 +18,7 @@ And in the ``database/seeds/DatabaseSeeder.php`` file you have to add to the ``r
     $this->call(LaratrustSeeder::class);
 
 .. NOTE::
-    If you haven't run ``php artisan vendor:publish`` you should run it in order to customize the roles, modules and permissions in each case.
+    If you **have not** run ``php artisan vendor:publish`` you should run it in order to customize the roles, modules and permissions in each case.
 
 After you run ``php artisan vendor:publish``, you will have a ``config/laratrust_seeder.php`` file and it looks like this:
 
@@ -61,4 +61,4 @@ With that in mind, you should arrange your roles, modules and permissions like t
 Permissions
 -----------
 
-In case that you don't want to use the ``c,r,u,d`` permissions, in the ``config/laratrust_seeder.php`` there the ``permissions_map`` where you can change the permissions mapping.
+In case that you do not want to use the ``c,r,u,d`` permissions, in the ``config/laratrust_seeder.php`` there the ``permissions_map`` where you can change the permissions mapping.

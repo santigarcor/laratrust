@@ -22,7 +22,7 @@ This command will generate the migrations, create the ``Role`` and ``Permission`
 .. NOTE::
     The user trait will be added to the Model configured in the ``auth.php`` file.
 
-And then don't forget to run::
+And then do not forget to run::
 
     composer dump-autoload
 
