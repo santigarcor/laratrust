@@ -43,7 +43,7 @@ class LaratrustServiceProvider extends ServiceProvider
      * @param  Factory $view
      * @return void
      */
-    public function boot(Factory $view)
+    public function boot()
     {
         // Register published configuration.
         $this->publishes([
@@ -52,7 +52,7 @@ class LaratrustServiceProvider extends ServiceProvider
         ]);
 
         if (class_exists('\Blade')) {
-            $this->registerBladeDirectives($view);
+            $this->registerBladeDirectives();
         }
     }
 
@@ -76,15 +76,9 @@ class LaratrustServiceProvider extends ServiceProvider
      * @param  Factory $view
      * @return void
      */
-    private function registerBladeDirectives(Factory $view)
+    private function registerBladeDirectives()
     {
-        // Fetch Blade Compiler off of the View\Factory
-        $bladeCompiler = $view->getEngineResolver()
-                              ->resolve('blade')
-                              ->getCompiler();
-
-        $directivesRegistrator = new LaratrustRegistersBladeDirectives($bladeCompiler);
-        $directivesRegistrator->handle($this->app->version());
+        (new LaratrustRegistersBladeDirectives)->handle($this->app->version());
     }
 
     /**

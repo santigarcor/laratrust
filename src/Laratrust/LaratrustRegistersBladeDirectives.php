@@ -2,6 +2,8 @@
 
 namespace Laratrust;
 
+use Illuminate\Support\Facades\Blade;
+
 /**
  * This class is the one in charge of registering
  * the blade directives making a difference
@@ -9,13 +11,6 @@ namespace Laratrust;
  */
 class LaratrustRegistersBladeDirectives
 {
-    protected $bladeCompiler;
-
-    public function __construct($bladeCompiler)
-    {
-        $this->bladeCompiler = $bladeCompiler;
-    }
-
     /**
      * Handles the registration of the blades directives
      * @param  string $laravelVersion
@@ -39,17 +34,17 @@ class LaratrustRegistersBladeDirectives
     protected function registerWithParenthesis()
     {
         // Call to Laratrust::hasRole
-        $this->bladeCompiler->directive('role', function ($expression) {
+        Blade::directive('role', function ($expression) {
             return "<?php if (app('laratrust')->hasRole({$expression})) : ?>";
         });
 
         // Call to Laratrust::can
-        $this->bladeCompiler->directive('permission', function ($expression) {
+        Blade::directive('permission', function ($expression) {
             return "<?php if (app('laratrust')->can({$expression})) : ?>";
         });
 
         // Call to Laratrust::ability
-        $this->bladeCompiler->directive('ability', function ($expression) {
+        Blade::directive('ability', function ($expression) {
             return "<?php if (app('laratrust')->ability({$expression})) : ?>";
         });
     }
@@ -61,17 +56,17 @@ class LaratrustRegistersBladeDirectives
     protected function registerWithoutParenthesis()
     {
         // Call to Laratrust::hasRole
-        $this->bladeCompiler->directive('role', function ($expression) {
+        Blade::directive('role', function ($expression) {
             return "<?php if (app('laratrust')->hasRole{$expression}) : ?>";
         });
 
         // Call to Laratrust::can
-        $this->bladeCompiler->directive('permission', function ($expression) {
+        Blade::directive('permission', function ($expression) {
             return "<?php if (app('laratrust')->can{$expression}) : ?>";
         });
 
         // Call to Laratrust::ability
-        $this->bladeCompiler->directive('ability', function ($expression) {
+        Blade::directive('ability', function ($expression) {
             return "<?php if (app('laratrust')->ability{$expression}) : ?>";
         });
     }
@@ -82,15 +77,15 @@ class LaratrustRegistersBladeDirectives
      */
     protected function registerClosingDirectives()
     {
-        $this->bladeCompiler->directive('endrole', function () {
+        Blade::directive('endrole', function () {
             return "<?php endif; // app('laratrust')->hasRole ?>";
         });
 
-        $this->bladeCompiler->directive('endpermission', function () {
+        Blade::directive('endpermission', function () {
             return "<?php endif; // app('laratrust')->can ?>";
         });
 
-        $this->bladeCompiler->directive('endability', function () {
+        Blade::directive('endability', function () {
             return "<?php endif; // app('laratrust')->ability ?>";
         });
     }
