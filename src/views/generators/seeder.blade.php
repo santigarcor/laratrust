@@ -69,11 +69,11 @@ class LaratrustSeeder extends Seeder
     public function truncateLaratrustTables()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
-        DB::table('permission_role')->truncate();
-        DB::table('role_user')->truncate();
-        \App\User::truncate();
-        \App\Role::truncate();
-        \App\Permission::truncate();
+        DB::table('{{ config('laratrust.permission_role_table') }}')->truncate();
+        DB::table('{{ config('laratrust.role_user_table') }}')->truncate();
+        \{{ $user }}::truncate();
+        \{{ $role }}::truncate();
+        \{{ $permission }}::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
     }
 }
