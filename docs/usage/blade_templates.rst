@@ -7,7 +7,7 @@ Three directives are available for use within your Blade templates. What you giv
 
     @role('admin')
         <p>This is visible to users with the admin role. Gets translated to 
-        \Laratrust::role('admin')</p>
+        \Laratrust::hasRole('admin')</p>
     @endrole
 
     @permission('manage-admins')
