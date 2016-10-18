@@ -55,5 +55,5 @@
             "tests/UserTest.php"
         ]
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev"
 }
