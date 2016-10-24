@@ -63,31 +63,33 @@ class LaratrustSeeder extends Seeder
         }
 
         // creating user with permissions
-        foreach ($userPermission as $key => $modules) {
-            foreach ($modules as $module => value) {
-                $permissions = explode(',', $value);
-                // Create default user for each permission set
-                $user = \{{ $user }}::create([
-                    'name' => ucfirst($key),
-                    'email' => $key.'@app.com',
-                    'password' => bcrypt('password'),
-                    'remember_token' => str_random(10),
-                ]);
-                foreach ($permissions as $p => $perm) {
-                    $permissionValue = $mapPermission->get($perm);
-
-                    $permission = \{{ $permission }}::firstOrCreate([
-                        'name' => $module . '-' . $permissionValue,
-                        'display_name' => ucfirst($permissionValue) . ' ' . ucfirst($module),
-                        'description' => ucfirst($permissionValue) . ' ' . ucfirst($module),
+        if (!empty($userPermission)) {
+            foreach ($userPermission as $key => $modules) {
+                foreach ($modules as $module => value) {
+                    $permissions = explode(',', $value);
+                    // Create default user for each permission set
+                    $user = \{{ $user }}::create([
+                        'name' => ucfirst($key),
+                        'email' => $key.'@app.com',
+                        'password' => bcrypt('password'),
+                        'remember_token' => str_random(10),
                     ]);
+                    foreach ($permissions as $p => $perm) {
+                        $permissionValue = $mapPermission->get($perm);
 
-                    $this->command->info('Creating Permission to '.$permissionValue.' for '. $module);
-                    
-                    if (!$user->hasPermission($permission->name)) {
-                        $user->attachPermission($permission);
-                    } else {
-                        $this->command->info($key . ': ' . $p . ' ' . $permissionValue . ' already exist');
+                        $permission = \{{ $permission }}::firstOrCreate([
+                            'name' => $module . '-' . $permissionValue,
+                            'display_name' => ucfirst($permissionValue) . ' ' . ucfirst($module),
+                            'description' => ucfirst($permissionValue) . ' ' . ucfirst($module),
+                        ]);
+
+                        $this->command->info('Creating Permission to '.$permissionValue.' for '. $module);
+                        
+                        if (!$user->can($permission->name)) {
+                            $user->attachPermission($permission);
+                        } else {
+                            $this->command->info($key . ': ' . $p . ' ' . $permissionValue . ' already exist');
+                        }
                     }
                 }
             }

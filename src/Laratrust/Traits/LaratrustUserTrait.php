@@ -408,7 +408,7 @@ trait LaratrustUserTrait
      * @param mixed $permission
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function attachPermission($permission, $group = null)
+    public function attachPermission($permission)
     {
         if (is_object($permission)) {
             $permission = $permission->getKey();
@@ -416,14 +416,6 @@ trait LaratrustUserTrait
 
         if (is_array($permission)) {
             $permission = $permission['id'];
-        }
-
-        if (!is_object($group) && $group != null) {
-            throw new InvalidArgumentException;
-        }
-        
-        if (!is_null($group)) {
-            $group = $group->getKey();
         }
 
         $this->permissions()->detach($permission);
@@ -439,7 +431,7 @@ trait LaratrustUserTrait
      * @param mixed $permission
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function detachPermission($permission, $group = null)
+    public function detachPermission($permission)
     {
         if (is_object($permission)) {
             $permission = $permission->getKey();
@@ -447,14 +439,6 @@ trait LaratrustUserTrait
 
         if (is_array($permission)) {
             $permission = $permission['id'];
-        }
-
-        if (!is_object($group) && $group != null) {
-            throw new InvalidArgumentException;
-        }
-
-        if (!is_null($group)) {
-            $group = $group->getKey();
         }
 
         $this->permissions()->detach($permission);
@@ -469,10 +453,10 @@ trait LaratrustUserTrait
      * @param mixed $permissions
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function attachPermissions($permissions, $group = null)
+    public function attachPermissions($permissions)
     {
         foreach ($permissions as $permission) {
-            $this->attachPermission($permission, $group);
+            $this->attachPermission($permission);
         }
 
         return $this;
@@ -484,14 +468,14 @@ trait LaratrustUserTrait
      * @param mixed $permissions
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function detachPermissions($permissions = null, $group = null)
+    public function detachPermissions($permissions = null)
     {
         if (!$permissions) {
             $permissions = $this->permissions()->get();
         }
         
         foreach ($permissions as $permission) {
-            $this->detachPermission($permission, $group);
+            $this->detachPermission($permission);
         }
 
         return $this;
