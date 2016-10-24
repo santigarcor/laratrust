@@ -59,6 +59,7 @@ class MakeSeederCommand extends Command
         $permission = Config::get('laratrust.permission', 'App\Permission');
         $role = Config::get('laratrust.role', 'App\Role');
         $rolePermissions = Config::get('laratrust.permission_role_table');
+        $userPermissions = Config::get('laratrust.permission_user_table');
         $roleUsers = Config::get('laratrust.role_user_table');
         $user   = Config::get('auth.providers.users.model', 'App\User');
 
@@ -69,6 +70,7 @@ class MakeSeederCommand extends Command
                 'permission',
                 'user',
                 'rolePermissions',
+                'userPermissions',
                 'roleUsers',
             ]))
             ->render();

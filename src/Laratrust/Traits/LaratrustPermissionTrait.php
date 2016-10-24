@@ -30,6 +30,21 @@ trait LaratrustPermissionTrait
     }
 
     /**
+     * Many-to-Many relations with user model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany(
+            Config::get('laratrust.user'),
+            Config::get('laratrust.permission_user_table'),
+            Config::get('laratrust.permission_foreign_key'),
+            Config::get('laratrust.user_foreign_key')
+        );
+    }
+
+    /**
      * Boot the permission model
      * Attach event listener to remove the many-to-many records when trying to delete
      * Will NOT delete any records if the permission model uses soft deletes.

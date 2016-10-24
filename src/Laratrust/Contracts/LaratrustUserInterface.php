@@ -20,6 +20,13 @@ interface LaratrustUserInterface
     public function roles();
 
     /**
+     * Many-to-Many relations with Role.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function permissions();
+
+    /**
      * Checks if the user has a role by its name.
      *
      * @param string|array $name       Role name or array of role names.
@@ -86,4 +93,36 @@ interface LaratrustUserInterface
      * @param string $group
      */
     public function detachRoles($roles, $group = null);
+
+    /**
+     * Alias to eloquent many-to-many relation's attach() method.
+     *
+     * @param mixed  $permission
+     * @param string $group
+     */
+    public function attachPermission($permission);
+    
+    /**
+     * Alias to eloquent many-to-many relation's detach() method.
+     *
+     * @param mixed  $permission
+     * @param string $group
+     */
+    public function detachPermission($permission);
+    
+    /**
+     * Attach multiple permissions to a user
+     *
+     * @param mixed  $permissions
+     * @param string $group
+     */
+    public function attachPermissions($permissions);
+    
+    /**
+     * Detach multiple permissions from a user
+     *
+     * @param mixed  $permissions
+     * @param string $group
+     */
+    public function detachPermissions($permissions);
 }

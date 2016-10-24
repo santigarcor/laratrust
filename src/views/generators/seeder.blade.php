@@ -16,6 +16,7 @@ class LaratrustSeeder extends Seeder
         $this->truncateLaratrustTables();
         
         $config = config('laratrust_seeder.role_structure');
+        $userPermission = config('laratrust_seeder.permission_structure');
         $mapPermission = collect(config('laratrust_seeder.permissions_map'));
 
         foreach ($config as $key => $modules) {
@@ -60,6 +61,38 @@ class LaratrustSeeder extends Seeder
             ]);
             $user->attachRole($role);
         }
+
+        // creating user with permissions
+        foreach ($userPermission as $key => $modules) {
+            foreach ($modules as $module => value) {
+                $permissions = explode(',', $value);
+                // Create default user for each permission set
+                $user = \{{ $user }}::create([
+                    'name' => ucfirst($key),
+                    'email' => $key.'@app.com',
+                    'password' => bcrypt('password'),
+                    'remember_token' => str_random(10),
+                ]);
+                foreach ($permissions as $p => $perm) {
+                    $permissionValue = $mapPermission->get($perm);
+
+                    $permission = \{{ $permission }}::firstOrCreate([
+                        'name' => $module . '-' . $permissionValue,
+                        'display_name' => ucfirst($permissionValue) . ' ' . ucfirst($module),
+                        'description' => ucfirst($permissionValue) . ' ' . ucfirst($module),
+                    ]);
+
+                    $this->command->info('Creating Permission to '.$permissionValue.' for '. $module);
+                    
+                    if (!$user->hasPermission($permission->name)) {
+                        $user->attachPermission($permission);
+                    } else {
+                        $this->command->info($key . ': ' . $p . ' ' . $permissionValue . ' already exist');
+                    }
+                }
+            }
+        }
+
     }
 
     /**
@@ -70,6 +103,7 @@ class LaratrustSeeder extends Seeder
     {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         DB::table('{{ config('laratrust.permission_role_table') }}')->truncate();
+        DB::table('{{ config('laratrust.permission_user_table') }}')->truncate();
         DB::table('{{ config('laratrust.role_user_table') }}')->truncate();
         \{{ $user }}::truncate();
         \{{ $role }}::truncate();
