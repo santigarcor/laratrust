@@ -175,8 +175,8 @@ class LaratrustUserAbilityTest extends UserTest
 
         $roleA->shouldReceive('cachedPermissions')->times(12)->andReturn($roleA->perms); 
         $roleB->shouldReceive('cachedPermissions')->times(8)->andReturn($roleB->perms); 
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(32)->andReturn('1440'); 
-        Cache::shouldReceive('remember')->times(32)->andReturn($user->roles);
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(48)->andReturn('1440'); 
+        Cache::shouldReceive('remember')->times(48)->andReturn($user->roles);
 
         $user->shouldReceive('hasRole')
             ->with(m::anyOf($userRoleNameA, $userRoleNameB), $group->name, m::anyOf(true, false))

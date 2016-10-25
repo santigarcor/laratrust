@@ -161,8 +161,8 @@ class LaratrustUserTest extends UserTest
         */
         $roleA->shouldReceive('cachedPermissions')->times(11)->andReturn($roleA->perms);
         $roleB->shouldReceive('cachedPermissions')->times(7)->andReturn($roleB->perms);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(11)->andReturn('1440');
-        Cache::shouldReceive('remember')->times(11)->andReturn($user->roles);
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(22)->andReturn('1440');
+        Cache::shouldReceive('remember')->times(22)->andReturn($user->roles);
 
         /*
         |------------------------------------------------------------
@@ -213,8 +213,8 @@ class LaratrustUserTest extends UserTest
 
         $roleA->shouldReceive('cachedPermissions')->times(0);
         $roleB->shouldReceive('cachedPermissions')->times(11)->andReturn($roleB->perms);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(11)->andReturn('1440');
-        Cache::shouldReceive('remember')->times(11)->andReturn($user->roles);
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(22)->andReturn('1440');
+        Cache::shouldReceive('remember')->times(22)->andReturn($user->roles);
 
         /*
         |------------------------------------------------------------
@@ -256,8 +256,8 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         $role->shouldReceive('cachedPermissions')->times(6)->andReturn($role->perms);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(6)->andReturn('1440');
-        Cache::shouldReceive('remember')->times(6)->andReturn($user->roles);
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(12)->andReturn('1440');
+        Cache::shouldReceive('remember')->times(12)->andReturn($user->roles);
 
         /*
         |------------------------------------------------------------
@@ -303,8 +303,8 @@ class LaratrustUserTest extends UserTest
         $group->shouldReceive('getKey')->times(6)->andReturn($group->id);
 
         $role->shouldReceive('cachedPermissions')->times(6)->andReturn($role->perms);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(6)->andReturn('1440');
-        Cache::shouldReceive('remember')->times(6)->andReturn($user->roles);
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(12)->andReturn('1440');
+        Cache::shouldReceive('remember')->times(12)->andReturn($user->roles);
 
         /*
         |------------------------------------------------------------
