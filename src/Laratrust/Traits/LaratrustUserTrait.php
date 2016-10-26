@@ -526,5 +526,6 @@ trait LaratrustUserTrait
     public function flushCache()
     {
         Cache::forget('laratrust_roles_for_user_' . $this->getKey());
+        Cache::forget('laratrust_permissions_for_user_' . $this->getKey());
     }
 }

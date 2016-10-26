@@ -832,6 +832,7 @@ class HasRoleUser extends Model implements LaratrustUserInterface
     use LaratrustUserTrait;
 
     public $roles;
+    public $permissions;
     public $primaryKey;
 
     public function __construct() {

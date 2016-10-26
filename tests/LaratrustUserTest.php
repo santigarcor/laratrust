@@ -359,7 +359,7 @@ class LaratrustUserTest extends UserTest
             ->andReturn('group_id')
             ->times(6);
         Cache::shouldReceive('forget')
-            ->times(3);
+            ->times(6);
 
         /*
         |------------------------------------------------------------
@@ -416,7 +416,7 @@ class LaratrustUserTest extends UserTest
             ->andReturn('group_id')
             ->times(6);
         Cache::shouldReceive('forget')
-            ->times(3);
+            ->times(6);
 
         /*
         |------------------------------------------------------------
@@ -473,7 +473,7 @@ class LaratrustUserTest extends UserTest
             ->andReturn('group_id')
             ->times(3);
         Cache::shouldReceive('forget')
-            ->times(3);
+            ->times(6);
 
         /*
         |------------------------------------------------------------
@@ -533,7 +533,7 @@ class LaratrustUserTest extends UserTest
             ->andReturn('group_id')
             ->times(3);
         Cache::shouldReceive('forget')
-            ->times(3);
+            ->times(6);
 
         /*
         |------------------------------------------------------------
