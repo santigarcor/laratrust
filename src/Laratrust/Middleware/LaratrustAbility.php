@@ -40,8 +40,11 @@ class LaratrustAbility
      * @param bool $validateAll
      * @return mixed
      */
-    public function handle($request, Closure $next, $roles, $permissions, $validateAll = false)
+    public function handle($request, Closure $next, $roles, $permissions, $group = null, $validateAll = false)
     {
+        $validateAll = is_bool($group) ? $group : $validateAll;
+        $group = is_bool($group) ? null : $group;
+
         if (!is_array($roles)) {
             $roles = explode(self::DELIMITER, $roles);
         }
@@ -55,7 +58,7 @@ class LaratrustAbility
         }
 
         if ($this->auth->guest() ||
-             !$request->user()->ability($roles, $permissions, [ 'validate_all' => $validateAll ])) {
+             !$request->user()->ability($roles, $permissions, $group, [ 'validate_all' => $validateAll ])) {
             return call_user_func(
                 Config::get('laratrust.middleware_handling', 'abort'),
                 Config::get('laratrust.middleware_params', '403')

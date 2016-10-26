@@ -38,13 +38,16 @@ class LaratrustPermission
      * @param  $permissions
      * @return mixed
      */
-    public function handle($request, Closure $next, $permissions)
+    public function handle($request, Closure $next, $permissions, $group = null, $requireAll = false)
     {
+        $requireAll = is_bool($group) ? $group : $requireAll;
+        $group = is_bool($group) ? null : $group;
+
         if (!is_array($permissions)) {
             $permissions = explode(self::DELIMITER, $permissions);
         }
 
-        if ($this->auth->guest() || !$request->user()->can($permissions)) {
+        if ($this->auth->guest() || !$request->user()->can($permissions, $group, $requireAll)) {
             return call_user_func(
                 Config::get('laratrust.middleware_handling', 'abort'),
                 Config::get('laratrust.middleware_params', '403')

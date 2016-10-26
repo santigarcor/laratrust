@@ -90,7 +90,7 @@ abstract class MiddlewareTest extends PHPUnit_Framework_TestCase
 
     protected function mockRequest()
     {
-        $user = m::mock('_mockedUser')->makePartial();
+        $user = m::mock('HasRoleUser')->makePartial();
 
         $request = m::mock('Illuminate\Http\Request')
             ->shouldReceive('user')

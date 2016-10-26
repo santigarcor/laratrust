@@ -38,13 +38,16 @@ class LaratrustRole
      * @param  $roles
      * @return mixed
      */
-    public function handle($request, Closure $next, $roles)
+    public function handle($request, Closure $next, $roles, $group = null, $requireAll = false)
     {
+        $requireAll = is_bool($group) ? $group : $requireAll;
+        $group = is_bool($group) ? null : $group;
+
         if (!is_array($roles)) {
             $roles = explode(self::DELIMITER, $roles);
         }
-  
-        if ($this->auth->guest() || !$request->user()->hasRole($roles)) {
+
+        if ($this->auth->guest() || !$request->user()->hasRole($roles, $group, $requireAll)) {
             return call_user_func(
                 Config::get('laratrust.middleware_handling', 'abort'),
                 Config::get('laratrust.middleware_params', '403')

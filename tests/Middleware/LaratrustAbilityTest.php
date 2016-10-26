@@ -30,7 +30,7 @@ class LaratrustAbilityTest extends MiddlewareTest
         Config::shouldReceive('get')->once()->with('laratrust.middleware_params', '403')
             ->andReturn('403');
 
-        $middleware->handle($request, function () {}, null, null, true);
+        $middleware->handle($request, function () {}, null, null, null, true);
 
         /*
         |------------------------------------------------------------
