@@ -13,6 +13,7 @@ class LaratrustSeeder extends Seeder
      */
     public function run()
     {
+        $this->command->info('Truncating User, Role and Permission tables');
         $this->truncateLaratrustTables();
         
         $config = config('laratrust_seeder.role_structure');
@@ -51,6 +52,7 @@ class LaratrustSeeder extends Seeder
                 }
             }
 
+            $this->command->info("Creating '{$key}' user");
             // Create default user for each role
             $user = \{{ $user }}::create([
                 'name' => ucfirst($key),
