@@ -306,6 +306,19 @@ trait LaratrustUserTrait
     }
 
     /**
+     * Sync roles to the user
+     * @param  array  $roles
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function syncRoles($roles = [])
+    {
+        $this->roles()->sync($roles);
+        $this->flushCache();
+
+        return $this;
+    }
+
+    /**
      * Checks if the user owns the thing
      * @param  Model $thing
      * @return boolean

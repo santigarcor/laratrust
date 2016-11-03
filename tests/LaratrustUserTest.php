@@ -1102,6 +1102,38 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
 
     }
 
+    public function testSyncRoles()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $rolesIds = [1, 2, 3];
+        $user = m::mock('HasRoleUser')->makePartial();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $user->shouldReceive('roles')
+            ->andReturn($user);
+        $user->shouldReceive('sync')
+            ->with($rolesIds)
+            ->once()->ordered();
+
+        Cache::shouldReceive('forget')
+            ->once();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds));
+    }
+
     function testUserOwnsaPostModel()
     {
         $user = m::mock('HasRoleUser')->makePartial();

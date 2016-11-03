@@ -30,6 +30,9 @@ Thanks to the ``LaratrustUserTrait`` this is as easy as:
    // or eloquent's original technique
    $user->roles()->attach($admin->id); // id only
 
+   // In case that you want to use the sync (Many to Many sync method) funtionality
+   $user->syncRoles([$admin->id, $owner->id]);
+
 Now we just need to add permissions to those Roles:
 
 .. code-block:: php

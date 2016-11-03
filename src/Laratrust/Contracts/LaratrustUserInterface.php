@@ -79,4 +79,16 @@ interface LaratrustUserInterface
      * @param mixed $roles
      */
     public function detachRoles($roles);
+
+    /**
+     * Sync multiple roles in a user
+     * @param  array $roles
+     */
+    public function syncRoles($roles);
+
+    /**
+     * Checks if the user owns the thing
+     * @param  mixed $thing
+     */
+    public function owns($thing);
 }
