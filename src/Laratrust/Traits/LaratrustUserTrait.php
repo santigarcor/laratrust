@@ -30,6 +30,20 @@ trait LaratrustUserTrait
             return $this->roles()->get();
         });
     }
+    /**
+     * Tries to return all the cached permissions of the user
+     * and if it can't bring the permissions from the cache,
+     * it would bring them back from the DB
+     * @return Illuminate\Database\Eloquent\Collection
+     */
+    public function cachedPermissions()
+    {
+        $cacheKey = 'laratrust_permissions_for_user_' . $this->getKey();
+
+        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
+            return $this->permissions()->get();
+        });
+    }
 
     /**
      * Many-to-Many relations with Role.
@@ -44,6 +58,21 @@ trait LaratrustUserTrait
             Config::get('laratrust.user_foreign_key'),
             Config::get('laratrust.role_foreign_key')
         )->withPivot(Config::get('laratrust.group_foreign_key'));
+    }
+
+    /**
+     * Many-to-Many relations with Permission.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function permissions()
+    {
+        return $this->belongsToMany(
+            Config::get('laratrust.permission'),
+            Config::get('laratrust.permission_user_table'),
+            Config::get('laratrust.user_foreign_key'),
+            Config::get('laratrust.permission_foreign_key')
+        );
     }
 
     /**
@@ -183,6 +212,12 @@ trait LaratrustUserTrait
                     ['name', $group]
                 )->first();
             $group = is_null($group) ? $group : $group->getKey();
+        }
+
+        foreach ($this->cachedPermissions() as $perm) {
+            if (str_is($permission, $perm->name)) {
+                return true;
+            }
         }
 
         foreach ($this->cachedRoles() as $role) {
@@ -367,6 +402,83 @@ trait LaratrustUserTrait
         }
 
         return $this;
+    }/**
+     * Alias to eloquent many-to-many relation's attach() method.
+     *
+     * @param mixed $permission
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function attachPermission($permission)
+    {
+        if (is_object($permission)) {
+            $permission = $permission->getKey();
+        }
+
+        if (is_array($permission)) {
+            $permission = $permission['id'];
+        }
+
+        $this->permissions()->detach($permission);
+        $this->permissions()->attach($permission);
+        $this->flushCache();
+
+        return $this;
+    }
+
+    /**
+     * Alias to eloquent many-to-many relation's detach() method.
+     *
+     * @param mixed $permission
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function detachPermission($permission)
+    {
+        if (is_object($permission)) {
+            $permission = $permission->getKey();
+        }
+
+        if (is_array($permission)) {
+            $permission = $permission['id'];
+        }
+
+        $this->permissions()->detach($permission);
+        $this->flushCache();
+
+        return $this;
+    }
+
+    /**
+     * Attach multiple permissions to a user
+     *
+     * @param mixed $permissions
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function attachPermissions($permissions)
+    {
+        foreach ($permissions as $permission) {
+            $this->attachPermission($permission);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Detach multiple permissions from a user
+     *
+     * @param mixed $permissions
+     * @return Illuminate\Database\Eloquent\Model
+     */
+    public function detachPermissions($permissions = null)
+    {
+        if (!$permissions) {
+            $permissions = $this->permissions()->get();
+        }
+        
+        foreach ($permissions as $permission) {
+            $this->detachPermission($permission);
+        }
+
+        return $this;
     }
 
     /**
@@ -395,11 +507,25 @@ trait LaratrustUserTrait
     }
 
     /**
+     * This scope allows to retrive users with an specific permission
+     * @param  Illuminate\Database\Eloquent\Builder $query
+     * @param  string $permission
+     * @return Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWherePermissionIs($query, $permission = '')
+    {
+        return $query->whereHas('permissions', function ($permissionQuery) use ($permission) {
+            $permissionQuery->where('name', $permission);
+        });
+    }
+
+    /**
      * Flush the user's cache
      * @return void
      */
     public function flushCache()
     {
         Cache::forget('laratrust_roles_for_user_' . $this->getKey());
+        Cache::forget('laratrust_permissions_for_user_' . $this->getKey());
     }
 }
