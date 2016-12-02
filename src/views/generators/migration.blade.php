@@ -64,9 +64,9 @@ class LaratrustSetupTables extends Migration
      */
     public function down()
     {
-        Schema::drop('{{ $laratrust['permission_role_table'] }}');
-        Schema::drop('{{ $laratrust['permissions_table'] }}');
-        Schema::drop('{{ $laratrust['role_user_table'] }}');
-        Schema::drop('{{ $laratrust['roles_table'] }}');
+        Schema::dropIfExists('{{ $laratrust['permission_role_table'] }}');
+        Schema::dropIfExists('{{ $laratrust['permissions_table'] }}');
+        Schema::dropIfExists('{{ $laratrust['role_user_table'] }}');
+        Schema::dropIfExists('{{ $laratrust['roles_table'] }}');
     }
 }
