@@ -47,6 +47,23 @@ Now we just need to add \ ``Permission``\s to those \ ``Role``\s:
 Without Groups
 --------------
 
+Permissions Assignment
+^^^^^^^^^^^^^^^^^^^^^^
+You can attach single permissions to an user, so in order to do it you only have to make:
+
+.. code-block:: php
+   $user = User::where('username', '=', 'michele')->first();
+
+   // permission attach alias
+   $user->attachPermission($createPost); // parameter can be an Permission object, array, or id
+
+   // if you want to attach multiple permissions
+   $user->attachPermissions([$createPost, $editUser]);
+
+   // To detach permissions you can do
+   $user->detachPermission($createPost]);   
+   $user->detachPermissions([$createPost, $editUser]);   
+
 Roles Assignment
 ^^^^^^^^^^^^^^^^
 
@@ -60,8 +77,15 @@ Thanks to the ``LaratrustUserTrait`` this is as easy as:
    // role attach alias
    $user->attachRole($admin); // parameter can be an Role object, array, or id
 
+   // multiple roles
+   $user->attachRoles([$admin, $owner]);
+
    // or eloquent's original technique
    $user->roles()->attach($admin->id); // id only
+
+   // if you want to detach roles you can do
+   $user->detachRole($admin);
+   $user->detachRoles([$admin, $owner]);
 
 Checking for Roles & Permissions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -211,6 +235,13 @@ With the group created to attach it to a user is as easy as:
    // First parameter can be a Role or an id
    // Second parameter must be a Group
    $user->attachRole($admin, $group);
+
+   // multiple roles
+   $user->attachRoles([$admin, $owner], $group);
+
+   // if you want to detach roles you can do
+   $user->detachRole($admin, $group);
+   $user->detachRoles([$admin, $owner], $group);
 
 Checking for Roles & Permissions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
