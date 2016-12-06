@@ -70,6 +70,16 @@ class LaratrustSeeder extends Seeder
      */
     public function truncateLaratrustTables()
     {
+@if (Config::get('database.default') == 'pgsql')
+        DB::table('{{ config('laratrust.permission_role_table') }}')->truncate();
+        DB::table('{{ config('laratrust.role_user_table') }}')->truncate();
+        $usersTable = (new \{{ $user }})->getTable();
+        $rolesTable = (new \{{ $role }})->getTable();
+        $permissionsTable = (new \{{ $permission }})->getTable();
+        DB::statement("TRUNCATE TABLE {$usersTable} CASCADE");
+        DB::statement("TRUNCATE TABLE {$rolesTable} CASCADE");
+        DB::statement("TRUNCATE TABLE {$permissionsTable} CASCADE");
+@elseif(Config::get('database.default') == 'mysql')
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         DB::table('{{ config('laratrust.permission_role_table') }}')->truncate();
         DB::table('{{ config('laratrust.role_user_table') }}')->truncate();
@@ -77,5 +87,7 @@ class LaratrustSeeder extends Seeder
         \{{ $role }}::truncate();
         \{{ $permission }}::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+@endif
+    
     }
 }
