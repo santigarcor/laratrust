@@ -8,7 +8,7 @@ Set the property values in the ``config/auth.php``. These values will be used by
 
 You can also publish the configuration for this package to further customize table names and model namespaces.
 
-Just use ``php artisan vendor:publish`` and a ``laratrust.php`` file will be created in your ``app/config`` directory.
+Use ``php artisan vendor:publish``, the ``laratrust.php`` and ``laratrust_seeder.php`` files will be created in your ``app/config`` directory.
 
 Automatic setup (Recommended)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

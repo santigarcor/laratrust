@@ -1,7 +1,10 @@
 Concepts
 ========
 
-Let's start by creating the following \ ``Role``\s and \ ``Permission``\s:
+Set things up
+--------------
+
+Let's start by creating the following \ ``Role``\s:
 
 .. code-block:: php
 
@@ -17,23 +20,7 @@ Let's start by creating the following \ ``Role``\s and \ ``Permission``\s:
    $admin->description  = 'User is allowed to manage and edit other users'; // optional
    $admin->save();
 
-Next, with both roles created let's assign them to the users.
-Thanks to the ``LaratrustUserTrait`` this is as easy as:
-
-.. code-block:: php
-
-   $user = User::where('username', '=', 'michele')->first();
-
-   // role attach alias
-   $user->attachRole($admin); // parameter can be an Role object, array, or id
-
-   // or eloquent's original technique
-   $user->roles()->attach($admin->id); // id only
-
-   // In case that you want to use the sync (Many to Many sync method) funtionality
-   $user->syncRoles([$admin->id, $owner->id]);
-
-Now we just need to add permissions to those Roles:
+Now we just need to add \ ``Permission``\s to those \ ``Role``\s:
 
 .. code-block:: php
 
@@ -57,8 +44,24 @@ Now we just need to add permissions to those Roles:
    $owner->attachPermissions([$createPost, $editUser]);
    // equivalent to $owner->permissions()->sync([$createPost->id, $editUser->id]);
 
+Roles Assignment
+----------------
+
+With both roles created let's assign them to the users.
+Thanks to the ``LaratrustUserTrait`` this is as easy as:
+
+.. code-block:: php
+
+   $user = User::where('username', '=', 'michele')->first();
+
+   // role attach alias
+   $user->attachRole($admin); // parameter can be an Role object, array, or id
+
+   // or eloquent's original technique
+   $user->roles()->attach($admin->id); // id only
+
 Checking for Roles & Permissions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------------
 
 Now we can check for roles and permissions simply by doing:
 
@@ -111,7 +114,7 @@ You can also use placeholders (wildcards) to check any matching permission by do
    $user->can('*_users'); // true
 
 User ability
-^^^^^^^^^^^^
+------------
 
 More advanced checking can be done using the awesome ``ability`` function.
 It takes in three parameters (roles, permissions, options):
@@ -181,7 +184,7 @@ The ``Laratrust`` class has a shortcut to ``ability()`` for the currently logged
    Auth::user()->ability('admin,owner', 'create-post,edit-user');
 
 Model's Ownership
-^^^^^^^^^^^^^^^^^
+-----------------
 
 If you need to check if the user owns a model you can use the user function ``owns``:
 

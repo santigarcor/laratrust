@@ -1,11 +1,7 @@
 Installation
 ============
 
-1. In order to install Laravel 5 Laratrust, just add the following to your composer.json. Then run ``composer update``::
-
-        "santigarcor/laratrust": "3.0.*"
-
-   or you can run the `composer require` command from your terminal::
+1. In order to install Laratrust in your Laravel project, just run the `composer require` command from your terminal::
 
         composer require "santigarcor/laratrust:3.0.*"
 
