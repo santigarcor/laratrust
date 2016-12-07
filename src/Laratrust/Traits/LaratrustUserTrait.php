@@ -28,7 +28,7 @@ trait LaratrustUserTrait
 
         return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
             $roles = $this->roles()->get()->each(function($role){
-              unset($role->relations);
+                unset($role->relations);
             });
             return $roles;
         });
