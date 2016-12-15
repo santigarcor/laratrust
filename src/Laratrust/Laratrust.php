@@ -84,7 +84,7 @@ class Laratrust
     /**
      * Get the currently authenticated user or null.
      *
-     * @return Illuminate\Auth\UserInterface|null
+     * @return \Illuminate\Auth\UserInterface|null
      */
     public function user()
     {
