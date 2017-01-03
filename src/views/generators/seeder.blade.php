@@ -67,7 +67,7 @@ class LaratrustSeeder extends Seeder
         // creating user with permissions
         if (!empty($userPermission)) {
             foreach ($userPermission as $key => $modules) {
-                foreach ($modules as $module => value) {
+                foreach ($modules as $module => $value) {
                     $permissions = explode(',', $value);
                     // Create default user for each permission set
                     $user = \{{ $user }}::create([
