@@ -82,4 +82,4 @@ To make a redirection in case the middleware check fails. You will need to chang
 .. code-block:: php
 
     'middleware_handling' => 'redirect',
-    'middleware_params'   => 'home',       // Change this to the route you need
+    'middleware_params'   => '/home',       // Change this to the route you need
