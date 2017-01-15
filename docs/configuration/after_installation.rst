@@ -4,7 +4,7 @@ After Installation
 Configuration Files
 ^^^^^^^^^^^^^^^^^^^
 
-Set the property values in the ``config/auth.php``. These values will be used by laratrust to refer to the correct user model.
+Set the proper values in the ``config/auth.php``. These values will be used by laratrust to refer to the user model.
 
 You can also publish the configuration for this package to further customize table names and model namespaces.
 
@@ -41,9 +41,11 @@ You may now run it with the artisan migrate command::
 
     php artisan migrate
 
-After the migration, four new tables will be present:
+After the migration, six new tables will be present:
 
 * ``roles`` — stores role records.
 * ``permissions`` — stores permission records.
+* ``groups`` — stores groups records. 
 * ``role_user`` — stores `many-to-many <https://laravel.com/docs/eloquent-relationships#many-to-many>`_ relations between roles, users and groups (*Laravel does not support ternary relationships so the user-role, user-group and role-group relationships are treated like many to many*).
 * ``permission_role`` — stores `many-to-many <https://laravel.com/docs/eloquent-relationships#many-to-many>`_ relations between roles and permissions.
+* ``permission_user`` — stores `many-to-many <https://laravel.com/docs/eloquent-relationships#many-to-many>`_ relations between users and permissions.

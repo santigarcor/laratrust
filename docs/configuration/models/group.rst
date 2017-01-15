@@ -1,7 +1,7 @@
 Group
 =====
 
-Create a Group model inside ``app/models/Group.php`` using the following example:
+Create a Group model inside ``app/Group.php`` using the following example:
 
 .. code-block:: php
 
