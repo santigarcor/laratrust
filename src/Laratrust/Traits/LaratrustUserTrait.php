@@ -132,6 +132,7 @@ trait LaratrustUserTrait
     {
         $requireAll = is_bool($group) ? $group : $requireAll;
         $group = is_bool($group) ? null : $group;
+        $groupForeignKey = Config::get('laratrust.group_foreign_key', 'group_id');
 
         if (is_array($name)) {
             if (empty($name)) {
@@ -163,7 +164,7 @@ trait LaratrustUserTrait
         }
 
         foreach ($this->cachedRoles() as $role) {
-            if ($role->name == $name && $role->pivot->group_id == $group) {
+            if ($role->name == $name && $role->pivot->$groupForeignKey == $group) {
                 return true;
             }
         }
@@ -184,6 +185,7 @@ trait LaratrustUserTrait
     {
         $requireAll = is_bool($group) ? $group : $requireAll;
         $group = is_bool($group) ? null : $group;
+        $groupForeignKey = Config::get('laratrust.group_foreign_key', 'group_id');
 
         if (is_array($permission)) {
             if (empty($permission)) {
@@ -222,7 +224,7 @@ trait LaratrustUserTrait
 
         foreach ($this->cachedRoles() as $role) {
             // Validate against the Permission table
-            if ($role->pivot->group_id != $group) {
+            if ($role->pivot->$groupForeignKey != $group) {
                 continue;
             }
 

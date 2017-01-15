@@ -169,6 +169,7 @@ class LaratrustUserAbilityTest extends UserTest
         |------------------------------------------------------------
         */
         Config::shouldReceive('get')->with('laratrust.group')->andReturn($group)->times(24);
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key', 'group_id')->andReturn('group_id')->times(32);
         $group->shouldReceive('where')->with('name', 'GroupA')->times(24)->andReturn($group);
         $group->shouldReceive('first')->times(24)->andReturn($group);
         $group->shouldReceive('getKey')->times(24)->andReturn($group->id);

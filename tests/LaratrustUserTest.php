@@ -76,6 +76,7 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         Config::shouldReceive('get')->with('cache.ttl', 60)->times(9)->andReturn('1440');
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key', 'group_id')->andReturn('group_id')->times(13);
         Cache::shouldReceive('remember')->times(9)->andReturn($user->roles);
 
         /*
@@ -113,6 +114,7 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         Config::shouldReceive('get')->with('laratrust.group')->times(10)->andReturn($group);
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key', 'group_id')->andReturn('group_id')->times(14);
         $group->shouldReceive('where')->with('name', 'GroupA')->times(10)->andReturn($group);
         $group->shouldReceive('first')->times(10)->andReturn($group);
         $group->shouldReceive('getKey')->times(10)->andReturn($group->id);
@@ -163,6 +165,7 @@ class LaratrustUserTest extends UserTest
         $roleB->shouldReceive('cachedPermissions')->times(7)->andReturn($roleB->perms);
         Config::shouldReceive('get')->with('cache.ttl', 60)->times(22)->andReturn('1440');
         Cache::shouldReceive('remember')->times(22)->andReturn($user->roles);
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key', 'group_id')->andReturn('group_id')->times(15);
 
         /*
         |------------------------------------------------------------
@@ -207,6 +210,7 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         Config::shouldReceive('get')->with('laratrust.group')->times(11)->andReturn($group);
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key', 'group_id')->andReturn('group_id')->times(15);
         $group->shouldReceive('where')->with('name', 'GroupA')->times(11)->andReturn($group);
         $group->shouldReceive('first')->times(11)->andReturn($group);
         $group->shouldReceive('getKey')->times(11)->andReturn($group->id);
@@ -258,6 +262,7 @@ class LaratrustUserTest extends UserTest
         $role->shouldReceive('cachedPermissions')->times(6)->andReturn($role->perms);
         Config::shouldReceive('get')->with('cache.ttl', 60)->times(12)->andReturn('1440');
         Cache::shouldReceive('remember')->times(12)->andReturn($user->roles);
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key', 'group_id')->andReturn('group_id')->times(8);
 
         /*
         |------------------------------------------------------------
@@ -298,6 +303,7 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         Config::shouldReceive('get')->with('laratrust.group')->times(6)->andReturn($group);
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key', 'group_id')->andReturn('group_id')->times(8);
         $group->shouldReceive('where')->with('name', 'GroupA')->times(6)->andReturn($group);
         $group->shouldReceive('first')->times(6)->andReturn($group);
         $group->shouldReceive('getKey')->times(6)->andReturn($group->id);
