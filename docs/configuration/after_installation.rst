@@ -4,7 +4,7 @@ After Installation
 Configuration Files
 ^^^^^^^^^^^^^^^^^^^
 
-Set the property values in the ``config/auth.php``. These values will be used by laratrust to refer to the correct user model.
+Set the proper values in the ``config/auth.php``. These values will be used by laratrust to refer to the user model.
 
 You can also publish the configuration for this package to further customize table names and model namespaces.
 

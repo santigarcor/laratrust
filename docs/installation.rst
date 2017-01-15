@@ -7,7 +7,7 @@ Installation
 
 2. Then in your ``config/app.php`` add the following to the providers array::
         
-    Laratrust\LaratrustServiceProvider::class
+    Laratrust\LaratrustServiceProvider::class,
 
 3. In the same ```config/app.php`` and add the following to the ``aliases`` array::
 

@@ -1,7 +1,7 @@
 Permission
 ==========
 
-Create a Permission model inside ``app/models/Permission.php`` using the following example:
+Create a Permission model inside ``app/Permission.php`` using the following example:
 
 .. code-block:: php
 
