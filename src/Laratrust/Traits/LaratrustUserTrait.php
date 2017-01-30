@@ -27,9 +27,7 @@ trait LaratrustUserTrait
         $cacheKey = 'laratrust_roles_for_user_' . $this->getKey();
 
         return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
-            return $this->roles()->get()->each(function ($role) {
-                $role->relations = [];
-            });
+            return $this->roles()->get();
         });
     }
 
