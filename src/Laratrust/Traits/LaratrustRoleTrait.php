@@ -24,7 +24,9 @@ trait LaratrustRoleTrait
         $cacheKey = 'laratrust_permissions_for_role_' . $this->getKey();
 
         return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
-            return $this->permissions()->get();
+            return $this->permissions()->get()->each(function ($permission) {
+                $permission->relations = [];
+            });
         });
     }
 
