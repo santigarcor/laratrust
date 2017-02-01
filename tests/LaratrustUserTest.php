@@ -155,7 +155,7 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
     }
 
 
-    public function testCanWithPlaceholderSupport ()
+    public function testCanWithPlaceholderSupport()
     {
         /*
         |------------------------------------------------------------
@@ -1099,7 +1099,6 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         |------------------------------------------------------------
         */
         $user->detachRoles();
-
     }
 
     public function testSyncRoles()
@@ -1134,7 +1133,7 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds));
     }
 
-    function testUserOwnsaPostModel()
+    public function testUserOwnsaPostModel()
     {
         $user = m::mock('HasRoleUser')->makePartial();
         $post = new stdClass();
@@ -1145,6 +1144,19 @@ class LaratrustUserTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($user->owns($post));
         $this->assertFalse($user->owns($post2));
+    }
+
+    public function testUserOwnsaPostModelCustomKey()
+    {
+        $user = m::mock('HasRoleUser')->makePartial();
+        $post = new stdClass();
+        $post->UserId = $user->getKey();
+
+        $post2 = new stdClass();
+        $post2->UserId = 9;
+
+        $this->assertTrue($user->owns($post, 'UserId'));
+        $this->assertFalse($user->owns($post2, 'UserId'));
     }
 
     protected function mockPermission($permName)
@@ -1176,7 +1188,8 @@ class HasRoleUser extends Model implements LaratrustUserInterface
     public $roles;
     public $primaryKey;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->primaryKey = 'id';
         $this->setAttribute('id', 4);
     }
@@ -1186,8 +1199,7 @@ class HasRoleUser extends Model implements LaratrustUserInterface
         return $this->id;
     }
 
-    public function belongsToMany($related, $table = NULL, $foreignKey = NULL, $otherKey = NULL, $relation = NULL)
+    public function belongsToMany($related, $table = null, $foreignKey = null, $otherKey = null, $relation = null)
     {
-
     }
 }

@@ -323,9 +323,9 @@ trait LaratrustUserTrait
      * @param  Model $thing
      * @return boolean
      */
-    public function owns($thing)
+    public function owns($thing, $foreignKeyName = null)
     {
-        $foreignKeyName = snake_case(get_class($this). 'Id');
+        $foreignKeyName = $foreignKeyName ?: snake_case(get_class($this). 'Id');
 
         return $thing->$foreignKeyName == $this->getKey();
     }

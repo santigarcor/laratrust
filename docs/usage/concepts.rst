@@ -38,30 +38,65 @@ Now we just need to add \ ``Permission``\s to those \ ``Role``\s:
    $editUser->description  = 'edit existing users'; // optional
    $editUser->save();
 
+Permissions Assignment & Removal
+--------------------------------
+By using the ``LaratrustRoleTrait`` we can do the following:
+   
+Assignment
+^^^^^^^^^^  
+
+.. code-block:: php
+
    $admin->attachPermission($createPost);
-   // equivalent to $admin->permissions()->sync([$createPost->id]);
+   // equivalent to $admin->permissions()->attach([$createPost->id]);
 
    $owner->attachPermissions([$createPost, $editUser]);
+   // equivalent to $owner->permissions()->attach([$createPost->id, $editUser->id]);
+
+   $owner->savePermissions([$createPost, $editUser]);
    // equivalent to $owner->permissions()->sync([$createPost->id, $editUser->id]);
 
-Roles Assignment
-----------------
+Removal
+^^^^^^^
+
+.. code-block:: php
+
+   $admin->detachPermission($createPost);
+   // equivalent to $admin->permissions()->detach([$createPost->id]);
+
+   $owner->detachPermissions([$createPost, $editUser]);
+   // equivalent to $owner->permissions()->detach([$createPost->id, $editUser->id]);
+
+Roles Assignment & Removal
+--------------------------
 
 With both roles created let's assign them to the users.
 Thanks to the ``LaratrustUserTrait`` this is as easy as:
 
+Assignment
+^^^^^^^^^^  
+
 .. code-block:: php
 
-   $user = User::where('username', '=', 'michele')->first();
-
-   // role attach alias
    $user->attachRole($admin); // parameter can be an Role object, array, or id
+   // equivalent to $user->roles()->attach([$admin->id]);
 
-   // or eloquent's original technique
-   $user->roles()->attach($admin->id); // id only
+   $user->attachRoles([$admin, $owner]); // parameter can be an Role object, array, or id
+   // equivalent to $user->roles()->attach([$admin->id, $owner->id]);
 
-   // In case that you want to use the sync (Many to Many sync method) funtionality 
-   $user->syncRoles([$admin->id, $owner->id]); 
+   $user->syncRoles([$admin->id, $owner->id]);
+   // equivalent to $user->roles()->sync([$admin->id]);
+
+Removal
+^^^^^^^
+
+.. code-block:: php
+
+   $user->detachRole($admin); // parameter can be an Role object, array, or id
+   // equivalent to $user->roles()->detach([$admin->id]);
+
+   $user->detachRoles([$admin, $owner]); // parameter can be an Role object, array, or id
+   // equivalent to $user->roles()->detach([$admin->id, $owner->id]);
 
 Checking for Roles & Permissions
 --------------------------------
@@ -124,6 +159,7 @@ It takes in three parameters (roles, permissions, options):
    
 * ``roles`` is a set of roles to check.
 * ``permissions`` is a set of permissions to check.
+* ``options`` is a set of options to change the method behavior.
 
 Either of the roles or permissions variable can be a comma separated string or array:
 
@@ -194,9 +230,26 @@ If you need to check if the user owns a model you can use the user function ``ow
 .. code-block:: php
    
    public function update (Post $post) {
-      if ($user->owns($post)) {
+      if ($user->owns($post)) { //This will check the 'user_id' inside the $post
          abort(403);
       }
 
       ...
    }
+
+If you want to change the foreign key name to check for, you can pass a second attribute to the method:
+
+.. code-block:: php
+   
+   public function update (Post $post) {
+      if ($user->owns($post, 'idUser')) { //This will check for 'idUser' inside the $post
+         abort(403);
+      }
+
+      ...
+   }
+
+Manually Clear the Cache
+________________________
+
+...
