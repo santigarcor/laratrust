@@ -321,6 +321,7 @@ trait LaratrustUserTrait
     /**
      * Checks if the user owns the thing
      * @param  Model $thing
+     * @param  string $foreignKeyName
      * @return boolean
      */
     public function owns($thing, $foreignKeyName = null)
