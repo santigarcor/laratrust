@@ -38,21 +38,47 @@ Now we just need to add \ ``Permission``\s to those \ ``Role``\s:
    $editUser->description  = 'edit existing users'; // optional
    $editUser->save();
 
-   $admin->savePermissions($createPost);
-   // equivalent to $admin->permissions()->sync([$createPost->id]);
+Role Permissions Assignment & Removal
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+By using the ``LaratrustRoleTrait`` we can do the following:
+   
+Assignment
+__________
+
+.. code-block:: php
+
+   $admin->attachPermission($createPost);
+   // equivalent to $admin->permissions()->attach([$createPost->id]);
+
+   $owner->attachPermissions([$createPost, $editUser]);
+   // equivalent to $owner->permissions()->attach([$createPost->id, $editUser->id]);
 
    $owner->savePermissions([$createPost, $editUser]);
    // equivalent to $owner->permissions()->sync([$createPost->id, $editUser->id]);
 
+Removal
+_______
+
+.. code-block:: php
+
+   $admin->detachPermission($createPost);
+   // equivalent to $admin->permissions()->detach([$createPost->id]);
+
+   $owner->detachPermissions([$createPost, $editUser]);
+   // equivalent to $owner->permissions()->detach([$createPost->id, $editUser->id]);
+
 Without Groups
 --------------
 
-Permissions Assignment
-^^^^^^^^^^^^^^^^^^^^^^
+User Permissions Assignment & Removal
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 You can attach single permissions to an user, so in order to do it you only have to make:
 
+Assignment
+__________
+
 .. code-block:: php
-   $user = User::where('username', '=', 'michele')->first();
 
    // permission attach alias
    $user->attachPermission($createPost); // parameter can be an Permission object, array, or id
@@ -60,32 +86,44 @@ You can attach single permissions to an user, so in order to do it you only have
    // if you want to attach multiple permissions
    $user->attachPermissions([$createPost, $editUser]);
 
-   // To detach permissions you can do
+Removal
+_______
+
+.. code-block:: php
+
    $user->detachPermission($createPost]);   
    $user->detachPermissions([$createPost, $editUser]);   
 
-Roles Assignment
-^^^^^^^^^^^^^^^^
+User Roles Assignment & Removal
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 With both roles created let's assign them to the users.
 Thanks to the ``LaratrustUserTrait`` this is as easy as:
 
+Assignment
+__________
+
 .. code-block:: php
 
-   $user = User::where('username', '=', 'michele')->first();
-
-   // role attach alias
    $user->attachRole($admin); // parameter can be an Role object, array, or id
+   // equivalent to $user->roles()->attach([$admin->id]);
 
-   // multiple roles
-   $user->attachRoles([$admin, $owner]);
+   $user->attachRoles([$admin, $owner]); // parameter can be an Role object, array, or id
+   // equivalent to $user->roles()->attach([$admin->id, $owner->id]);
 
-   // or eloquent's original technique
-   $user->roles()->attach($admin->id); // id only
+   $user->syncRoles([$admin->id, $owner->id]);
+   // equivalent to $user->roles()->sync([$admin->id]);
 
-   // if you want to detach roles you can do
-   $user->detachRole($admin);
-   $user->detachRoles([$admin, $owner]);
+Removal
+_______
+
+.. code-block:: php
+
+   $user->detachRole($admin); // parameter can be an Role object, array, or id
+   // equivalent to $user->roles()->detach([$admin->id]);
+
+   $user->detachRoles([$admin, $owner]); // parameter can be an Role object, array, or id
+   // equivalent to $user->roles()->detach([$admin->id, $owner->id]);
 
 Checking for Roles & Permissions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -148,6 +186,7 @@ It takes in three parameters (roles, permissions, options):
    
 * ``roles`` is a set of roles to check.
 * ``permissions`` is a set of permissions to check.
+* ``options`` is a set of options to change the method behavior.
 
 Either of the roles or permissions variable can be a comma separated string or array:
 
@@ -378,10 +417,22 @@ If you need to check if the user owns a model you can use the user function ``ow
 
 .. code-block:: php
    
-    public function update (Post $post) {
-        if ($user->owns($post)) {
-            abort(403);
-        }
+   public function update (Post $post) {
+      if ($user->owns($post)) { //This will check the 'user_id' inside the $post
+         abort(403);
+      }
 
-    ...
-    }
+      ...
+   }
+
+If you want to change the foreign key name to check for, you can pass a second attribute to the method:
+
+.. code-block:: php
+   
+   public function update (Post $post) {
+      if ($user->owns($post, 'idUser')) { //This will check for 'idUser' inside the $post
+         abort(403);
+      }
+
+      ...
+   }

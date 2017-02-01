@@ -745,4 +745,17 @@ class LaratrustUserTest extends UserTest
         $this->assertTrue($user->owns($post));
         $this->assertFalse($user->owns($post2));
     }
+
+    public function testUserOwnsaPostModelCustomKey()
+    {
+        $user = m::mock('HasRoleUser')->makePartial();
+        $post = new stdClass();
+        $post->UserId = $user->getKey();
+
+        $post2 = new stdClass();
+        $post2->UserId = 9;
+
+        $this->assertTrue($user->owns($post, 'UserId'));
+        $this->assertFalse($user->owns($post2, 'UserId'));
+    }
 }

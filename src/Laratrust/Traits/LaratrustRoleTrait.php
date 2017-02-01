@@ -127,14 +127,14 @@ trait LaratrustRoleTrait
     /**
      * Save the inputted permissions.
      *
-     * @param mixed $inputPermissions
+     * @param mixed $permissions
      *
      * @return array
      */
-    public function savePermissions($inputPermissions)
+    public function savePermissions($permissions)
     {
-        // If the inputPermissions ist empty it will delete all associations
-        $changes = $this->permissions()->sync($inputPermissions);
+        // If the permissions is empty it will delete all associations
+        $changes = $this->permissions()->sync($permissions);
         $this->flushCache();
 
         return $changes;
