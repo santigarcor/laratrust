@@ -80,7 +80,7 @@ class UpgradeCommand extends Command
 
     /**
      * Create the migration.
-     * 
+     *
      * @return bool
      */
     protected function createMigration()
