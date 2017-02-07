@@ -20,7 +20,7 @@ class MakeRoleCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'laratrust:make-role';
+    protected $name = 'laratrust:role';
 
     /**
      * The console command description.

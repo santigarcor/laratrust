@@ -20,7 +20,7 @@ class MakePermissionCommand extends GeneratorCommand
      *
      * @var string
      */
-    protected $name = 'laratrust:make-permission';
+    protected $name = 'laratrust:permission';
 
     /**
      * The console command description.

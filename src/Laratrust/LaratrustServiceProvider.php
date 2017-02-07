@@ -30,8 +30,8 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     protected $commands = [
         'Migration' => 'command.laratrust.migration',
-        'MakeRole' => 'command.laratrust.make-role',
-        'MakePermission' => 'command.laratrust.make-permission',
+        'MakeRole' => 'command.laratrust.role',
+        'MakePermission' => 'command.laratrust.permission',
         'AddLaratrustUserTraitUse' => 'command.laratrust.add-trait',
         'Setup' => 'command.laratrust.setup',
         'MakeSeeder' => 'command.laratrust.seeder'
@@ -120,14 +120,14 @@ class LaratrustServiceProvider extends ServiceProvider
     
     protected function registerMakeRoleCommand()
     {
-        $this->app->singleton('command.laratrust.make-role', function ($app) {
+        $this->app->singleton('command.laratrust.role', function ($app) {
             return new MakeRoleCommand($app['files']);
         });
     }
     
     protected function registerMakePermissionCommand()
     {
-        $this->app->singleton('command.laratrust.make-permission', function ($app) {
+        $this->app->singleton('command.laratrust.permission', function ($app) {
             return new MakePermissionCommand($app['files']);
         });
     }
