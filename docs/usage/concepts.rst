@@ -38,8 +38,8 @@ Now we just need to add \ ``Permission``\s to those \ ``Role``\s:
    $editUser->description  = 'edit existing users'; // optional
    $editUser->save();
 
-Permissions Assignment & Removal
---------------------------------
+Role Permissions Assignment & Removal
+-------------------------------------
 By using the ``LaratrustRoleTrait`` we can do the following:
    
 Assignment
@@ -67,8 +67,8 @@ Removal
    $owner->detachPermissions([$createPost, $editUser]);
    // equivalent to $owner->permissions()->detach([$createPost->id, $editUser->id]);
 
-Roles Assignment & Removal
---------------------------
+User Roles Assignment & Removal
+-------------------------------
 
 With both roles created let's assign them to the users.
 Thanks to the ``LaratrustUserTrait`` this is as easy as:
@@ -97,6 +97,36 @@ Removal
 
    $user->detachRoles([$admin, $owner]); // parameter can be an Role object, array, or id
    // equivalent to $user->roles()->detach([$admin->id, $owner->id]);
+
+User Permissions Assignment & Removal
+-------------------------------------
+
+You can attach single permissions to an user, so in order to do it you only have to make:
+
+Assignment
+^^^^^^^^^^
+
+.. code-block:: php
+
+   $user->attachPermission($editUser); // parameter can be an Permission object, array, or id
+   // equivalent to $user->permissions()->attach([$editUser->id]);
+
+   $user->attachPermissions([$editUser, $createPost]); // parameter can be an Permission object, array, or id
+   // equivalent to $user->permissions()->attach([$editUser->id, $createPost->id]);
+
+   $user->syncPermissions([$editUser->id, $createPost->id]);
+   // equivalent to $user->permissions()->sync([$editUser->id, createPost->id]);
+
+Removal
+^^^^^^^
+
+.. code-block:: php
+
+   $user->detachPermission($createPost); // parameter can be an Permission object, array, or id
+   // equivalent to $user->roles()->detach([$createPost->id]);
+
+   $user->detachPermissions([$createPost, $editUser]); // parameter can be an Permission object, array, or id
+   // equivalent to $user->roles()->detach([$createPost->id, $editUser->id]);
 
 Checking for Roles & Permissions
 --------------------------------
