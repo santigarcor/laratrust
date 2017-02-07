@@ -17,6 +17,7 @@ class LaratrustSeeder extends Seeder
         $this->truncateLaratrustTables();
         
         $config = config('laratrust_seeder.role_structure');
+        $userPermission = config('laratrust_seeder.permission_structure');
         $mapPermission = collect(config('laratrust_seeder.permissions_map'));
 
         foreach ($config as $key => $modules) {
@@ -61,6 +62,39 @@ class LaratrustSeeder extends Seeder
                 'remember_token' => str_random(10),
             ]);
             $user->attachRole($role);
+        }
+
+        // creating user with permissions
+        if (!empty($userPermission)) {
+            foreach ($userPermission as $key => $modules) {
+                foreach ($modules as $module => $value) {
+                    $permissions = explode(',', $value);
+                    // Create default user for each permission set
+                    $user = \{{ $user }}::create([
+                        'name' => ucfirst($key),
+                        'email' => $key.'@app.com',
+                        'password' => bcrypt('password'),
+                        'remember_token' => str_random(10),
+                    ]);
+                    foreach ($permissions as $p => $perm) {
+                        $permissionValue = $mapPermission->get($perm);
+
+                        $permission = \{{ $permission }}::firstOrCreate([
+                            'name' => $module . '-' . $permissionValue,
+                            'display_name' => ucfirst($permissionValue) . ' ' . ucfirst($module),
+                            'description' => ucfirst($permissionValue) . ' ' . ucfirst($module),
+                        ]);
+
+                        $this->command->info('Creating Permission to '.$permissionValue.' for '. $module);
+                        
+                        if (!$user->can($permission->name)) {
+                            $user->attachPermission($permission);
+                        } else {
+                            $this->command->info($key . ': ' . $p . ' ' . $permissionValue . ' already exist');
+                        }
+                    }
+                }
+            }
         }
     }
 

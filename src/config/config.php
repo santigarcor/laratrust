@@ -77,6 +77,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Laratrust permission_user Table
+    |--------------------------------------------------------------------------
+    |
+    | This is the permission_user table used by Laratrust to save relationship
+    | between permissions and users to the database.
+    |
+    */
+    'permission_user_table' => 'permission_user',
+
+    /*
+    |--------------------------------------------------------------------------
     | User Foreign key on Laratrust's role_user Table (Pivot)
     |--------------------------------------------------------------------------
     */
