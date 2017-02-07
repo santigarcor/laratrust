@@ -13,28 +13,28 @@ namespace Laratrust;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 
-class MigrationCommand extends Command
+class UpgradeCommand extends Command
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'laratrust:migration';
+    protected $name = 'laratrust:upgrade';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Creates a migration following the Laratrust specifications.';
+    protected $description = 'Creates a migration to upgrade laratrust from version 3.0 to 3.1.';
 
     /**
      * Suffix of the migration name.
      *
      * @var string
      */
-    protected $migrationSuffix = 'laratrust_setup_tables';
+    protected $migrationSuffix = 'laratrust_upgrade_tables';
 
     /**
      * Execute the console command.
@@ -45,24 +45,8 @@ class MigrationCommand extends Command
     {
         $this->laravel->view->addNamespace('laratrust', substr(__DIR__, 0, -8).'views');
 
-        $rolesTable          = Config::get('laratrust.roles_table');
-        $roleUserTable       = Config::get('laratrust.role_user_table');
-        $permissionsTable    = Config::get('laratrust.permissions_table');
-        $permissionRoleTable = Config::get('laratrust.permission_role_table');
-        $permissionUserTable = Config::get('laratrust.permission_user_table');
-
         $this->line('');
-        $this->info("Tables: $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable, $permissionUserTable");
-
-        $message = $this->generateMigrationMessage(
-            $rolesTable,
-            $roleUserTable,
-            $permissionsTable,
-            $permissionRoleTable,
-            $permissionUserTable
-        );
-
-        $this->comment($message);
+        $this->info("An upgrade migration will be created in database/migration directory");
 
         $existingMigrations = $this->alreadyExistingMigrations();
 
@@ -96,7 +80,7 @@ class MigrationCommand extends Command
 
     /**
      * Create the migration.
-     *
+     * 
      * @return bool
      */
     protected function createMigration()
@@ -112,7 +96,7 @@ class MigrationCommand extends Command
             'laratrust'
         );
 
-        $output = $this->laravel->view->make('laratrust::generators.migration')->with($data)->render();
+        $output = $this->laravel->view->make('laratrust::generators.upgrade-migration')->with($data)->render();
 
         if (!file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
             fwrite($fs, $output);
@@ -121,29 +105,6 @@ class MigrationCommand extends Command
         }
 
         return false;
-    }
-
-    /**
-     * Generate the message to display when running the
-     * console command showing what tables are going
-     * to be created.
-     *
-     * @param  string $rolesTable
-     * @param  string $roleUserTable
-     * @param  string $permissionsTable
-     * @param  string $permissionRoleTable
-     * @param  string $permissionUserTable
-     * @return string
-     */
-    protected function generateMigrationMessage(
-        $rolesTable,
-        $roleUserTable,
-        $permissionsTable,
-        $permissionRoleTable,
-        $permissionUserTable
-    ) {
-        return "A migration that creates '$rolesTable', '$roleUserTable', '$permissionsTable', '$permissionRoleTable', '$permissionUserTable'".
-            " tables will be created in database/migrations directory";
     }
 
     /**
@@ -156,9 +117,9 @@ class MigrationCommand extends Command
     protected function getExistingMigrationsWarning(array $existingMigrations)
     {
         if (count($existingMigrations) > 1) {
-            $base = "Laratrust migrations already exist.\nFollowing files were found: ";
+            $base = "Laratrust upgrade migrations already exist.\nFollowing files were found: ";
         } else {
-            $base = "Laratrust migration already exists.\nFollowing file was found: ";
+            $base = "Laratrust upgrade migration already exists.\nFollowing file was found: ";
         }
 
         return $base . array_reduce($existingMigrations, function ($carry, $fileName) {

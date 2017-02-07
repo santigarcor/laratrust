@@ -10,6 +10,7 @@ Table of Contents:
 
 .. toctree::
 
+    upgrade
     installation
     configuration/index
     usage/index

@@ -53,7 +53,7 @@ Assignment
    $owner->attachPermissions([$createPost, $editUser]);
    // equivalent to $owner->permissions()->attach([$createPost->id, $editUser->id]);
 
-   $owner->savePermissions([$createPost, $editUser]);
+   $owner->syncPermissions([$createPost, $editUser]);
    // equivalent to $owner->permissions()->sync([$createPost->id, $editUser->id]);
 
 Removal

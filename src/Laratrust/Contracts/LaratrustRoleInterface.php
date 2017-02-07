@@ -29,11 +29,11 @@ interface LaratrustRoleInterface
     /**
      * Save the inputted permissions.
      *
-     * @param mixed $inputPermissions
+     * @param mixed $permissions
      *
      * @return void
      */
-    public function savePermissions($inputPermissions);
+    public function syncPermissions($permissions);
     
      /**
      * Attach permission to current role.

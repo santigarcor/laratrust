@@ -131,7 +131,7 @@ trait LaratrustRoleTrait
      *
      * @return array
      */
-    public function savePermissions($permissions)
+    public function syncPermissions($permissions)
     {
         // If the permissions is empty it will delete all associations
         $changes = $this->permissions()->sync($permissions);

@@ -9,7 +9,7 @@ Installation
         
     Laratrust\LaratrustServiceProvider::class,
 
-3. In the same ```config/app.php`` and add the following to the ``aliases`` array::
+3. In the same ``config/app.php`` and add the following to the ``aliases`` array::
 
     'Laratrust'   => Laratrust\LaratrustFacade::class,
 
