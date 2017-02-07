@@ -370,7 +370,6 @@ trait LaratrustUserTrait
             $permission = $permission['id'];
         }
 
-        $this->permissions()->detach($permission);
         $this->permissions()->attach($permission);
         $this->flushCache();
 
@@ -438,7 +437,7 @@ trait LaratrustUserTrait
      * @param  array  $permissions
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function syncPermissinos($permissions = [])
+    public function syncPermissions($permissions = [])
     {
         $this->permissions()->sync($permissions);
         $this->flushCache();
