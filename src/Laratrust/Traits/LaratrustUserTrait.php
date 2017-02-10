@@ -160,12 +160,12 @@ trait LaratrustUserTrait
                 return true;
             }
 
-            foreach ($permission as $permName) {
-                $hasPerm = $this->can($permName);
+            foreach ($permission as $permissionName) {
+                $hasPermission = $this->can($permissionName);
 
-                if ($hasPerm && !$requireAll) {
+                if ($hasPermission && !$requireAll) {
                     return true;
-                } elseif (!$hasPerm && $requireAll) {
+                } elseif (!$hasPermission && $requireAll) {
                     return false;
                 }
             }
@@ -183,7 +183,6 @@ trait LaratrustUserTrait
         }
 
         foreach ($this->cachedRoles() as $role) {
-            // Validate against the Permission table
             foreach ($role->cachedPermissions() as $perm) {
                 if (str_is($permission, $perm->name)) {
                     return true;

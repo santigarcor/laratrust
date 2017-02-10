@@ -91,15 +91,15 @@ trait LaratrustRoleTrait
     /**
      * Checks if the role has a permission by its name.
      *
-     * @param string|array $name       Permission name or array of permission names.
-     * @param bool         $requireAll All permissions in the array are required.
+     * @param string|array $permission       Permission name or array of permission names.
+     * @param bool         $requireAll       All permissions in the array are required.
      *
      * @return bool
      */
-    public function hasPermission($name, $requireAll = false)
+    public function hasPermission($permission, $requireAll = false)
     {
-        if (is_array($name)) {
-            foreach ($name as $permissionName) {
+        if (is_array($permission)) {
+            foreach ($permission as $permissionName) {
                 $hasPermission = $this->hasPermission($permissionName);
 
                 if ($hasPermission && !$requireAll) {
@@ -115,8 +115,8 @@ trait LaratrustRoleTrait
             return $requireAll;
         }
 
-        foreach ($this->cachedPermissions() as $permission) {
-            if ($permission->name == $name) {
+        foreach ($this->cachedPermissions() as $perm) {
+            if (str_is($permission, $perm->name)) {
                 return true;
             }
         }
