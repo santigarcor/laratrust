@@ -297,7 +297,7 @@ trait LaratrustUserTrait
         if (!$roles) {
             $roles = $this->roles()->get();
         }
-        
+
         foreach ($roles as $role) {
             $this->detachRole($role);
         }
