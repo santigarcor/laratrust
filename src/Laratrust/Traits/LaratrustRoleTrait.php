@@ -149,15 +149,7 @@ trait LaratrustRoleTrait
      */
     public function attachPermission($permission)
     {
-        if (is_object($permission)) {
-            $permission = $permission->getKey();
-        }
-
-        if (is_array($permission)) {
-            $permission = $permission['id'];
-        }
-
-        $this->permissions()->attach($permission);
+        $this->permissions()->attach($this->getIdFor($permission));
         $this->flushCache();
 
         return $this;
@@ -172,15 +164,7 @@ trait LaratrustRoleTrait
      */
     public function detachPermission($permission)
     {
-        if (is_object($permission)) {
-            $permission = $permission->getKey();
-        }
-
-        if (is_array($permission)) {
-            $permission = $permission['id'];
-        }
-
-        $this->permissions()->detach($permission);
+        $this->permissions()->detach($this->getIdFor($permission));
         $this->flushCache();
 
         return $this;
@@ -225,5 +209,22 @@ trait LaratrustRoleTrait
     public function flushCache()
     {
         Cache::forget('laratrust_permissions_for_role_' . $this->getKey());
+    }
+
+    /**
+     * @param $permission
+     * @return mixed
+     */
+    private function getIdFor($permission)
+    {
+        if (is_object($permission)) {
+            $permission = $permission->getKey();
+        }
+
+        if (is_array($permission)) {
+            $permission = $permission['id'];
+        }
+
+        return $permission;
     }
 }
