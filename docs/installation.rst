@@ -13,7 +13,11 @@ Installation
 
     'Laratrust'   => Laratrust\LaratrustFacade::class,
 
-4. If you are going to use :doc:`usage/middleware` (requires Laravel 5.1 or later) you also need to add the following to ``routeMiddleware`` array in ``app/Http/Kernel.php``::
+4. Run the next command to publish all the configuration files::
+    
+    php artisan vendor:publish --tag="laratrust"
+
+5. If you are going to use :doc:`usage/middleware` (requires Laravel 5.1 or later) you also need to add the following to ``routeMiddleware`` array in ``app/Http/Kernel.php``::
 
     'role' => \Laratrust\Middleware\LaratrustRole::class,
     'permission' => \Laratrust\Middleware\LaratrustPermission::class,

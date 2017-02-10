@@ -18,9 +18,9 @@ And in the ``database/seeds/DatabaseSeeder.php`` file you have to add to the ``r
     $this->call(LaratrustSeeder::class);
 
 .. NOTE::
-    If you **have not** run ``php artisan vendor:publish`` you should run it in order to customize the roles, modules and permissions in each case.
+    If you **have not** run ``php artisan vendor:publish --tag="laratrust"`` you should run it in order to customize the roles, modules and permissions in each case.
 
-After you run ``php artisan vendor:publish``, you will have a ``config/laratrust_seeder.php`` file and it looks like this:
+Your ``config/laratrust_seeder.php`` file looks like this:
 
 .. code-block:: php
 
@@ -39,10 +39,15 @@ After you run ``php artisan vendor:publish``, you will have a ``config/laratrust
                 'profile' => 'r,u'
            ],
        ],
+       'permission_structure' => [
+           'cru_user' => [
+               'profile' => 'c,r,u'
+           ],
+       ],
        ...
     ];
 
-To understand the file you must know:
+To understand the ``role_structure`` you must know:
 
 * The first level is the roles.
 * The second level is the modules.
@@ -53,9 +58,29 @@ With that in mind, you should arrange your roles, modules and permissions like t
 .. code-block:: php
 
     return [
-       'role' => [
-            'module' => 'permissions',
-       ],
+       'role_structure' => [
+           'role' => [
+                'module' => 'permissions',
+           ],
+       ]
+    ];
+
+To understand the ``permission_structure`` you must know:
+
+* The first level is the users.
+* The second level is the modules.
+* The second level assignments are the permissions.
+
+With that in mind, you should arrange your users, modules and permissions like this:
+
+.. code-block:: php
+
+    return [
+       'permission_structure' => [
+           'user' => [
+                'module' => 'permissions',
+           ],
+       ]
     ];
 
 Permissions
