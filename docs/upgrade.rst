@@ -15,7 +15,7 @@ In order to upgrade from Laratrust 3.0 to 3.1 you have to follow these steps:
 
 4. Run ``php artisan laratrust:upgrade`` to create the migration with the database upgrade.
 
-5. Run ``php artisan migrate`` to run the migration created in the las step.
+5. Run ``php artisan migrate`` to apply the migration created in the previous step.
 
 6. If you use the ``savePermissions`` method in your code, change it to ``syncPermissions``.
 

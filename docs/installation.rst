@@ -3,7 +3,7 @@ Installation
 
 1. In order to install Laratrust in your Laravel project, just run the `composer require` command from your terminal::
 
-        composer require "santigarcor/laratrust:3.0.*"
+        composer require "santigarcor/laratrust:3.1.*"
 
 2. Then in your ``config/app.php`` add the following to the providers array::
         
