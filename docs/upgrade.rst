@@ -5,7 +5,7 @@ In order to upgrade from Laratrust 3.0 to 3.1 you have to follow these steps:
 
 1. Change your ``composer.json`` to require the 3.1 version of laratrust::
     
-    "santigarcor/laratrust": "3.1.*",
+    "santigarcor/laratrust": "3.1.*"
 
 2. Run ``composer update`` to update the source code.
 
