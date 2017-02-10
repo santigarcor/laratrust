@@ -270,7 +270,6 @@ trait LaratrustUserTrait
      */
     public function attachRole($role)
     {
-
         $this->roles()->attach($this->getIdFor($role));
         $this->flushCache();
 
