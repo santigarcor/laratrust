@@ -121,7 +121,14 @@ class LaratrustSeeder extends Seeder
         \{{ $role }}::truncate();
         \{{ $permission }}::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
+@elseif(Config::get('database.default') == 'sqlsrv')
+        DB::statement('EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all"');
+        DB::table('{{ config('laratrust.permission_role_table') }}')->truncate();
+        DB::table('{{ config('laratrust.role_user_table') }}')->truncate();
+        \{{ $user }}::truncate();
+        \{{ $role }}::truncate();
+        \{{ $permission }}::truncate();
+        DB::statement('EXEC sp_msforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all"');
 @endif
-    
     }
 }
