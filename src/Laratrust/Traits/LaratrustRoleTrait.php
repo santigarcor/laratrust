@@ -71,7 +71,7 @@ trait LaratrustRoleTrait
             $role->flushCache();
             return true;
         };
-        
+
         // If the role doesn't use SoftDeletes
         if (method_exists(Config::get('laratrust.role'), 'restored')) {
             static::restored($flushCache);
@@ -87,7 +87,7 @@ trait LaratrustRoleTrait
             }
         });
     }
-    
+
     /**
      * Checks if the role has a permission by its name.
      *
