@@ -270,15 +270,7 @@ trait LaratrustUserTrait
      */
     public function attachRole($role)
     {
-        if (is_object($role)) {
-            $role = $role->getKey();
-        }
-
-        if (is_array($role)) {
-            $role = $role['id'];
-        }
-
-        $this->roles()->attach($role);
+        $this->roles()->attach($this->getIdFor($role));
         $this->flushCache();
 
         return $this;
@@ -292,15 +284,7 @@ trait LaratrustUserTrait
      */
     public function detachRole($role)
     {
-        if (is_object($role)) {
-            $role = $role->getKey();
-        }
-
-        if (is_array($role)) {
-            $role = $role['id'];
-        }
-
-        $this->roles()->detach($role);
+        $this->roles()->detach($this->getIdFor($role));
         $this->flushCache();
 
         return $this;
@@ -423,7 +407,7 @@ trait LaratrustUserTrait
         if (!$permissions) {
             $permissions = $this->permissions()->get();
         }
-        
+
         foreach ($permissions as $permission) {
             $this->detachPermission($permission);
         }
@@ -478,5 +462,22 @@ trait LaratrustUserTrait
     {
         Cache::forget('laratrust_roles_for_user_' . $this->getKey());
         Cache::forget('laratrust_permissions_for_user_' . $this->getKey());
+    }
+
+    /**
+     * @param $role
+     * @return mixed
+     */
+    private function getIdFor($role)
+    {
+        if (is_object($role)) {
+            $role = $role->getKey();
+        }
+
+        if (is_array($role)) {
+            $role = $role['id'];
+        }
+
+        return $role;
     }
 }
