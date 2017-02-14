@@ -12,6 +12,7 @@ namespace Laratrust\Traits;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
+use InvalidArgumentException;
 
 trait LaratrustRoleTrait
 {
@@ -137,7 +138,7 @@ trait LaratrustRoleTrait
         $changes = $this->permissions()->sync($permissions);
         $this->flushCache();
 
-        return $changes;
+        return $this;
     }
 
     /**
@@ -193,8 +194,12 @@ trait LaratrustRoleTrait
      *
      * @return void
      */
-    public function detachPermissions($permissions)
+    public function detachPermissions($permissions = null)
     {
+        if (!$permissions) {
+            $permissions = $this->permissions()->get();
+        }
+
         foreach ($permissions as $permission) {
             $this->detachPermission($permission);
         }
@@ -218,13 +223,15 @@ trait LaratrustRoleTrait
     private function getIdFor($permission)
     {
         if (is_object($permission)) {
-            $permission = $permission->getKey();
+            return $permission->getKey();
+        } elseif (is_int($permission)) {
+            return $permission;
+        } elseif (is_array($permission)) {
+            return $permission['id'];
         }
 
-        if (is_array($permission)) {
-            $permission = $permission['id'];
-        }
-
-        return $permission;
+        throw new InvalidArgumentException(
+            'getIdFor function only accepts an integer, a Model object or an array with an "id" key'
+        );
     }
 }

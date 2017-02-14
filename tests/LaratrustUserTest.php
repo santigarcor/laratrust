@@ -474,7 +474,6 @@ class LaratrustUserTest extends UserTest
         $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds));
     }
 
-    
     public function testAttachPermission()
     {
         /*
@@ -716,11 +715,13 @@ class LaratrustUserTest extends UserTest
     public function testUserOwnsaPostModel()
     {
         $user = m::mock('HasRoleUser')->makePartial();
+        $className = snake_case(get_class($user)) . '_id';
+        
         $post = new stdClass();
-        $post->mockery_14__has_role_user_id = $user->getKey();
+        $post->$className = $user->getKey();
 
         $post2 = new stdClass();
-        $post2->mockery_14__has_role_user_id = 9;
+        $post2->$className = 9;
 
         $this->assertTrue($user->owns($post));
         $this->assertFalse($user->owns($post2));
