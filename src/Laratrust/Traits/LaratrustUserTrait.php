@@ -420,7 +420,8 @@ trait LaratrustUserTrait
      */
     public function owns($thing, $foreignKeyName = null)
     {
-        $foreignKeyName = $foreignKeyName ?: snake_case(get_class($this). 'Id');
+        $className = (new \ReflectionClass($this))->getShortName();
+        $foreignKeyName = $foreignKeyName ?: snake_case($className . 'Id');
 
         return $thing->$foreignKeyName == $this->getKey();
     }
