@@ -5,6 +5,7 @@
 [![Build Status](https://travis-ci.org/santigarcor/laratrust.svg?branch=master)](https://travis-ci.org/santigarcor/laratrust)
 [![Latest Stable Version](https://poser.pugx.org/santigarcor/laratrust/v/stable)](https://packagist.org/packages/santigarcor/laratrust)
 [![Total Downloads](https://poser.pugx.org/santigarcor/laratrust/downloads)](https://packagist.org/packages/santigarcor/laratrust)
+[![Coverage Status](https://coveralls.io/repos/github/santigarcor/laratrust/badge.svg)](https://coveralls.io/github/santigarcor/laratrust)
 [![StyleCI](https://styleci.io/repos/59691202/shield)](https://styleci.io/repos/59691202)
 [![License](https://poser.pugx.org/santigarcor/laratrust/license)](https://packagist.org/packages/santigarcor/laratrust)
 
