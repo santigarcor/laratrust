@@ -2,12 +2,9 @@
 
 use Laratrust\Contracts\LaratrustUserInterface;
 use Laratrust\Traits\LaratrustUserTrait;
-use Illuminate\Cache\ArrayStore;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
-use Laratrust\Permission;
-use Laratrust\Role;
 use Mockery as m;
 
 class LaratrustUserTest extends UserTest
@@ -112,6 +109,7 @@ class LaratrustUserTest extends UserTest
         | Assertion
         |------------------------------------------------------------
         */
+        $this->assertTrue($user->hasRole([]));
         $this->assertTrue($user->hasRole('RoleA'));
         $this->assertTrue($user->hasRole('RoleB'));
         $this->assertFalse($user->hasRole('RoleC'));
@@ -170,6 +168,7 @@ class LaratrustUserTest extends UserTest
         | Assertion
         |------------------------------------------------------------
         */
+        $this->assertTrue($user->can([]));
         $this->assertTrue($user->can('manage_a'));
         $this->assertTrue($user->can('manage_b'));
         $this->assertTrue($user->can('manage_c'));
@@ -475,6 +474,7 @@ class LaratrustUserTest extends UserTest
         $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds));
     }
 
+    
     public function testAttachPermission()
     {
         /*
@@ -521,6 +521,8 @@ class LaratrustUserTest extends UserTest
         $this->assertInstanceOf('HasRoleUser', $result);
         $result = $user->attachPermission(3);
         $this->assertInstanceOf('HasRoleUser', $result);
+        $this->setExpectedException(InvalidArgumentException::class);
+        $user->attachPermission(true);
     }
 
     public function testDetachPermission()
@@ -637,6 +639,80 @@ class LaratrustUserTest extends UserTest
         $this->assertInstanceOf('HasRoleUser', $result);
     }
 
+
+    public function testDetachAllPermissions()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $permissionA = $this->mockRole('PermissionA');
+        $permissionB = $this->mockRole('PermissionB');
+
+        $user = m::mock('HasRoleUser')->makePartial();
+        $user->permissions = [$permissionA, $permissionB];
+
+        $relationship = m::mock('BelongsToMany');
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Config::shouldReceive('get')->with('laratrust.permission')->once()->andReturn('App\Permission');
+        Config::shouldReceive('get')->with('laratrust.permission_user_table')->once()->andReturn('permission_user');
+        Config::shouldReceive('get')->with('laratrust.user_foreign_key')->once()->andReturn('user_id');
+        Config::shouldReceive('get')->with('laratrust.permission_foreign_key')->once()->andReturn('permission_id');
+
+        $relationship->shouldReceive('get')
+                     ->andReturn($user->permissions)->once();
+
+        $user->shouldReceive('belongsToMany')
+                    ->andReturn($relationship)->once();
+
+        $user->shouldReceive('detachPermission')->twice();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $user->detachPermissions();
+    }
+
+    public function testSyncPermissions()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $permissionsIds = [1, 2, 3];
+        $user = m::mock('HasRoleUser')->makePartial();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $user->shouldReceive('permissions')
+            ->andReturn($user);
+        $user->shouldReceive('sync')
+            ->with($permissionsIds)
+            ->once()->ordered();
+
+        Cache::shouldReceive('forget')
+            ->twice();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertInstanceOf('HasRoleUser', $user->syncPermissions($permissionsIds));
+    }
+
     public function testUserOwnsaPostModel()
     {
         $user = m::mock('HasRoleUser')->makePartial();
@@ -661,6 +737,20 @@ class LaratrustUserTest extends UserTest
 
         $this->assertTrue($user->owns($post, 'UserId'));
         $this->assertFalse($user->owns($post2, 'UserId'));
+    }
+
+    public function testScopeWhereRoleIs()
+    {
+        $query = m::mock();
+
+        $query->shouldReceive('whereHas')
+            ->with('roles', m::any())
+            ->once()
+            ->andReturn($query);
+
+        $user = m::mock('HasRoleUser')->makePartial();
+
+        $this->assertInstanceOf(get_class($query), $user->scopeWhereRoleIs($query, 'admin'));
     }
 }
 

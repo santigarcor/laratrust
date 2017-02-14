@@ -711,5 +711,6 @@ class LaratrustUserAbilityTest extends UserTest {
         $this->assertFalse(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['return_type' => 'array']));
         $this->assertFalse(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['return_type' => 'both']));
         $this->assertTrue(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['return_type' => 'potato']));
+        $this->assertTrue(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['validate_all' => 'potato']));
     }
 }

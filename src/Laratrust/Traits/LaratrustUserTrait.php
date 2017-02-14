@@ -449,19 +449,22 @@ trait LaratrustUserTrait
     }
 
     /**
-     * @param $object
-     * @return mixed
+     * Gets the it from an array or object
+     * @param  mixed $object
+     * @return int
      */
     private function getIdFor($object)
     {
         if (is_object($object)) {
-            $object = $object->getKey();
+            return $object->getKey();
+        } elseif (is_array($object)) {
+            return $object['id'];
+        } elseif (is_int($object)) {
+            return $object;
         }
 
-        if (is_array($object)) {
-            $object = $object['id'];
-        }
-
-        return $object;
+        throw new InvalidArgumentException(
+            'getIdFor function only accepts an integer, a Model object or an array with an "id" key'
+        );
     }
 }
