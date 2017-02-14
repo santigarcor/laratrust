@@ -37,10 +37,9 @@
         "kkszymanowski/traitor": "^0.2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.1",
+        "phpunit/phpunit": "~4.0",
         "mockery/mockery": "~0.9",
-        "illuminate/database": "~5.0",
-        "squizlabs/php_codesniffer": "2.*"
+        "illuminate/database": "~5.0"
     },
     "autoload": {
         "classmap": [
@@ -56,5 +55,9 @@
             "tests/UserTest.php"
         ]
     },
+    "config": {
+        "sort-packages": true
+    },
+    "prefer-stable": true,
     "minimum-stability": "dev"
 }

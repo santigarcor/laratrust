@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Config;
 use Laratrust\Middleware\LaratrustAbility;
 use Mockery as m;
 
-class LaratrustAbilityTest extends MiddlewareTest
+class MiddlewareLaratrustAbilityTest extends MiddlewareTest
 {
     public function testHandle_IsGuestWithNoAbility_ShouldAbort403()
     {
