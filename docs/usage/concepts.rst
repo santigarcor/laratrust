@@ -279,7 +279,14 @@ If you want to change the foreign key name to check for, you can pass a second a
       ...
    }
 
-Manually Clear the Cache
-________________________
+The ``Laratrust`` class has a shortcut to ``owns()`` method for the currently logged in user:
 
-...
+.. code-block:: php
+
+   Laratrust::owns($post);
+   Laratrust::owns($post, 'idUser');
+
+   // is identical to
+
+   Auth::user()->owns($post);
+   Auth::user()->owns($post, 'idUser');
