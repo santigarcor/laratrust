@@ -93,7 +93,7 @@ class LaratrustRoleTest extends UserTest
         $permA = $this->mockPermission('PermissionA');
         $permB = $this->mockPermission('PermissionB');
 
-        $role = new RoleTestClass();
+        $role = m::mock('RoleTestClass')->makePartial();
         $role->permissions = [$permA, $permB];
 
         /*
