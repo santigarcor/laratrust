@@ -129,6 +129,7 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         $request->user()->shouldReceive('ability')->andReturn(true);;
 
         $middleware->handle($request, function () {}, null, null);
+        $middleware->handle($request, function () {}, null, null, 1);
 
         /*
         |------------------------------------------------------------

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Laratrust\LaratrustRole;
@@ -355,10 +356,37 @@ class LaratrustRoleTest extends UserTest
         */
         $this->assertInstanceOf('RoleTestClass', $role->syncPermissions($permissionsIds));
     }
+
+    public function testBootLaratrustRoleTrait()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $role = m::mock('RoleTestClass');
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $role->shouldReceive('bootLaratrustRoleTrait');
+        Config::shouldReceive('get')->with('laratrust.role')->once()->andReturn('RoleTestClass');
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        RoleTestClass::bootLaratrustRoleTrait();
+    }
 }
 
 class RoleTestClass extends LaratrustRole
 {
+    use SoftDeletes;
+
     public $users;
     public $permissions;
     public $primaryKey;

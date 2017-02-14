@@ -147,6 +147,50 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($laratrust->can('any_permission'));
     }
 
+    public function testAbility()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $app = new stdClass();
+        $laratrust = m::mock('Laratrust\Laratrust[user]', [$app]);
+        $user = m::mock('_mockedUser');
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $laratrust->shouldReceive('user')
+            ->andReturn($user)
+            ->twice()->ordered();
+
+        $laratrust->shouldReceive('user')
+            ->andReturn(false)
+            ->once()->ordered();
+
+        $user->shouldReceive('ability')
+            ->with('admin', 'user_can', [])
+            ->andReturn(true)
+            ->once();
+
+        $user->shouldReceive('ability')
+            ->with('admin', 'user_cannot', [])
+            ->andReturn(false)
+            ->once();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($laratrust->ability('admin', 'user_can'));
+        $this->assertFalse($laratrust->ability('admin', 'user_cannot'));
+        $this->assertFalse($laratrust->ability('any_role', 'any_permission'));
+    }
+
     public function testUser()
     {
         /*

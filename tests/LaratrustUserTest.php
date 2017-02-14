@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use Laratrust\Contracts\LaratrustUserInterface;
 use Laratrust\Traits\LaratrustUserTrait;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Cache;
 use Mockery as m;
 
 class LaratrustUserTest extends UserTest
@@ -753,11 +754,37 @@ class LaratrustUserTest extends UserTest
 
         $this->assertInstanceOf(get_class($query), $user->scopeWhereRoleIs($query, 'admin'));
     }
+
+    public function testBootLaratrustUserTrait()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $user = m::mock('HasRoleUser');
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $user->shouldReceive('bootLaratrustUserTrait');
+        Config::shouldReceive('get')->with('auth.providers.users.model')->once()->andReturn('HasRoleUser');
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        HasRoleUser::bootLaratrustUserTrait();
+    }
 }
 
 class HasRoleUser extends Model implements LaratrustUserInterface
 {
     use LaratrustUserTrait;
+    use SoftDeletes;
 
     public $roles;
     public $permissions;
