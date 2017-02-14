@@ -37,9 +37,10 @@
         "kkszymanowski/traitor": "^0.2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.0",
+        "illuminate/database": "~5.0",
         "mockery/mockery": "~0.9",
-        "illuminate/database": "~5.0"
+        "phpunit/phpunit": "~4.0",
+        "satooshi/php-coveralls": "^1.0"
     },
     "autoload": {
         "classmap": [
