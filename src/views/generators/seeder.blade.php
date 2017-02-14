@@ -24,8 +24,8 @@ class LaratrustSeeder extends Seeder
             // Create a new role
             $role = \{{ $role }}::create([
                 'name' => $key,
-                'display_name' => ucfirst($key),
-                'description' => ucfirst($key)
+                'display_name' => ucwords(str_replace("_", " ", $key)),
+                'description' => ucwords(str_replace("_", " ", $key))
             ]);
 
             $this->command->info('Creating Role '. strtoupper($key));
