@@ -14,7 +14,7 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->nullFilterTest = function($filterClosure) {
+        $this->nullFilterTest = function ($filterClosure) {
             if (!($filterClosure instanceof Closure)) {
                 return false;
             }
@@ -24,7 +24,7 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
             return true;
         };
 
-        $this->abortFilterTest = function($filterClosure) {
+        $this->abortFilterTest = function ($filterClosure) {
             if (!($filterClosure instanceof Closure)) {
                 return false;
             }
@@ -41,7 +41,7 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
             return false;
         };
 
-        $this->customResponseFilterTest = function($filterClosure) {
+        $this->customResponseFilterTest = function ($filterClosure) {
             if (!($filterClosure instanceof Closure)) {
                 return false;
             }
@@ -189,6 +189,51 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($laratrust->ability('admin', 'user_can'));
         $this->assertFalse($laratrust->ability('admin', 'user_cannot'));
         $this->assertFalse($laratrust->ability('any_role', 'any_permission'));
+    }
+
+    public function testUserOwnsaPostModel()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $app = new stdClass();
+        $laratrust = m::mock('Laratrust\Laratrust[user]', [$app]);
+        $user = m::mock('_mockedUser');
+        $postModel = m::mock('SomeObject');
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $laratrust->shouldReceive('user')
+            ->andReturn($user)
+            ->twice()->ordered();
+
+        $laratrust->shouldReceive('user')
+            ->andReturn(false)
+            ->once()->ordered();
+
+        $user->shouldReceive('owns')
+            ->with($postModel, null)
+            ->andReturn(true)
+            ->once();
+
+        $user->shouldReceive('owns')
+            ->with($postModel, 'UserId')
+            ->andReturn(false)
+            ->once();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($laratrust->owns($postModel, null));
+        $this->assertFalse($laratrust->owns($postModel, 'UserId'));
+        $this->assertFalse($laratrust->owns($postModel, 'UserId'));
     }
 
     public function testUser()

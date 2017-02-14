@@ -82,6 +82,21 @@ class Laratrust
     }
 
     /**
+     * Checks if the user owns the thing
+     * @param  Model $thing
+     * @param  string $foreignKeyName
+     * @return boolean
+     */
+    public function owns($thing, $foreignKeyName = null)
+    {
+        if ($user = $this->user()) {
+            return $user->owns($thing, $foreignKeyName);
+        }
+
+        return false;
+    }
+
+    /**
      * Get the currently authenticated user or null.
      *
      * @return \Illuminate\Auth\UserInterface|null
