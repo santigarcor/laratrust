@@ -460,7 +460,7 @@ trait LaratrustUserTrait
             return $object->getKey();
         } elseif (is_array($object)) {
             return $object['id'];
-        } elseif (is_int($object)) {
+        } elseif (is_numeric($object)) {
             return $object;
         }
 

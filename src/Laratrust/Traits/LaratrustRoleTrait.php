@@ -224,7 +224,7 @@ trait LaratrustRoleTrait
     {
         if (is_object($permission)) {
             return $permission->getKey();
-        } elseif (is_int($permission)) {
+        } elseif (is_numeric($permission)) {
             return $permission;
         } elseif (is_array($permission)) {
             return $permission['id'];
