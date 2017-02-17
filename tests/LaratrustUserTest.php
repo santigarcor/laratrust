@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Contracts\LaratrustUserInterface;
+use Laratrust\Contracts\Ownable;
 use Laratrust\Traits\LaratrustUserTrait;
 use Mockery as m;
 
@@ -715,6 +716,11 @@ class LaratrustUserTest extends UserTest
 
     public function testUserOwnsaPostModel()
     {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
         $user = m::mock('HasRoleUser')->makePartial();
         $className = snake_case(get_class($user)) . '_id';
         
@@ -724,12 +730,25 @@ class LaratrustUserTest extends UserTest
         $post2 = new stdClass();
         $post2->$className = 9;
 
+        $ownableObject = new OwnableObject;
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
         $this->assertTrue($user->owns($post));
         $this->assertFalse($user->owns($post2));
+        $this->assertFalse($user->owns($ownableObject));
     }
 
     public function testUserOwnsaPostModelCustomKey()
     {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
         $user = m::mock('HasRoleUser')->makePartial();
         $post = new stdClass();
         $post->UserId = $user->getKey();
@@ -737,8 +756,77 @@ class LaratrustUserTest extends UserTest
         $post2 = new stdClass();
         $post2->UserId = 9;
 
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
         $this->assertTrue($user->owns($post, 'UserId'));
         $this->assertFalse($user->owns($post2, 'UserId'));
+    }
+
+    public function testUserCanAndOwnsaPostModel()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $user = m::mock('HasRoleUser')->makePartial();
+        $post = new stdClass();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $user->shouldReceive('can')->with('edit-post', false)->andReturn(true)->once();
+        $user->shouldReceive('owns')->with($post, null)->andReturn(true)->once();
+        $user->shouldReceive('can')->with('update-post', false)->andReturn(false)->once();
+        $user->shouldReceive('can')->with('enhance-post', true)->andReturn(true)->once();
+        $user->shouldReceive('owns')->with($post, 'UserID')->andReturn(false)->once();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->canAndOwns('edit-post', $post));
+        $this->assertFalse($user->canAndOwns('update-post', $post));
+        $this->assertFalse($user->canAndOwns('enhance-post', $post, ['requireAll' => true, 'foreignKeyName' => 'UserID']));
+    }
+
+    public function testUserHasRoleAndOwnsaPostModel()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $user = m::mock('HasRoleUser')->makePartial();
+        $post = new stdClass();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $user->shouldReceive('hasRole')->with('editor', false)->andReturn(true)->once();
+        $user->shouldReceive('owns')->with($post, null)->andReturn(true)->once();
+        $user->shouldReceive('hasRole')->with('regular-user', false)->andReturn(false)->once();
+        $user->shouldReceive('hasRole')->with('administrator', true)->andReturn(true)->once();
+        $user->shouldReceive('owns')->with($post, 'UserID')->andReturn(false)->once();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->hasRoleAndOwns('editor', $post));
+        $this->assertFalse($user->hasRoleAndOwns('regular-user', $post));
+        $this->assertFalse($user->hasRoleAndOwns('administrator', $post, [
+            'requireAll' => true, 'foreignKeyName' => 'UserID'
+        ]));
     }
 
     public function testScopeWhereRoleIs()
@@ -803,5 +891,13 @@ class HasRoleUser extends Model implements LaratrustUserInterface
 
     public function belongsToMany($related, $table = null, $foreignKey = null, $otherKey = null, $relation = null)
     {
+    }
+}
+
+class OwnableObject implements Ownable
+{
+    public function ownerKey()
+    {
+        return 1;
     }
 }

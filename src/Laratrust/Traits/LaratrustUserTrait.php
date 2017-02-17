@@ -215,22 +215,8 @@ trait LaratrustUserTrait
         }
 
         // Set up default values and validate options.
-        if (!isset($options['validate_all'])) {
-            $options['validate_all'] = false;
-        } else {
-            if ($options['validate_all'] !== true && $options['validate_all'] !== false) {
-                throw new InvalidArgumentException();
-            }
-        }
-        if (!isset($options['return_type'])) {
-            $options['return_type'] = 'boolean';
-        } else {
-            if ($options['return_type'] != 'boolean' &&
-                $options['return_type'] != 'array' &&
-                $options['return_type'] != 'both') {
-                throw new InvalidArgumentException();
-            }
-        }
+        $options = $this->checkOrSetDefaultOption('validate_all', $options, [false, true]);
+        $options = $this->checkOrSetDefaultOption('return_type', $options, ['boolean', 'array', 'both']);
 
         // Loop through roles and permissions and check each.
         $checkedRoles = [];
@@ -414,16 +400,77 @@ trait LaratrustUserTrait
 
     /**
      * Checks if the user owns the thing
-     * @param  Model $thing
+     * @param  Object $thing
      * @param  string $foreignKeyName
      * @return boolean
      */
     public function owns($thing, $foreignKeyName = null)
     {
-        $className = (new \ReflectionClass($this))->getShortName();
-        $foreignKeyName = $foreignKeyName ?: snake_case($className . 'Id');
+        if ($thing instanceof \Laratrust\Contracts\Ownable) {
+            $ownerKey = $thing->ownerKey();
+        } else {
+            $className = (new \ReflectionClass($this))->getShortName();
+            $foreignKeyName = $foreignKeyName ?: snake_case($className . 'Id');
+            $ownerKey = $thing->$foreignKeyName;
+        }
 
-        return $thing->$foreignKeyName == $this->getKey();
+        return $ownerKey == $this->getKey();
+    }
+
+    /**
+     * Checks if the user has some role and if he owns the thing
+     * @param  string|array $role
+     * @param  Object $thing
+     * @param  array  $options
+     * @return boolean
+     */
+    public function hasRoleAndOwns($role, $thing, $options = [])
+    {
+        $options = $this->checkOrSetDefaultOption('requireAll', $options, [false, true]);
+        $options['foreignKeyName'] = isset($options['foreignKeyName']) ? $options['foreignKeyName'] : null;
+
+        return $this->hasRole($role, $options['requireAll'])
+                && $this->owns($thing, $options['foreignKeyName']);
+    }
+
+    /**
+     * Checks if the user can do something and if he owns the thing
+     * @param  string|array $permission
+     * @param  Object $thing
+     * @param  array  $options
+     * @return boolean
+     */
+    public function canAndOwns($permission, $thing, $options = [])
+    {
+        $options = $this->checkOrSetDefaultOption('requireAll', $options, [false, true]);
+        $options['foreignKeyName'] = isset($options['foreignKeyName']) ? $options['foreignKeyName'] : null;
+
+        return $this->can($permission, $options['requireAll'])
+                && $this->owns($thing, $options['foreignKeyName']);
+    }
+
+    /**
+     * Checks if the option exists inside the arrayToCheck
+     * if not sets a the first option inside the default
+     * values array
+     * @param  string $option
+     * @param  array $arrayToCheck
+     * @param  array $defaultValues
+     * @return array
+     */
+    protected function checkOrSetDefaultOption($option, $arrayToCheck, $defaultValues)
+    {
+        if (!isset($arrayToCheck[$option])) {
+            $arrayToCheck[$option] = $defaultValues[0];
+
+            return $arrayToCheck;
+        }
+
+        if (!in_array($arrayToCheck[$option], $defaultValues, true)) {
+            throw new InvalidArgumentException();
+        }
+
+        return $arrayToCheck;
     }
 
     /**

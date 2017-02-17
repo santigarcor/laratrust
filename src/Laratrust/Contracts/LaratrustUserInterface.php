@@ -132,4 +132,22 @@ interface LaratrustUserInterface
      * @param  mixed $thing
      */
     public function owns($thing);
+    
+    /**
+     * Checks if the user can do something and if he owns the thing
+     * @param  string|array $permission
+     * @param  Object $thing
+     * @param  array  $options
+     * @return boolean
+     */
+    public function hasRoleAndOwns($role, $thing, $options = []);
+
+    /**
+     * Checks if the user can do something and if he owns the thing
+     * @param  string|array $permission
+     * @param  Object $thing
+     * @param  array  $options
+     * @return boolean
+     */
+    public function canAndOwns($permission, $thing, $options = []);
 }

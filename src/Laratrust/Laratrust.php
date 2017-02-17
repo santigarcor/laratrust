@@ -83,7 +83,7 @@ class Laratrust
 
     /**
      * Checks if the user owns the thing
-     * @param  Model $thing
+     * @param  Object $thing
      * @param  string $foreignKeyName
      * @return boolean
      */
@@ -91,6 +91,38 @@ class Laratrust
     {
         if ($user = $this->user()) {
             return $user->owns($thing, $foreignKeyName);
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the user has some role and if he owns the thing
+     * @param  string|array $role
+     * @param  Object $thing
+     * @param  array  $options
+     * @return boolean
+     */
+    public function hasRoleAndOwns($role, $thing, $options = [])
+    {
+        if ($user = $this->user()) {
+            return $user->hasRoleAndOwns($role, $thing, $options);
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the user can do something and if he owns the thing
+     * @param  string|array $permission
+     * @param  Object $thing
+     * @param  array  $options
+     * @return boolean
+     */
+    public function canAndOwns($permission, $thing, $options = [])
+    {
+        if ($user = $this->user()) {
+            return $user->canAndOwns($permission, $thing, $options);
         }
 
         return false;

@@ -236,6 +236,84 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($laratrust->owns($postModel, 'UserId'));
     }
 
+    public function testUserHasRoleAndOwnsaPostModel()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $app = new stdClass();
+        $laratrust = m::mock('Laratrust\Laratrust[user]', [$app]);
+        $user = m::mock('_mockedUser');
+        $postModel = m::mock('SomeObject');
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $laratrust->shouldReceive('user')
+            ->andReturn($user)
+            ->once()->ordered();
+
+        $laratrust->shouldReceive('user')
+            ->andReturn(false)
+            ->once()->ordered();
+
+        $user->shouldReceive('hasRoleAndOwns')
+            ->with('admin', $postModel, [])
+            ->andReturn(true)
+            ->once();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($laratrust->hasRoleAndOwns('admin', $postModel));
+        $this->assertFalse($laratrust->hasRoleAndOwns('admin', $postModel));
+    }
+
+    public function testUserCanAndOwnsaPostModel()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $app = new stdClass();
+        $laratrust = m::mock('Laratrust\Laratrust[user]', [$app]);
+        $user = m::mock('_mockedUser');
+        $postModel = m::mock('SomeObject');
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $laratrust->shouldReceive('user')
+            ->andReturn($user)
+            ->once()->ordered();
+
+        $laratrust->shouldReceive('user')
+            ->andReturn(false)
+            ->once()->ordered();
+
+        $user->shouldReceive('canAndOwns')
+            ->with('update-post', $postModel, [])
+            ->andReturn(true)
+            ->once();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($laratrust->canAndOwns('update-post', $postModel));
+        $this->assertFalse($laratrust->canAndOwns('update-post', $postModel));
+    }
+
     public function testUser()
     {
         /*
