@@ -252,10 +252,10 @@ The ``Laratrust`` class has a shortcut to ``ability()`` for the currently logged
 
    Auth::user()->ability('admin,owner', 'create-post,edit-user');
 
-Model's Ownership
+Objects's Ownership
 -----------------
 
-If you need to check if the user owns a model you can use the user function ``owns``:
+If you need to check if the user owns an object you can use the user function ``owns``:
 
 .. code-block:: php
    
@@ -279,14 +279,79 @@ If you want to change the foreign key name to check for, you can pass a second a
       ...
    }
 
-The ``Laratrust`` class has a shortcut to ``owns()`` method for the currently logged in user:
+Permissions, Roles and Ownership Checks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you want to check if an user can do something or has a role, and also is the owner of an object you can use the ``canAndOwns`` and ``hasRoleAndOwns`` methods:
+
+Both methods accept three parameters:
+
+* ``permission`` or ``role`` are the permission or role to check (This can be an array of roles or permissions).
+* ``thing`` is the object used to check the ownership .
+* ``options`` is a set of options to change the method behavior (optional).
+
+The third parameter is an options array:
+
+.. code-block:: php
+
+   $options = [
+       'requireAll' => true | false (Default: false),
+       'foreignKeyName'  => 'canBeAnyString' (Default: null)
+   ];
+
+Here's an example of the usage of both methods:
+
+.. code-block:: php
+   
+   $post = Post::find(1);
+   $user->canAndOwns('edit-post', $post);
+   $user->canAndOwns(['edit-post', 'delete-post'], $post);
+   $user->canAndOwns(['edit-post', 'delete-post'], $post, ['requireAll' => false, 'foreignKeyName' => 'writer_id']);
+
+   $user->hasRoleAndOwns('admin', $post);
+   $user->hasRoleAndOwns(['admin', 'writer'], $post);
+   $user->hasRoleAndOwns(['admin', 'writer'], $post, ['requireAll' => false, 'foreignKeyName' => 'writer_id']);
+
+
+The ``Laratrust`` class has a shortcut to ``owns()``, ``canAndOwns`` and ``hasRoleAndOwns`` methods for the currently logged in user:
 
 .. code-block:: php
 
    Laratrust::owns($post);
    Laratrust::owns($post, 'idUser');
 
-   // is identical to
+   Laratrust::canAndOwns('edit-post', $post);
+   Laratrust::canAndOwns(['edit-post', 'delete-post'], $post, ['requireAll' => false, 'foreignKeyName' => 'writer_id']);
 
-   Auth::user()->owns($post);
-   Auth::user()->owns($post, 'idUser');
+   Laratrust::hasRoleAndOwns('admin', $post);
+   Laratrust::hasRoleAndOwns(['admin', 'writer'], $post, ['requireAll' => false, 'foreignKeyName' => 'writer_id']);
+
+Ownable Interface
+^^^^^^^^^^^^^^^^^
+
+If the object ownership is witha a more complex logic you can implement the Ownable interface so you can use the ``owns``, ``canAndOwns`` and ``hasRoleAndOwns`` methods in these cases:
+
+.. code-block:: php
+
+   class SomeOwnedObject implements \Laratrust\Contracts\Ownable
+   {
+      ...
+
+      public function ownerKey()
+      {
+         return $this->someRelationship->user->id;
+      }
+
+      ...
+   }
+
+.. NOTE::
+   The ``ownerKey`` method **must** return the object's owner id value.
+
+And then in your code you can simply do:
+
+.. code-block:: php
+   
+   $user = User::find(1);
+   $theObject = new SomeOwnedObject;
+   $user->owns($theObject);            // This will return true or false depending of what the ownerKey method returns

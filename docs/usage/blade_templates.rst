@@ -20,3 +20,13 @@ Three directives are available for use within your Blade templates. What you giv
         <p>This is visible to users with the given abilities. Gets translated to 
         \Laratrust::ability('admin,owner', 'create-post,edit-user')</p>
     @endability
+    
+    @canAndOwns('edit-post', $post)
+        <p>This is visible if the user has the permission and owns the object. Gets translated to 
+        \Laratrust::canAndOwns('edit-post', $post)</p>
+    @endOwns
+
+    @hasRoleAndOwns('admin', $post)
+        <p>This is visible if the user has the role and owns the object. Gets translated to 
+        \Laratrust::hasRoleAndOwns('admin', $post)</p>
+    @endOwns
