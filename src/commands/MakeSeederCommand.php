@@ -11,6 +11,7 @@ namespace Laratrust;
  */
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 
 class MakeSeederCommand extends Command
@@ -60,7 +61,8 @@ class MakeSeederCommand extends Command
         $role = Config::get('laratrust.role', 'App\Role');
         $rolePermissions = Config::get('laratrust.permission_role_table');
         $roleUsers = Config::get('laratrust.role_user_table');
-        $user   = Config::get('auth.providers.users.model', 'App\User');
+        $user = new Collection(Config::get('laratrust.user_models', ['App\User']));
+        $user = $user->first();
 
         $migrationPath = $this->getMigrationPath();
         $output = $this->laravel->view->make('laratrust::generators.seeder')

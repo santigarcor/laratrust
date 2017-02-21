@@ -392,10 +392,6 @@ class RoleTestClass extends LaratrustRole
         return $this->id;
     }
 
-    public function belongsToMany($related, $table = null, $foreignKey = null, $otherKey = null, $relation = null)
-    {
-    }
-
     public function users()
     {
         return $this->getMorphByUserRelation('users');

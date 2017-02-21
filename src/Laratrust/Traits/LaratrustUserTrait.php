@@ -53,8 +53,9 @@ trait LaratrustUserTrait
      */
     public function roles()
     {
-        return $this->belongsToMany(
+        return $this->morphToMany(
             Config::get('laratrust.role'),
+            'user',
             Config::get('laratrust.role_user_table'),
             Config::get('laratrust.user_foreign_key'),
             Config::get('laratrust.role_foreign_key')
@@ -68,8 +69,9 @@ trait LaratrustUserTrait
      */
     public function permissions()
     {
-        return $this->belongsToMany(
+        return $this->morphToMany(
             Config::get('laratrust.permission'),
+            'user',
             Config::get('laratrust.permission_user_table'),
             Config::get('laratrust.user_foreign_key'),
             Config::get('laratrust.permission_foreign_key')

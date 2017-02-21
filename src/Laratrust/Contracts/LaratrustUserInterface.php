@@ -15,14 +15,14 @@ interface LaratrustUserInterface
     /**
      * Many-to-Many relations with Role.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function roles();
 
     /**
      * Many-to-Many relations with Role.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function permissions();
 

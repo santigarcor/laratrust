@@ -18,7 +18,7 @@ class LaratrustUserTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $belongsToMany = new stdClass();
+        $morphToMany = new stdClass();
         $user = m::mock('HasRoleUser')->makePartial();
 
         /*
@@ -26,13 +26,13 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('belongsToMany')
-            ->with('role_table_name', 'assigned_roles_table_name', 'user_id', 'role_id')
-            ->andReturn($belongsToMany)
+        $user->shouldReceive('morphToMany')
+            ->with('role', 'user', 'assigned_roles_table_name', 'user_id', 'role_id')
+            ->andReturn($morphToMany)
             ->once();
 
         Config::shouldReceive('get')->once()->with('laratrust.role')
-            ->andReturn('role_table_name');
+            ->andReturn('role');
         Config::shouldReceive('get')->once()->with('laratrust.role_user_table')
             ->andReturn('assigned_roles_table_name');
         Config::shouldReceive('get')->once()->with('laratrust.user_foreign_key')
@@ -45,7 +45,7 @@ class LaratrustUserTest extends UserTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertSame($belongsToMany, $user->roles());
+        $this->assertSame($morphToMany, $user->roles());
     }
 
     public function testPermissions()
@@ -55,7 +55,7 @@ class LaratrustUserTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $belongsToMany = new stdClass();
+        $morphToMany = new stdClass();
         $user = m::mock('HasRoleUser')->makePartial();
 
         /*
@@ -63,13 +63,13 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('belongsToMany')
-            ->with('permission_table_name', 'assigned_permissions_table_name', 'user_id', 'permission_id')
-            ->andReturn($belongsToMany)
+        $user->shouldReceive('morphToMany')
+            ->with('permission', 'user', 'assigned_permissions_table_name', 'user_id', 'permission_id')
+            ->andReturn($morphToMany)
             ->once();
 
         Config::shouldReceive('get')->once()->with('laratrust.permission')
-            ->andReturn('permission_table_name');
+            ->andReturn('permission');
         Config::shouldReceive('get')->once()->with('laratrust.permission_user_table')
             ->andReturn('assigned_permissions_table_name');
         Config::shouldReceive('get')->once()->with('laratrust.user_foreign_key')
@@ -82,7 +82,7 @@ class LaratrustUserTest extends UserTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertSame($belongsToMany, $user->permissions());
+        $this->assertSame($morphToMany, $user->permissions());
     }
 
     public function testHasRole()
@@ -416,7 +416,7 @@ class LaratrustUserTest extends UserTest
         $user = m::mock('HasRoleUser')->makePartial();
         $user->roles = [$roleA, $roleB];
 
-        $relationship = m::mock('BelongsToMany');
+        $relationship = m::mock('MorphToMany');
 
         /*
         |------------------------------------------------------------
@@ -431,7 +431,7 @@ class LaratrustUserTest extends UserTest
         $relationship->shouldReceive('get')
                      ->andReturn($user->roles)->once();
 
-        $user->shouldReceive('belongsToMany')
+        $user->shouldReceive('morphToMany')
                     ->andReturn($relationship)->once();
 
         $user->shouldReceive('detachRole')->twice();
@@ -654,7 +654,7 @@ class LaratrustUserTest extends UserTest
         $user = m::mock('HasRoleUser')->makePartial();
         $user->permissions = [$permissionA, $permissionB];
 
-        $relationship = m::mock('BelongsToMany');
+        $relationship = m::mock('MorphToMany');
 
         /*
         |------------------------------------------------------------
@@ -669,7 +669,7 @@ class LaratrustUserTest extends UserTest
         $relationship->shouldReceive('get')
                      ->andReturn($user->permissions)->once();
 
-        $user->shouldReceive('belongsToMany')
+        $user->shouldReceive('morphToMany')
                     ->andReturn($relationship)->once();
 
         $user->shouldReceive('detachPermission')->twice();
@@ -887,10 +887,6 @@ class HasRoleUser extends Model implements LaratrustUserInterface
     public function getKey()
     {
         return $this->id;
-    }
-
-    public function belongsToMany($related, $table = null, $foreignKey = null, $otherKey = null, $relation = null)
-    {
     }
 }
 
