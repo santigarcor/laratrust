@@ -53,7 +53,6 @@ class LaratrustRoleTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $morphedByMany = m::mock('Illuminate\Database\Eloquent\Relations\MorphToMany');
         $role = m::mock('RoleTestClass')->shouldAllowMockingProtectedMethods()->makePartial();
 
         /*
