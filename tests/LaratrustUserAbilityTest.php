@@ -60,10 +60,10 @@ class LaratrustUserAbilityTest extends UserTest {
         $user->shouldReceive('hasRole')
             ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
             ->andReturn(false);
-        $user->shouldReceive('can')
+        $user->shouldReceive('hasPermission')
             ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
             ->andReturn(true);
-        $user->shouldReceive('can')
+        $user->shouldReceive('hasPermission')
             ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
             ->andReturn(false);
 
@@ -182,10 +182,10 @@ class LaratrustUserAbilityTest extends UserTest {
         $user->shouldReceive('hasRole')
             ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
             ->andReturn(false);
-        $user->shouldReceive('can')
+        $user->shouldReceive('hasPermission')
             ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
             ->andReturn(true);
-        $user->shouldReceive('can')
+        $user->shouldReceive('hasPermission')
             ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
             ->andReturn(false);
 
@@ -342,10 +342,10 @@ class LaratrustUserAbilityTest extends UserTest {
         $user->shouldReceive('hasRole')
             ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
             ->andReturn(false);
-        $user->shouldReceive('can')
+        $user->shouldReceive('hasPermission')
             ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
             ->andReturn(true);
-        $user->shouldReceive('can')
+        $user->shouldReceive('hasPermission')
             ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
             ->andReturn(false);
 
@@ -516,10 +516,10 @@ class LaratrustUserAbilityTest extends UserTest {
         $user->shouldReceive('hasRole')
             ->with('NonUserRoleB', m::anyOf(true, false))
             ->andReturn(false);
-        $user->shouldReceive('can')
+        $user->shouldReceive('hasPermission')
             ->with(m::anyOf('user_can_a', 'user_can_b', 'user_can_c'), m::anyOf(true, false))
             ->andReturn(true);
-        $user->shouldReceive('can')
+        $user->shouldReceive('hasPermission')
             ->with('user_cannot_b', m::anyOf(true, false))
             ->andReturn(false);
 
@@ -590,10 +590,10 @@ class LaratrustUserAbilityTest extends UserTest {
         $user->shouldReceive('hasRole')
             ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
             ->andReturn(false);
-        $user->shouldReceive('can')
+        $user->shouldReceive('hasPermission')
             ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
             ->andReturn(true);
-        $user->shouldReceive('can')
+        $user->shouldReceive('hasPermission')
             ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
             ->andReturn(false);
 
@@ -699,7 +699,7 @@ class LaratrustUserAbilityTest extends UserTest {
         */
         $user->shouldReceive('hasRole')
             ->times(3);
-        $user->shouldReceive('can')
+        $user->shouldReceive('hasPermission')
             ->times(3);
 
         /*

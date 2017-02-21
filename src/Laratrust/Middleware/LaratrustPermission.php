@@ -44,7 +44,7 @@ class LaratrustPermission
             $permissions = explode(self::DELIMITER, $permissions);
         }
 
-        if ($this->auth->guest() || !$request->user()->can($permissions)) {
+        if ($this->auth->guest() || !$request->user()->hasPermission($permissions)) {
             return call_user_func(
                 Config::get('laratrust.middleware_handling', 'abort'),
                 Config::get('laratrust.middleware_params', '403')

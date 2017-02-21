@@ -148,6 +148,19 @@ trait LaratrustUserTrait
     }
 
     /**
+     * Checks if the user has a role by its name.
+     *
+     * @param string|array $name       Role name or array of role names.
+     * @param bool         $requireAll All roles in the array are required.
+     *
+     * @return bool
+     */
+    public function is($name, $requireAll = false)
+    {
+        return $this->hasRole($name, $requireAll);
+    }
+
+    /**
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
@@ -155,7 +168,7 @@ trait LaratrustUserTrait
      *
      * @return bool
      */
-    public function can($permission, $requireAll = false)
+    public function hasPermission($permission, $requireAll = false)
     {
         if (is_array($permission)) {
             if (empty($permission)) {
@@ -163,7 +176,7 @@ trait LaratrustUserTrait
             }
 
             foreach ($permission as $permissionName) {
-                $hasPermission = $this->can($permissionName);
+                $hasPermission = $this->hasPermission($permissionName);
 
                 if ($hasPermission && !$requireAll) {
                     return true;
@@ -193,6 +206,32 @@ trait LaratrustUserTrait
         }
 
         return false;
+    }
+
+    /**
+     * Check if user has a permission by its name.
+     *
+     * @param string|array $permission Permission string or array of permissions.
+     * @param bool         $requireAll All permissions in the array are required.
+     *
+     * @return bool
+     */
+    public function can($permission, $requireAll = false)
+    {
+        return $this->hasPermission($permission, $requireAll);
+    }
+
+    /**
+     * Check if user has a permission by its name.
+     *
+     * @param string|array $permission Permission string or array of permissions.
+     * @param bool         $requireAll All permissions in the array are required.
+     *
+     * @return bool
+     */
+    public function isAbleTo($permission, $requireAll = false)
+    {
+        return $this->hasPermission($permission, $requireAll);
     }
 
     /**
@@ -227,7 +266,7 @@ trait LaratrustUserTrait
             $checkedRoles[$role] = $this->hasRole($role);
         }
         foreach ($permissions as $permission) {
-            $checkedPermissions[$permission] = $this->can($permission);
+            $checkedPermissions[$permission] = $this->hasPermission($permission);
         }
 
         // If validate all and there is a false in either
@@ -447,7 +486,7 @@ trait LaratrustUserTrait
         $options = $this->checkOrSetDefaultOption('requireAll', $options, [false, true]);
         $options['foreignKeyName'] = isset($options['foreignKeyName']) ? $options['foreignKeyName'] : null;
 
-        return $this->can($permission, $options['requireAll'])
+        return $this->hasPermission($permission, $options['requireAll'])
                 && $this->owns($thing, $options['foreignKeyName']);
     }
 

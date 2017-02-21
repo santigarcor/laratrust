@@ -87,7 +87,7 @@ class LaratrustSeeder extends Seeder
 
                         $this->command->info('Creating Permission to '.$permissionValue.' for '. $module);
                         
-                        if (!$user->can($permission->name)) {
+                        if (!$user->hasPermission($permission->name)) {
                             $user->attachPermission($permission);
                         } else {
                             $this->command->info($key . ': ' . $p . ' ' . $permissionValue . ' already exist');

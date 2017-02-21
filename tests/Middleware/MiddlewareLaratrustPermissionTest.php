@@ -24,7 +24,7 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(true);
-        $request->user()->shouldReceive('can')->andReturn(false);
+        $request->user()->shouldReceive('hasPermission')->andReturn(false);
         Config::shouldReceive('get')->once()->with('laratrust.middleware_handling', 'abort')
             ->andReturn('abort');
         Config::shouldReceive('get')->once()->with('laratrust.middleware_params', '403')
@@ -58,7 +58,7 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(true);
-        $request->user()->shouldReceive('can')->andReturn(true);
+        $request->user()->shouldReceive('hasPermission')->andReturn(true);
         Config::shouldReceive('get')->once()->with('laratrust.middleware_handling', 'abort')
             ->andReturn('abort');
         Config::shouldReceive('get')->once()->with('laratrust.middleware_params', '403')
@@ -92,7 +92,7 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('can')->andReturn(false);
+        $request->user()->shouldReceive('hasPermission')->andReturn(false);
         Config::shouldReceive('get')->once()->with('laratrust.middleware_handling', 'abort')
             ->andReturn('abort');
         Config::shouldReceive('get')->once()->with('laratrust.middleware_params', '403')
@@ -126,7 +126,7 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('can')->andReturn(true);
+        $request->user()->shouldReceive('hasPermission')->andReturn(true);
 
         $middleware->handle($request, function () {}, null, null);
 

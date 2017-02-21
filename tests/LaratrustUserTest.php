@@ -780,10 +780,10 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('can')->with('edit-post', false)->andReturn(true)->once();
+        $user->shouldReceive('hasPermission')->with('edit-post', false)->andReturn(true)->once();
         $user->shouldReceive('owns')->with($post, null)->andReturn(true)->once();
-        $user->shouldReceive('can')->with('update-post', false)->andReturn(false)->once();
-        $user->shouldReceive('can')->with('enhance-post', true)->andReturn(true)->once();
+        $user->shouldReceive('hasPermission')->with('update-post', false)->andReturn(false)->once();
+        $user->shouldReceive('hasPermission')->with('enhance-post', true)->andReturn(true)->once();
         $user->shouldReceive('owns')->with($post, 'UserID')->andReturn(false)->once();
 
         /*
