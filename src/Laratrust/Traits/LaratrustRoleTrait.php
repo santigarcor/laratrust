@@ -10,12 +10,16 @@ namespace Laratrust\Traits;
  * @package Laratrust
  */
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
+use Laratrust\Traits\LaratrustDynamicUserRelationsCalls;
 
 trait LaratrustRoleTrait
 {
+
+    use LaratrustDynamicUserRelationsCalls;
+
     /**
      * Big block of caching functionality
      * @return Illuminate\Database\Eloquent\Collection
@@ -35,7 +39,7 @@ trait LaratrustRoleTrait
      * @param  string $relationship
      * @return Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function getMorphedUserRelation($relationship)
+    public function getMorphByUserRelation($relationship)
     {
         return $this->morphedByMany(
             Config::get('laratrust.user_models')[$relationship],
@@ -235,50 +239,5 @@ trait LaratrustRoleTrait
         throw new InvalidArgumentException(
             'getIdFor function only accepts an integer, a Model object or an array with an "id" key'
         );
-    }
-
-    /**
-     * Get a relationship.
-     * @param  string $key
-     * @return mixed
-     */
-    public function getUsersRelationValue($key)
-    {
-        if ($this->relationLoaded($key)) {
-            return $this->relations[$key];
-        }
-
-        return $this->getRelationshipFromMethod($key);
-    }
-
-    /**
-     * Dynamically retrieve the relationship value with the possible user models.
-     *
-     * @param  string  $key
-     * @return mixed
-     */
-    public function __get($key)
-    {
-        if (in_array($key, array_keys(Config::get('laratrust.user_models')))) {
-            return $this->getUsersRelationValue($key);
-        }
-
-        return parent::__get($key);
-    }
-
-    /**
-     * Handle dynamic method calls into the model.
-     *
-     * @param  string  $method
-     * @param  array  $parameters
-     * @return mixed
-     */
-    public function __call($method, $parameters)
-    {
-        if (in_array($method, array_keys(Config::get('laratrust.user_models')))) {
-            return $this->getMorphedUserRelation($method);
-        }
-
-        return parent::__call($method, $parameters);
     }
 }

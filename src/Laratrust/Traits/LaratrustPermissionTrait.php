@@ -11,9 +11,12 @@ namespace Laratrust\Traits;
  */
 
 use Illuminate\Support\Facades\Config;
+use Laratrust\Traits\LaratrustDynamicUserRelationsCalls;
 
 trait LaratrustPermissionTrait
 {
+    use LaratrustDynamicUserRelationsCalls;
+
     /**
      * Many-to-Many relations with role model.
      *
@@ -30,14 +33,16 @@ trait LaratrustPermissionTrait
     }
 
     /**
-     * Many-to-Many relations with user model.
+     * Morph by Many relationship between the role and the one of the possible user models
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @param  string $relationship
+     * @return Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function users()
+    public function getMorphByUserRelation($relationship)
     {
-        return $this->belongsToMany(
-            Config::get('laratrust.user'),
+        return $this->morphedByMany(
+            Config::get('laratrust.user_models')[$relationship],
+            'user',
             Config::get('laratrust.permission_user_table'),
             Config::get('laratrust.permission_foreign_key'),
             Config::get('laratrust.user_foreign_key')

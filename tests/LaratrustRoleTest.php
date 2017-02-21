@@ -398,6 +398,6 @@ class RoleTestClass extends LaratrustRole
 
     public function users()
     {
-        return $this->getMorphedUserRelation('users');
+        return $this->getMorphByUserRelation('users');
     }
 }

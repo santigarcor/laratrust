@@ -18,7 +18,7 @@ interface LaratrustRoleInterface
      * @param  string $relationship
      * @return Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function getMorphedUserRelation($relationship);
+    public function getMorphByUserRelation($relationship);
     
     /**
      * Many-to-Many relations with the permission model.

@@ -23,7 +23,6 @@ return [
     */
     'user_models' => [
         'users' => 'App\User',
-        'companies' => 'App\Company',
     ],
 
     /*

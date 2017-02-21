@@ -21,9 +21,10 @@ interface LaratrustPermissionInterface
     public function roles();
     
     /**
-     * Many-to-Many relations with user model.
+     * Morph by Many relationship between the role and the one of the possible user models
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @param  string $relationship
+     * @return Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function users();
+    public function getMorphByUserRelation($relationship);
 }
