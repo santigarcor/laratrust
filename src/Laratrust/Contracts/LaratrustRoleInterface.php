@@ -13,11 +13,12 @@ namespace Laratrust\Contracts;
 interface LaratrustRoleInterface
 {
     /**
-     * Many-to-Many relations with the user model.
+     * Morph by Many relationship between the role and the one of the possible user models
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @param  string $relationship
+     * @return Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function users();
+    public function getMorphedUserRelation($relationship);
     
     /**
      * Many-to-Many relations with the permission model.

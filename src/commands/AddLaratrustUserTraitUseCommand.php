@@ -10,7 +10,9 @@ namespace Laratrust;
  * @package Laratrust
  */
 
+use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Traits\LaratrustUserTrait;
 use Traitor\Traitor;
@@ -38,29 +40,32 @@ class AddLaratrustUserTraitUseCommand extends Command
      */
     public function fire()
     {
-        $userModel = $this->getUserModel();
-        
-        if (! class_exists($userModel)) {
-            $this->error("Class $userModel does not exist.");
-            return;
+        $models = $this->getUserModels() ;
+
+        foreach ($models as $model) {
+            if (!class_exists($model)) {
+                $this->error("Class $model does not exist.");
+                return;
+            }
+
+            if ($this->alreadyUsesLaratrustUserTrait($model)) {
+                $this->error("Class $model already uses LaratrustUserTrait.");
+                continue;
+            }
+
+            Traitor::addTrait($this->targetTrait)->toClass($model);
         }
 
-        if ($this->alreadyUsesLaratrustUserTrait()) {
-            $this->error("Class $userModel already uses LaratrustUserTrait.");
-            return;
-        }
-
-        Traitor::addTrait($this->targetTrait)->toClass($userModel);
-
-        $this->info("LaratrustUserTrait added successfully");
+        $this->info("LaratrustUserTrait added successfully to {$models->implode(', ')}");
     }
 
     /**
+     * @param  string $model
      * @return bool
      */
-    protected function alreadyUsesLaratrustUserTrait()
+    protected function alreadyUsesLaratrustUserTrait($model)
     {
-        return in_array(LaratrustUserTrait::class, class_uses($this->getUserModel()));
+        return in_array(LaratrustUserTrait::class, class_uses($model));
     }
 
     /**
@@ -68,14 +73,14 @@ class AddLaratrustUserTraitUseCommand extends Command
      */
     public function getDescription()
     {
-        return "Add LaratrustUserTrait to {$this->getUserModel()} class";
+        return "Add LaratrustUserTrait to {$this->getUserModels()->implode(', ')} class";
     }
 
     /**
-     * @return string
+     * @return array
      */
-    protected function getUserModel()
+    protected function getUserModels()
     {
-        return Config::get('auth.providers.users.model', 'App\User');
+        return new Collection(Config::get('laratrust.user_models', []));
     }
 }

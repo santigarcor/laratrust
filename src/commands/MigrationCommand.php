@@ -102,15 +102,8 @@ class MigrationCommand extends Command
     protected function createMigration()
     {
         $migrationPath = $this->getMigrationPath();
-
-        $userModel   = Config::get('auth.providers.users.model');
-        $user = new $userModel;
         $laratrust = Config::get('laratrust');
-
-        $data = compact(
-            'user',
-            'laratrust'
-        );
+        $data = compact('laratrust');
 
         $output = $this->laravel->view->make('laratrust::generators.migration')->with($data)->render();
 

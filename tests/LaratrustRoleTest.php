@@ -16,7 +16,7 @@ class LaratrustRoleTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $belongsToMany = new stdClass();
+        $morphedByMany = new stdClass();
         $role = m::mock('RoleTestClass')->makePartial();
 
         /*
@@ -24,13 +24,13 @@ class LaratrustRoleTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $role->shouldReceive('belongsToMany')
-            ->with('user_table_name', 'assigned_users_table_name', 'role_id', 'user_id')
-            ->andReturn($belongsToMany)
+        $role->shouldReceive('morphedByMany')
+            ->with('user_model', 'user', 'assigned_users_table_name', 'role_id', 'user_id')
+            ->andReturn($morphedByMany)
             ->once();
 
-        Config::shouldReceive('get')->once()->with('auth.providers.users.model')
-            ->andReturn('user_table_name');
+        Config::shouldReceive('get')->once()->with('laratrust.user_models')
+            ->andReturn(['users' => 'user_model']);
         Config::shouldReceive('get')->once()->with('laratrust.role_user_table')
             ->andReturn('assigned_users_table_name');
         Config::shouldReceive('get')->once()->with('laratrust.role_foreign_key')
@@ -43,7 +43,7 @@ class LaratrustRoleTest extends UserTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertSame($belongsToMany, $role->users());
+        $this->assertSame($morphedByMany, $role->users());
     }
 
     public function testPermissions()
@@ -101,6 +101,7 @@ class LaratrustRoleTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('laratrust.user_models')->andReturn([]);
         Config::shouldReceive('get')->with('cache.ttl', 60)->times(9)->andReturn('1440');
         Cache::shouldReceive('remember')->times(9)->andReturn($role->permissions);
 
@@ -136,6 +137,7 @@ class LaratrustRoleTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('laratrust.user_models')->andReturn([]);
         $permissionObject->shouldReceive('getKey')
             ->andReturn(1);
 
@@ -186,6 +188,7 @@ class LaratrustRoleTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('laratrust.user_models')->andReturn([]);
         $permissionObject->shouldReceive('getKey')
             ->andReturn(1);
 
@@ -340,6 +343,7 @@ class LaratrustRoleTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('laratrust.user_models')->andReturn([]);
         $role->shouldReceive('permissions')
             ->andReturn($role);
         $role->shouldReceive('sync')
@@ -404,5 +408,10 @@ class RoleTestClass extends LaratrustRole
 
     public function belongsToMany($related, $table = null, $foreignKey = null, $otherKey = null, $relation = null)
     {
+    }
+
+    public function users()
+    {
+        return $this->getMorphedUserRelation('users');
     }
 }

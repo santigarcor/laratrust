@@ -21,17 +21,16 @@ class LaratrustSetupTables extends Migration
             $table->timestamps();
         });
 
-        // Create table for associating roles to users (Many-to-Many)
+        // Create table for associating roles to users (Many To Many Polymorphic)
         Schema::create('{{ $laratrust['role_user_table'] }}', function (Blueprint $table) {
             $table->integer('{{ $laratrust['user_foreign_key'] }}')->unsigned();
             $table->integer('{{ $laratrust['role_foreign_key'] }}')->unsigned();
+            $table->string('user_type');
 
-            $table->foreign('{{ $laratrust['user_foreign_key'] }}')->references('{{ $user->getKeyName() }}')->on('{{ $user->getTable() }}')
-                ->onUpdate('cascade')->onDelete('cascade');
             $table->foreign('{{ $laratrust['role_foreign_key'] }}')->references('id')->on('{{ $laratrust['roles_table'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
 
-            $table->primary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}']);
+            $table->primary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}', 'user_type']);
         });
 
         // Create table for storing permissions
@@ -56,17 +55,16 @@ class LaratrustSetupTables extends Migration
             $table->primary(['{{ $laratrust['permission_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}']);
         });
 
-        // Create table for associating permissions to users (Many-to-Many)
+        // Create table for associating permissions to users (Many To Many Polymorphic)
         Schema::create('{{ $laratrust['permission_user_table'] }}', function (Blueprint $table) {
             $table->integer('{{ $laratrust['permission_foreign_key'] }}')->unsigned();
             $table->integer('{{ $laratrust['user_foreign_key'] }}')->unsigned();
+            $table->string('user_type');
 
             $table->foreign('{{ $laratrust['permission_foreign_key'] }}')->references('id')->on('{{ $laratrust['permissions_table'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('{{ $laratrust['user_foreign_key'] }}')->references('{{ $user->getKeyName() }}')->on('{{ $user->getTable() }}')
-                ->onUpdate('cascade')->onDelete('cascade');
 
-            $table->primary(['{{ $laratrust['permission_foreign_key'] }}', '{{ $laratrust['user_foreign_key'] }}']);
+            $table->primary(['{{ $laratrust['permission_foreign_key'] }}', '{{ $laratrust['user_foreign_key'] }}', 'user_type']);
         });
 
     }
