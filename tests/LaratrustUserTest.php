@@ -68,14 +68,11 @@ class LaratrustUserTest extends UserTest
             ->andReturn($morphToMany)
             ->once();
 
-        Config::shouldReceive('get')->once()->with('laratrust.permission')
-            ->andReturn('permission');
+        Config::shouldReceive('get')->once()->with('laratrust.permission')->andReturn('permission');
         Config::shouldReceive('get')->once()->with('laratrust.permission_user_table')
             ->andReturn('assigned_permissions_table_name');
-        Config::shouldReceive('get')->once()->with('laratrust.user_foreign_key')
-            ->andReturn('user_id');
-        Config::shouldReceive('get')->once()->with('laratrust.permission_foreign_key')
-            ->andReturn('permission_id');
+        Config::shouldReceive('get')->once()->with('laratrust.user_foreign_key')->andReturn('user_id');
+        Config::shouldReceive('get')->once()->with('laratrust.permission_foreign_key')->andReturn('permission_id');
 
         /*
         |------------------------------------------------------------
@@ -258,23 +255,12 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $roleObject->shouldReceive('getKey')
-            ->andReturn(1);
-
-        $user->shouldReceive('roles')
-            ->andReturn($user);
-        $user->shouldReceive('attach')
-            ->with(1)
-            ->once()->ordered();
-        $user->shouldReceive('attach')
-            ->with(2)
-            ->once()->ordered();
-        $user->shouldReceive('attach')
-            ->with(3)
-            ->once()->ordered();
-
-        Cache::shouldReceive('forget')
-            ->times(6);
+        $roleObject->shouldReceive('getKey')->andReturn(1);
+        $user->shouldReceive('roles')->andReturn($user);
+        $user->shouldReceive('attach')->with(1)->once()->ordered();
+        $user->shouldReceive('attach')->with(2)->once()->ordered();
+        $user->shouldReceive('attach')->with(3)->once()->ordered();
+        Cache::shouldReceive('forget')->times(6);
 
         /*
         |------------------------------------------------------------
@@ -306,23 +292,12 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $roleObject->shouldReceive('getKey')
-            ->andReturn(1);
-
-        $user->shouldReceive('roles')
-            ->andReturn($user);
-        $user->shouldReceive('detach')
-            ->with(1)
-            ->once()->ordered();
-        $user->shouldReceive('detach')
-            ->with(2)
-            ->once()->ordered();
-        $user->shouldReceive('detach')
-            ->with(3)
-            ->once()->ordered();
-
-        Cache::shouldReceive('forget')
-            ->times(6);
+        $roleObject->shouldReceive('getKey')->andReturn(1);
+        $user->shouldReceive('roles')->andReturn($user);
+        $user->shouldReceive('detach')->with(1)->once()->ordered();
+        $user->shouldReceive('detach')->with(2)->once()->ordered();
+        $user->shouldReceive('detach')->with(3)->once()->ordered();
+        Cache::shouldReceive('forget')->times(6);
 
         /*
         |------------------------------------------------------------
@@ -351,15 +326,9 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('attachRole')
-            ->with(1)
-            ->once()->ordered();
-        $user->shouldReceive('attachRole')
-            ->with(2)
-            ->once()->ordered();
-        $user->shouldReceive('attachRole')
-            ->with(3)
-            ->once()->ordered();
+        $user->shouldReceive('attachRole')->with(1)->once()->ordered();
+        $user->shouldReceive('attachRole')->with(2)->once()->ordered();
+        $user->shouldReceive('attachRole')->with(3)->once()->ordered();
 
         /*
         |------------------------------------------------------------
@@ -384,15 +353,9 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('detachRole')
-            ->with(1)
-            ->once()->ordered();
-        $user->shouldReceive('detachRole')
-            ->with(2)
-            ->once()->ordered();
-        $user->shouldReceive('detachRole')
-            ->with(3)
-            ->once()->ordered();
+        $user->shouldReceive('detachRole')->with(1)->once()->ordered();
+        $user->shouldReceive('detachRole')->with(2)->once()->ordered();
+        $user->shouldReceive('detachRole')->with(3)->once()->ordered();
 
         /*
         |------------------------------------------------------------
@@ -427,13 +390,8 @@ class LaratrustUserTest extends UserTest
         Config::shouldReceive('get')->with('laratrust.role_user_table')->once()->andReturn('role_user');
         Config::shouldReceive('get')->with('laratrust.user_foreign_key')->once()->andReturn('user_id');
         Config::shouldReceive('get')->with('laratrust.role_foreign_key')->once()->andReturn('role_id');
-
-        $relationship->shouldReceive('get')
-                     ->andReturn($user->roles)->once();
-
-        $user->shouldReceive('morphToMany')
-                    ->andReturn($relationship)->once();
-
+        $relationship->shouldReceive('get')->andReturn($user->roles)->once();
+        $user->shouldReceive('morphToMany')->andReturn($relationship)->once();
         $user->shouldReceive('detachRole')->twice();
 
         /*
@@ -459,14 +417,9 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('roles')
-            ->andReturn($user);
-        $user->shouldReceive('sync')
-            ->with($rolesIds)
-            ->once()->ordered();
-
-        Cache::shouldReceive('forget')
-            ->twice();
+        $user->shouldReceive('roles')->andReturn($user);
+        $user->shouldReceive('sync')->with($rolesIds)->once()->ordered();
+        Cache::shouldReceive('forget')->twice();
 
         /*
         |------------------------------------------------------------
@@ -493,23 +446,12 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $permissionObject->shouldReceive('getKey')
-            ->andReturn(1);
-
-        $user->shouldReceive('permissions')
-            ->andReturn($user);
-        $user->shouldReceive('attach')
-            ->with(1)
-            ->once()->ordered();
-        $user->shouldReceive('attach')
-            ->with(2)
-            ->once()->ordered();
-        $user->shouldReceive('attach')
-            ->with(3)
-            ->once()->ordered();
-
-        Cache::shouldReceive('forget')
-            ->times(6);
+        $permissionObject->shouldReceive('getKey')->andReturn(1);
+        $user->shouldReceive('permissions')->andReturn($user);
+        $user->shouldReceive('attach')->with(1)->once()->ordered();
+        $user->shouldReceive('attach')->with(2)->once()->ordered();
+        $user->shouldReceive('attach')->with(3)->once()->ordered();
+        Cache::shouldReceive('forget')->times(6);
 
         /*
         |------------------------------------------------------------
@@ -543,23 +485,12 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $permissionObject->shouldReceive('getKey')
-            ->andReturn(1);
-
-        $user->shouldReceive('permissions')
-            ->andReturn($user);
-        $user->shouldReceive('detach')
-            ->with(1)
-            ->once()->ordered();
-        $user->shouldReceive('detach')
-            ->with(2)
-            ->once()->ordered();
-        $user->shouldReceive('detach')
-            ->with(3)
-            ->once()->ordered();
-
-        Cache::shouldReceive('forget')
-            ->times(6);
+        $permissionObject->shouldReceive('getKey')->andReturn(1);
+        $user->shouldReceive('permissions')->andReturn($user);
+        $user->shouldReceive('detach')->with(1)->once()->ordered();
+        $user->shouldReceive('detach')->with(2)->once()->ordered();
+        $user->shouldReceive('detach')->with(3)->once()->ordered();
+        Cache::shouldReceive('forget')->times(6);
 
         /*
         |------------------------------------------------------------
@@ -588,15 +519,9 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('attachPermission')
-            ->with(1)
-            ->once()->ordered();
-        $user->shouldReceive('attachPermission')
-            ->with(2)
-            ->once()->ordered();
-        $user->shouldReceive('attachPermission')
-            ->with(3)
-            ->once()->ordered();
+        $user->shouldReceive('attachPermission')->with(1)->once()->ordered();
+        $user->shouldReceive('attachPermission')->with(2)->once()->ordered();
+        $user->shouldReceive('attachPermission')->with(3)->once()->ordered();
 
         /*
         |------------------------------------------------------------
@@ -621,15 +546,9 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('detachPermission')
-            ->with(1)
-            ->once()->ordered();
-        $user->shouldReceive('detachPermission')
-            ->with(2)
-            ->once()->ordered();
-        $user->shouldReceive('detachPermission')
-            ->with(3)
-            ->once()->ordered();
+        $user->shouldReceive('detachPermission')->with(1)->once()->ordered();
+        $user->shouldReceive('detachPermission')->with(2)->once()->ordered();
+        $user->shouldReceive('detachPermission')->with(3)->once()->ordered();
 
         /*
         |------------------------------------------------------------
@@ -665,13 +584,8 @@ class LaratrustUserTest extends UserTest
         Config::shouldReceive('get')->with('laratrust.permission_user_table')->once()->andReturn('permission_user');
         Config::shouldReceive('get')->with('laratrust.user_foreign_key')->once()->andReturn('user_id');
         Config::shouldReceive('get')->with('laratrust.permission_foreign_key')->once()->andReturn('permission_id');
-
-        $relationship->shouldReceive('get')
-                     ->andReturn($user->permissions)->once();
-
-        $user->shouldReceive('morphToMany')
-                    ->andReturn($relationship)->once();
-
+        $relationship->shouldReceive('get')->andReturn($user->permissions)->once();
+        $user->shouldReceive('morphToMany')->andReturn($relationship)->once();
         $user->shouldReceive('detachPermission')->twice();
 
         /*
@@ -697,14 +611,9 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('permissions')
-            ->andReturn($user);
-        $user->shouldReceive('sync')
-            ->with($permissionsIds)
-            ->once()->ordered();
-
-        Cache::shouldReceive('forget')
-            ->twice();
+        $user->shouldReceive('permissions')->andReturn($user);
+        $user->shouldReceive('sync')->with($permissionsIds)->once()->ordered();
+        Cache::shouldReceive('forget')->twice();
 
         /*
         |------------------------------------------------------------
@@ -831,15 +740,29 @@ class LaratrustUserTest extends UserTest
 
     public function testScopeWhereRoleIs()
     {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
         $query = m::mock();
+        $user = m::mock('HasRoleUser')->makePartial();
 
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
         $query->shouldReceive('whereHas')
             ->with('roles', m::any())
             ->once()
             ->andReturn($query);
 
-        $user = m::mock('HasRoleUser')->makePartial();
-
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
         $this->assertInstanceOf(get_class($query), $user->scopeWhereRoleIs($query, 'admin'));
     }
 
