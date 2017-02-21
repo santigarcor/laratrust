@@ -17,7 +17,7 @@ return [
     | This is the array that contains the information of the user models.
     | This information is used in the add-trait command, and for the roles and
     | permissions relationships with the possible user models.
-    | 
+    |
     | The key in the array is the name of the relationship inside the roles and permissions.
     |
     */
