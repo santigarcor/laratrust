@@ -17,7 +17,6 @@ use Laratrust\Traits\LaratrustDynamicUserRelationsCalls;
 
 trait LaratrustRoleTrait
 {
-
     use LaratrustDynamicUserRelationsCalls;
 
     /**
