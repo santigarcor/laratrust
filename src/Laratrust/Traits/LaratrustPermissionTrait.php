@@ -37,7 +37,7 @@ trait LaratrustPermissionTrait
     public function users()
     {
         return $this->belongsToMany(
-            Config::get('laratrust.user'),
+            Config::get('auth.providers.users.model'),
             Config::get('laratrust.permission_user_table'),
             Config::get('laratrust.permission_foreign_key'),
             Config::get('laratrust.user_foreign_key')
