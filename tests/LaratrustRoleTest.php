@@ -46,6 +46,36 @@ class LaratrustRoleTest extends UserTest
         $this->assertSame($morphedByMany, $role->users());
     }
 
+    public function testUsersAsAttribute()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $morphedByMany = m::mock('Illuminate\Database\Eloquent\Relations\MorphToMany');
+        $role = m::mock('RoleTestClass')->shouldAllowMockingProtectedMethods()->makePartial();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Config::shouldReceive('get')->twice()->with('laratrust.user_models')
+            ->andReturn(['users' => 'user_model']);
+        $role->shouldReceive('getRelationshipFromMethod')->with('users')->andReturn([])->once();
+        $role->shouldReceive('relationLoaded')->with('users')->andReturn(false)->once();
+        $role->shouldReceive('relationLoaded')->with('users')->andReturn(true)->once();
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertSame([], $role->users);
+        $role->relations['users'] = [];
+        $this->assertSame([], $role->users);
+    }
+
     public function testPermissions()
     {
         /*
@@ -101,7 +131,7 @@ class LaratrustRoleTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        Config::shouldReceive('get')->with('laratrust.user_models')->andReturn([]);
+        Config::shouldReceive('get')->with('laratrust.user_models')->times(9)->andReturn([]);
         Config::shouldReceive('get')->with('cache.ttl', 60)->times(9)->andReturn('1440');
         Cache::shouldReceive('remember')->times(9)->andReturn($role->permissions);
 
@@ -137,24 +167,13 @@ class LaratrustRoleTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        Config::shouldReceive('get')->with('laratrust.user_models')->andReturn([]);
-        $permissionObject->shouldReceive('getKey')
-            ->andReturn(1);
-
-        $role->shouldReceive('permissions')
-            ->andReturn($role);
-        $role->shouldReceive('attach')
-            ->with(1)
-            ->once()->ordered();
-        $role->shouldReceive('attach')
-            ->with(2)
-            ->once()->ordered();
-        $role->shouldReceive('attach')
-            ->with(3)
-            ->once()->ordered();
-
-        Cache::shouldReceive('forget')
-            ->times(3);
+        Config::shouldReceive('get')->with('laratrust.user_models')->times(3)->andReturn([]);
+        $permissionObject->shouldReceive('getKey')->andReturn(1);
+        $role->shouldReceive('permissions')->andReturn($role);
+        $role->shouldReceive('attach')->with(1)->once()->ordered();
+        $role->shouldReceive('attach')->with(2)->once()->ordered();
+        $role->shouldReceive('attach')->with(3)->once()->ordered();
+        Cache::shouldReceive('forget')->times(3);
 
         /*
         |------------------------------------------------------------
@@ -188,24 +207,13 @@ class LaratrustRoleTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        Config::shouldReceive('get')->with('laratrust.user_models')->andReturn([]);
-        $permissionObject->shouldReceive('getKey')
-            ->andReturn(1);
-
-        $role->shouldReceive('permissions')
-            ->andReturn($role);
-        $role->shouldReceive('detach')
-            ->with(1)
-            ->once()->ordered();
-        $role->shouldReceive('detach')
-            ->with(2)
-            ->once()->ordered();
-        $role->shouldReceive('detach')
-            ->with(3)
-            ->once()->ordered();
-
-        Cache::shouldReceive('forget')
-            ->times(3);
+        Config::shouldReceive('get')->with('laratrust.user_models')->times(3)->andReturn([]);
+        $permissionObject->shouldReceive('getKey')->andReturn(1);
+        $role->shouldReceive('permissions')->andReturn($role);
+        $role->shouldReceive('detach')->with(1)->once()->ordered();
+        $role->shouldReceive('detach')->with(2)->once()->ordered();
+        $role->shouldReceive('detach')->with(3)->once()->ordered();
+        Cache::shouldReceive('forget')->times(3);
 
         /*
         |------------------------------------------------------------
@@ -234,15 +242,9 @@ class LaratrustRoleTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $role->shouldReceive('attachPermission')
-            ->with(1)
-            ->once()->ordered();
-        $role->shouldReceive('attachPermission')
-            ->with(2)
-            ->once()->ordered();
-        $role->shouldReceive('attachPermission')
-            ->with(3)
-            ->once()->ordered();
+        $role->shouldReceive('attachPermission')->with(1)->once()->ordered();
+        $role->shouldReceive('attachPermission')->with(2)->once()->ordered();
+        $role->shouldReceive('attachPermission')->with(3)->once()->ordered();
 
         /*
         |------------------------------------------------------------
@@ -267,15 +269,9 @@ class LaratrustRoleTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $role->shouldReceive('detachPermission')
-            ->with(1)
-            ->once()->ordered();
-        $role->shouldReceive('detachPermission')
-            ->with(2)
-            ->once()->ordered();
-        $role->shouldReceive('detachPermission')
-            ->with(3)
-            ->once()->ordered();
+        $role->shouldReceive('detachPermission')->with(1)->once()->ordered();
+        $role->shouldReceive('detachPermission')->with(2)->once()->ordered();
+        $role->shouldReceive('detachPermission')->with(3)->once()->ordered();
 
         /*
         |------------------------------------------------------------
@@ -312,12 +308,8 @@ class LaratrustRoleTest extends UserTest
         Config::shouldReceive('get')->with('laratrust.role_foreign_key')->once()->andReturn('role_id');
         Config::shouldReceive('get')->with('laratrust.permission_foreign_key')->once()->andReturn('permission_id');
 
-        $relationship->shouldReceive('get')
-                     ->andReturn($role->permissions)->once();
-
-        $role->shouldReceive('belongsToMany')
-                    ->andReturn($relationship)->once();
-
+        $relationship->shouldReceive('get')->andReturn($role->permissions)->once();
+        $role->shouldReceive('belongsToMany')->andReturn($relationship)->once();
         $role->shouldReceive('detachPermission')->twice();
 
         /*
@@ -343,15 +335,10 @@ class LaratrustRoleTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        Config::shouldReceive('get')->with('laratrust.user_models')->andReturn([]);
-        $role->shouldReceive('permissions')
-            ->andReturn($role);
-        $role->shouldReceive('sync')
-            ->with($permissionsIds)
-            ->once()->ordered();
-
-        Cache::shouldReceive('forget')
-            ->once();
+        Config::shouldReceive('get')->with('laratrust.user_models')->once()->andReturn([]);
+        $role->shouldReceive('permissions')->andReturn($role);
+        $role->shouldReceive('sync')->with($permissionsIds)->once()->ordered();
+        Cache::shouldReceive('forget')->once();
 
         /*
         |------------------------------------------------------------
@@ -391,8 +378,8 @@ class RoleTestClass extends LaratrustRole
 {
     use SoftDeletes;
 
-    public $users;
     public $permissions;
+    public $relations = [];
     public $primaryKey;
 
     public function __construct()
