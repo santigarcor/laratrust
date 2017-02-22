@@ -37,16 +37,6 @@ interface LaratrustUserInterface
     public function hasRole($name, $requireAll = false);
 
     /**
-     * Checks if the user has a role by its name. Calls hasRole Method
-     *
-     * @param string|array $name       Role name or array of role names.
-     * @param bool         $requireAll All roles in the array are required.
-     *
-     * @return bool
-     */
-    public function is($name, $requireAll = false);
-
-    /**
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
