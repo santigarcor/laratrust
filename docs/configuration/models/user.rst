@@ -1,7 +1,7 @@
 User
 ====
 
-Next, use the ``LaratrustUserTrait`` trait in your existing ``User`` model. For example:
+Next, use the ``LaratrustUserTrait`` trait in your existing user models. For example:
 
 .. code-block:: php
 
@@ -16,7 +16,7 @@ Next, use the ``LaratrustUserTrait`` trait in your existing ``User`` model. For 
        ...
     }
 
-This will enable the relation with ``Role`` and add the following methods ``roles()``, ``hasRole($name)``, ``can($permission)``, and ``ability($roles, $permissions, $options)`` within your ``User`` model.
+This will enable the relation with ``Role`` and ``Permission``, and add the following methods ``roles()``, ``hasRole($name)``, ``hasPermission($permission)``, ``isAbleTo($permission)``, ``can($permission)``, and ``ability($roles, $permissions, $options)`` within your ``User`` model.
 
 Do not forget to dump composer autoload::
 

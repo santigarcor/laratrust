@@ -3,6 +3,9 @@ Seeder
 
 Laratrust comes with a database seeder, this seeder helps you filling the permissions for each role depending on the module, and creates one user for each role.
 
+.. NOTE::
+    Laratrust now accepts multiple user models so the seeder is going to work with the first user model inside the user_models array.
+
 To generate the seeder you have to run::
 
     php artisan laratrust:seeder
@@ -11,7 +14,7 @@ and::
 
     composer dump-autoload
 
-And in the ``database/seeds/DatabaseSeeder.php`` file you have to add to the ``run`` method:
+And in the ``database/seeds/DatabaseSeeder.php`` file you have to add this to the ``run`` method:
 
 .. code-block:: php
 

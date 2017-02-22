@@ -1,3 +1,5 @@
+.. _troubleshooting:
+
 Troubleshooting
 ===============
 
@@ -19,5 +21,21 @@ When trying to use the LaratrustUserTrait methods, you encounter the error which
 Then probably you do not have published Laratrust assets or something went wrong when you did it.
 First of all check that you have the ``laratrust.php`` file in your ``app/config`` directory.
 If you don't, then try ``php artisan vendor:publish`` and, if it does not appear, manually copy the ``/vendor/santigarcor/laratrust/src/config/config.php`` file in your config directory and rename it ``laratrust.php``.
+
+---
+
+If you want to use the ``Authorizable`` trait yo have to do:
+
+.. code-block:: php
+
+    use Authorizable {
+        Authorizable::can insteadof LaratrustUserTrait;
+        LaratrustUserTrait::can as laratrustCan;
+    }
+
+And then replace all the uses of ``can`` with ``hasPermission`` or ``isAbleTo``.
+
+.. NOTE::
+    If you use the ``Laratrust::can`` you don't have to change this method because it calls the ``hasPermission`` method.
 
 ---
