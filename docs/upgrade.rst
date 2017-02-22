@@ -1,22 +1,28 @@
-Upgrade from 3.0 to 3.1
+Upgrade from 3.1 to 3.2
 =======================
 
-In order to upgrade from Laratrust 3.0 to 3.1 you have to follow these steps:
+In order to upgrade from Laratrust 3.1 to 3.2 you have to follow these steps:
 
-1. Change your ``composer.json`` to require the 3.1 version of laratrust::
+1. Change your ``composer.json`` to require the 3.2 version of laratrust::
     
-    "santigarcor/laratrust": "3.1.*"
+    "santigarcor/laratrust": "3.2.*"
 
 2. Run ``composer update`` to update the source code.
 
-3. Add in your ``config/laratrust.php`` file this line::
+3. Add in your ``config/laratrust.php`` file this block:
 
-    'permission_user_table' => 'permission_user',
+   .. code-block:: php
 
-4. Run ``php artisan laratrust:upgrade`` to create the migration with the database upgrade.
+        'user_models' => [
+            'users' => 'App\User',
+        ],
 
-5. Run ``php artisan migrate`` to apply the migration created in the previous step.
+   And configure it with you user models information according to the new :ref:`multiple-user-models` explanation.
 
-6. If you use the ``savePermissions`` method in your code, change it to ``syncPermissions``.
+4. Run ``php artisan laratrust:add-trait`` to add the ``LaratrustUserTrait`` to the user models.
 
-Now you can use the 3.1 version without any problem.
+5. Run ``php artisan laratrust:upgrade`` to create the migration with the database upgrade.
+
+6. Run ``php artisan migrate`` to apply the migration created in the previous step.
+
+Now you can use the 3.2 version without any problem.

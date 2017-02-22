@@ -6,6 +6,8 @@ Configuration Files
 
 Laratrust now allows mutliple user models, so in order to configure it correctly, you must change the values inside the ``config/laratrust.php`` file.
 
+.. _multiple-user-models:
+
 Multiple User Models
 --------------------
 

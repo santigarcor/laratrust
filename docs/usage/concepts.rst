@@ -139,22 +139,19 @@ Now we can check for roles and permissions simply by doing:
    $user->hasRole('admin');   // true
    $user->can('edit-user');   // false
    $user->can('create-post'); // true
-   $user->hasPermission('create-post'); // true
-   $user->isAbleTo('create-post'); // true
 
 .. NOTE::
-   The ``can``, ``hasPermission`` and ``isAbleTo`` methods have the same objective, to check user's permissions.
+   If you want, you can use the ``hasPermission`` and ``isAbleTo`` methods instead of the ``can`` method.
 
-   Inside Laratrust code the ``hasPermission`` method is used intead of the ``can`` method, so if you want to use the Authorizable trait you can use it without any problem (if you didn't use the Laratrust can method). To use the Authorizable trait check :ref:`troubleshooting`.
+.. NOTE::
+   If you want to use the Authorizable trait alongside Laratrust please check :ref:`troubleshooting`.
 
-Both ``hasRole()``, ``can()``, ``hasPermission()``, ``isAbleTo()`` can receive an array of roles & permissions to check:
+Both ``hasRole()`` and ``can()`` can receive an array of roles & permissions to check:
 
 .. code-block:: php
 
    $user->hasRole(['owner', 'admin']);       // true
    $user->can(['edit-user', 'create-post']); // true
-   $user->hasPermission(['edit-user', 'create-post']); // true
-   $user->isAbleTo(['edit-user', 'create-post']); // true
 
 By default, if any of the roles or permissions are present for a user then the method will return true.
 Passing ``true`` as a second parameter instructs the method to require **all** of the items:
@@ -165,8 +162,6 @@ Passing ``true`` as a second parameter instructs the method to require **all** o
    $user->hasRole(['owner', 'admin'], true);       // false, user does not have admin role
    $user->can(['edit-user', 'create-post']);       // true
    $user->can(['edit-user', 'create-post'], true); // false, user does not have edit-user permission
-   $user->hasPermission(['edit-user', 'create-post'], true); // false, user does not have edit-user permission
-   $user->isAbleTo(['edit-user', 'create-post'], true); // false, user does not have edit-user permission
 
 You can have as many \ ``Role``\s as you want for each ``User`` and vice versa.
 
@@ -180,7 +175,10 @@ The ``Laratrust`` class has shortcuts to both ``can()`` and ``hasRole()`` for th
    // is identical to
 
    Auth::user()->hasRole('role-name');
-   Auth::user()->can('permission-name');
+   Auth::user()->hasPermission('permission-name');
+
+.. WARNING::
+   There aren't  ``Laratrust::hasPermission`` or ``Laratrust::isAbleTo`` facade methods, because you can use the ``Laratrust::can`` even when using the ``Authorizable`` trait.
 
 You can also use placeholders (wildcards) to check any matching permission by doing:
 
