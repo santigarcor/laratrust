@@ -12,19 +12,24 @@ class LaratrustUpgradeTables extends Migration
      */
     public function up()
     {
-        // Create table for associating permissions to users (Many-to-Many)
-        Schema::create('{{ $laratrust['permission_user_table'] }}', function (Blueprint $table) {
-            $table->integer('{{ $laratrust['permission_foreign_key'] }}')->unsigned();
-            $table->integer('{{ $laratrust['user_foreign_key'] }}')->unsigned();
 
-            $table->foreign('{{ $laratrust['permission_foreign_key'] }}')->references('id')->on('{{ $laratrust['permissions_table'] }}')
-                ->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('{{ $laratrust['user_foreign_key'] }}')->references('{{ $user->getKeyName() }}')->on('{{ $user->getTable() }}')
-                ->onUpdate('cascade')->onDelete('cascade');
+        Schema::table('{{ $laratrust['role_user_table'] }}', function (Blueprint $table) {
+           // Drop user foreign key and primary with role_id
+            $table->dropForeign('{{ $laratrust['role_user_table'] }}_{{ $laratrust['user_foreign_key'] }}_foreign');
+            $table->dropPrimary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}']);
 
-            $table->primary(['{{ $laratrust['permission_foreign_key'] }}', '{{ $laratrust['user_foreign_key'] }}']);
+            $table->string('user_type');
+            $table->primary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}', 'user_type']);
         });
 
+        Schema::table('{{ $laratrust['permission_user_table'] }}', function (Blueprint $table) {
+           // Drop user foreign key and primary with permission_id
+            $table->dropForeign('{{ $laratrust['permission_user_table'] }}_{{ $laratrust['user_foreign_key'] }}_foreign');
+            $table->dropPrimary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['permission_foreign_key'] }}']);
+
+            $table->string('user_type');
+            $table->primary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['permission_foreign_key'] }}', 'user_type']);
+        });
     }
 
     /**
@@ -34,6 +39,22 @@ class LaratrustUpgradeTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('{{ $laratrust['permission_user_table'] }}');
+        Schema::table('{{ $laratrust['role_user_table'] }}', function (Blueprint $table) {
+            $table->dropPrimary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}', 'user_type']);
+            $table->dropColumn('user_type');
+
+            $table->foreign('{{ $laratrust['user_foreign_key'] }}')->references('{{ $user->getKeyName() }}')->on('{{ $user->getTable() }}')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->primary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}']);
+        });
+
+        Schema::table('{{ $laratrust['permission_user_table'] }}', function (Blueprint $table) {
+            $table->dropPrimary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['permission_foreign_key'] }}', 'user_type']);
+            $table->dropColumn('user_type');
+
+            $table->foreign('{{ $laratrust['user_foreign_key'] }}')->references('{{ $user->getKeyName() }}')->on('{{ $user->getTable() }}')
+                ->onUpdate('cascade')->onDelete('cascade');
+            $table->primary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['permission_foreign_key'] }}']);
+        });
     }
 }

@@ -25,4 +25,8 @@ In order to upgrade from Laratrust 3.1 to 3.2 you have to follow these steps:
 
 6. Run ``php artisan migrate`` to apply the migration created in the previous step.
 
+7. Delete the ``LaratrustSeeder.php`` file and run ``php artisan laratrust:seeder``.
+
+8. Run ``composer dump-autoload``.
+
 Now you can use the 3.2 version without any problem.
