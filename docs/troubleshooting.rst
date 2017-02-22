@@ -36,6 +36,6 @@ If you want to use the ``Authorizable`` trait yo have to do:
 And then replace all the uses of ``can`` with ``hasPermission`` or ``isAbleTo``.
 
 .. NOTE::
-    If you use the ``Laratrust::can`` you don't have to change this method because it calls the ``hasPermission`` method.
+    If you use the ``Laratrust::can`` facade method you don't have to change this method because it calls the ``hasPermission`` method.
 
 ---

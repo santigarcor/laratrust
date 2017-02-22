@@ -145,7 +145,7 @@ Now we can check for roles and permissions simply by doing:
 .. NOTE::
    The ``can``, ``hasPermission`` and ``isAbleTo`` methods have the same objective, to check user's permissions.
 
-   Inside Laratrust code the ``hasPermission`` method is used intead of the ``can`` method, so if you want to use the Authorizable trait you can use it without any problem. To use the Authorizable trait check :ref:`troubleshooting`.
+   Inside Laratrust code the ``hasPermission`` method is used intead of the ``can`` method, so if you want to use the Authorizable trait you can use it without any problem (if you didn't use the Laratrust can method). To use the Authorizable trait check :ref:`troubleshooting`.
 
 Both ``hasRole()``, ``can()``, ``hasPermission()``, ``isAbleTo()`` can receive an array of roles & permissions to check:
 
