@@ -29,6 +29,8 @@ It means that there is only one user model using Laratrust, and the relationship
     $role->users;
     $role->users();
 
+.. NOTE::
+    Inside the ``role_user`` and ``permission_user`` table the ``user_type`` column will be set with the user's fully qualified class name, as the `polymorphic <https://laravel.com/docs/eloquent-relationships#polymorphic-relations>`_ relations describe it in Laravel docs.
 
 Automatic setup (Recommended)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
