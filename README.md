@@ -11,7 +11,7 @@
 
 <!--[![SensioLabsInsight](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e/small.png)](https://insight.sensiolabs.com/projects/cc4af966-809b-4fbc-b8b2-bb2850e6711e)  -->
 
-Laratrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5**.
+Laratrust is a succinct and flexible way to add Role-based Permissions to **Laravel 5 (>=5.1)**.
 
 ## Note
 This is a fork of Zizaco's [original code](https://github.com/Zizaco/entrust); thanks go to him for getting this thing started!
