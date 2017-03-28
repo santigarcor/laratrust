@@ -21,7 +21,7 @@ trait LaratrustRoleTrait
 
     /**
      * Big block of caching functionality
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function cachedPermissions()
     {
@@ -36,7 +36,7 @@ trait LaratrustRoleTrait
      * Morph by Many relationship between the role and the one of the possible user models
      *
      * @param  string $relationship
-     * @return Illuminate\Database\Eloquent\Relations\MorphToMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function getMorphByUserRelation($relationship)
     {
