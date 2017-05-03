@@ -170,4 +170,25 @@ interface LaratrustUserInterface
      * @return boolean
      */
     public function canAndOwns($permission, $thing, $options = []);
+
+    /**
+     * Checks if the user has a level equal to or greater than supplied
+     * @param  int $level
+     * @return boolean
+     */
+    public function hasLevelOrGreater($level);
+
+    /**
+     * Checks if the user has a level equal to or less than supplied
+     * @param  int $level
+     * @return boolean
+     */
+    public function hasLevelOrLess($level);
+
+    /**
+     * Checks if the user has a level between supplied
+     * @param  string $levels
+     * @return boolean
+     */
+    public function hasLevelBetween($levels);
 }

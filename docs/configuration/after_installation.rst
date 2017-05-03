@@ -35,7 +35,7 @@ It means that there is only one user model using Laratrust, and the relationship
 Automatic setup (Recommended)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you want to let laratrust to setup by itselft, just run the following command::
+If you want to let laratrust to setup by itself, just run the following command::
 
     php artisan laratrust:setup
 
@@ -47,6 +47,9 @@ This command will generate the migrations, create the ``Role`` and ``Permission`
 And then do not forget to run::
 
     composer dump-autoload
+
+.. NOTE::
+    If you plan on using the hierarchical Levels functionality, you will need to add the optional trait to your user model that is outlined in the :ref:`user-model` Model part of the documentation.
 
 .. IMPORTANT::
     **If you did the steps above you are done with the configuration, if not, please read and follow the whole configuration process**

@@ -137,4 +137,43 @@ class Laratrust
     {
         return $this->app->auth->user();
     }
+
+    /**
+     * Checks if the user has a level equal to or greater than supplied
+     * @param  int $level
+     * @return boolean
+     */
+    public function hasLevelOrGreater($level)
+    {
+        if ($user = $this->user()) {
+            return $user->hasLevelOrGreater($level);
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the user has a level equal to or less than supplied
+     * @param  int $level
+     * @return boolean
+     */
+    public function hasLevelOrLess($level)
+    {
+        if ($user = $this->user()) {
+            return $user->hasLevelOrLess($level);
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the user has a level equal to or less than supplied
+     * @param  string $levels
+     * @return boolean
+     */
+    public function hasLevelBetween($levels)
+    {
+        if ($user = $this->user()) {
+            return $user->hasLevelBetween($levels);
+        }
+        return false;
+    }
 }

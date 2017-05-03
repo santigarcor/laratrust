@@ -30,3 +30,25 @@ Three directives are available for use within your Blade templates. What you giv
         <p>This is visible if the user has the role and owns the object. Gets translated to 
         \Laratrust::hasRoleAndOwns('admin', $post)</p>
     @endOwns
+
+.. NOTE::
+
+    If you are using the levels hierarchical functionality then you have access to the following blade directives.
+
+
+.. code-block:: php
+
+    @hasLevelOrGreater(1)
+        <p>This is visible to users with role level >= 1. Gets translated to
+        \Laratrust::hasLevelOrGreater(1)</p>
+    @endlevel
+
+    @hasLevelOrLess(3)
+        <p>This is visible to users with role level <= 3. Gets translated to
+        \Laratrust::hasLevelOrLess(3)</p>
+    @endlevel
+
+    @hasLevelBetween('1^3')
+        <p>This is visible to users with role level between 1 and 3. Gets translated to
+        \Laratrust::hasLevelBetween('1^3')</p>
+    @endlevel
