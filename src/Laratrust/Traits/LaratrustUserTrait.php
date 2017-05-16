@@ -359,7 +359,7 @@ trait LaratrustUserTrait
      */
     public function attachPermission($permission)
     {
-        $this->permissions()->attach($this->getIdFor($permission));
+        $this->permissions()->attach($this->getIdFor($permission, 'permission'));
         $this->flushCache();
 
         return $this;
@@ -373,7 +373,7 @@ trait LaratrustUserTrait
      */
     public function detachPermission($permission)
     {
-        $this->permissions()->detach($this->getIdFor($permission));
+        $this->permissions()->detach($this->getIdFor($permission, 'permission'));
         $this->flushCache();
 
         return $this;
@@ -526,10 +526,11 @@ trait LaratrustUserTrait
 
     /**
      * Gets the it from an array or object
-     * @param  mixed $object
+     * @param  mixed  $object
+     * @param  string $type
      * @return int
      */
-    private function getIdFor($object)
+    private function getIdFor($object, $type = 'role')
     {
         if (is_object($object)) {
             return $object->getKey();
@@ -537,6 +538,10 @@ trait LaratrustUserTrait
             return $object['id'];
         } elseif (is_numeric($object)) {
             return $object;
+        } elseif (is_string($object)) {
+            return call_user_func_array([
+                Config::get("laratrust.{$type}"), 'where'
+            ], ['name', $object])->firstOrFail()->getKey();
         }
 
         throw new InvalidArgumentException(

@@ -119,7 +119,7 @@ class LaratrustUserTest extends UserTest
         $this->assertFalse($user->hasRole(['RoleC', 'RoleD']));
     }
 
-    public function testCan()
+    public function testHasPermission()
     {
         /*
         |------------------------------------------------------------
@@ -167,20 +167,54 @@ class LaratrustUserTest extends UserTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertTrue($user->can([]));
-        $this->assertTrue($user->can('manage_a'));
-        $this->assertTrue($user->can('manage_b'));
-        $this->assertTrue($user->can('manage_c'));
-        $this->assertTrue($user->can('manage_d'));
-        $this->assertFalse($user->can('manage_e'));
+        $this->assertTrue($user->hasPermission([]));
+        $this->assertTrue($user->hasPermission('manage_a'));
+        $this->assertTrue($user->hasPermission('manage_b'));
+        $this->assertTrue($user->hasPermission('manage_c'));
+        $this->assertTrue($user->hasPermission('manage_d'));
+        $this->assertFalse($user->hasPermission('manage_e'));
 
-        $this->assertTrue($user->can(['manage_a', 'manage_b', 'manage_c']));
-        $this->assertTrue($user->can(['manage_a', 'manage_b', 'manage_d']));
-        $this->assertTrue($user->can(['manage_a', 'manage_b', 'manage_d'], true));
-        $this->assertFalse($user->can(['manage_a', 'manage_b', 'manage_e'], true));
-        $this->assertFalse($user->can(['manage_e', 'manage_f']));
+        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_c']));
+        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_d']));
+        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_d'], true));
+        $this->assertFalse($user->hasPermission(['manage_a', 'manage_b', 'manage_e'], true));
+        $this->assertFalse($user->hasPermission(['manage_e', 'manage_f']));
     }
 
+    public function testIsAbleTo()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $user = m::mock('HasRoleUser')->makePartial();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $user->shouldReceive('hasPermission')->with('manage_user', false)->andReturn(true);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->isAbleTo('manage_user'));
+        // $this->assertTrue($user->isAbleTo('manage_a'));
+        // $this->assertTrue($user->isAbleTo('manage_b'));
+        // $this->assertTrue($user->isAbleTo('manage_c'));
+        // $this->assertTrue($user->isAbleTo('manage_d'));
+        // $this->assertFalse($user->isAbleTo('manage_e'));
+
+        // $this->assertTrue($user->isAbleTo(['manage_a', 'manage_b', 'manage_c']));
+        // $this->assertTrue($user->isAbleTo(['manage_a', 'manage_b', 'manage_d']));
+        // $this->assertTrue($user->isAbleTo(['manage_a', 'manage_b', 'manage_d'], true));
+        // $this->assertFalse($user->isAbleTo(['manage_a', 'manage_b', 'manage_e'], true));
+        // $this->assertFalse($user->isAbleTo(['manage_e', 'manage_f']));
+    }
 
     public function testCanWithPlaceholderSupport()
     {
@@ -255,12 +289,16 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $roleObject->shouldReceive('getKey')->andReturn(1);
+        $roleObject->shouldReceive('getKey')->andReturn(1)->twice();
         $user->shouldReceive('roles')->andReturn($user);
         $user->shouldReceive('attach')->with(1)->once()->ordered();
         $user->shouldReceive('attach')->with(2)->once()->ordered();
         $user->shouldReceive('attach')->with(3)->once()->ordered();
-        Cache::shouldReceive('forget')->times(6);
+        $user->shouldReceive('attach')->with(1)->once()->ordered();
+        Cache::shouldReceive('forget')->times(8);
+        Config::shouldReceive('get')->with('laratrust.role')->andReturn($roleObject)->once();
+        $roleObject->shouldReceive('where')->with('name', 'admin')->andReturn($roleObject);
+        $roleObject->shouldReceive('firstOrFail')->andReturn($roleObject);
 
         /*
         |------------------------------------------------------------
@@ -272,6 +310,8 @@ class LaratrustUserTest extends UserTest
         $result = $user->attachRole($roleArray);
         $this->assertInstanceOf('HasRoleUser', $result);
         $result = $user->attachRole(3);
+        $this->assertInstanceOf('HasRoleUser', $result);
+        $result = $user->attachRole('admin');
         $this->assertInstanceOf('HasRoleUser', $result);
     }
 
@@ -451,7 +491,11 @@ class LaratrustUserTest extends UserTest
         $user->shouldReceive('attach')->with(1)->once()->ordered();
         $user->shouldReceive('attach')->with(2)->once()->ordered();
         $user->shouldReceive('attach')->with(3)->once()->ordered();
-        Cache::shouldReceive('forget')->times(6);
+        $user->shouldReceive('attach')->with(1)->once()->ordered();
+        Cache::shouldReceive('forget')->times(8);
+        Config::shouldReceive('get')->with('laratrust.permission')->andReturn($permissionObject)->once();
+        $permissionObject->shouldReceive('where')->with('name', 'edit-post')->andReturn($permissionObject);
+        $permissionObject->shouldReceive('firstOrFail')->andReturn($permissionObject);
 
         /*
         |------------------------------------------------------------
@@ -463,6 +507,8 @@ class LaratrustUserTest extends UserTest
         $result = $user->attachPermission($permissionArray);
         $this->assertInstanceOf('HasRoleUser', $result);
         $result = $user->attachPermission(3);
+        $this->assertInstanceOf('HasRoleUser', $result);
+        $result = $user->attachPermission('edit-post');
         $this->assertInstanceOf('HasRoleUser', $result);
         $this->setExpectedException(InvalidArgumentException::class);
         $user->attachPermission(true);

@@ -78,10 +78,10 @@ Assignment
 
 .. code-block:: php
 
-   $user->attachRole($admin); // parameter can be an Role object, array, or id
+   $user->attachRole($admin); // parameter can be an Role object, array, id or string
    // equivalent to $user->roles()->attach([$admin->id]);
 
-   $user->attachRoles([$admin, $owner]); // parameter can be an Role object, array, or id
+   $user->attachRoles([$admin, $owner]); // parameter can be an Role object, array, id or string
    // equivalent to $user->roles()->attach([$admin->id, $owner->id]);
 
    $user->syncRoles([$admin->id, $owner->id]);
@@ -92,10 +92,10 @@ Removal
 
 .. code-block:: php
 
-   $user->detachRole($admin); // parameter can be an Role object, array, or id
+   $user->detachRole($admin); // parameter can be an Role object, array, id or string
    // equivalent to $user->roles()->detach([$admin->id]);
 
-   $user->detachRoles([$admin, $owner]); // parameter can be an Role object, array, or id
+   $user->detachRoles([$admin, $owner]); // parameter can be an Role object, array, id or string
    // equivalent to $user->roles()->detach([$admin->id, $owner->id]);
 
 User Permissions Assignment & Removal
@@ -108,10 +108,10 @@ Assignment
 
 .. code-block:: php
 
-   $user->attachPermission($editUser); // parameter can be an Permission object, array, or id
+   $user->attachPermission($editUser); // parameter can be an Permission object, array, id or string
    // equivalent to $user->permissions()->attach([$editUser->id]);
 
-   $user->attachPermissions([$editUser, $createPost]); // parameter can be an Permission object, array, or id
+   $user->attachPermissions([$editUser, $createPost]); // parameter can be an Permission object, array, id or string
    // equivalent to $user->permissions()->attach([$editUser->id, $createPost->id]);
 
    $user->syncPermissions([$editUser->id, $createPost->id]);
@@ -122,10 +122,10 @@ Removal
 
 .. code-block:: php
 
-   $user->detachPermission($createPost); // parameter can be an Permission object, array, or id
+   $user->detachPermission($createPost); // parameter can be an Permission object, array, id or string
    // equivalent to $user->roles()->detach([$createPost->id]);
 
-   $user->detachPermissions([$createPost, $editUser]); // parameter can be an Permission object, array, or id
+   $user->detachPermissions([$createPost, $editUser]); // parameter can be an Permission object, array, id or string
    // equivalent to $user->roles()->detach([$createPost->id, $editUser->id]);
 
 Checking for Roles & Permissions
