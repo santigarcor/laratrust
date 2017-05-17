@@ -10,6 +10,7 @@ namespace Laratrust;
  * @package Laratrust
  */
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Factory;
 use Laratrust\LaratrustRegistersBladeDirectives;
@@ -51,6 +52,10 @@ class LaratrustServiceProvider extends ServiceProvider
             __DIR__.'/../config/config.php' => config_path('laratrust.php'),
             __DIR__.'/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
         ], 'laratrust');
+
+        if ($this->app['config']->get('laratrust.use_morph_map')) {
+            Relation::morphMap($this->app['config']->get('laratrust.user_models'));
+        }
 
         if (class_exists('\Blade')) {
             $this->registerBladeDirectives();

@@ -105,6 +105,7 @@ class LaratrustSeeder extends Seeder
     {
 @if (Config::get('database.default') == 'pgsql')
         DB::table('{{ config('laratrust.permission_role_table') }}')->truncate();
+        DB::table('{{ config('laratrust.permission_user_table') }}')->truncate();
         DB::table('{{ config('laratrust.role_user_table') }}')->truncate();
         $usersTable = (new \{{ $user }})->getTable();
         $rolesTable = (new \{{ $role }})->getTable();
@@ -115,6 +116,7 @@ class LaratrustSeeder extends Seeder
 @elseif(Config::get('database.default') == 'mysql')
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         DB::table('{{ config('laratrust.permission_role_table') }}')->truncate();
+        DB::table('{{ config('laratrust.permission_user_table') }}')->truncate();
         DB::table('{{ config('laratrust.role_user_table') }}')->truncate();
         \{{ $user }}::truncate();
         \{{ $role }}::truncate();
@@ -123,6 +125,7 @@ class LaratrustSeeder extends Seeder
 @elseif(Config::get('database.default') == 'sqlsrv')
         DB::statement('EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all"');
         DB::table('{{ config('laratrust.permission_role_table') }}')->truncate();
+        DB::table('{{ config('laratrust.permission_user_table') }}')->truncate();
         DB::table('{{ config('laratrust.role_user_table') }}')->truncate();
         \{{ $user }}::truncate();
         \{{ $role }}::truncate();
