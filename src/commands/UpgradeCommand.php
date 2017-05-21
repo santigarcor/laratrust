@@ -96,6 +96,7 @@ class UpgradeCommand extends Command
             'laratrust'
         );
 
+        $this->call('view:clear');
         $output = $this->laravel->view->make('laratrust::generators.upgrade-migration')->with($data)->render();
 
         if (!file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
