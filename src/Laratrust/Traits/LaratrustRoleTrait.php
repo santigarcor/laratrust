@@ -79,7 +79,7 @@ trait LaratrustRoleTrait
         };
         
         // If the role doesn't use SoftDeletes
-        if (method_exists(Config::get('laratrust.role'), 'restored')) {
+        if (method_exists(static::class, 'restored')) {
             static::restored($flushCache);
         }
 
@@ -87,9 +87,14 @@ trait LaratrustRoleTrait
         static::saved($flushCache);
 
         static::deleting(function ($role) {
-            if (!method_exists(Config::get('laratrust.role'), 'bootSoftDeletes')) {
-                $role->users()->sync([]);
-                $role->permissions()->sync([]);
+            if (method_exists($role, 'bootSoftDeletes') && $role->forceDeleting) {
+                return true;
+            }
+
+            $role->permissions()->sync([]);
+
+            foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
+                $role->$key()->sync([]);
             }
         });
     }

@@ -63,5 +63,17 @@ trait LaratrustPermissionTrait
                 $permission->roles()->sync([]);
             }
         });
+
+        static::deleting(function ($permission) {
+            if (method_exists($permission, 'bootSoftDeletes') && $permission->forceDeleting) {
+                return true;
+            }
+
+            $permission->roles()->sync([]);
+
+            foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
+                $permission->$key()->sync([]);
+            }
+        });
     }
 }
