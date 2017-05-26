@@ -18,7 +18,7 @@ class LaratrustUserTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $morphToMany = new stdClass();
+        $morphToMany = m::mock(new stdClass());
         $user = m::mock('HasRoleUser')->makePartial();
 
         /*
@@ -30,6 +30,9 @@ class LaratrustUserTest extends UserTest
             ->with('role', 'user', 'assigned_roles_table_name', 'user_id', 'role_id')
             ->andReturn($morphToMany)
             ->once();
+        $morphToMany->shouldReceive('withPivot')
+            ->with('group_id')
+            ->andReturn($morphToMany);
 
         Config::shouldReceive('get')->once()->with('laratrust.role')
             ->andReturn('role');
@@ -39,6 +42,8 @@ class LaratrustUserTest extends UserTest
             ->andReturn('user_id');
         Config::shouldReceive('get')->once()->with('laratrust.role_foreign_key')
             ->andReturn('role_id');
+        Config::shouldReceive('get')->once()->with('laratrust.group_foreign_key')
+            ->andReturn('group_id');
 
         /*
         |------------------------------------------------------------
@@ -55,7 +60,7 @@ class LaratrustUserTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $morphToMany = new stdClass();
+        $morphToMany = m::mock(new stdClass());
         $user = m::mock('HasRoleUser')->makePartial();
 
         /*
@@ -67,13 +72,17 @@ class LaratrustUserTest extends UserTest
             ->with('permission', 'user', 'assigned_permissions_table_name', 'user_id', 'permission_id')
             ->andReturn($morphToMany)
             ->once();
+        $morphToMany->shouldReceive('withPivot')
+            ->with('group_id')
+            ->andReturn($morphToMany);
 
         Config::shouldReceive('get')->once()->with('laratrust.permission')->andReturn('permission');
         Config::shouldReceive('get')->once()->with('laratrust.permission_user_table')
             ->andReturn('assigned_permissions_table_name');
         Config::shouldReceive('get')->once()->with('laratrust.user_foreign_key')->andReturn('user_id');
         Config::shouldReceive('get')->once()->with('laratrust.permission_foreign_key')->andReturn('permission_id');
-
+        Config::shouldReceive('get')->once()->with('laratrust.group_foreign_key')
+            ->andReturn('group_id');
         /*
         |------------------------------------------------------------
         | Assertion
@@ -89,19 +98,30 @@ class LaratrustUserTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
+        $group = $this->mockGroup('GroupA');
         $roleA = $this->mockRole('RoleA');
         $roleB = $this->mockRole('RoleB');
+        $roleC = $this->mockRole('RoleC', $group->id);
 
         $user = new HasRoleUser();
-        $user->roles = [$roleA, $roleB];
+        $user->roles = [$roleA, $roleB, $roleC];
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(9)->andReturn('1440');
-        Cache::shouldReceive('remember')->times(9)->andReturn($user->roles);
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(14)->andReturn('1440');
+        Cache::shouldReceive('remember')->times(14)->andReturn($user->roles);
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key')
+            ->times(21)
+            ->andReturn('group_id');
+        Config::shouldReceive('get')->with('laratrust.group')
+            ->times(5)
+            ->andReturn($group);
+        $group->shouldReceive('where')->with('name', 'GroupA')->times(5)->andReturn($group);
+        $group->shouldReceive('first')->times(5)->andReturn($group);
+        $group->shouldReceive('getKey')->times(5)->andReturn($group->id);
 
         /*
         |------------------------------------------------------------
@@ -112,9 +132,13 @@ class LaratrustUserTest extends UserTest
         $this->assertTrue($user->hasRole('RoleA'));
         $this->assertTrue($user->hasRole('RoleB'));
         $this->assertFalse($user->hasRole('RoleC'));
+        $this->assertTrue($user->hasRole('RoleC', 'GroupA'));
+        $this->assertFalse($user->hasRole('RoleA', 'GroupA'));
 
         $this->assertTrue($user->hasRole(['RoleA', 'RoleB']));
         $this->assertTrue($user->hasRole(['RoleA', 'RoleC']));
+        $this->assertTrue($user->hasRole(['RoleA', 'RoleC'], 'GroupA'));
+        $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], 'GroupA', true));
         $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], true));
         $this->assertFalse($user->hasRole(['RoleC', 'RoleD']));
     }
@@ -430,8 +454,11 @@ class LaratrustUserTest extends UserTest
         Config::shouldReceive('get')->with('laratrust.role_user_table')->once()->andReturn('role_user');
         Config::shouldReceive('get')->with('laratrust.user_foreign_key')->once()->andReturn('user_id');
         Config::shouldReceive('get')->with('laratrust.role_foreign_key')->once()->andReturn('role_id');
-        $relationship->shouldReceive('get')->andReturn($user->roles)->once();
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key')
+            ->once()->andReturn('group_id');
         $user->shouldReceive('morphToMany')->andReturn($relationship)->once();
+        $relationship->shouldReceive('withPivot')->with('group_id')->andReturn($relationship)->once();
+        $relationship->shouldReceive('get')->andReturn($user->roles)->once();
         $user->shouldReceive('detachRole')->twice();
 
         /*
@@ -630,8 +657,11 @@ class LaratrustUserTest extends UserTest
         Config::shouldReceive('get')->with('laratrust.permission_user_table')->once()->andReturn('permission_user');
         Config::shouldReceive('get')->with('laratrust.user_foreign_key')->once()->andReturn('user_id');
         Config::shouldReceive('get')->with('laratrust.permission_foreign_key')->once()->andReturn('permission_id');
-        $relationship->shouldReceive('get')->andReturn($user->permissions)->once();
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key')
+            ->once()->andReturn('group_id');
         $user->shouldReceive('morphToMany')->andReturn($relationship)->once();
+        $relationship->shouldReceive('withPivot')->with('group_id')->andReturn($relationship)->once();
+        $relationship->shouldReceive('get')->andReturn($user->permissions)->once();
         $user->shouldReceive('detachPermission')->twice();
 
         /*

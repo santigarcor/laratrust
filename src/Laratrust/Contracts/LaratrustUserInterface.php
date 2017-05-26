@@ -34,7 +34,7 @@ interface LaratrustUserInterface
      *
      * @return bool
      */
-    public function hasRole($name, $requireAll = false);
+    public function hasRole($name, $group = null, $requireAll = false);
 
     /**
      * Check if user has a permission by its name.

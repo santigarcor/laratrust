@@ -21,16 +21,28 @@ class LaratrustSetupTables extends Migration
             $table->timestamps();
         });
 
-        // Create table for associating roles to users (Many To Many Polymorphic)
+        // Create table for storing groups
+        Schema::create('{{ $laratrust['groups_table'] }}', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name')->unique();
+            $table->string('display_name')->nullable();
+            $table->string('description')->nullable();
+            $table->timestamps();
+        });
+
+        // Create table for associating roles to users and groups (Many To Many Polymorphic)
         Schema::create('{{ $laratrust['role_user_table'] }}', function (Blueprint $table) {
             $table->integer('{{ $laratrust['user_foreign_key'] }}')->unsigned();
             $table->integer('{{ $laratrust['role_foreign_key'] }}')->unsigned();
+            $table->integer('{{ $laratrust['group_foreign_key'] }}')->unsigned()->nullable();
             $table->string('user_type');
 
             $table->foreign('{{ $laratrust['role_foreign_key'] }}')->references('id')->on('{{ $laratrust['roles_table'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('{{ $laratrust['group_foreign_key'] }}')->references('id')->on('{{ $laratrust['groups_table'] }}')
+                ->onUpdate('cascade')->onDelete('cascade');
 
-            $table->primary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}', 'user_type']);
+            $table->unique(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}', 'user_type', '{{ $laratrust['group_foreign_key'] }}']);
         });
 
         // Create table for storing permissions
@@ -60,11 +72,14 @@ class LaratrustSetupTables extends Migration
             $table->integer('{{ $laratrust['permission_foreign_key'] }}')->unsigned();
             $table->integer('{{ $laratrust['user_foreign_key'] }}')->unsigned();
             $table->string('user_type');
+            $table->integer('{{ $laratrust['group_foreign_key'] }}')->unsigned()->nullable();
 
             $table->foreign('{{ $laratrust['permission_foreign_key'] }}')->references('id')->on('{{ $laratrust['permissions_table'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
+            $table->foreign('{{ $laratrust['group_foreign_key'] }}')->references('id')->on('{{ $laratrust['groups_table'] }}')
+                ->onUpdate('cascade')->onDelete('cascade');
 
-            $table->primary(['{{ $laratrust['permission_foreign_key'] }}', '{{ $laratrust['user_foreign_key'] }}', 'user_type']);
+            $table->unique(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['permission_foreign_key'] }}', 'user_type', '{{ $laratrust['group_foreign_key'] }}']);
         });
 
     }
@@ -80,6 +95,7 @@ class LaratrustSetupTables extends Migration
         Schema::dropIfExists('{{ $laratrust['permission_role_table'] }}');
         Schema::dropIfExists('{{ $laratrust['permissions_table'] }}');
         Schema::dropIfExists('{{ $laratrust['role_user_table'] }}');
+        Schema::dropIfExists('{{ $laratrust['groups_table'] }}');
         Schema::dropIfExists('{{ $laratrust['roles_table'] }}');
     }
 }

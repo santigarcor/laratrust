@@ -49,7 +49,7 @@ trait LaratrustUserTrait
     /**
      * Many-to-Many relations with Role.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function roles()
     {
@@ -59,13 +59,13 @@ trait LaratrustUserTrait
             Config::get('laratrust.role_user_table'),
             Config::get('laratrust.user_foreign_key'),
             Config::get('laratrust.role_foreign_key')
-        );
+        )->withPivot(Config::get('laratrust.group_foreign_key'));
     }
 
     /**
      * Many-to-Many relations with Permission.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function permissions()
     {
@@ -75,7 +75,23 @@ trait LaratrustUserTrait
             Config::get('laratrust.permission_user_table'),
             Config::get('laratrust.user_foreign_key'),
             Config::get('laratrust.permission_foreign_key')
-        );
+        )->withPivot(Config::get('laratrust.group_foreign_key'));
+    }
+
+    /**
+     * Many-to-Many relations with Group.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function groups()
+    {
+        return $this->morphToMany(
+            Config::get('laratrust.group'),
+            'user',
+            Config::get('laratrust.role_user_table'),
+            Config::get('laratrust.user_foreign_key'),
+            Config::get('laratrust.group_foreign_key')
+        )->withPivot(Config::get('laratrust.role_foreign_key'));
     }
 
     /**
@@ -113,6 +129,20 @@ trait LaratrustUserTrait
     }
 
     /**
+     * Assing the real values to the group and requireAllOrOptions parameters
+     * @param  mixed $group
+     * @param  mixed $requireAllOrOptions
+     * @return array
+     */
+    protected function parametersRealValues($group, $requireAllOrOptions)
+    {
+        return [
+            (is_bool($group) ? null : $group),
+            (is_bool($group) ? $group : $requireAllOrOptions),
+        ];
+    }
+
+    /**
      * Checks if the user has a role by its name.
      *
      * @param string|array $name       Role name or array of role names.
@@ -120,15 +150,18 @@ trait LaratrustUserTrait
      *
      * @return bool
      */
-    public function hasRole($name, $requireAll = false)
+    public function hasRole($name, $group = null, $requireAll = false)
     {
+        list($group, $requireAll) = $this->parametersRealValues($group, $requireAll);
+        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+
         if (is_array($name)) {
             if (empty($name)) {
                 return true;
             }
 
             foreach ($name as $roleName) {
-                $hasRole = $this->hasRole($roleName);
+                $hasRole = $this->hasRole($roleName, $group);
 
                 if ($hasRole && !$requireAll) {
                     return true;
@@ -143,8 +176,16 @@ trait LaratrustUserTrait
             return $requireAll;
         }
 
+        if (!is_null($group)) {
+            $group = call_user_func_array(
+                        [Config::get('laratrust.group'), 'where'],
+                        ['name', $group]
+                    )->first();
+            $group = is_null($group) ? $group : $group->getKey();
+        }
+
         foreach ($this->cachedRoles() as $role) {
-            if ($role->name == $name) {
+            if ($role->name == $name && $role->pivot->$groupForeignKey == $group) {
                 return true;
             }
         }

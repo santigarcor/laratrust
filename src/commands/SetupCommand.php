@@ -37,6 +37,7 @@ class SetupCommand extends Command
         'laratrust:migration' => 'Creating migration',
         'laratrust:role' => 'Creating Role model',
         'laratrust:permission' => 'Creating Permission model',
+        'laratrust:group' => 'Creating Group model',
         'laratrust:add-trait' => 'Adding LaratrustUserTrait to User model'
     ];
 

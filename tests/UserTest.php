@@ -45,7 +45,7 @@ abstract class UserTest extends PHPUnit_Framework_TestCase
         return $permMock;
     }
 
-    protected function mockRole($roleName)
+    protected function mockRole($roleName, $group_id = null)
     {
         $roleMock = m::mock('Laratrust\Role');
         $roleMock->name = $roleName;
@@ -53,6 +53,19 @@ abstract class UserTest extends PHPUnit_Framework_TestCase
         $roleMock->permissions = [];
         $roleMock->id = 1;
 
+        $pivot = new stdClass();
+        $pivot->group_id = $group_id;
+        $roleMock->pivot = $pivot;
+
         return $roleMock;
+    }
+
+    protected function mockGroup($groupName)
+    {
+        $groupMock = m::mock('Laratrust\Group');
+        $groupMock->name = $groupName;
+        $groupMock->id = 1;
+
+        return $groupMock;
     }
 }

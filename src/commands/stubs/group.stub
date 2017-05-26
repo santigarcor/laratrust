@@ -1,0 +1,10 @@
+<?php
+
+namespace DummyNamespace;
+
+use Laratrust\LaratrustGroup;
+
+class DummyClass extends LaratrustGroup
+{
+    //
+}
