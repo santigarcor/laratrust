@@ -362,7 +362,6 @@ class LaratrustRoleTest extends UserTest
         |------------------------------------------------------------
         */
         $role->shouldReceive('bootLaratrustRoleTrait');
-        Config::shouldReceive('get')->with('laratrust.role')->once()->andReturn('RoleTestClass');
 
         /*
         |------------------------------------------------------------

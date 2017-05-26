@@ -827,7 +827,6 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         $user->shouldReceive('bootLaratrustUserTrait');
-        Config::shouldReceive('get')->with('auth.providers.users.model')->once()->andReturn('HasRoleUser');
 
         /*
         |------------------------------------------------------------
