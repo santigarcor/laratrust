@@ -12,61 +12,61 @@ use Mockery as m;
 
 class LaratrustUserAbilityTest extends UserTest {
 
+    protected $permissions;
+    protected $roles;
+    protected $user;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->permissions['A'] = $this->mockPermission('user_can_a');
+        $this->permissions['B'] = $this->mockPermission('user_can_b');
+        $this->permissions['C'] = $this->mockPermission('user_can_c');
+
+        $this->group = $this->mockGroup('GroupA');
+        $this->roles['A'] = $this->mockRole('UserRoleA');
+        $this->roles['B'] = $this->mockRole('UserRoleB', $this->group->id);
+
+        $this->roles['A']->perms = [$this->permissions['A']];
+        $this->roles['B']->perms = [$this->permissions['B'], $this->permissions['C']];
+
+        $this->user = m::mock('HasRoleUser')->makePartial();
+        $this->user->roles = [$this->roles['A'], $this->roles['B']];
+        $this->user->id = 4;
+        $this->user->primaryKey = 'id';
+    }
+
+    protected function hasRoleAndHasPermissionExpectations()
+    {
+        $this->user->shouldReceive('hasRole')->with('UserRoleA', null)->andReturn(true);
+        $this->user->shouldReceive('hasRole')->with('UserRoleA', 'GroupA')->andReturn(false);
+        $this->user->shouldReceive('hasRole')->with('UserRoleB', 'GroupA')->andReturn(true);
+        $this->user->shouldReceive('hasRole')->with('UserRoleB', null)->andReturn(false);
+        $this->user->shouldReceive('hasRole')
+            ->with(m::anyOf('NonUserRoleA', 'NonUserRoleB'), m::anyOf('GroupA', null))
+            ->andReturn(false);
+        $this->user->shouldReceive('hasPermission')->with('user_can_a', null)->andReturn(true);
+        $this->user->shouldReceive('hasPermission')->with('user_can_a', 'GroupA')->andReturn(false);
+        $this->user->shouldReceive('hasPermission')
+            ->with(m::anyOf('user_can_b', 'user_can_c'), 'GroupA')
+            ->andReturn(true);
+        $this->user->shouldReceive('hasPermission')
+            ->with(m::anyOf('user_can_b', 'user_can_c'), null)
+            ->andReturn(false);
+        $this->user->shouldReceive('hasPermission')
+            ->with(m::anyOf('user_cannot_a', 'user_cannot_b'), m::anyOf('GroupA', null))
+            ->andReturn(false);
+    }
+
     public function testAbilityShouldReturnBoolean()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $userPermNameA = 'user_can_a';
-        $userPermNameB = 'user_can_b';
-        $userPermNameC = 'user_can_c';
-        $nonUserPermNameA = 'user_cannot_a';
-        $nonUserPermNameB = 'user_cannot_b';
-        $userRoleNameA = 'UserRoleA';
-        $userRoleNameB = 'UserRoleB';
-        $nonUserRoleNameA = 'NonUserRoleA';
-        $nonUserRoleNameB = 'NonUserRoleB';
-
-        $permA = $this->mockPermission($userPermNameA);
-        $permB = $this->mockPermission($userPermNameB);
-        $permC = $this->mockPermission($userPermNameC);
-
-        $roleA = $this->mockRole($userRoleNameA);
-        $roleB = $this->mockRole($userRoleNameB);
-
-        $roleA->perms = [$permA];
-        $roleB->perms = [$permB, $permC];
-
-        $user = m::mock('HasRoleUser')->makePartial();
-        $user->roles = [$roleA, $roleB];
-        $user->id = 4;
-        $user->primaryKey = 'id';
-
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $roleA->shouldReceive('cachedPermissions')->times(16)->andReturn($roleA->perms);
-        $roleB->shouldReceive('cachedPermissions')->times(12)->andReturn($roleB->perms);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(48)->andReturn('1440');
-        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->times(16)->andReturn('group_id');
-        Cache::shouldReceive('remember')->times(48)->andReturn($user->roles);
-
-        $user->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
-            ->andReturn(true);
-        $user->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
-            ->andReturn(false);
-        $user->shouldReceive('hasPermission')
-            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
-            ->andReturn(true);
-        $user->shouldReceive('hasPermission')
-            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
-            ->andReturn(false);
+        $this->hasRoleAndHasPermissionExpectations();
 
         /*
         |------------------------------------------------------------
@@ -75,60 +75,67 @@ class LaratrustUserAbilityTest extends UserTest {
         */
         // Case: User has everything.
         $this->assertTrue(
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB]
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b']
             )
         );
         $this->assertTrue(
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b'],
+                'GroupA'
+            )
+        );
+        $this->assertTrue(
+            $this->user->ability(
+                ['UserRoleA'],
+                ['user_can_a'],
                 ['validate_all' => true]
             )
         );
 
         // Case: User lacks a role.
         $this->assertTrue(
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB]
+            $this->user->ability(
+                ['NonUserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b']
             )
         );
         $this->assertFalse(
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
+            $this->user->ability(
+                ['NonUserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b'],
                 ['validate_all' => true]
             )
         );
 
         // Case: User lacks a permission.
         $this->assertTrue(
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB]
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_cannot_a', 'user_can_b']
             )
         );
         $this->assertFalse(
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB],
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_cannot_a', 'user_can_b'],
                 ['validate_all' => true]
             )
         );
 
         // Case: User lacks everything.
         $this->assertFalse(
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB]
+            $this->user->ability(
+                ['NonUserRoleA', 'NonUserRoleB'],
+                ['user_cannot_a', 'user_cannot_b']
             )
         );
         $this->assertFalse(
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB],
+            $this->user->ability(
+                ['NonUserRoleA', 'NonUserRoleB'],
+                ['user_cannot_a', 'user_cannot_b'],
                 ['validate_all' => true]
             )
         );
@@ -138,58 +145,10 @@ class LaratrustUserAbilityTest extends UserTest {
     {
         /*
         |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $userPermNameA = 'user_can_a';
-        $userPermNameB = 'user_can_b';
-        $userPermNameC = 'user_can_c';
-        $nonUserPermNameA = 'user_cannot_a';
-        $nonUserPermNameB = 'user_cannot_b';
-        $userRoleNameA = 'UserRoleA';
-        $userRoleNameB = 'UserRoleB';
-        $nonUserRoleNameA = 'NonUserRoleA';
-        $nonUserRoleNameB = 'NonUserRoleB';
-
-        $permA = $this->mockPermission($userPermNameA);
-        $permB = $this->mockPermission($userPermNameB);
-        $permC = $this->mockPermission($userPermNameC);
-
-        $roleA = $this->mockRole($userRoleNameA);
-        $roleB = $this->mockRole($userRoleNameB);
-
-        $roleA->perms = [$permA];
-        $roleB->perms = [$permB, $permC];
-
-        $user = m::mock('HasRoleUser')->makePartial();
-        $user->roles = [$roleA, $roleB];
-        $user->id = 4;
-        $user->primaryKey = 'id';
-
-
-        /*
-        |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $roleA->shouldReceive('cachedPermissions')->times(16)->andReturn($roleA->perms);
-        $roleB->shouldReceive('cachedPermissions')->times(12)->andReturn($roleB->perms);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(48)->andReturn('1440');
-        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->times(16)->andReturn('group_id');
-        Cache::shouldReceive('remember')->times(48)->andReturn($user->roles);
-
-        $user->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
-            ->andReturn(true);
-        $user->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
-            ->andReturn(false);
-        $user->shouldReceive('hasPermission')
-            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
-            ->andReturn(true);
-        $user->shouldReceive('hasPermission')
-            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
-            ->andReturn(false);
+        $this->hasRoleAndHasPermissionExpectations();
 
         /*
         |------------------------------------------------------------
@@ -199,98 +158,35 @@ class LaratrustUserAbilityTest extends UserTest {
         // Case: User has everything.
         $this->assertSame(
             [
-                'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
-                'permissions' => [$userPermNameA => true, $userPermNameB => true]
+                'roles'       => ['UserRoleA' => true, 'UserRoleB' => false],
+                'permissions' => ['user_can_a' => true, 'user_can_b' => false]
             ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b'],
                 ['return_type' => 'array']
             )
         );
         $this->assertSame(
             [
-                'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
-                'permissions' => [$userPermNameA => true, $userPermNameB => true]
+                'roles'       => ['UserRoleA' => false, 'UserRoleB' => true],
+                'permissions' => ['user_can_a' => false, 'user_can_b' => true]
             ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b'],
+                'GroupA',
                 ['validate_all' => true, 'return_type' => 'array']
             )
         );
-
-
-        // Case: User lacks a role.
         $this->assertSame(
             [
-                'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
-                'permissions' => [$userPermNameA    => true, $userPermNameB  => true]
+                'roles'       => ['UserRoleA' => true],
+                'permissions' => ['user_can_a' => true]
             ],
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['return_type' => 'array']
-            )
-        );
-        $this->assertSame(
-            [
-                'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
-                'permissions' => [$userPermNameA    => true, $userPermNameB  => true]
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['validate_all' => true, 'return_type' => 'array']
-            )
-        );
-
-
-        // Case: User lacks a permission.
-        $this->assertSame(
-            [
-                'roles'       => [$userRoleNameA    => true, $userRoleNameB  => true],
-                'permissions' => [$nonUserPermNameA => false, $userPermNameB => true]
-            ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB],
-                ['return_type' => 'array']
-            )
-        );
-        $this->assertSame(
-            [
-                'roles'       => [$userRoleNameA    => true, $userRoleNameB  => true],
-                'permissions' => [$nonUserPermNameA => false, $userPermNameB => true]
-            ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB],
-                ['validate_all' => true, 'return_type' => 'array']
-            )
-        );
-
-
-        // Case: User lacks everything.
-        $this->assertSame(
-            [
-                'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
-                'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false]
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB],
-                ['return_type' => 'array']
-            )
-        );
-        $this->assertSame(
-            [
-                'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
-                'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false]
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB],
+            $this->user->ability(
+                ['UserRoleA'],
+                ['user_can_a'],
                 ['validate_all' => true, 'return_type' => 'array']
             )
         );
@@ -300,75 +196,27 @@ class LaratrustUserAbilityTest extends UserTest {
     {
         /*
         |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $userPermNameA = 'user_can_a';
-        $userPermNameB = 'user_can_b';
-        $userPermNameC = 'user_can_c';
-        $nonUserPermNameA = 'user_cannot_a';
-        $nonUserPermNameB = 'user_cannot_b';
-        $userRoleNameA = 'UserRoleA';
-        $userRoleNameB = 'UserRoleB';
-        $nonUserRoleNameA = 'NonUserRoleA';
-        $nonUserRoleNameB = 'NonUserRoleB';
-
-        $permA = $this->mockPermission($userPermNameA);
-        $permB = $this->mockPermission($userPermNameB);
-        $permC = $this->mockPermission($userPermNameC);
-
-        $roleA = $this->mockRole($userRoleNameA);
-        $roleB = $this->mockRole($userRoleNameB);
-
-        $roleA->perms = [$permA];
-        $roleB->perms = [$permB, $permC];
-
-        $user = m::mock('HasRoleUser')->makePartial();
-        $user->roles = [$roleA, $roleB];
-        $user->id = 4;
-        $user->primaryKey = 'id';
-
-        /*
-        |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $roleA->shouldReceive('cachedPermissions')->times(16)->andReturn($roleA->perms);
-        $roleB->shouldReceive('cachedPermissions')->times(12)->andReturn($roleB->perms);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(48)->andReturn('1440');
-        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->times(16)->andReturn('group_id');
-        Cache::shouldReceive('remember')->times(48)->andReturn($user->roles);
-
-        $user->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
-            ->andReturn(true);
-        $user->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
-            ->andReturn(false);
-        $user->shouldReceive('hasPermission')
-            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
-            ->andReturn(true);
-        $user->shouldReceive('hasPermission')
-            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
-            ->andReturn(false);
+        $this->hasRoleAndHasPermissionExpectations();
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        // Case: User has everything.
         $this->assertSame(
             [
                 true,
                 [
-                    'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
-                    'permissions' => [$userPermNameA => true, $userPermNameB => true]
+                    'roles'       => ['UserRoleA' => true, 'UserRoleB' => false],
+                    'permissions' => ['user_can_a' => true, 'user_can_b' => false]
                 ]
             ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b'],
                 ['return_type' => 'both']
             )
         );
@@ -376,30 +224,14 @@ class LaratrustUserAbilityTest extends UserTest {
             [
                 true,
                 [
-                    'roles'       => [$userRoleNameA => true, $userRoleNameB => true],
-                    'permissions' => [$userPermNameA => true, $userPermNameB => true]
+                    'roles'       => ['UserRoleA' => false, 'UserRoleB' => true],
+                    'permissions' => ['user_can_a' => false, 'user_can_b' => true]
                 ]
             ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['validate_all' => true, 'return_type' => 'both']
-            )
-        );
-
-
-        // Case: User lacks a role.
-        $this->assertSame(
-            [
-                true,
-                [
-                    'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
-                    'permissions' => [$userPermNameA    => true, $userPermNameB  => true]
-                ]
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b'],
+                'GroupA',
                 ['return_type' => 'both']
             )
         );
@@ -407,75 +239,13 @@ class LaratrustUserAbilityTest extends UserTest {
             [
                 false,
                 [
-                    'roles'       => [$nonUserRoleNameA => false, $userRoleNameB => true],
-                    'permissions' => [$userPermNameA    => true, $userPermNameB  => true]
+                    'roles'       => ['UserRoleA' => true, 'UserRoleB' => false],
+                    'permissions' => ['user_can_a' => true, 'user_can_b' => false]
                 ]
             ],
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['validate_all' => true, 'return_type' => 'both']
-            )
-        );
-
-
-        // Case: User lacks a permission.
-        $this->assertSame(
-            [
-                true,
-                [
-                    'roles'       => [$userRoleNameA    => true, $userRoleNameB  => true],
-                    'permissions' => [$nonUserPermNameA => false, $userPermNameB => true]
-                ]
-            ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB],
-                ['return_type' => 'both']
-            )
-        );
-        $this->assertSame(
-            [
-                false,
-                [
-                    'roles'       => [$userRoleNameA    => true, $userRoleNameB  => true],
-                    'permissions' => [$nonUserPermNameA => false, $userPermNameB => true]
-                ]
-            ],
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB],
-                ['validate_all' => true, 'return_type' => 'both']
-            )
-        );
-
-
-        // Case: User lacks everything.
-        $this->assertSame(
-            [
-                false,
-                [
-                    'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
-                    'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false]
-                ]
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB],
-                ['return_type' => 'both']
-            )
-        );
-        $this->assertSame(
-            [
-                false,
-                [
-                    'roles'       => [$nonUserRoleNameA => false, $nonUserRoleNameB => false],
-                    'permissions' => [$nonUserPermNameA => false, $nonUserPermNameB => false]
-                ]
-            ],
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB],
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b'],
                 ['validate_all' => true, 'return_type' => 'both']
             )
         );
@@ -485,47 +255,10 @@ class LaratrustUserAbilityTest extends UserTest {
     {
         /*
         |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $permA = $this->mockPermission('user_can_a');
-        $permB = $this->mockPermission('user_can_b');
-        $permC = $this->mockPermission('user_can_c');
-
-        $roleA = $this->mockRole('UserRoleA');
-        $roleB = $this->mockRole('UserRoleB');
-
-        $roleA->perms = [$permA];
-        $roleB->perms = [$permB, $permC];
-
-        $user = m::mock('HasRoleUser')->makePartial();
-        $user->roles = [$roleA, $roleB];
-        $user->id = 4;
-        $user->primaryKey = 'id';
-
-        /*
-        |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $roleA->shouldReceive('cachedPermissions')->times(4)->andReturn($roleA->perms);
-        $roleB->shouldReceive('cachedPermissions')->times(2)->andReturn($roleB->perms);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(12)->andReturn('1440');
-        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->times(4)->andReturn('group_id');
-        Cache::shouldReceive('remember')->times(12)->andReturn($user->roles);
-
-        $user->shouldReceive('hasRole')
-            ->with(m::anyOf('UserRoleA', 'UserRoleB'), m::anyOf(true, false))
-            ->andReturn(true);
-        $user->shouldReceive('hasRole')
-            ->with('NonUserRoleB', m::anyOf(true, false))
-            ->andReturn(false);
-        $user->shouldReceive('hasPermission')
-            ->with(m::anyOf('user_can_a', 'user_can_b', 'user_can_c'), m::anyOf(true, false))
-            ->andReturn(true);
-        $user->shouldReceive('hasPermission')
-            ->with('user_cannot_b', m::anyOf(true, false))
-            ->andReturn(false);
+        $this->hasRoleAndHasPermissionExpectations();
 
         /*
         |------------------------------------------------------------
@@ -533,12 +266,12 @@ class LaratrustUserAbilityTest extends UserTest {
         |------------------------------------------------------------
         */
         $this->assertSame(
-            $user->ability(
+            $this->user->ability(
                 ['UserRoleA', 'NonUserRoleB'],
                 ['user_can_a', 'user_cannot_b'],
                 ['return_type' => 'both']
             ),
-            $user->ability(
+            $this->user->ability(
                 'UserRoleA,NonUserRoleB',
                 'user_can_a,user_cannot_b',
                 ['return_type' => 'both']
@@ -550,57 +283,10 @@ class LaratrustUserAbilityTest extends UserTest {
     {
         /*
         |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $userPermNameA = 'user_can_a';
-        $userPermNameB = 'user_can_b';
-        $userPermNameC = 'user_can_c';
-        $nonUserPermNameA = 'user_cannot_a';
-        $nonUserPermNameB = 'user_cannot_b';
-        $userRoleNameA = 'UserRoleA';
-        $userRoleNameB = 'UserRoleB';
-        $nonUserRoleNameA = 'NonUserRoleA';
-        $nonUserRoleNameB = 'NonUserRoleB';
-
-        $permA = $this->mockPermission($userPermNameA);
-        $permB = $this->mockPermission($userPermNameB);
-        $permC = $this->mockPermission($userPermNameC);
-
-        $roleA = $this->mockRole($userRoleNameA);
-        $roleB = $this->mockRole($userRoleNameB);
-
-        $roleA->perms = [$permA];
-        $roleB->perms = [$permB, $permC];
-
-        $user = m::mock('HasRoleUser')->makePartial();
-        $user->roles = [$roleA, $roleB];
-        $user->id = 4;
-        $user->primaryKey = 'id';
-
-        /*
-        |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $roleA->shouldReceive('cachedPermissions')->times(16)->andReturn($roleA->perms);
-        $roleB->shouldReceive('cachedPermissions')->times(12)->andReturn($roleB->perms);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(48)->andReturn('1440');
-        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->times(16)->andReturn('group_id');
-        Cache::shouldReceive('remember')->times(48)->andReturn($user->roles);
-
-        $user->shouldReceive('hasRole')
-            ->with(m::anyOf($userRoleNameA, $userRoleNameB), m::anyOf(true, false))
-            ->andReturn(true);
-        $user->shouldReceive('hasRole')
-            ->with(m::anyOf($nonUserRoleNameA, $nonUserRoleNameB), m::anyOf(true, false))
-            ->andReturn(false);
-        $user->shouldReceive('hasPermission')
-            ->with(m::anyOf($userPermNameA, $userPermNameB, $userPermNameC), m::anyOf(true, false))
-            ->andReturn(true);
-        $user->shouldReceive('hasPermission')
-            ->with(m::anyOf($nonUserPermNameA, $nonUserPermNameB), m::anyOf(true, false))
-            ->andReturn(false);
+        $this->hasRoleAndHasPermissionExpectations();
 
         /*
         |------------------------------------------------------------
@@ -609,55 +295,40 @@ class LaratrustUserAbilityTest extends UserTest {
         */
         // Case: User has everything.
         $this->assertSame(
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB]
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b']
             ),
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b'],
                 ['validate_all' => false, 'return_type' => 'boolean']
             )
         );
 
+        $this->assertSame(
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b'],
+                'GroupA'
+            ),
+            $this->user->ability(
+                ['UserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b'],
+                'GroupA',
+                ['validate_all' => false, 'return_type' => 'boolean']
+            )
+        );
 
         // Case: User lacks a role.
         $this->assertSame(
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB]
+            $this->user->ability(
+                ['NonUserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b']
             ),
-            $user->ability(
-                [$nonUserRoleNameA, $userRoleNameB],
-                [$userPermNameA, $userPermNameB],
-                ['validate_all' => false, 'return_type' => 'boolean']
-            )
-        );
-
-
-        // Case: User lacks a permission.
-        $this->assertSame(
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB]
-            ),
-            $user->ability(
-                [$userRoleNameA, $userRoleNameB],
-                [$nonUserPermNameA, $userPermNameB],
-                ['validate_all' => false, 'return_type' => 'boolean']
-            )
-        );
-
-
-        // Case: User lacks everything.
-        $this->assertSame(
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB]
-            ),
-            $user->ability(
-                [$nonUserRoleNameA, $nonUserRoleNameB],
-                [$nonUserPermNameA, $nonUserPermNameB],
+            $this->user->ability(
+                ['NonUserRoleA', 'UserRoleB'],
+                ['user_can_a', 'user_can_b'],
                 ['validate_all' => false, 'return_type' => 'boolean']
             )
         );

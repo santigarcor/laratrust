@@ -129,30 +129,17 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Assing the real values to the group and requireAllOrOptions parameters
-     * @param  mixed $group
-     * @param  mixed $requireAllOrOptions
-     * @return array
-     */
-    protected function parametersRealValues($group, $requireAllOrOptions)
-    {
-        return [
-            (is_bool($group) ? null : $group),
-            (is_bool($group) ? $group : $requireAllOrOptions),
-        ];
-    }
-
-    /**
      * Checks if the user has a role by its name.
      *
      * @param string|array $name       Role name or array of role names.
+     * @param string|bool  $group      Group name or requiredAll roles.
      * @param bool         $requireAll All roles in the array are required.
      *
      * @return bool
      */
     public function hasRole($name, $group = null, $requireAll = false)
     {
-        list($group, $requireAll) = $this->parametersRealValues($group, $requireAll);
+        list($group, $requireAll) = $this->parametersRealValues($group, $requireAll, 'is_bool');
         $groupForeignKey = Config::get('laratrust.group_foreign_key');
 
         if (is_array($name)) {
@@ -197,19 +184,23 @@ trait LaratrustUserTrait
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
-     * @param bool         $requireAll All permissions in the array are required.
+     * @param string|bool  $group      Group name or requiredAll roles.
+     * @param bool         $requireAll All roles in the array are required.
      *
      * @return bool
      */
-    public function hasPermission($permission, $requireAll = false)
+    public function hasPermission($permission, $group = null, $requireAll = false)
     {
+        list($group, $requireAll) = $this->parametersRealValues($group, $requireAll, 'is_bool');
+        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+
         if (is_array($permission)) {
             if (empty($permission)) {
                 return true;
             }
 
             foreach ($permission as $permissionName) {
-                $hasPermission = $this->hasPermission($permissionName);
+                $hasPermission = $this->hasPermission($permissionName, $group);
 
                 if ($hasPermission && !$requireAll) {
                     return true;
@@ -224,13 +215,29 @@ trait LaratrustUserTrait
             return $requireAll;
         }
 
+        if (!is_null($group)) {
+            $group = call_user_func_array(
+                    [Config::get('laratrust.group'), 'where'],
+                    ['name', $group]
+                )->first();
+            $group = is_null($group) ? $group : $group->getKey();
+        }
+
         foreach ($this->cachedPermissions() as $perm) {
+            if ($perm->pivot->$groupForeignKey != $group) {
+                continue;
+            }
+
             if (str_is($permission, $perm->name)) {
                 return true;
             }
         }
 
         foreach ($this->cachedRoles() as $role) {
+            if ($role->pivot->$groupForeignKey != $group) {
+                continue;
+            }
+
             foreach ($role->cachedPermissions() as $perm) {
                 if (str_is($permission, $perm->name)) {
                     return true;
@@ -245,26 +252,28 @@ trait LaratrustUserTrait
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
+     * @param string|bool  $group      Group name or requiredAll roles.
      * @param bool         $requireAll All permissions in the array are required.
      *
      * @return bool
      */
-    public function can($permission, $requireAll = false)
+    public function can($permission, $group = null, $requireAll = false)
     {
-        return $this->hasPermission($permission, $requireAll);
+        return $this->hasPermission($permission, $group, $requireAll);
     }
 
     /**
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
+     * @param string|bool  $group      Group name or requiredAll roles.
      * @param bool         $requireAll All permissions in the array are required.
      *
      * @return bool
      */
-    public function isAbleTo($permission, $requireAll = false)
+    public function isAbleTo($permission, $group = null, $requireAll = false)
     {
-        return $this->hasPermission($permission, $requireAll);
+        return $this->hasPermission($permission, $group, $requireAll);
     }
 
     /**
@@ -272,14 +281,17 @@ trait LaratrustUserTrait
      *
      * @param string|array $roles       Array of roles or comma separated string
      * @param string|array $permissions Array of permissions or comma separated string.
+     * @param string|bool  $group      Group name or requiredAll roles.
      * @param array        $options     validate_all (true|false) or return_type (boolean|array|both)
      *
      * @throws \InvalidArgumentException
      *
      * @return array|bool
      */
-    public function ability($roles, $permissions, $options = [])
+    public function ability($roles, $permissions, $group = null, $options = [])
     {
+        list($group, $options) = $this->parametersRealValues($group, $options, 'is_array');
+
         // Convert string to array if that's what is passed in.
         if (!is_array($roles)) {
             $roles = explode(',', $roles);
@@ -296,10 +308,10 @@ trait LaratrustUserTrait
         $checkedRoles = [];
         $checkedPermissions = [];
         foreach ($roles as $role) {
-            $checkedRoles[$role] = $this->hasRole($role);
+            $checkedRoles[$role] = $this->hasRole($role, $group);
         }
         foreach ($permissions as $permission) {
-            $checkedPermissions[$permission] = $this->hasPermission($permission);
+            $checkedPermissions[$permission] = $this->hasPermission($permission, $group);
         }
 
         // If validate all and there is a false in either
@@ -524,6 +536,29 @@ trait LaratrustUserTrait
     }
 
     /**
+     * This scope allows to retrive users with an specific role
+     * @param  Illuminate\Database\Eloquent\Builder $query
+     * @param  string $role
+     * @return Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWhereRoleIs($query, $role = '')
+    {
+        return $query->whereHas('roles', function ($roleQuery) use ($role) {
+            $roleQuery->where('name', $role);
+        });
+    }
+
+    /**
+     * Flush the user's cache
+     * @return void
+     */
+    public function flushCache()
+    {
+        Cache::forget('laratrust_roles_for_user_' . $this->getKey());
+        Cache::forget('laratrust_permissions_for_user_' . $this->getKey());
+    }
+
+    /**
      * Checks if the option exists inside the arrayToCheck
      * if not sets a the first option inside the default
      * values array
@@ -545,29 +580,6 @@ trait LaratrustUserTrait
         }
 
         return $arrayToCheck;
-    }
-
-    /**
-     * This scope allows to retrive users with an specific role
-     * @param  Illuminate\Database\Eloquent\Builder $query
-     * @param  string $role
-     * @return Illuminate\Database\Eloquent\Builder
-     */
-    public function scopeWhereRoleIs($query, $role = '')
-    {
-        return $query->whereHas('roles', function ($roleQuery) use ($role) {
-            $roleQuery->where('name', $role);
-        });
-    }
-
-    /**
-     * Flush the user's cache
-     * @return void
-     */
-    public function flushCache()
-    {
-        Cache::forget('laratrust_roles_for_user_' . $this->getKey());
-        Cache::forget('laratrust_permissions_for_user_' . $this->getKey());
     }
 
     /**
@@ -593,5 +605,20 @@ trait LaratrustUserTrait
         throw new InvalidArgumentException(
             'getIdFor function only accepts an integer, a Model object or an array with an "id" key'
         );
+    }
+
+    
+    /**
+     * Assing the real values to the group and requireAllOrOptions parameters
+     * @param  mixed $group
+     * @param  mixed $requireAllOrOptions
+     * @return array
+     */
+    private function parametersRealValues($group, $requireAllOrOptions, $method)
+    {
+        return [
+            ($method($group) ? null : $group),
+            ($method($group) ? $group : $requireAllOrOptions),
+        ];
     }
 }

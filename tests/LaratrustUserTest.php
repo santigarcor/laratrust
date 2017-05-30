@@ -150,29 +150,39 @@ class LaratrustUserTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
+        $group = $this->mockGroup('GroupA');
+
         $permA = $this->mockPermission('manage_a');
         $permB = $this->mockPermission('manage_b');
-        $permC = $this->mockPermission('manage_c');
+        $permC = $this->mockPermission('manage_c', $group->id);
         $permD = $this->mockPermission('manage_d');
 
         $roleA = $this->mockRole('RoleA');
-        $roleB = $this->mockRole('RoleB');
+        $roleB = $this->mockRole('RoleB', $group->id);
 
         $roleA->perms = [$permA];
-        $roleB->perms = [$permB, $permC];
+        $roleB->perms = [$permB];
 
         $user = new HasRoleUser();
         $user->roles = [$roleA, $roleB];
-        $user->permissions = [$permD];
+        $user->permissions = [$permC, $permD];
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $roleA->shouldReceive('cachedPermissions')->times(13)->andReturn($roleA->perms);
-        $roleB->shouldReceive('cachedPermissions')->times(8)->andReturn($roleB->perms);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(28)->andReturn('1440');
+        $roleA->shouldReceive('cachedPermissions')->times(10)->andReturn($roleA->perms);
+        $roleB->shouldReceive('cachedPermissions')->times(2)->andReturn($roleB->perms);
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(27)->andReturn('1440');
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->times(22)->andReturn('group_id');
+        Config::shouldReceive('get')->with('laratrust.group')
+            ->times(3)
+            ->andReturn($group);
+        $group->shouldReceive('where')->with('name', 'GroupA')->times(3)->andReturn($group);
+        $group->shouldReceive('first')->times(3)->andReturn($group);
+        $group->shouldReceive('getKey')->times(3)->andReturn($group->id);
+
         Cache::shouldReceive('remember')
             ->with(
                 "laratrust_permissions_for_user_{$user->getKey()}",
@@ -184,7 +194,7 @@ class LaratrustUserTest extends UserTest
                 "laratrust_roles_for_user_{$user->getKey()}",
                 1440,
                 m::any()
-            )->times(13)->andReturn($user->roles);
+            )->times(12)->andReturn($user->roles);
 
         /*
         |------------------------------------------------------------
@@ -193,16 +203,41 @@ class LaratrustUserTest extends UserTest
         */
         $this->assertTrue($user->hasPermission([]));
         $this->assertTrue($user->hasPermission('manage_a'));
-        $this->assertTrue($user->hasPermission('manage_b'));
-        $this->assertTrue($user->hasPermission('manage_c'));
+        $this->assertTrue($user->hasPermission('manage_b', 'GroupA'));
+        $this->assertTrue($user->hasPermission('manage_c', 'GroupA'));
         $this->assertTrue($user->hasPermission('manage_d'));
         $this->assertFalse($user->hasPermission('manage_e'));
 
-        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_c']));
-        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_d']));
-        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_d'], true));
+        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_c', 'manage_d', 'manage_e']));
+        $this->assertTrue($user->hasPermission(['manage_a', 'manage_d'], true));
+        $this->assertFalse($user->hasPermission(['manage_a', 'manage_b', 'manage_d'], true));
+        $this->assertFalse($user->hasPermission(['manage_a', 'manage_b', 'manage_d'], 'GroupA', true));
         $this->assertFalse($user->hasPermission(['manage_a', 'manage_b', 'manage_e'], true));
         $this->assertFalse($user->hasPermission(['manage_e', 'manage_f']));
+    }
+
+    public function testCan()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $user = m::mock('HasRoleUser')->makePartial();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $user->shouldReceive('hasPermission')->with('manage_user', null, false)->andReturn(true);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->can('manage_user'));
     }
 
     public function testIsAbleTo()
@@ -219,7 +254,7 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('hasPermission')->with('manage_user', false)->andReturn(true);
+        $user->shouldReceive('hasPermission')->with('manage_user', null, false)->andReturn(true);
 
         /*
         |------------------------------------------------------------
@@ -227,30 +262,21 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         $this->assertTrue($user->isAbleTo('manage_user'));
-        // $this->assertTrue($user->isAbleTo('manage_a'));
-        // $this->assertTrue($user->isAbleTo('manage_b'));
-        // $this->assertTrue($user->isAbleTo('manage_c'));
-        // $this->assertTrue($user->isAbleTo('manage_d'));
-        // $this->assertFalse($user->isAbleTo('manage_e'));
-
-        // $this->assertTrue($user->isAbleTo(['manage_a', 'manage_b', 'manage_c']));
-        // $this->assertTrue($user->isAbleTo(['manage_a', 'manage_b', 'manage_d']));
-        // $this->assertTrue($user->isAbleTo(['manage_a', 'manage_b', 'manage_d'], true));
-        // $this->assertFalse($user->isAbleTo(['manage_a', 'manage_b', 'manage_e'], true));
-        // $this->assertFalse($user->isAbleTo(['manage_e', 'manage_f']));
     }
 
-    public function testCanWithPlaceholderSupport()
+    public function testHasPermissionWithPlaceholderSupport()
     {
         /*
         |------------------------------------------------------------
         | Set
         |------------------------------------------------------------
         */
+        $group = $this->mockGroup('GroupA');
+
         $permA = $this->mockPermission('admin.posts');
         $permB = $this->mockPermission('admin.pages');
         $permC = $this->mockPermission('admin.users');
-        $permD = $this->mockPermission('config.things');
+        $permD = $this->mockPermission('config.things', $group->id);
 
         $role = $this->mockRole('Role');
 
@@ -266,19 +292,27 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         $role->shouldReceive('cachedPermissions')->times(6)->andReturn($role->perms);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(13)->andReturn('1440');
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(15)->andReturn('1440');
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->times(12)->andReturn('group_id');
+        Config::shouldReceive('get')->with('laratrust.group')
+            ->times(2)
+            ->andReturn($group);
+        $group->shouldReceive('where')->with('name', 'GroupA')->times(2)->andReturn($group);
+        $group->shouldReceive('first')->times(2)->andReturn($group);
+        $group->shouldReceive('getKey')->times(2)->andReturn($group->id);
+
         Cache::shouldReceive('remember')
             ->with(
                 "laratrust_permissions_for_user_{$user->getKey()}",
                 1440,
                 m::any()
-            )->times(7)->andReturn($user->permissions);
+            )->times(8)->andReturn($user->permissions);
         Cache::shouldReceive('remember')
             ->with(
                 "laratrust_roles_for_user_{$user->getKey()}",
                 1440,
                 m::any()
-            )->times(6)->andReturn($user->roles);
+            )->times(7)->andReturn($user->roles);
 
 
         /*
@@ -286,14 +320,15 @@ class LaratrustUserTest extends UserTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertTrue($user->can('admin.posts'));
-        $this->assertTrue($user->can('admin.pages'));
-        $this->assertTrue($user->can('admin.users'));
-        $this->assertFalse($user->can('admin.config'));
+        $this->assertTrue($user->hasPermission('admin.posts'));
+        $this->assertTrue($user->hasPermission('admin.pages'));
+        $this->assertTrue($user->hasPermission('admin.users'));
+        $this->assertFalse($user->hasPermission('admin.config', 'GroupA'));
 
-        $this->assertTrue($user->can(['admin.*']));
-        $this->assertTrue($user->can(['config.*']));
-        $this->assertFalse($user->can(['site.*']));
+        $this->assertTrue($user->hasPermission(['admin.*']));
+        $this->assertTrue($user->hasPermission(['admin.*']));
+        $this->assertTrue($user->hasPermission(['config.*'], 'GroupA'));
+        $this->assertFalse($user->hasPermission(['site.*']));
     }
 
     public function testAttachRole()
@@ -305,6 +340,7 @@ class LaratrustUserTest extends UserTest
         */
         $roleObject = m::mock('Role');
         $roleArray = ['id' => 2];
+        $groupObject = m::mock('Group');
 
         $user = m::mock('HasRoleUser')->makePartial();
 
@@ -315,10 +351,7 @@ class LaratrustUserTest extends UserTest
         */
         $roleObject->shouldReceive('getKey')->andReturn(1)->twice();
         $user->shouldReceive('roles')->andReturn($user);
-        $user->shouldReceive('attach')->with(1)->once()->ordered();
-        $user->shouldReceive('attach')->with(2)->once()->ordered();
-        $user->shouldReceive('attach')->with(3)->once()->ordered();
-        $user->shouldReceive('attach')->with(1)->once()->ordered();
+        $user->shouldReceive('attach')->with(m::anyOf(1, 2, 3));
         Cache::shouldReceive('forget')->times(8);
         Config::shouldReceive('get')->with('laratrust.role')->andReturn($roleObject)->once();
         $roleObject->shouldReceive('where')->with('name', 'admin')->andReturn($roleObject);

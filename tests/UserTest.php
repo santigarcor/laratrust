@@ -35,12 +35,16 @@ abstract class UserTest extends PHPUnit_Framework_TestCase
         m::close();
     }
 
-    protected function mockPermission($permName)
+    protected function mockPermission($permName, $group_id = null)
     {
         $permMock = m::mock('Laratrust\Permission');
         $permMock->name = $permName;
         $permMock->display_name = ucwords(str_replace('_', ' ', $permName));
         $permMock->id = 1;
+
+        $pivot = new stdClass();
+        $pivot->group_id = $group_id;
+        $permMock->pivot = $pivot;
 
         return $permMock;
     }
