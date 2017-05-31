@@ -20,7 +20,7 @@ trait LaratrustUserTrait
      * Tries to return all the cached roles of the user
      * and if it can't bring the roles from the cache,
      * it would bring them back from the DB
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function cachedRoles()
     {
@@ -35,7 +35,7 @@ trait LaratrustUserTrait
      * Tries to return all the cached permissions of the user
      * and if it can't bring the permissions from the cache,
      * it would bring them back from the DB
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function cachedPermissions()
     {
@@ -285,7 +285,7 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed $role
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function attachRole($role)
     {
@@ -299,7 +299,7 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $role
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function detachRole($role)
     {
@@ -313,7 +313,7 @@ trait LaratrustUserTrait
      * Attach multiple roles to a user
      *
      * @param mixed $roles
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function attachRoles($roles)
     {
@@ -328,7 +328,7 @@ trait LaratrustUserTrait
      * Detach multiple roles from a user
      *
      * @param mixed $roles
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function detachRoles($roles = null)
     {
@@ -346,7 +346,7 @@ trait LaratrustUserTrait
     /**
      * Sync roles to the user
      * @param  array  $roles
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function syncRoles($roles = [])
     {
@@ -360,7 +360,7 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed $permission
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function attachPermission($permission)
     {
@@ -374,7 +374,7 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $permission
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function detachPermission($permission)
     {
@@ -388,7 +388,7 @@ trait LaratrustUserTrait
      * Attach multiple permissions to a user
      *
      * @param mixed $permissions
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function attachPermissions($permissions)
     {
@@ -403,7 +403,7 @@ trait LaratrustUserTrait
      * Detach multiple permissions from a user
      *
      * @param mixed $permissions
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function detachPermissions($permissions = null)
     {
@@ -421,7 +421,7 @@ trait LaratrustUserTrait
     /**
      * Sync roles to the user
      * @param  array  $permissions
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function syncPermissions($permissions = [])
     {
