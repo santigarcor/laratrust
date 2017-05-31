@@ -20,7 +20,7 @@ trait LaratrustUserTrait
      * Tries to return all the cached roles of the user
      * and if it can't bring the roles from the cache,
      * it would bring them back from the DB
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function cachedRoles()
     {
@@ -35,7 +35,7 @@ trait LaratrustUserTrait
      * Tries to return all the cached permissions of the user
      * and if it can't bring the permissions from the cache,
      * it would bring them back from the DB
-     * @return Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function cachedPermissions()
     {
@@ -339,7 +339,7 @@ trait LaratrustUserTrait
      *
      * @param mixed $role
      * @param mixed $group
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function attachRole($role, $group = null)
     {
@@ -364,7 +364,7 @@ trait LaratrustUserTrait
      *
      * @param mixed $role
      * @param mixed $group
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function detachRole($role, $group = null)
     {
@@ -383,7 +383,7 @@ trait LaratrustUserTrait
      *
      * @param mixed $roles
      * @param mixed $group
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function attachRoles($roles = [], $group = null)
     {
@@ -399,7 +399,7 @@ trait LaratrustUserTrait
      *
      * @param mixed $roles
      * @param mixed $group
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function detachRoles($roles = [], $group = null)
     {
@@ -418,7 +418,7 @@ trait LaratrustUserTrait
      * Sync roles to the user
      * @param array $roles
      * @param mixed $group
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function syncRoles($roles = [], $group = null)
     {
@@ -440,7 +440,7 @@ trait LaratrustUserTrait
      *
      * @param mixed $permission
      * @param mixed $group
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function attachPermission($permission, $group = null)
     {
@@ -465,7 +465,7 @@ trait LaratrustUserTrait
      *
      * @param mixed $permission
      * @param mixed $group
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function detachPermission($permission, $group = null)
     {
@@ -484,7 +484,7 @@ trait LaratrustUserTrait
      *
      * @param mixed $permissions
      * @param mixed $group
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function attachPermissions($permissions = [], $group = null)
     {
@@ -500,7 +500,7 @@ trait LaratrustUserTrait
      *
      * @param mixed $permissions
      * @param mixed $group
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function detachPermissions($permissions = [], $group = null)
     {
@@ -518,7 +518,7 @@ trait LaratrustUserTrait
     /**
      * Sync roles to the user
      * @param  array  $permissions
-     * @return Illuminate\Database\Eloquent\Model
+     * @return static
      */
     public function syncPermissions($permissions = [], $group = null)
     {
