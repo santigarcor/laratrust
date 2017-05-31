@@ -338,11 +338,22 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed $role
+     * @param mixed $group
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function attachRole($role)
+    public function attachRole($role, $group = null)
     {
-        $this->roles()->attach($this->getIdFor($role));
+        $group = $this->getIdFor($group, 'group');
+        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+
+        if ($this->roles()->wherePivot($groupForeignKey, $group)->count()) {
+            return $this;
+        }
+
+        $this->roles()->attach(
+            $this->getIdFor($role),
+            [$groupForeignKey => $group]
+        );
         $this->flushCache();
 
         return $this;
@@ -352,11 +363,16 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $role
+     * @param mixed $group
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function detachRole($role)
+    public function detachRole($role, $group = null)
     {
-        $this->roles()->detach($this->getIdFor($role));
+        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+
+        $this->roles()
+            ->wherePivot($groupForeignKey, $this->getIdFor($group, 'group'))
+            ->detach($this->getIdFor($role));
         $this->flushCache();
 
         return $this;
@@ -366,12 +382,13 @@ trait LaratrustUserTrait
      * Attach multiple roles to a user
      *
      * @param mixed $roles
+     * @param mixed $group
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function attachRoles($roles)
+    public function attachRoles($roles = [], $group = null)
     {
         foreach ($roles as $role) {
-            $this->attachRole($role);
+            $this->attachRole($role, $group);
         }
 
         return $this;
@@ -381,16 +398,17 @@ trait LaratrustUserTrait
      * Detach multiple roles from a user
      *
      * @param mixed $roles
+     * @param mixed $group
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function detachRoles($roles = null)
+    public function detachRoles($roles = [], $group = null)
     {
-        if (!$roles) {
+        if (empty($roles)) {
             $roles = $this->roles()->get();
         }
-        
+
         foreach ($roles as $role) {
-            $this->detachRole($role);
+            $this->detachRole($role, $group);
         }
 
         return $this;
@@ -398,12 +416,20 @@ trait LaratrustUserTrait
 
     /**
      * Sync roles to the user
-     * @param  array  $roles
+     * @param array $roles
+     * @param mixed $group
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function syncRoles($roles = [])
+    public function syncRoles($roles = [], $group = null)
     {
-        $this->roles()->sync($roles);
+        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+        $mappedRoles = [];
+
+        foreach ($roles as $role) {
+            $mappedRoles[$this->getIdFor($role)] = [$groupForeignKey => $group];
+        }
+
+        $this->roles()->sync($mappedRoles);
         $this->flushCache();
 
         return $this;
@@ -413,11 +439,22 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed $permission
+     * @param mixed $group
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function attachPermission($permission)
+    public function attachPermission($permission, $group = null)
     {
-        $this->permissions()->attach($this->getIdFor($permission, 'permission'));
+        $group = $this->getIdFor($group, 'group');
+        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+
+        if ($this->permissions()->wherePivot($groupForeignKey, $group)->count()) {
+            return $this;
+        }
+
+        $this->permissions()->attach(
+            $this->getIdFor($permission, 'permission'),
+            [$groupForeignKey => $group]
+        );
         $this->flushCache();
 
         return $this;
@@ -427,11 +464,16 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $permission
+     * @param mixed $group
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function detachPermission($permission)
+    public function detachPermission($permission, $group = null)
     {
-        $this->permissions()->detach($this->getIdFor($permission, 'permission'));
+        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+
+        $this->permissions()
+            ->wherePivot($groupForeignKey, $this->getIdFor($group, 'group'))
+            ->detach($this->getIdFor($permission, 'permission'));
         $this->flushCache();
 
         return $this;
@@ -441,12 +483,13 @@ trait LaratrustUserTrait
      * Attach multiple permissions to a user
      *
      * @param mixed $permissions
+     * @param mixed $group
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function attachPermissions($permissions)
+    public function attachPermissions($permissions = [], $group = null)
     {
         foreach ($permissions as $permission) {
-            $this->attachPermission($permission);
+            $this->attachPermission($permission, $group);
         }
 
         return $this;
@@ -456,16 +499,17 @@ trait LaratrustUserTrait
      * Detach multiple permissions from a user
      *
      * @param mixed $permissions
+     * @param mixed $group
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function detachPermissions($permissions = null)
+    public function detachPermissions($permissions = [], $group = null)
     {
         if (!$permissions) {
             $permissions = $this->permissions()->get();
         }
 
         foreach ($permissions as $permission) {
-            $this->detachPermission($permission);
+            $this->detachPermission($permission, $group);
         }
 
         return $this;
@@ -476,9 +520,16 @@ trait LaratrustUserTrait
      * @param  array  $permissions
      * @return Illuminate\Database\Eloquent\Model
      */
-    public function syncPermissions($permissions = [])
+    public function syncPermissions($permissions = [], $group = null)
     {
-        $this->permissions()->sync($permissions);
+        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+        $mappedPerms = [];
+
+        foreach ($permissions as $permission) {
+            $mappedPerms[$this->getIdFor($permission, 'permission')] = [$groupForeignKey => $group];
+        }
+
+        $this->permissions()->sync($mappedPerms);
         $this->flushCache();
 
         return $this;
@@ -590,7 +641,9 @@ trait LaratrustUserTrait
      */
     private function getIdFor($object, $type = 'role')
     {
-        if (is_object($object)) {
+        if (is_null($object)) {
+            return null;
+        } elseif (is_object($object)) {
             return $object->getKey();
         } elseif (is_array($object)) {
             return $object['id'];

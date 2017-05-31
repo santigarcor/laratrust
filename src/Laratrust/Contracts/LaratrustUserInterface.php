@@ -88,69 +88,79 @@ interface LaratrustUserInterface
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed $role
+     * @param mixed $group
      */
-    public function attachRole($role);
+    public function attachRole($role, $group = null);
     
     /**
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $role
+     * @param mixed $group
      */
-    public function detachRole($role);
+    public function detachRole($role, $group = null);
     
     /**
      * Attach multiple roles to a user
      *
      * @param mixed $roles
+     * @param mixed $group
      */
-    public function attachRoles($roles);
+    public function attachRoles($roles = [], $group = null);
     
     /**
      * Detach multiple roles from a user
      *
      * @param mixed $roles
+     * @param mixed $group
      */
-    public function detachRoles($roles);
+    public function detachRoles($roles = [], $group = null);
 
     /**
      * Sync multiple roles in a user
-     * @param  array $roles
+     * @param array $roles
+     * @param mixed $group
      */
-    public function syncRoles($roles);
+    public function syncRoles($roles = [], $group = null);
 
     /**
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed  $permission
+     * @param mixed $group
      */
-    public function attachPermission($permission);
+    public function attachPermission($permission, $group = null);
     
     /**
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed  $permission
+     * @param mixed $group
      */
-    public function detachPermission($permission);
+    public function detachPermission($permission, $group = null);
     
     /**
      * Attach multiple permissions to a user
      *
      * @param mixed  $permissions
+     * @param mixed $group
      */
-    public function attachPermissions($permissions);
+    public function attachPermissions($permissions = [], $group = null);
     
     /**
      * Detach multiple permissions from a user
      *
      * @param mixed  $permissions
+     * @param mixed $group
      */
-    public function detachPermissions($permissions);
+    public function detachPermissions($permissions = [], $group = null);
 
     /**
      * Sync multiple roles in a user
      * @param  array $permissions
+     * @param mixed $group
      */
-    public function syncPermissions($permissions);
+    public function syncPermissions($permissions = [], $group = null);
 
     /**
      * Checks if the user owns the thing

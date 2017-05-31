@@ -338,38 +338,49 @@ class LaratrustUserTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $roleObject = m::mock('Role');
-        $roleArray = ['id' => 2];
-        $groupObject = m::mock('Group');
-
+        $role = $this->mockRole('admin');
+        $group = $this->mockGroup('GroupA');
         $user = m::mock('HasRoleUser')->makePartial();
+        $roleArray = ['id' => 1];
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $roleObject->shouldReceive('getKey')->andReturn(1)->twice();
-        $user->shouldReceive('roles')->andReturn($user);
-        $user->shouldReceive('attach')->with(m::anyOf(1, 2, 3));
-        Cache::shouldReceive('forget')->times(8);
-        Config::shouldReceive('get')->with('laratrust.role')->andReturn($roleObject)->once();
-        $roleObject->shouldReceive('where')->with('name', 'admin')->andReturn($roleObject);
-        $roleObject->shouldReceive('firstOrFail')->andReturn($roleObject);
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->andReturn('group_id');
+        $user->shouldReceive('roles->wherePivot->count')->andReturn(0);
+        $role->shouldReceive('getKey')->andReturn(1);
+        $user->shouldReceive('roles->attach')
+            ->with(1, m::anyOf(['group_id' => null], ['group_id' => 1]));
+        Cache::shouldReceive('forget');
+        Config::shouldReceive('get')->with('laratrust.role')->andReturn($role);
+        $role->shouldReceive('where')->with('name', 'admin')->andReturn($role);
+        $role->shouldReceive('firstOrFail')->andReturn($role);
+        $group->shouldReceive('getKey')->andReturn($group->id);
+        Config::shouldReceive('get')->with('laratrust.group')->andReturn($group);
+        $group->shouldReceive('where')->with('name', 'GroupA')->andReturn($group);
+        $group->shouldReceive('firstOrFail')->andReturn($group);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $result = $user->attachRole($roleObject);
-        $this->assertInstanceOf('HasRoleUser', $result);
-        $result = $user->attachRole($roleArray);
-        $this->assertInstanceOf('HasRoleUser', $result);
-        $result = $user->attachRole(3);
-        $this->assertInstanceOf('HasRoleUser', $result);
-        $result = $user->attachRole('admin');
-        $this->assertInstanceOf('HasRoleUser', $result);
+        // Can attach role by passing an object
+        $this->assertInstanceOf('HasRoleUser', $user->attachRole($role));
+        // Can attach role by passing an id
+        $this->assertInstanceOf('HasRoleUser', $user->attachRole($role->id));
+        // Can attach role by passing an array with 'id' => $id
+        $this->assertInstanceOf('HasRoleUser', $user->attachRole($roleArray));
+        // Can attach role by passing the role name
+        $this->assertInstanceOf('HasRoleUser', $user->attachRole('admin'));// Can attach role by passing the role and group
+        $this->assertInstanceOf('HasRoleUser', $user->attachRole($role, $group));
+        // Can attach role by passing the role and group id
+        $this->assertInstanceOf('HasRoleUser', $user->attachRole($role, $group->id));
+        // Can attach role by passing the role and group name
+        $this->assertInstanceOf('HasRoleUser', $user->attachRole($role, 'GroupA'));
+        
     }
 
     public function testDetachRole()
@@ -379,34 +390,46 @@ class LaratrustUserTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $roleObject = m::mock('Role');
-        $roleArray = ['id' => 2];
-
+        $role = $this->mockRole('admin');
+        $group = $this->mockGroup('GroupA');
         $user = m::mock('HasRoleUser')->makePartial();
+        $roleArray = ['id' => 1];
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $roleObject->shouldReceive('getKey')->andReturn(1);
-        $user->shouldReceive('roles')->andReturn($user);
-        $user->shouldReceive('detach')->with(1)->once()->ordered();
-        $user->shouldReceive('detach')->with(2)->once()->ordered();
-        $user->shouldReceive('detach')->with(3)->once()->ordered();
-        Cache::shouldReceive('forget')->times(6);
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->andReturn('group_id');
+        $user->shouldReceive('roles->wherePivot->detach')->andReturn($user);
+        Cache::shouldReceive('forget');
+        $role->shouldReceive('getKey')->andReturn(1);
+        Config::shouldReceive('get')->with('laratrust.role')->andReturn($role);
+        $role->shouldReceive('where')->with('name', 'admin')->andReturn($role);
+        $role->shouldReceive('firstOrFail')->andReturn($role);
+        $group->shouldReceive('getKey')->andReturn($group->id);
+        Config::shouldReceive('get')->with('laratrust.group')->andReturn($group);
+        $group->shouldReceive('where')->with('name', 'GroupA')->andReturn($group);
+        $group->shouldReceive('firstOrFail')->andReturn($group);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $result = $user->detachRole($roleObject);
-        $this->assertInstanceOf('HasRoleUser', $result);
-        $result = $user->detachRole($roleArray);
-        $this->assertInstanceOf('HasRoleUser', $result);
-        $result = $user->detachRole(3);
-        $this->assertInstanceOf('HasRoleUser', $result);
+        // Can detach role by passing an object
+        $this->assertInstanceOf('HasRoleUser', $user->detachRole($role));
+        // Can detach role by passing an id
+        $this->assertInstanceOf('HasRoleUser', $user->detachRole($role->id));
+        // Can detach role by passing an array with 'id' => $id
+        $this->assertInstanceOf('HasRoleUser', $user->detachRole($roleArray));
+        // Can detach role by passing the role name
+        $this->assertInstanceOf('HasRoleUser', $user->detachRole('admin'));// Can detach role by passing the role and group
+        $this->assertInstanceOf('HasRoleUser', $user->detachRole($role, $group));
+        // Can detach role by passing the role and group id
+        $this->assertInstanceOf('HasRoleUser', $user->detachRole($role, $group->id));
+        // Can detach role by passing the role and group name
+        $this->assertInstanceOf('HasRoleUser', $user->detachRole($role, 'GroupA'));
     }
 
     public function testAttachRoles()
@@ -423,17 +446,15 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('attachRole')->with(1)->once()->ordered();
-        $user->shouldReceive('attachRole')->with(2)->once()->ordered();
-        $user->shouldReceive('attachRole')->with(3)->once()->ordered();
+        $user->shouldReceive('attachRole')->with(m::anyOf(1, 2, 3), m::anyOf(null, 'GroupA'));
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $result = $user->attachRoles([1, 2, 3]);
-        $this->assertInstanceOf('HasRoleUser', $result);
+        $this->assertInstanceOf('HasRoleUser', $user->attachRoles([1, 2, 3]));
+        $this->assertInstanceOf('HasRoleUser', $user->attachRoles([1, 2, 3], 'GroupA'));
     }
 
     public function testDetachRoles()
@@ -450,56 +471,17 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('detachRole')->with(1)->once()->ordered();
-        $user->shouldReceive('detachRole')->with(2)->once()->ordered();
-        $user->shouldReceive('detachRole')->with(3)->once()->ordered();
+        $user->shouldReceive('roles->get')->andReturn([1, 2, 3]);
+        $user->shouldReceive('detachRole')->with(m::anyOf(1, 2, 3), m::anyOf(null, 'GroupA'));
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $result = $user->detachRoles([1, 2, 3]);
-        $this->assertInstanceOf('HasRoleUser', $result);
-    }
-
-    public function testDetachAllRoles()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $roleA = $this->mockRole('RoleA');
-        $roleB = $this->mockRole('RoleB');
-
-        $user = m::mock('HasRoleUser')->makePartial();
-        $user->roles = [$roleA, $roleB];
-
-        $relationship = m::mock('MorphToMany');
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        Config::shouldReceive('get')->with('laratrust.role')->once()->andReturn('App\Role');
-        Config::shouldReceive('get')->with('laratrust.role_user_table')->once()->andReturn('role_user');
-        Config::shouldReceive('get')->with('laratrust.user_foreign_key')->once()->andReturn('user_id');
-        Config::shouldReceive('get')->with('laratrust.role_foreign_key')->once()->andReturn('role_id');
-        Config::shouldReceive('get')->with('laratrust.group_foreign_key')
-            ->once()->andReturn('group_id');
-        $user->shouldReceive('morphToMany')->andReturn($relationship)->once();
-        $relationship->shouldReceive('withPivot')->with('group_id')->andReturn($relationship)->once();
-        $relationship->shouldReceive('get')->andReturn($user->roles)->once();
-        $user->shouldReceive('detachRole')->twice();
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $user->detachRoles();
+        $this->assertInstanceOf('HasRoleUser', $user->detachRoles([1, 2, 3]));
+        $this->assertInstanceOf('HasRoleUser', $user->detachRoles([]));
+        $this->assertInstanceOf('HasRoleUser', $user->detachRoles([1, 2, 3], 'GroupA'));
     }
 
     public function testSyncRoles()
@@ -517,9 +499,19 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->andReturn('group_id');
         $user->shouldReceive('roles')->andReturn($user);
-        $user->shouldReceive('sync')->with($rolesIds)->once()->ordered();
-        Cache::shouldReceive('forget')->twice();
+        $user->shouldReceive('sync')->with([
+            1 => ['group_id' => null],
+            2 => ['group_id' => null],
+            3 => ['group_id' => null]
+        ])->once()->ordered();
+        $user->shouldReceive('sync')->with([
+            1 => ['group_id' => 'GroupA'],
+            2 => ['group_id' => 'GroupA'],
+            3 => ['group_id' => 'GroupA']
+        ])->once()->ordered();
+        Cache::shouldReceive('forget');
 
         /*
         |------------------------------------------------------------
@@ -527,6 +519,7 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds));
+        $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds, 'GroupA'));
     }
 
     public function testAttachPermission()
@@ -536,42 +529,48 @@ class LaratrustUserTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $permissionObject = m::mock('Permission');
-        $permissionArray = ['id' => 2];
-
+        $permission = $this->mockPermission('admin.users');
+        $group = $this->mockGroup('GroupA');
         $user = m::mock('HasRoleUser')->makePartial();
+        $permissionArray = ['id' => 1];
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $permissionObject->shouldReceive('getKey')->andReturn(1);
-        $user->shouldReceive('permissions')->andReturn($user);
-        $user->shouldReceive('attach')->with(1)->once()->ordered();
-        $user->shouldReceive('attach')->with(2)->once()->ordered();
-        $user->shouldReceive('attach')->with(3)->once()->ordered();
-        $user->shouldReceive('attach')->with(1)->once()->ordered();
-        Cache::shouldReceive('forget')->times(8);
-        Config::shouldReceive('get')->with('laratrust.permission')->andReturn($permissionObject)->once();
-        $permissionObject->shouldReceive('where')->with('name', 'edit-post')->andReturn($permissionObject);
-        $permissionObject->shouldReceive('firstOrFail')->andReturn($permissionObject);
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->andReturn('group_id');
+        $user->shouldReceive('permissions->wherePivot->count')->andReturn(0);
+        $permission->shouldReceive('getKey')->andReturn(1);
+        $user->shouldReceive('permissions->attach')
+            ->with(1, m::anyOf(['group_id' => null], ['group_id' => 1]));
+        Cache::shouldReceive('forget');
+        Config::shouldReceive('get')->with('laratrust.permission')->andReturn($permission);
+        $permission->shouldReceive('where')->with('name', 'admin.users')->andReturn($permission);
+        $permission->shouldReceive('firstOrFail')->andReturn($permission);
+        $group->shouldReceive('getKey')->andReturn($group->id);
+        Config::shouldReceive('get')->with('laratrust.group')->andReturn($group);
+        $group->shouldReceive('where')->with('name', 'GroupA')->andReturn($group);
+        $group->shouldReceive('firstOrFail')->andReturn($group);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $result = $user->attachPermission($permissionObject);
-        $this->assertInstanceOf('HasRoleUser', $result);
-        $result = $user->attachPermission($permissionArray);
-        $this->assertInstanceOf('HasRoleUser', $result);
-        $result = $user->attachPermission(3);
-        $this->assertInstanceOf('HasRoleUser', $result);
-        $result = $user->attachPermission('edit-post');
-        $this->assertInstanceOf('HasRoleUser', $result);
-        $this->setExpectedException(InvalidArgumentException::class);
-        $user->attachPermission(true);
+        // Can attach permission by passing an object
+        $this->assertInstanceOf('HasRoleUser', $user->attachPermission($permission));
+        // Can attach role by passing an id
+        $this->assertInstanceOf('HasRoleUser', $user->attachPermission($permission->id));
+        // Can attach role by passing an array with 'id' => $id
+        $this->assertInstanceOf('HasRoleUser', $user->attachPermission($permissionArray));
+        // Can attach role by passing the role name
+        $this->assertInstanceOf('HasRoleUser', $user->attachPermission('admin.users'));// Can attach role by passing the role and group
+        $this->assertInstanceOf('HasRoleUser', $user->attachPermission($permission, $group));
+        // Can attach role by passing the role and group id
+        $this->assertInstanceOf('HasRoleUser', $user->attachPermission($permission, $group->id));
+        // Can attach role by passing the role and group name
+        $this->assertInstanceOf('HasRoleUser', $user->attachPermission($permission, 'GroupA'));
     }
 
     public function testDetachPermission()
@@ -581,34 +580,46 @@ class LaratrustUserTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $permissionObject = m::mock('Permission');
-        $permissionArray = ['id' => 2];
-
+        $permission = $this->mockPermission('admin.users');
+        $group = $this->mockGroup('GroupA');
         $user = m::mock('HasRoleUser')->makePartial();
+        $permissionArray = ['id' => 1];
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $permissionObject->shouldReceive('getKey')->andReturn(1);
-        $user->shouldReceive('permissions')->andReturn($user);
-        $user->shouldReceive('detach')->with(1)->once()->ordered();
-        $user->shouldReceive('detach')->with(2)->once()->ordered();
-        $user->shouldReceive('detach')->with(3)->once()->ordered();
-        Cache::shouldReceive('forget')->times(6);
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->andReturn('group_id');
+        $user->shouldReceive('permissions->wherePivot->detach')->andReturn($user);
+        Cache::shouldReceive('forget');
+        $permission->shouldReceive('getKey')->andReturn(1);
+        Config::shouldReceive('get')->with('laratrust.permission')->andReturn($permission);
+        $permission->shouldReceive('where')->with('name', 'admin.users')->andReturn($permission);
+        $permission->shouldReceive('firstOrFail')->andReturn($permission);
+        $group->shouldReceive('getKey')->andReturn($group->id);
+        Config::shouldReceive('get')->with('laratrust.group')->andReturn($group);
+        $group->shouldReceive('where')->with('name', 'GroupA')->andReturn($group);
+        $group->shouldReceive('firstOrFail')->andReturn($group);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $result = $user->detachPermission($permissionObject);
-        $this->assertInstanceOf('HasRoleUser', $result);
-        $result = $user->detachPermission($permissionArray);
-        $this->assertInstanceOf('HasRoleUser', $result);
-        $result = $user->detachPermission(3);
-        $this->assertInstanceOf('HasRoleUser', $result);
+        // Can detach role by passing an object
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermission($permission));
+        // Can detach role by passing an id
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermission($permission->id));
+        // Can detach role by passing an array with 'id' => $id
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermission($permissionArray));
+        // Can detach role by passing the role name
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermission('admin.users'));// Can detach role by passing the role and group
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermission($permission, $group));
+        // Can detach role by passing the role and group id
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermission($permission, $group->id));
+        // Can detach role by passing the role and group name
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermission($permission, 'GroupA'));
     }
 
     public function testAttachPermissions()
@@ -625,17 +636,15 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('attachPermission')->with(1)->once()->ordered();
-        $user->shouldReceive('attachPermission')->with(2)->once()->ordered();
-        $user->shouldReceive('attachPermission')->with(3)->once()->ordered();
+        $user->shouldReceive('attachPermission')->with(m::anyOf(1, 2, 3), m::anyOf(null, 'GroupA'));
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $result = $user->attachPermissions([1, 2, 3]);
-        $this->assertInstanceOf('HasRoleUser', $result);
+        $this->assertInstanceOf('HasRoleUser', $user->attachPermissions([1, 2, 3]));
+        $this->assertInstanceOf('HasRoleUser', $user->attachPermissions([1, 2, 3], 'GroupA'));
     }
 
     public function testDetachPermissions()
@@ -652,57 +661,17 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('detachPermission')->with(1)->once()->ordered();
-        $user->shouldReceive('detachPermission')->with(2)->once()->ordered();
-        $user->shouldReceive('detachPermission')->with(3)->once()->ordered();
+        $user->shouldReceive('permissions->get')->andReturn([1, 2, 3]);
+        $user->shouldReceive('detachPermission')->with(m::anyOf(1, 2, 3), m::anyOf(null, 'GroupA'));
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $result = $user->detachPermissions([1, 2, 3]);
-        $this->assertInstanceOf('HasRoleUser', $result);
-    }
-
-
-    public function testDetachAllPermissions()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $permissionA = $this->mockRole('PermissionA');
-        $permissionB = $this->mockRole('PermissionB');
-
-        $user = m::mock('HasRoleUser')->makePartial();
-        $user->permissions = [$permissionA, $permissionB];
-
-        $relationship = m::mock('MorphToMany');
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        Config::shouldReceive('get')->with('laratrust.permission')->once()->andReturn('App\Permission');
-        Config::shouldReceive('get')->with('laratrust.permission_user_table')->once()->andReturn('permission_user');
-        Config::shouldReceive('get')->with('laratrust.user_foreign_key')->once()->andReturn('user_id');
-        Config::shouldReceive('get')->with('laratrust.permission_foreign_key')->once()->andReturn('permission_id');
-        Config::shouldReceive('get')->with('laratrust.group_foreign_key')
-            ->once()->andReturn('group_id');
-        $user->shouldReceive('morphToMany')->andReturn($relationship)->once();
-        $relationship->shouldReceive('withPivot')->with('group_id')->andReturn($relationship)->once();
-        $relationship->shouldReceive('get')->andReturn($user->permissions)->once();
-        $user->shouldReceive('detachPermission')->twice();
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $user->detachPermissions();
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermissions( [1, 2, 3]));
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermissions([]));
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermissions([1, 2, 3], 'GroupA'));
     }
 
     public function testSyncPermissions()
@@ -720,9 +689,19 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('laratrust.group_foreign_key')->andReturn('group_id');
         $user->shouldReceive('permissions')->andReturn($user);
-        $user->shouldReceive('sync')->with($permissionsIds)->once()->ordered();
-        Cache::shouldReceive('forget')->twice();
+        $user->shouldReceive('sync')->with([
+            1 => ['group_id' => null],
+            2 => ['group_id' => null],
+            3 => ['group_id' => null]
+        ])->once()->ordered();
+        $user->shouldReceive('sync')->with([
+            1 => ['group_id' => 'GroupA'],
+            2 => ['group_id' => 'GroupA'],
+            3 => ['group_id' => 'GroupA']
+        ])->once()->ordered();
+        Cache::shouldReceive('forget');
 
         /*
         |------------------------------------------------------------
@@ -730,6 +709,7 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         $this->assertInstanceOf('HasRoleUser', $user->syncPermissions($permissionsIds));
+        $this->assertInstanceOf('HasRoleUser', $user->syncPermissions($permissionsIds, 'GroupA'));
     }
 
     public function testUserOwnsaPostModel()
