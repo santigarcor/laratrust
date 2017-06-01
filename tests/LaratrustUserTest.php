@@ -763,37 +763,6 @@ class LaratrustUserTest extends UserTest
         $this->assertFalse($user->owns($post2, 'UserId'));
     }
 
-    public function testUserCanAndOwnsaPostModel()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $user = m::mock('HasRoleUser')->makePartial();
-        $post = new stdClass();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $user->shouldReceive('hasPermission')->with('edit-post', false)->andReturn(true)->once();
-        $user->shouldReceive('owns')->with($post, null)->andReturn(true)->once();
-        $user->shouldReceive('hasPermission')->with('update-post', false)->andReturn(false)->once();
-        $user->shouldReceive('hasPermission')->with('enhance-post', true)->andReturn(true)->once();
-        $user->shouldReceive('owns')->with($post, 'UserID')->andReturn(false)->once();
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($user->canAndOwns('edit-post', $post));
-        $this->assertFalse($user->canAndOwns('update-post', $post));
-        $this->assertFalse($user->canAndOwns('enhance-post', $post, ['requireAll' => true, 'foreignKeyName' => 'UserID']));
-    }
-
     public function testUserHasRoleAndOwnsaPostModel()
     {
         /*
@@ -801,6 +770,7 @@ class LaratrustUserTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
+        $group = $this->mockGroup('GroupA');
         $user = m::mock('HasRoleUser')->makePartial();
         $post = new stdClass();
 
@@ -809,10 +779,11 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('hasRole')->with('editor', false)->andReturn(true)->once();
+        $user->shouldReceive('hasRole')->with('editor', null, false)->andReturn(true)->once();
         $user->shouldReceive('owns')->with($post, null)->andReturn(true)->once();
-        $user->shouldReceive('hasRole')->with('regular-user', false)->andReturn(false)->once();
-        $user->shouldReceive('hasRole')->with('administrator', true)->andReturn(true)->once();
+        $user->shouldReceive('hasRole')->with('regular-user', null, false)->andReturn(false)->once();
+        $user->shouldReceive('hasRole')->with('administrator', null, true)->andReturn(true)->once();
+        $user->shouldReceive('hasRole')->with('team-member', $group, true)->andReturn(false)->once();
         $user->shouldReceive('owns')->with($post, 'UserID')->andReturn(false)->once();
 
         /*
@@ -824,6 +795,51 @@ class LaratrustUserTest extends UserTest
         $this->assertFalse($user->hasRoleAndOwns('regular-user', $post));
         $this->assertFalse($user->hasRoleAndOwns('administrator', $post, [
             'requireAll' => true, 'foreignKeyName' => 'UserID'
+        ]));
+        $this->assertFalse($user->hasRoleAndOwns('team-member', $post, [
+            'requireAll' => true,
+            'foreignKeyName' => 'UserID',
+            'group' => $group
+        ]));
+    }
+
+    public function testUserCanAndOwnsaPostModel()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $group = $this->mockGroup('GroupA');
+        $user = m::mock('HasRoleUser')->makePartial();
+        $post = new stdClass();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $user->shouldReceive('hasPermission')->with('edit-post', null, false)->andReturn(true)->once();
+        $user->shouldReceive('owns')->with($post, null)->andReturn(true)->once();
+        $user->shouldReceive('hasPermission')->with('update-post', null, false)->andReturn(false)->once();
+        $user->shouldReceive('hasPermission')->with('enhance-post', null, true)->andReturn(true)->once();
+        $user->shouldReceive('hasPermission')->with('edit-team', $group, true)->andReturn(false)->once();
+        $user->shouldReceive('owns')->with($post, 'UserID')->andReturn(false)->once();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->canAndOwns('edit-post', $post));
+        $this->assertFalse($user->canAndOwns('update-post', $post));
+        $this->assertFalse($user->canAndOwns('enhance-post', $post, [
+            'requireAll' => true, 'foreignKeyName' => 'UserID'
+        ]));
+        $this->assertFalse($user->canAndOwns('edit-team', $post, [
+            'requireAll' => true,
+            'foreignKeyName' => 'UserID',
+            'group' => $group
         ]));
     }
 

@@ -24,53 +24,19 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(true);
-        $request->user()->shouldReceive('ability')->andReturn(false);
-        Config::shouldReceive('get')->once()->with('laratrust.middleware_handling', 'abort')
+        Config::shouldReceive('get')
+            ->with('laratrust.middleware_handling', 'abort')
             ->andReturn('abort');
-        Config::shouldReceive('get')->once()->with('laratrust.middleware_params', '403')
+        Config::shouldReceive('get')
+            ->with('laratrust.middleware_params', '403')
             ->andReturn('403');
-
-        $middleware->handle($request, function () {}, null, null, true);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertAbortCode(403);
-    }
-
-    public function testHandle_IsGuestWithAbility_ShouldAbort403()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $guard = m::mock('Illuminate\Contracts\Auth\Guard');
-        $request = $this->mockRequest();
-
-        $middleware = new LaratrustAbility($guard);
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $guard->shouldReceive('guest')->andReturn(true);
-        $request->user()->shouldReceive('ability')->andReturn(true);
-        Config::shouldReceive('get')->once()->with('laratrust.middleware_handling', 'abort')
-            ->andReturn('abort');
-        Config::shouldReceive('get')->once()->with('laratrust.middleware_params', '403')
-            ->andReturn('403');
-
-        $middleware->handle($request, function () {}, null, null);
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
+        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users');
         $this->assertAbortCode(403);
     }
 
@@ -92,19 +58,31 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('ability')->andReturn(false);
-        Config::shouldReceive('get')->once()->with('laratrust.middleware_handling', 'abort')
+        $request->user()->shouldReceive('ability')
+            ->with(
+                ['admin', 'user'],
+                ['edit-users', 'update-users'],
+                m::anyOf(null, 'GroupA'),
+                m::anyOf(['validate_all' => true], ['validate_all' => false])
+            )
+            ->andReturn(false);
+        Config::shouldReceive('get')->with('laratrust.middleware_handling', 'abort')
             ->andReturn('abort');
-        Config::shouldReceive('get')->once()->with('laratrust.middleware_params', '403')
+        Config::shouldReceive('get')->with('laratrust.middleware_params', '403')
             ->andReturn('403');
-
-        $middleware->handle($request, function () {}, null, null);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
+        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users');
+        $this->assertAbortCode(403);
+
+        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'require_all');
+        $this->assertAbortCode(403);
+
+        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'GroupA', 'require_all');
         $this->assertAbortCode(403);
     }
 
@@ -126,16 +104,28 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('ability')->andReturn(true);;
-
-        $middleware->handle($request, function () {}, null, null);
-        $middleware->handle($request, function () {}, null, null, 1);
+        $request->user()->shouldReceive('ability')
+            ->with(
+                ['admin', 'user'],
+                ['edit-users', 'update-users'],
+                m::anyOf(null, 'GroupA'),
+                m::anyOf(['validate_all' => true], ['validate_all' => false])
+            )
+            ->andReturn(true);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
+        $this->assertDidNotAbort();
+        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users');
+        $this->assertDidNotAbort();
+
+        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'require_all');
+        $this->assertDidNotAbort();
+
+        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'GroupA', 'require_all');
         $this->assertDidNotAbort();
     }
 

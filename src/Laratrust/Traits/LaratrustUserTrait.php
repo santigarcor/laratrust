@@ -139,7 +139,7 @@ trait LaratrustUserTrait
      */
     public function hasRole($name, $group = null, $requireAll = false)
     {
-        list($group, $requireAll) = $this->parametersRealValues($group, $requireAll, 'is_bool');
+        list($group, $requireAll) = $this->assignRealValuesTo($group, $requireAll, 'is_bool');
         $groupForeignKey = Config::get('laratrust.group_foreign_key');
 
         if (is_array($name)) {
@@ -191,7 +191,7 @@ trait LaratrustUserTrait
      */
     public function hasPermission($permission, $group = null, $requireAll = false)
     {
-        list($group, $requireAll) = $this->parametersRealValues($group, $requireAll, 'is_bool');
+        list($group, $requireAll) = $this->assignRealValuesTo($group, $requireAll, 'is_bool');
         $groupForeignKey = Config::get('laratrust.group_foreign_key');
 
         if (is_array($permission)) {
@@ -290,7 +290,7 @@ trait LaratrustUserTrait
      */
     public function ability($roles, $permissions, $group = null, $options = [])
     {
-        list($group, $options) = $this->parametersRealValues($group, $options, 'is_array');
+        list($group, $options) = $this->assignRealValuesTo($group, $options, 'is_array');
 
         // Convert string to array if that's what is passed in.
         if (!is_array($roles)) {
@@ -301,8 +301,8 @@ trait LaratrustUserTrait
         }
 
         // Set up default values and validate options.
-        $options = $this->checkOrSetDefaultOption('validate_all', $options, [false, true]);
-        $options = $this->checkOrSetDefaultOption('return_type', $options, ['boolean', 'array', 'both']);
+        $options = $this->checkOrSet('validate_all', $options, [false, true]);
+        $options = $this->checkOrSet('return_type', $options, ['boolean', 'array', 'both']);
 
         // Loop through roles and permissions and check each.
         $checkedRoles = [];
@@ -563,10 +563,11 @@ trait LaratrustUserTrait
      */
     public function hasRoleAndOwns($role, $thing, $options = [])
     {
-        $options = $this->checkOrSetDefaultOption('requireAll', $options, [false, true]);
-        $options['foreignKeyName'] = isset($options['foreignKeyName']) ? $options['foreignKeyName'] : null;
+        $options = $this->checkOrSet('requireAll', $options, [false, true]);
+        $options = $this->checkOrSet('group', $options, [null]);
+        $options = $this->checkOrSet('foreignKeyName', $options, [null]);
 
-        return $this->hasRole($role, $options['requireAll'])
+        return $this->hasRole($role, $options['group'], $options['requireAll'])
                 && $this->owns($thing, $options['foreignKeyName']);
     }
 
@@ -579,10 +580,11 @@ trait LaratrustUserTrait
      */
     public function canAndOwns($permission, $thing, $options = [])
     {
-        $options = $this->checkOrSetDefaultOption('requireAll', $options, [false, true]);
-        $options['foreignKeyName'] = isset($options['foreignKeyName']) ? $options['foreignKeyName'] : null;
+        $options = $this->checkOrSet('requireAll', $options, [false, true]);
+        $options = $this->checkOrSet('foreignKeyName', $options, [null]);
+        $options = $this->checkOrSet('group', $options, [null]);
 
-        return $this->hasPermission($permission, $options['requireAll'])
+        return $this->hasPermission($permission, $options['group'], $options['requireAll'])
                 && $this->owns($thing, $options['foreignKeyName']);
     }
 
@@ -610,27 +612,30 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Checks if the option exists inside the arrayToCheck
+     * Checks if the option exists inside the array
      * if not sets a the first option inside the default
      * values array
      * @param  string $option
-     * @param  array $arrayToCheck
-     * @param  array $defaultValues
+     * @param  array $array
+     * @param  array $possibleValues
+     * @param  int $defaultIndex
      * @return array
      */
-    protected function checkOrSetDefaultOption($option, $arrayToCheck, $defaultValues)
+    protected function checkOrSet($option, $array, $possibleValues)
     {
-        if (!isset($arrayToCheck[$option])) {
-            $arrayToCheck[$option] = $defaultValues[0];
+        if (!isset($array[$option])) {
+            $array[$option] = $possibleValues[0];
 
-            return $arrayToCheck;
+            return $array;
         }
 
-        if (!in_array($arrayToCheck[$option], $defaultValues, true)) {
+        $ignoredOptions = ['group', 'foreignKeyName'];
+
+        if (!in_array($option, $ignoredOptions) && !in_array($array[$option], $possibleValues, true)) {
             throw new InvalidArgumentException();
         }
 
-        return $arrayToCheck;
+        return $array;
     }
 
     /**
@@ -667,7 +672,7 @@ trait LaratrustUserTrait
      * @param  mixed $requireAllOrOptions
      * @return array
      */
-    private function parametersRealValues($group, $requireAllOrOptions, $method)
+    private function assignRealValuesTo($group, $requireAllOrOptions, $method)
     {
         return [
             ($method($group) ? null : $group),

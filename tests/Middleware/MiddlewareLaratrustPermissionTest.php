@@ -24,53 +24,19 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(true);
-        $request->user()->shouldReceive('hasPermission')->andReturn(false);
-        Config::shouldReceive('get')->once()->with('laratrust.middleware_handling', 'abort')
+        Config::shouldReceive('get')
+            ->with('laratrust.middleware_handling', 'abort')
             ->andReturn('abort');
-        Config::shouldReceive('get')->once()->with('laratrust.middleware_params', '403')
+        Config::shouldReceive('get')
+            ->with('laratrust.middleware_params', '403')
             ->andReturn('403');
-
-        $middleware->handle($request, function () {}, null, null, true);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertAbortCode(403);
-    }
-
-    public function testHandle_IsGuestWithPermission_ShouldAbort403()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $guard = m::mock('Illuminate\Contracts\Auth\Guard');
-        $request = $this->mockRequest();
-
-        $middleware = new LaratrustPermission($guard);
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $guard->shouldReceive('guest')->andReturn(true);
-        $request->user()->shouldReceive('hasPermission')->andReturn(true);
-        Config::shouldReceive('get')->once()->with('laratrust.middleware_handling', 'abort')
-            ->andReturn('abort');
-        Config::shouldReceive('get')->once()->with('laratrust.middleware_params', '403')
-            ->andReturn('403');
-
-        $middleware->handle($request, function () {}, null, null);
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
+        $middleware->handle($request, function () {}, 'users-create|users-update');
         $this->assertAbortCode(403);
     }
 
@@ -92,19 +58,30 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('hasPermission')->andReturn(false);
-        Config::shouldReceive('get')->once()->with('laratrust.middleware_handling', 'abort')
+        $request->user()->shouldReceive('hasPermission')
+            ->with(
+                ['users-create', 'users-update'],
+                m::anyOf(null, 'GroupA'),
+                m::anyOf(true, false)
+            )
+            ->andReturn(false);
+        Config::shouldReceive('get')->with('laratrust.middleware_handling', 'abort')
             ->andReturn('abort');
-        Config::shouldReceive('get')->once()->with('laratrust.middleware_params', '403')
+        Config::shouldReceive('get')->with('laratrust.middleware_params', '403')
             ->andReturn('403');
-
-        $middleware->handle($request, function () {}, null, null);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
+        $middleware->handle($request, function () {}, 'users-create|users-update');
+        $this->assertAbortCode(403);
+
+        $middleware->handle($request, function () {}, 'users-create|users-update', 'require_all');
+        $this->assertAbortCode(403);
+
+        $middleware->handle($request, function () {}, 'users-create|users-update', 'GroupA', 'require_all');
         $this->assertAbortCode(403);
     }
 
@@ -126,15 +103,27 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('hasPermission')->andReturn(true);
-
-        $middleware->handle($request, function () {}, null, null);
+        $request->user()->shouldReceive('hasPermission')
+            ->with(
+                ['users-create', 'users-update'],
+                m::anyOf(null, 'GroupA'),
+                m::anyOf(true, false)
+            )
+            ->andReturn(true);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
+        $this->assertDidNotAbort();
+        $middleware->handle($request, function () {}, 'users-create|users-update');
+        $this->assertDidNotAbort();
+
+        $middleware->handle($request, function () {}, 'users-create|users-update', 'require_all');
+        $this->assertDidNotAbort();
+
+        $middleware->handle($request, function () {}, 'users-create|users-update', 'GroupA', 'require_all');
         $this->assertDidNotAbort();
     }
 }
