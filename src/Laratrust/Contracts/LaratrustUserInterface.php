@@ -30,137 +30,137 @@ interface LaratrustUserInterface
      * Checks if the user has a role by its name.
      *
      * @param string|array $name       Role name or array of role names.
-     * @param string|bool  $group      Group name or requiredAll roles.
+     * @param string|bool  $team      Team name or requiredAll roles.
      * @param bool         $requireAll All roles in the array are required.
      *
      * @return bool
      */
-    public function hasRole($name, $group = null, $requireAll = false);
+    public function hasRole($name, $team = null, $requireAll = false);
 
     /**
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
-     * @param string|bool  $group      Group name or requiredAll roles.
+     * @param string|bool  $team      Team name or requiredAll roles.
      * @param bool         $requireAll All roles in the array are required.
      *
      * @return bool
      */
-    public function hasPermission($permission, $group = null, $requireAll = false);
+    public function hasPermission($permission, $team = null, $requireAll = false);
 
     /**
      * Check if user has a permission by its name. Calls hasPermission method
      *
      * @param string|array $permission Permission string or array of permissions.
-     * @param string|bool  $group      Group name or requiredAll roles.
+     * @param string|bool  $team      Team name or requiredAll roles.
      * @param bool         $requireAll All permissions in the array are required.
      *
      * @return bool
      */
-    public function can($permission, $group = null, $requireAll = false);
+    public function can($permission, $team = null, $requireAll = false);
 
     /**
      * Check if user has a permission by its name. Calls hasPermission method
      *
      * @param string|array $permission Permission string or array of permissions.
-     * @param string|bool  $group      Group name or requiredAll roles.
+     * @param string|bool  $team      Team name or requiredAll roles.
      * @param bool         $requireAll All permissions in the array are required.
      *
      * @return bool
      */
-    public function isAbleTo($permission, $group = null, $requireAll = false);
+    public function isAbleTo($permission, $team = null, $requireAll = false);
     
     /**
      * Checks role(s) and permission(s).
      *
      * @param string|array $roles       Array of roles or comma separated string
      * @param string|array $permissions Array of permissions or comma separated string.
-     * @param string|bool  $group      Group name or requiredAll roles.
+     * @param string|bool  $team      Team name or requiredAll roles.
      * @param array        $options     validate_all (true|false) or return_type (boolean|array|both)
      *
      * @throws \InvalidArgumentException
      *
      * @return array|bool
      */
-    public function ability($roles, $permissions, $group = null, $options = []);
+    public function ability($roles, $permissions, $team = null, $options = []);
     
     /**
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed $role
-     * @param mixed $group
+     * @param mixed $team
      */
-    public function attachRole($role, $group = null);
+    public function attachRole($role, $team = null);
     
     /**
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $role
-     * @param mixed $group
+     * @param mixed $team
      */
-    public function detachRole($role, $group = null);
+    public function detachRole($role, $team = null);
     
     /**
      * Attach multiple roles to a user
      *
      * @param mixed $roles
-     * @param mixed $group
+     * @param mixed $team
      */
-    public function attachRoles($roles = [], $group = null);
+    public function attachRoles($roles = [], $team = null);
     
     /**
      * Detach multiple roles from a user
      *
      * @param mixed $roles
-     * @param mixed $group
+     * @param mixed $team
      */
-    public function detachRoles($roles = [], $group = null);
+    public function detachRoles($roles = [], $team = null);
 
     /**
      * Sync multiple roles in a user
      * @param array $roles
-     * @param mixed $group
+     * @param mixed $team
      */
-    public function syncRoles($roles = [], $group = null);
+    public function syncRoles($roles = [], $team = null);
 
     /**
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed  $permission
-     * @param mixed $group
+     * @param mixed $team
      */
-    public function attachPermission($permission, $group = null);
+    public function attachPermission($permission, $team = null);
     
     /**
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed  $permission
-     * @param mixed $group
+     * @param mixed $team
      */
-    public function detachPermission($permission, $group = null);
+    public function detachPermission($permission, $team = null);
     
     /**
      * Attach multiple permissions to a user
      *
      * @param mixed  $permissions
-     * @param mixed $group
+     * @param mixed $team
      */
-    public function attachPermissions($permissions = [], $group = null);
+    public function attachPermissions($permissions = [], $team = null);
     
     /**
      * Detach multiple permissions from a user
      *
      * @param mixed  $permissions
-     * @param mixed $group
+     * @param mixed $team
      */
-    public function detachPermissions($permissions = [], $group = null);
+    public function detachPermissions($permissions = [], $team = null);
 
     /**
      * Sync multiple roles in a user
      * @param  array $permissions
-     * @param mixed $group
+     * @param mixed $team
      */
-    public function syncPermissions($permissions = [], $group = null);
+    public function syncPermissions($permissions = [], $team = null);
 
     /**
      * Checks if the user owns the thing

@@ -61,7 +61,7 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         $request->user()->shouldReceive('hasPermission')
             ->with(
                 ['users-create', 'users-update'],
-                m::anyOf(null, 'GroupA'),
+                m::anyOf(null, 'TeamA'),
                 m::anyOf(true, false)
             )
             ->andReturn(false);
@@ -81,7 +81,7 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         $middleware->handle($request, function () {}, 'users-create|users-update', 'require_all');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {}, 'users-create|users-update', 'GroupA', 'require_all');
+        $middleware->handle($request, function () {}, 'users-create|users-update', 'TeamA', 'require_all');
         $this->assertAbortCode(403);
     }
 
@@ -106,7 +106,7 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         $request->user()->shouldReceive('hasPermission')
             ->with(
                 ['users-create', 'users-update'],
-                m::anyOf(null, 'GroupA'),
+                m::anyOf(null, 'TeamA'),
                 m::anyOf(true, false)
             )
             ->andReturn(true);
@@ -123,7 +123,7 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         $middleware->handle($request, function () {}, 'users-create|users-update', 'require_all');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {}, 'users-create|users-update', 'GroupA', 'require_all');
+        $middleware->handle($request, function () {}, 'users-create|users-update', 'TeamA', 'require_all');
         $this->assertDidNotAbort();
     }
 }

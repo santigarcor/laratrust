@@ -13,7 +13,7 @@ namespace Laratrust\Traits;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Traits\LaratrustDynamicUserRelationsCalls;
 
-trait LaratrustGroupTrait
+trait LaratrustTeamTrait
 {
     use LaratrustDynamicUserRelationsCalls;
 
@@ -29,7 +29,7 @@ trait LaratrustGroupTrait
             Config::get('laratrust.user_models')[$relationship],
             'user',
             Config::get('laratrust.role_user_table'),
-            Config::get('laratrust.group_foreign_key'),
+            Config::get('laratrust.team_foreign_key'),
             Config::get('laratrust.user_foreign_key')
         );
     }
@@ -37,19 +37,19 @@ trait LaratrustGroupTrait
     /**
      * Boot the permission model
      * Attach event listener to remove the many-to-many records when trying to delete
-     * Will NOT delete any records if the group model uses soft deletes.
+     * Will NOT delete any records if the team model uses soft deletes.
      *
      * @return void|bool
      */
-    public static function bootLaratrustGroupTrait()
+    public static function bootLaratrustTeamTrait()
     {
-        static::deleting(function ($group) {
-            if (method_exists($group, 'bootSoftDeletes') && $group->forceDeleting) {
+        static::deleting(function ($team) {
+            if (method_exists($team, 'bootSoftDeletes') && $team->forceDeleting) {
                 return true;
             }
 
             foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
-                $group->$key()->sync([]);
+                $team->$key()->sync([]);
             }
         });
     }

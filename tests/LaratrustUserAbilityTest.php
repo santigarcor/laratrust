@@ -24,9 +24,9 @@ class LaratrustUserAbilityTest extends UserTest {
         $this->permissions['B'] = $this->mockPermission('user_can_b');
         $this->permissions['C'] = $this->mockPermission('user_can_c');
 
-        $this->group = $this->mockGroup('GroupA');
+        $this->team = $this->mockTeam('TeamA');
         $this->roles['A'] = $this->mockRole('UserRoleA');
-        $this->roles['B'] = $this->mockRole('UserRoleB', $this->group->id);
+        $this->roles['B'] = $this->mockRole('UserRoleB', $this->team->id);
 
         $this->roles['A']->perms = [$this->permissions['A']];
         $this->roles['B']->perms = [$this->permissions['B'], $this->permissions['C']];
@@ -40,22 +40,22 @@ class LaratrustUserAbilityTest extends UserTest {
     protected function hasRoleAndHasPermissionExpectations()
     {
         $this->user->shouldReceive('hasRole')->with('UserRoleA', null)->andReturn(true);
-        $this->user->shouldReceive('hasRole')->with('UserRoleA', 'GroupA')->andReturn(false);
-        $this->user->shouldReceive('hasRole')->with('UserRoleB', 'GroupA')->andReturn(true);
+        $this->user->shouldReceive('hasRole')->with('UserRoleA', 'TeamA')->andReturn(false);
+        $this->user->shouldReceive('hasRole')->with('UserRoleB', 'TeamA')->andReturn(true);
         $this->user->shouldReceive('hasRole')->with('UserRoleB', null)->andReturn(false);
         $this->user->shouldReceive('hasRole')
-            ->with(m::anyOf('NonUserRoleA', 'NonUserRoleB'), m::anyOf('GroupA', null))
+            ->with(m::anyOf('NonUserRoleA', 'NonUserRoleB'), m::anyOf('TeamA', null))
             ->andReturn(false);
         $this->user->shouldReceive('hasPermission')->with('user_can_a', null)->andReturn(true);
-        $this->user->shouldReceive('hasPermission')->with('user_can_a', 'GroupA')->andReturn(false);
+        $this->user->shouldReceive('hasPermission')->with('user_can_a', 'TeamA')->andReturn(false);
         $this->user->shouldReceive('hasPermission')
-            ->with(m::anyOf('user_can_b', 'user_can_c'), 'GroupA')
+            ->with(m::anyOf('user_can_b', 'user_can_c'), 'TeamA')
             ->andReturn(true);
         $this->user->shouldReceive('hasPermission')
             ->with(m::anyOf('user_can_b', 'user_can_c'), null)
             ->andReturn(false);
         $this->user->shouldReceive('hasPermission')
-            ->with(m::anyOf('user_cannot_a', 'user_cannot_b'), m::anyOf('GroupA', null))
+            ->with(m::anyOf('user_cannot_a', 'user_cannot_b'), m::anyOf('TeamA', null))
             ->andReturn(false);
     }
 
@@ -84,7 +84,7 @@ class LaratrustUserAbilityTest extends UserTest {
             $this->user->ability(
                 ['UserRoleA', 'UserRoleB'],
                 ['user_can_a', 'user_can_b'],
-                'GroupA'
+                'TeamA'
             )
         );
         $this->assertTrue(
@@ -175,7 +175,7 @@ class LaratrustUserAbilityTest extends UserTest {
             $this->user->ability(
                 ['UserRoleA', 'UserRoleB'],
                 ['user_can_a', 'user_can_b'],
-                'GroupA',
+                'TeamA',
                 ['validate_all' => true, 'return_type' => 'array']
             )
         );
@@ -231,7 +231,7 @@ class LaratrustUserAbilityTest extends UserTest {
             $this->user->ability(
                 ['UserRoleA', 'UserRoleB'],
                 ['user_can_a', 'user_can_b'],
-                'GroupA',
+                'TeamA',
                 ['return_type' => 'both']
             )
         );
@@ -310,12 +310,12 @@ class LaratrustUserAbilityTest extends UserTest {
             $this->user->ability(
                 ['UserRoleA', 'UserRoleB'],
                 ['user_can_a', 'user_can_b'],
-                'GroupA'
+                'TeamA'
             ),
             $this->user->ability(
                 ['UserRoleA', 'UserRoleB'],
                 ['user_can_a', 'user_can_b'],
-                'GroupA',
+                'TeamA',
                 ['validate_all' => false, 'return_type' => 'boolean']
             )
         );

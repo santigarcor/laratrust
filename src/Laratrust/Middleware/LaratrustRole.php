@@ -38,15 +38,15 @@ class LaratrustRole
      * @param  $roles
      * @return mixed
      */
-    public function handle($request, Closure $next, $roles, $group = null, $requireAll = false)
+    public function handle($request, Closure $next, $roles, $team = null, $requireAll = false)
     {
-        list($group, $requireAll) = $this->assignRealValuesTo($group, $requireAll);
+        list($team, $requireAll) = $this->assignRealValuesTo($team, $requireAll);
 
         if (!is_array($roles)) {
             $roles = explode(self::DELIMITER, $roles);
         }
 
-        if ($this->auth->guest() || !$request->user()->hasRole($roles, $group, $requireAll)) {
+        if ($this->auth->guest() || !$request->user()->hasRole($roles, $team, $requireAll)) {
             return call_user_func(
                 Config::get('laratrust.middleware_handling', 'abort'),
                 Config::get('laratrust.middleware_params', '403')
@@ -57,16 +57,16 @@ class LaratrustRole
     }
 
     /**
-     * Assing the real values to the group and requireAllOrOptions parameters
-     * @param  mixed $group
+     * Assing the real values to the team and requireAllOrOptions parameters
+     * @param  mixed $team
      * @param  mixed $requireAllOrOptions
      * @return array
      */
-    private function assignRealValuesTo($group, $requireAllOrOptions)
+    private function assignRealValuesTo($team, $requireAllOrOptions)
     {
         return [
-            ($group == 'require_all' ? null : $group),
-            ($group == 'require_all' ? true : ($requireAllOrOptions== 'require_all' ? true : false)),
+            ($team == 'require_all' ? null : $team),
+            ($team == 'require_all' ? true : ($requireAllOrOptions== 'require_all' ? true : false)),
         ];
     }
 }

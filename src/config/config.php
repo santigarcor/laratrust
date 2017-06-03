@@ -81,25 +81,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Laratrust Groups Model
+    | Laratrust Teams Model
     |--------------------------------------------------------------------------
     |
-    | This is the Group model used by Laratrust to create correct relations.
-    | Update the group if it is in a different namespace.
+    | This is the Team model used by Laratrust to create correct relations.
+    | Update the team if it is in a different namespace.
     |
     */
-    'group' => 'App\Group',
+    'team' => 'App\Team',
 
     /*
     |--------------------------------------------------------------------------
-    | Laratrust Groups Table
+    | Laratrust Teams Table
     |--------------------------------------------------------------------------
     |
-    | This is the groups table used by Laratrust to save group to the
+    | This is the teams table used by Laratrust to save team to the
     | database.
     |
     */
-    'groups_table' => 'groups',
+    'teams_table' => 'teams',
 
     /*
     |--------------------------------------------------------------------------
@@ -157,10 +157,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Group Foreign key on Laratrust's role_user table (Pivot)
+    | Team Foreign key on Laratrust's role_user table (Pivot)
     |--------------------------------------------------------------------------
     */
-    'group_foreign_key' => 'group_id',
+    'team_foreign_key' => 'team_id',
     
     /*
     |--------------------------------------------------------------------------

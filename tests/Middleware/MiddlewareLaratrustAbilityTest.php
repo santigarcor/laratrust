@@ -62,7 +62,7 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
             ->with(
                 ['admin', 'user'],
                 ['edit-users', 'update-users'],
-                m::anyOf(null, 'GroupA'),
+                m::anyOf(null, 'TeamA'),
                 m::anyOf(['validate_all' => true], ['validate_all' => false])
             )
             ->andReturn(false);
@@ -82,7 +82,7 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'require_all');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'GroupA', 'require_all');
+        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all');
         $this->assertAbortCode(403);
     }
 
@@ -108,7 +108,7 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
             ->with(
                 ['admin', 'user'],
                 ['edit-users', 'update-users'],
-                m::anyOf(null, 'GroupA'),
+                m::anyOf(null, 'TeamA'),
                 m::anyOf(['validate_all' => true], ['validate_all' => false])
             )
             ->andReturn(true);
@@ -125,7 +125,7 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'require_all');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'GroupA', 'require_all');
+        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all');
         $this->assertDidNotAbort();
     }
 

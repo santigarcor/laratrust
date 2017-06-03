@@ -61,7 +61,7 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         $request->user()->shouldReceive('hasRole')
             ->with(
                 ['admin', 'user'],
-                m::anyOf(null, 'GroupA'),
+                m::anyOf(null, 'TeamA'),
                 m::anyOf(true, false)
             )
             ->andReturn(false);
@@ -81,7 +81,7 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         $middleware->handle($request, function () {}, 'admin|user', 'require_all');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {}, 'admin|user', 'GroupA', 'require_all');
+        $middleware->handle($request, function () {}, 'admin|user', 'TeamA', 'require_all');
         $this->assertAbortCode(403);
     }
 
@@ -106,7 +106,7 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         $request->user()->shouldReceive('hasRole')
             ->with(
                 ['admin', 'user'],
-                m::anyOf(null, 'GroupA'),
+                m::anyOf(null, 'TeamA'),
                 m::anyOf(true, false)
             )
             ->andReturn(true);
@@ -123,7 +123,7 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         $middleware->handle($request, function () {}, 'admin|user', 'require_all');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {}, 'admin|user', 'GroupA', 'require_all');
+        $middleware->handle($request, function () {}, 'admin|user', 'TeamA', 'require_all');
         $this->assertDidNotAbort();
     }
 }

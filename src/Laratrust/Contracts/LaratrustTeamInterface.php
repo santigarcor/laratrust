@@ -10,10 +10,10 @@ namespace Laratrust\Contracts;
  * @package Laratrust
  */
 
-interface LaratrustGroupInterface
+interface LaratrustTeamInterface
 {
     /**
-     * Morph by Many relationship between the group
+     * Morph by Many relationship between the team
      * and the one user by role models
      *
      * @param  string $relationship

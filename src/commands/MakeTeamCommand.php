@@ -13,28 +13,28 @@ namespace Laratrust;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Facades\Config;
 
-class MakeGroupCommand extends GeneratorCommand
+class MakeTeamCommand extends GeneratorCommand
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'laratrust:group';
+    protected $name = 'laratrust:team';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create Group model if it does not exist';
+    protected $description = 'Create Team model if it does not exist';
 
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Group model';
+    protected $type = 'Team model';
 
     /**
      * Execute the console command.
@@ -53,7 +53,7 @@ class MakeGroupCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/group.stub';
+        return __DIR__.'/stubs/team.stub';
     }
 
     /**
@@ -63,7 +63,7 @@ class MakeGroupCommand extends GeneratorCommand
      */
     protected function getNameInput()
     {
-        return Config::get('laratrust.group', 'Group');
+        return Config::get('laratrust.team', 'Team');
     }
 
     /**

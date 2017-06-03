@@ -59,7 +59,7 @@ trait LaratrustUserTrait
             Config::get('laratrust.role_user_table'),
             Config::get('laratrust.user_foreign_key'),
             Config::get('laratrust.role_foreign_key')
-        )->withPivot(Config::get('laratrust.group_foreign_key'));
+        )->withPivot(Config::get('laratrust.team_foreign_key'));
     }
 
     /**
@@ -75,22 +75,22 @@ trait LaratrustUserTrait
             Config::get('laratrust.permission_user_table'),
             Config::get('laratrust.user_foreign_key'),
             Config::get('laratrust.permission_foreign_key')
-        )->withPivot(Config::get('laratrust.group_foreign_key'));
+        )->withPivot(Config::get('laratrust.team_foreign_key'));
     }
 
     /**
-     * Many-to-Many relations with Group.
+     * Many-to-Many relations with Team.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function groups()
+    public function teams()
     {
         return $this->morphToMany(
-            Config::get('laratrust.group'),
+            Config::get('laratrust.team'),
             'user',
             Config::get('laratrust.role_user_table'),
             Config::get('laratrust.user_foreign_key'),
-            Config::get('laratrust.group_foreign_key')
+            Config::get('laratrust.team_foreign_key')
         )->withPivot(Config::get('laratrust.role_foreign_key'));
     }
 
@@ -132,15 +132,15 @@ trait LaratrustUserTrait
      * Checks if the user has a role by its name.
      *
      * @param string|array $name       Role name or array of role names.
-     * @param string|bool  $group      Group name or requiredAll roles.
+     * @param string|bool  $team      Team name or requiredAll roles.
      * @param bool         $requireAll All roles in the array are required.
      *
      * @return bool
      */
-    public function hasRole($name, $group = null, $requireAll = false)
+    public function hasRole($name, $team = null, $requireAll = false)
     {
-        list($group, $requireAll) = $this->assignRealValuesTo($group, $requireAll, 'is_bool');
-        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+        list($team, $requireAll) = $this->assignRealValuesTo($team, $requireAll, 'is_bool');
+        $teamForeignKey = Config::get('laratrust.team_foreign_key');
 
         if (is_array($name)) {
             if (empty($name)) {
@@ -148,7 +148,7 @@ trait LaratrustUserTrait
             }
 
             foreach ($name as $roleName) {
-                $hasRole = $this->hasRole($roleName, $group);
+                $hasRole = $this->hasRole($roleName, $team);
 
                 if ($hasRole && !$requireAll) {
                     return true;
@@ -163,16 +163,16 @@ trait LaratrustUserTrait
             return $requireAll;
         }
 
-        if (!is_null($group)) {
-            $group = call_user_func_array(
-                        [Config::get('laratrust.group'), 'where'],
-                        ['name', $group]
+        if (!is_null($team)) {
+            $team = call_user_func_array(
+                        [Config::get('laratrust.team'), 'where'],
+                        ['name', $team]
                     )->first();
-            $group = is_null($group) ? $group : $group->getKey();
+            $team = is_null($team) ? $team : $team->getKey();
         }
 
         foreach ($this->cachedRoles() as $role) {
-            if ($role->name == $name && $role->pivot->$groupForeignKey == $group) {
+            if ($role->name == $name && $role->pivot->$teamForeignKey == $team) {
                 return true;
             }
         }
@@ -184,15 +184,15 @@ trait LaratrustUserTrait
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
-     * @param string|bool  $group      Group name or requiredAll roles.
+     * @param string|bool  $team      Team name or requiredAll roles.
      * @param bool         $requireAll All roles in the array are required.
      *
      * @return bool
      */
-    public function hasPermission($permission, $group = null, $requireAll = false)
+    public function hasPermission($permission, $team = null, $requireAll = false)
     {
-        list($group, $requireAll) = $this->assignRealValuesTo($group, $requireAll, 'is_bool');
-        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+        list($team, $requireAll) = $this->assignRealValuesTo($team, $requireAll, 'is_bool');
+        $teamForeignKey = Config::get('laratrust.team_foreign_key');
 
         if (is_array($permission)) {
             if (empty($permission)) {
@@ -200,7 +200,7 @@ trait LaratrustUserTrait
             }
 
             foreach ($permission as $permissionName) {
-                $hasPermission = $this->hasPermission($permissionName, $group);
+                $hasPermission = $this->hasPermission($permissionName, $team);
 
                 if ($hasPermission && !$requireAll) {
                     return true;
@@ -215,16 +215,16 @@ trait LaratrustUserTrait
             return $requireAll;
         }
 
-        if (!is_null($group)) {
-            $group = call_user_func_array(
-                    [Config::get('laratrust.group'), 'where'],
-                    ['name', $group]
+        if (!is_null($team)) {
+            $team = call_user_func_array(
+                    [Config::get('laratrust.team'), 'where'],
+                    ['name', $team]
                 )->first();
-            $group = is_null($group) ? $group : $group->getKey();
+            $team = is_null($team) ? $team : $team->getKey();
         }
 
         foreach ($this->cachedPermissions() as $perm) {
-            if ($perm->pivot->$groupForeignKey != $group) {
+            if ($perm->pivot->$teamForeignKey != $team) {
                 continue;
             }
 
@@ -234,7 +234,7 @@ trait LaratrustUserTrait
         }
 
         foreach ($this->cachedRoles() as $role) {
-            if ($role->pivot->$groupForeignKey != $group) {
+            if ($role->pivot->$teamForeignKey != $team) {
                 continue;
             }
 
@@ -252,28 +252,28 @@ trait LaratrustUserTrait
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
-     * @param string|bool  $group      Group name or requiredAll roles.
+     * @param string|bool  $team      Team name or requiredAll roles.
      * @param bool         $requireAll All permissions in the array are required.
      *
      * @return bool
      */
-    public function can($permission, $group = null, $requireAll = false)
+    public function can($permission, $team = null, $requireAll = false)
     {
-        return $this->hasPermission($permission, $group, $requireAll);
+        return $this->hasPermission($permission, $team, $requireAll);
     }
 
     /**
      * Check if user has a permission by its name.
      *
      * @param string|array $permission Permission string or array of permissions.
-     * @param string|bool  $group      Group name or requiredAll roles.
+     * @param string|bool  $team      Team name or requiredAll roles.
      * @param bool         $requireAll All permissions in the array are required.
      *
      * @return bool
      */
-    public function isAbleTo($permission, $group = null, $requireAll = false)
+    public function isAbleTo($permission, $team = null, $requireAll = false)
     {
-        return $this->hasPermission($permission, $group, $requireAll);
+        return $this->hasPermission($permission, $team, $requireAll);
     }
 
     /**
@@ -281,16 +281,16 @@ trait LaratrustUserTrait
      *
      * @param string|array $roles       Array of roles or comma separated string
      * @param string|array $permissions Array of permissions or comma separated string.
-     * @param string|bool  $group      Group name or requiredAll roles.
+     * @param string|bool  $team      Team name or requiredAll roles.
      * @param array        $options     validate_all (true|false) or return_type (boolean|array|both)
      *
      * @throws \InvalidArgumentException
      *
      * @return array|bool
      */
-    public function ability($roles, $permissions, $group = null, $options = [])
+    public function ability($roles, $permissions, $team = null, $options = [])
     {
-        list($group, $options) = $this->assignRealValuesTo($group, $options, 'is_array');
+        list($team, $options) = $this->assignRealValuesTo($team, $options, 'is_array');
 
         // Convert string to array if that's what is passed in.
         if (!is_array($roles)) {
@@ -308,10 +308,10 @@ trait LaratrustUserTrait
         $checkedRoles = [];
         $checkedPermissions = [];
         foreach ($roles as $role) {
-            $checkedRoles[$role] = $this->hasRole($role, $group);
+            $checkedRoles[$role] = $this->hasRole($role, $team);
         }
         foreach ($permissions as $permission) {
-            $checkedPermissions[$permission] = $this->hasPermission($permission, $group);
+            $checkedPermissions[$permission] = $this->hasPermission($permission, $team);
         }
 
         // If validate all and there is a false in either
@@ -338,21 +338,21 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed $role
-     * @param mixed $group
+     * @param mixed $team
      * @return static
      */
-    public function attachRole($role, $group = null)
+    public function attachRole($role, $team = null)
     {
-        $group = $this->getIdFor($group, 'group');
-        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+        $team = $this->getIdFor($team, 'team');
+        $teamForeignKey = Config::get('laratrust.team_foreign_key');
 
-        if ($this->roles()->wherePivot($groupForeignKey, $group)->count()) {
+        if ($this->roles()->wherePivot($teamForeignKey, $team)->count()) {
             return $this;
         }
 
         $this->roles()->attach(
             $this->getIdFor($role),
-            [$groupForeignKey => $group]
+            [$teamForeignKey => $team]
         );
         $this->flushCache();
 
@@ -363,15 +363,15 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $role
-     * @param mixed $group
+     * @param mixed $team
      * @return static
      */
-    public function detachRole($role, $group = null)
+    public function detachRole($role, $team = null)
     {
-        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+        $teamForeignKey = Config::get('laratrust.team_foreign_key');
 
         $this->roles()
-            ->wherePivot($groupForeignKey, $this->getIdFor($group, 'group'))
+            ->wherePivot($teamForeignKey, $this->getIdFor($team, 'team'))
             ->detach($this->getIdFor($role));
         $this->flushCache();
 
@@ -382,13 +382,13 @@ trait LaratrustUserTrait
      * Attach multiple roles to a user
      *
      * @param mixed $roles
-     * @param mixed $group
+     * @param mixed $team
      * @return static
      */
-    public function attachRoles($roles = [], $group = null)
+    public function attachRoles($roles = [], $team = null)
     {
         foreach ($roles as $role) {
-            $this->attachRole($role, $group);
+            $this->attachRole($role, $team);
         }
 
         return $this;
@@ -398,17 +398,17 @@ trait LaratrustUserTrait
      * Detach multiple roles from a user
      *
      * @param mixed $roles
-     * @param mixed $group
+     * @param mixed $team
      * @return static
      */
-    public function detachRoles($roles = [], $group = null)
+    public function detachRoles($roles = [], $team = null)
     {
         if (empty($roles)) {
             $roles = $this->roles()->get();
         }
 
         foreach ($roles as $role) {
-            $this->detachRole($role, $group);
+            $this->detachRole($role, $team);
         }
 
         return $this;
@@ -417,16 +417,16 @@ trait LaratrustUserTrait
     /**
      * Sync roles to the user
      * @param array $roles
-     * @param mixed $group
+     * @param mixed $team
      * @return static
      */
-    public function syncRoles($roles = [], $group = null)
+    public function syncRoles($roles = [], $team = null)
     {
-        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+        $teamForeignKey = Config::get('laratrust.team_foreign_key');
         $mappedRoles = [];
 
         foreach ($roles as $role) {
-            $mappedRoles[$this->getIdFor($role)] = [$groupForeignKey => $group];
+            $mappedRoles[$this->getIdFor($role)] = [$teamForeignKey => $team];
         }
 
         $this->roles()->sync($mappedRoles);
@@ -439,21 +439,21 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param mixed $permission
-     * @param mixed $group
+     * @param mixed $team
      * @return static
      */
-    public function attachPermission($permission, $group = null)
+    public function attachPermission($permission, $team = null)
     {
-        $group = $this->getIdFor($group, 'group');
-        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+        $team = $this->getIdFor($team, 'team');
+        $teamForeignKey = Config::get('laratrust.team_foreign_key');
 
-        if ($this->permissions()->wherePivot($groupForeignKey, $group)->count()) {
+        if ($this->permissions()->wherePivot($teamForeignKey, $team)->count()) {
             return $this;
         }
 
         $this->permissions()->attach(
             $this->getIdFor($permission, 'permission'),
-            [$groupForeignKey => $group]
+            [$teamForeignKey => $team]
         );
         $this->flushCache();
 
@@ -464,15 +464,15 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param mixed $permission
-     * @param mixed $group
+     * @param mixed $team
      * @return static
      */
-    public function detachPermission($permission, $group = null)
+    public function detachPermission($permission, $team = null)
     {
-        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+        $teamForeignKey = Config::get('laratrust.team_foreign_key');
 
         $this->permissions()
-            ->wherePivot($groupForeignKey, $this->getIdFor($group, 'group'))
+            ->wherePivot($teamForeignKey, $this->getIdFor($team, 'team'))
             ->detach($this->getIdFor($permission, 'permission'));
         $this->flushCache();
 
@@ -483,13 +483,13 @@ trait LaratrustUserTrait
      * Attach multiple permissions to a user
      *
      * @param mixed $permissions
-     * @param mixed $group
+     * @param mixed $team
      * @return static
      */
-    public function attachPermissions($permissions = [], $group = null)
+    public function attachPermissions($permissions = [], $team = null)
     {
         foreach ($permissions as $permission) {
-            $this->attachPermission($permission, $group);
+            $this->attachPermission($permission, $team);
         }
 
         return $this;
@@ -499,17 +499,17 @@ trait LaratrustUserTrait
      * Detach multiple permissions from a user
      *
      * @param mixed $permissions
-     * @param mixed $group
+     * @param mixed $team
      * @return static
      */
-    public function detachPermissions($permissions = [], $group = null)
+    public function detachPermissions($permissions = [], $team = null)
     {
         if (!$permissions) {
             $permissions = $this->permissions()->get();
         }
 
         foreach ($permissions as $permission) {
-            $this->detachPermission($permission, $group);
+            $this->detachPermission($permission, $team);
         }
 
         return $this;
@@ -520,13 +520,13 @@ trait LaratrustUserTrait
      * @param  array  $permissions
      * @return static
      */
-    public function syncPermissions($permissions = [], $group = null)
+    public function syncPermissions($permissions = [], $team = null)
     {
-        $groupForeignKey = Config::get('laratrust.group_foreign_key');
+        $teamForeignKey = Config::get('laratrust.team_foreign_key');
         $mappedPerms = [];
 
         foreach ($permissions as $permission) {
-            $mappedPerms[$this->getIdFor($permission, 'permission')] = [$groupForeignKey => $group];
+            $mappedPerms[$this->getIdFor($permission, 'permission')] = [$teamForeignKey => $team];
         }
 
         $this->permissions()->sync($mappedPerms);
@@ -564,10 +564,10 @@ trait LaratrustUserTrait
     public function hasRoleAndOwns($role, $thing, $options = [])
     {
         $options = $this->checkOrSet('requireAll', $options, [false, true]);
-        $options = $this->checkOrSet('group', $options, [null]);
+        $options = $this->checkOrSet('team', $options, [null]);
         $options = $this->checkOrSet('foreignKeyName', $options, [null]);
 
-        return $this->hasRole($role, $options['group'], $options['requireAll'])
+        return $this->hasRole($role, $options['team'], $options['requireAll'])
                 && $this->owns($thing, $options['foreignKeyName']);
     }
 
@@ -582,9 +582,9 @@ trait LaratrustUserTrait
     {
         $options = $this->checkOrSet('requireAll', $options, [false, true]);
         $options = $this->checkOrSet('foreignKeyName', $options, [null]);
-        $options = $this->checkOrSet('group', $options, [null]);
+        $options = $this->checkOrSet('team', $options, [null]);
 
-        return $this->hasPermission($permission, $options['group'], $options['requireAll'])
+        return $this->hasPermission($permission, $options['team'], $options['requireAll'])
                 && $this->owns($thing, $options['foreignKeyName']);
     }
 
@@ -629,7 +629,7 @@ trait LaratrustUserTrait
             return $array;
         }
 
-        $ignoredOptions = ['group', 'foreignKeyName'];
+        $ignoredOptions = ['team', 'foreignKeyName'];
 
         if (!in_array($option, $ignoredOptions) && !in_array($array[$option], $possibleValues, true)) {
             throw new InvalidArgumentException();
@@ -667,16 +667,16 @@ trait LaratrustUserTrait
 
     
     /**
-     * Assing the real values to the group and requireAllOrOptions parameters
-     * @param  mixed $group
+     * Assing the real values to the team and requireAllOrOptions parameters
+     * @param  mixed $team
      * @param  mixed $requireAllOrOptions
      * @return array
      */
-    private function assignRealValuesTo($group, $requireAllOrOptions, $method)
+    private function assignRealValuesTo($team, $requireAllOrOptions, $method)
     {
         return [
-            ($method($group) ? null : $group),
-            ($method($group) ? $group : $requireAllOrOptions),
+            ($method($team) ? null : $team),
+            ($method($team) ? $team : $requireAllOrOptions),
         ];
     }
 }

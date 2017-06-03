@@ -33,7 +33,7 @@ class LaratrustServiceProvider extends ServiceProvider
         'Migration' => 'command.laratrust.migration',
         'MakeRole' => 'command.laratrust.role',
         'MakePermission' => 'command.laratrust.permission',
-        'MakeGroup' => 'command.laratrust.group',
+        'MakeTeam' => 'command.laratrust.team',
         'AddLaratrustUserTraitUse' => 'command.laratrust.add-trait',
         'Setup' => 'command.laratrust.setup',
         'MakeSeeder' => 'command.laratrust.seeder',
@@ -139,10 +139,10 @@ class LaratrustServiceProvider extends ServiceProvider
         });
     }
 
-    protected function registerMakeGroupCommand()
+    protected function registerMakeTeamCommand()
     {
-        $this->app->singleton('command.laratrust.group', function ($app) {
-            return new MakeGroupCommand($app['files']);
+        $this->app->singleton('command.laratrust.team', function ($app) {
+            return new MakeTeamCommand($app['files']);
         });
     }
     

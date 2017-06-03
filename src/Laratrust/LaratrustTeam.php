@@ -10,14 +10,14 @@ namespace Laratrust;
  * @package Laratrust
  */
 
-use Laratrust\Contracts\LaratrustGroupInterface;
-use Laratrust\Traits\LaratrustGroupTrait;
+use Laratrust\Contracts\LaratrustTeamInterface;
+use Laratrust\Traits\LaratrustTeamTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 
-class LaratrustGroup extends Model implements LaratrustGroupInterface
+class LaratrustTeam extends Model implements LaratrustTeamInterface
 {
-    use LaratrustGroupTrait;
+    use LaratrustTeamTrait;
 
     /**
      * The database table used by the model.
@@ -35,6 +35,6 @@ class LaratrustGroup extends Model implements LaratrustGroupInterface
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->table = Config::get('laratrust.groups_table');
+        $this->table = Config::get('laratrust.teams_table');
     }
 }
