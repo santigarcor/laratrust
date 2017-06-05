@@ -4,9 +4,9 @@ Permission
 Create a Permission model inside ``app/Permission.php`` using the following example:
 
 .. code-block:: php
-
+    <? php
     namespace App;
-
+    
     use Laratrust\LaratrustPermission;
 
     class Permission extends LaratrustPermission
