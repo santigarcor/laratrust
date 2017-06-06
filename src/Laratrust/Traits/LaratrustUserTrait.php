@@ -129,6 +129,46 @@ trait LaratrustUserTrait
     }
 
     /**
+     * Returns the team's foreign key
+     * @return string
+     */
+    private function teamForeignKey()
+    {
+        return Config::get('laratrust.team_foreign_key');
+    }
+
+    /**
+     * Check if a role or permission is attach to the user
+     * in a same team
+     * @param  mixed  $rolePermission
+     * @param  \Illuminate\Database\Eloquent\Model  $team
+     * @return boolean
+     */
+    private function isInSameTeam($rolePermission, $team)
+    {
+        $teamForeignKey = $this->teamForeignKey();
+        return $rolePermission->pivot->$teamForeignKey == $team;
+    }
+
+    /**
+     * Fetch the team model from the name
+     * @param  mixed $team
+     * @return mixed
+     */
+    private function fetchTeam($team = null)
+    {
+        if (is_null($team)) {
+            return $team;
+        }
+
+        $team = call_user_func_array(
+                    [Config::get('laratrust.team'), 'where'],
+                    ['name', $team]
+                )->first();
+        return is_null($team) ? $team : $team->getKey();
+    }
+
+    /**
      * Checks if the user has a role by its name.
      *
      * @param string|array $name       Role name or array of role names.
@@ -140,7 +180,6 @@ trait LaratrustUserTrait
     public function hasRole($name, $team = null, $requireAll = false)
     {
         list($team, $requireAll) = $this->assignRealValuesTo($team, $requireAll, 'is_bool');
-        $teamForeignKey = Config::get('laratrust.team_foreign_key');
 
         if (is_array($name)) {
             if (empty($name)) {
@@ -163,16 +202,10 @@ trait LaratrustUserTrait
             return $requireAll;
         }
 
-        if (!is_null($team)) {
-            $team = call_user_func_array(
-                        [Config::get('laratrust.team'), 'where'],
-                        ['name', $team]
-                    )->first();
-            $team = is_null($team) ? $team : $team->getKey();
-        }
+        $team = $this->fetchTeam($team);
 
         foreach ($this->cachedRoles() as $role) {
-            if ($role->name == $name && $role->pivot->$teamForeignKey == $team) {
+            if ($role->name == $name && $this->isInSameTeam($role, $team)) {
                 return true;
             }
         }
@@ -192,7 +225,6 @@ trait LaratrustUserTrait
     public function hasPermission($permission, $team = null, $requireAll = false)
     {
         list($team, $requireAll) = $this->assignRealValuesTo($team, $requireAll, 'is_bool');
-        $teamForeignKey = Config::get('laratrust.team_foreign_key');
 
         if (is_array($permission)) {
             if (empty($permission)) {
@@ -215,16 +247,10 @@ trait LaratrustUserTrait
             return $requireAll;
         }
 
-        if (!is_null($team)) {
-            $team = call_user_func_array(
-                    [Config::get('laratrust.team'), 'where'],
-                    ['name', $team]
-                )->first();
-            $team = is_null($team) ? $team : $team->getKey();
-        }
+        $team = $this->fetchTeam($team);
 
         foreach ($this->cachedPermissions() as $perm) {
-            if ($perm->pivot->$teamForeignKey != $team) {
+            if (!$this->isInSameTeam($perm, $team)) {
                 continue;
             }
 
@@ -234,7 +260,7 @@ trait LaratrustUserTrait
         }
 
         foreach ($this->cachedRoles() as $role) {
-            if ($role->pivot->$teamForeignKey != $team) {
+            if (!$this->isInSameTeam($role, $team)) {
                 continue;
             }
 
@@ -337,26 +363,80 @@ trait LaratrustUserTrait
     /**
      * Alias to eloquent many-to-many relation's attach() method.
      *
+     * @param string $relationship
+     * @param string $objectType
+     * @param mixed $object
+     * @param mixed $team
+     * @return static
+     */
+    protected function attachModel($relationship, $objectType, $object, $team)
+    {
+        if (!in_array($relationship, ['roles', 'permissions'])) {
+            throw new InvalidArgumentException;
+        }
+
+        $team = $this->getIdFor($team, 'team');
+
+        if ($this->$relationship()->wherePivot($this->teamForeignKey(), $team)->count()) {
+            return $this;
+        }
+
+        $this->$relationship()->attach(
+            $this->getIdFor($object, $objectType),
+            [$this->teamForeignKey() => $team]
+        );
+        $this->flushCache();
+
+        return $this;
+    }
+
+    /**
+     * Alias to eloquent many-to-many relation's detach() method.
+     *
+     * @param string $relationship
+     * @param string $objectType
+     * @param mixed $object
+     * @param mixed $team
+     * @return static
+     */
+    protected function detachModel($relationship, $objectType, $object, $team)
+    {
+        if (!in_array($relationship, ['roles', 'permissions'])) {
+            throw new InvalidArgumentException;
+        }
+
+        $this->$relationship()
+            ->wherePivot($this->teamForeignKey(), $this->getIdFor($team, 'team'))
+            ->detach($this->getIdFor($object, $objectType));
+        $this->flushCache();
+
+        return $this;
+    }
+
+    protected function syncModels($relationship, $objectType, $objects, $team)
+    {
+        $mappedObjects = [];
+
+        foreach ($objects as $object) {
+            $mappedObjects[$this->getIdFor($object, $objectType)] = [$this->teamForeignKey() => $team];
+        }
+
+        $this->$relationship()->sync($mappedObjects);
+        $this->flushCache();
+
+        return $this;
+    }
+
+    /**
+     * Alias to eloquent many-to-many relation's attach() method.
+     *
      * @param mixed $role
      * @param mixed $team
      * @return static
      */
     public function attachRole($role, $team = null)
     {
-        $team = $this->getIdFor($team, 'team');
-        $teamForeignKey = Config::get('laratrust.team_foreign_key');
-
-        if ($this->roles()->wherePivot($teamForeignKey, $team)->count()) {
-            return $this;
-        }
-
-        $this->roles()->attach(
-            $this->getIdFor($role),
-            [$teamForeignKey => $team]
-        );
-        $this->flushCache();
-
-        return $this;
+        return $this->attachModel('roles', 'role', $role, $team);
     }
 
     /**
@@ -368,14 +448,7 @@ trait LaratrustUserTrait
      */
     public function detachRole($role, $team = null)
     {
-        $teamForeignKey = Config::get('laratrust.team_foreign_key');
-
-        $this->roles()
-            ->wherePivot($teamForeignKey, $this->getIdFor($team, 'team'))
-            ->detach($this->getIdFor($role));
-        $this->flushCache();
-
-        return $this;
+        return $this->detachModel('roles', 'role', $role, $team);
     }
 
     /**
@@ -422,17 +495,7 @@ trait LaratrustUserTrait
      */
     public function syncRoles($roles = [], $team = null)
     {
-        $teamForeignKey = Config::get('laratrust.team_foreign_key');
-        $mappedRoles = [];
-
-        foreach ($roles as $role) {
-            $mappedRoles[$this->getIdFor($role)] = [$teamForeignKey => $team];
-        }
-
-        $this->roles()->sync($mappedRoles);
-        $this->flushCache();
-
-        return $this;
+        return $this->syncModels('roles', 'role', $roles, $team);
     }
 
     /**
@@ -444,20 +507,7 @@ trait LaratrustUserTrait
      */
     public function attachPermission($permission, $team = null)
     {
-        $team = $this->getIdFor($team, 'team');
-        $teamForeignKey = Config::get('laratrust.team_foreign_key');
-
-        if ($this->permissions()->wherePivot($teamForeignKey, $team)->count()) {
-            return $this;
-        }
-
-        $this->permissions()->attach(
-            $this->getIdFor($permission, 'permission'),
-            [$teamForeignKey => $team]
-        );
-        $this->flushCache();
-
-        return $this;
+        return $this->attachModel('permissions', 'permission', $permission, $team);
     }
 
     /**
@@ -469,14 +519,7 @@ trait LaratrustUserTrait
      */
     public function detachPermission($permission, $team = null)
     {
-        $teamForeignKey = Config::get('laratrust.team_foreign_key');
-
-        $this->permissions()
-            ->wherePivot($teamForeignKey, $this->getIdFor($team, 'team'))
-            ->detach($this->getIdFor($permission, 'permission'));
-        $this->flushCache();
-
-        return $this;
+        return $this->detachModel('permissions', 'permission', $permission, $team);
     }
 
     /**
@@ -522,17 +565,7 @@ trait LaratrustUserTrait
      */
     public function syncPermissions($permissions = [], $team = null)
     {
-        $teamForeignKey = Config::get('laratrust.team_foreign_key');
-        $mappedPerms = [];
-
-        foreach ($permissions as $permission) {
-            $mappedPerms[$this->getIdFor($permission, 'permission')] = [$teamForeignKey => $team];
-        }
-
-        $this->permissions()->sync($mappedPerms);
-        $this->flushCache();
-
-        return $this;
+        return $this->syncModels('permissions', 'permission', $permissions, $team);
     }
 
     /**
@@ -644,7 +677,7 @@ trait LaratrustUserTrait
      * @param  string $type
      * @return int
      */
-    private function getIdFor($object, $type = 'role')
+    private function getIdFor($object, $type)
     {
         if (is_null($object)) {
             return null;
