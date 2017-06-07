@@ -5,7 +5,7 @@ Create a Permission model inside ``app/Permission.php`` using the following exam
 
 .. code-block:: php
 
-    namespace App;
+    <?php namespace App;
 
     use Laratrust\LaratrustPermission;
 
