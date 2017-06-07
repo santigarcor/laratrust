@@ -708,7 +708,13 @@ trait LaratrustUserTrait
     private function handleMagicCan($method, $parameters)
     {
         $case = str_replace('_case', '', Config::get('laratrust.magic_can_method_case'));
-        $permission = Str::$case(preg_replace('/^can/', '', $method));
+        $method = preg_replace('/^can/', '', $method);
+
+        if ($case == 'kebab') {
+            $permission = Str::snake($method, '-');
+        } else {
+            $permission = Str::$case($method);
+        }
 
         return $this->hasPermission($permission, array_shift($parameters), false);
     }
