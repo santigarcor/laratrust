@@ -36,7 +36,8 @@ class LaratrustServiceProvider extends ServiceProvider
         'AddLaratrustUserTraitUse' => 'command.laratrust.add-trait',
         'Setup' => 'command.laratrust.setup',
         'MakeSeeder' => 'command.laratrust.seeder',
-        'Upgrade' => 'command.laratrust.upgrade'
+        'Upgrade' => 'command.laratrust.upgrade',
+        'Levels' => 'command.laratrust.levels'
     ];
 
     /**
@@ -163,6 +164,13 @@ class LaratrustServiceProvider extends ServiceProvider
     {
         $this->app->singleton('command.laratrust.upgrade', function () {
             return new UpgradeCommand();
+        });
+    }
+
+    protected function registerLevelsCommand()
+    {
+        $this->app->singleton('command.laratrust.levels', function () {
+            return new LevelsCommand();
         });
     }
 

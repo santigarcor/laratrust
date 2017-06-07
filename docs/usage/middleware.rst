@@ -31,6 +31,16 @@ For more complex situations use ``ability`` middleware which accepts 3 parameter
 
     'middleware' => ['ability:admin|owner,create-post|edit-user,true']
 
+.. NOTE::
+    If you use are using the optional levels hierarchical functionality, the following middleware checks are available.
+
+.. code-block:: php
+
+    'level:3'
+    'level:3,>='
+    'level:3,<='
+    'level:3^5,BETWEEN'
+
 Middleware Return
 ^^^^^^^^^^^^^^^^^
 

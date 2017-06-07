@@ -57,6 +57,21 @@ class LaratrustRegistersBladeDirectives
         Blade::directive('hasRoleAndOwns', function ($expression) {
             return "<?php if (app('laratrust')->hasRoleAndOwns({$expression})) : ?>";
         });
+
+        // Call to Laratrust::hasLevelOrGreater
+        Blade::directive('hasLevelOrGreater', function ($expression) {
+            return "<?php if (app('laratrust')->hasLevelOrGreater({$expression})) : ?>";
+        });
+
+        // Call to Laratrust::hasLevelOrLess
+        Blade::directive('hasLevelOrLess', function ($expression) {
+            return "<?php if (app('laratrust')->hasLevelOrLess({$expression})) : ?>";
+        });
+
+        // Call to Laratrust::hasLevelBetween
+        Blade::directive('hasLevelBetween', function ($expression) {
+            return "<?php if (app('laratrust')->hasLevelBetween({$expression})) : ?>";
+        });
     }
 
     /**
@@ -89,6 +104,21 @@ class LaratrustRegistersBladeDirectives
         Blade::directive('hasRoleAndOwns', function ($expression) {
             return "<?php if (app('laratrust')->hasRoleAndOwns{$expression}) : ?>";
         });
+
+        // Call to Laratrust::hasLevelOrGreater
+        Blade::directive('hasLevelOrGreater', function ($expression) {
+            return "<?php if (app('laratrust')->hasLevelOrGreater{$expression}): ?>";
+        });
+
+        // Call to Laratrust::hasLevelOrLess
+        Blade::directive('hasLevelOrLess', function ($expression) {
+            return "<?php if (app('laratrust')->hasLevelOrLess{$expression}): ?>";
+        });
+
+        // Call to Laratrust::hasLevelBetween
+        Blade::directive('hasLevelBetween', function ($expression) {
+            return "<?php if (app('laratrust')->hasLevelBetween{$expression}): ?>";
+        });
     }
 
     /**
@@ -111,6 +141,10 @@ class LaratrustRegistersBladeDirectives
 
         Blade::directive('endOwns', function () {
             return "<?php endif; // app('laratrust')->hasRoleAndOwns or canAndOwns ?>";
+        });
+
+        Blade::directive('endlevel', function () {
+            return "<?php endif; // app('laratrust')->hasLevelOrGreater or hasLevelOrLess or hasLevelBetween ?>";
         });
     }
 }

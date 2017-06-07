@@ -25,5 +25,10 @@ return [
         'r' => 'read',
         'u' => 'update',
         'd' => 'delete'
+    ],
+    'levels_map' => [
+        'superadministrator' => 1,
+        'administrator' => 2,
+        'user' => 3
     ]
 ];

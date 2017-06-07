@@ -128,6 +128,19 @@ Removal
    $user->detachPermissions([$createPost, $editUser]); // parameter can be an Permission object, array, id or the permission string name
    // equivalent to $user->roles()->detach([$createPost->id, $editUser->id]);
 
+Checking for Levels (optional)
+------------------------------
+
+If you have added the ``LaratrustHasLevelsTrait`` to your user model and have run the ``addlevels`` migration, you can now use the levels hierarchical functionality like:
+
+.. code-block:: php
+
+   $user->hasLevelOrGreater(4);   // false
+   $user->hasLevelOrLess(3);   // true
+   $user->hasLevelBetween('1^3');   // true
+
+Depending on how you set the ``level_sort`` in the config will determine which direction you test for levels.
+
 Checking for Roles & Permissions
 --------------------------------
 

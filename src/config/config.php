@@ -147,4 +147,18 @@ return [
     |--------------------------------------------------------------------------
     */
     'middleware_params' => '403',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Used to determine which way to sort level(should be 'desc' is Highest level starts at 1 or 'asc' if you have done the opposite with your leveling)
+    |--------------------------------------------------------------------------
+    */
+    'level_sort' => 'desc',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default value of level column on roles table
+    |--------------------------------------------------------------------------
+    */
+    'level_default_value' => 1,
 ];
