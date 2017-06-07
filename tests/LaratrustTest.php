@@ -77,8 +77,8 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
         */
         $laratrust->shouldReceive('user')->andReturn($user)->twice()->ordered();
         $laratrust->shouldReceive('user')->andReturn(false)->once()->ordered();
-        $user->shouldReceive('hasRole')->with('UserRole', false)->andReturn(true)->once();
-        $user->shouldReceive('hasRole')->with('NonUserRole', false)->andReturn(false)->once();
+        $user->shouldReceive('hasRole')->with('UserRole', null, false)->andReturn(true)->once();
+        $user->shouldReceive('hasRole')->with('NonUserRole', null, false)->andReturn(false)->once();
 
         /*
         |------------------------------------------------------------
@@ -108,8 +108,8 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
         */
         $laratrust->shouldReceive('user')->andReturn($user)->twice()->ordered();
         $laratrust->shouldReceive('user')->andReturn(false)->once()->ordered();
-        $user->shouldReceive('hasPermission')->with('user_can', false)->andReturn(true)->once();
-        $user->shouldReceive('hasPermission')->with('user_cannot', false)->andReturn(false)->once();
+        $user->shouldReceive('hasPermission')->with('user_can', null, false)->andReturn(true)->once();
+        $user->shouldReceive('hasPermission')->with('user_cannot', null, false)->andReturn(false)->once();
 
         /*
         |------------------------------------------------------------
@@ -139,8 +139,8 @@ class LaratrustTest extends PHPUnit_Framework_TestCase
         */
         $laratrust->shouldReceive('user')->andReturn($user)->twice()->ordered();
         $laratrust->shouldReceive('user')->andReturn(false)->once()->ordered();
-        $user->shouldReceive('ability')->with('admin', 'user_can', [])->andReturn(true)->once();
-        $user->shouldReceive('ability')->with('admin', 'user_cannot', [])->andReturn(false)->once();
+        $user->shouldReceive('ability')->with('admin', 'user_can', null, [])->andReturn(true)->once();
+        $user->shouldReceive('ability')->with('admin', 'user_cannot', null, [])->andReturn(false)->once();
 
         /*
         |------------------------------------------------------------

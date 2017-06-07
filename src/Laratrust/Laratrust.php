@@ -38,10 +38,10 @@ class Laratrust
      *
      * @return bool
      */
-    public function hasRole($role, $requireAll = false)
+    public function hasRole($role, $team = null, $requireAll = false)
     {
         if ($user = $this->user()) {
-            return $user->hasRole($role, $requireAll);
+            return $user->hasRole($role, $team, $requireAll);
         }
 
         return false;
@@ -54,10 +54,10 @@ class Laratrust
      *
      * @return bool
      */
-    public function can($permission, $requireAll = false)
+    public function can($permission, $team = null, $requireAll = false)
     {
         if ($user = $this->user()) {
-            return $user->hasPermission($permission, $requireAll);
+            return $user->hasPermission($permission, $team, $requireAll);
         }
 
         return false;
@@ -72,10 +72,10 @@ class Laratrust
      *
      * @return bool
      */
-    public function ability($roles, $permissions, $options = [])
+    public function ability($roles, $permissions, $team = null, $options = [])
     {
         if ($user = $this->user()) {
-            return $user->ability($roles, $permissions, $options);
+            return $user->ability($roles, $permissions, $team, $options);
         }
 
         return false;
