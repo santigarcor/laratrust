@@ -12,6 +12,7 @@ namespace Laratrust\Traits;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 trait LaratrustUserTrait
@@ -76,22 +77,6 @@ trait LaratrustUserTrait
             Config::get('laratrust.user_foreign_key'),
             Config::get('laratrust.permission_foreign_key')
         )->withPivot(Config::get('laratrust.team_foreign_key'));
-    }
-
-    /**
-     * Many-to-Many relations with Team.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
-     */
-    public function teams()
-    {
-        return $this->morphToMany(
-            Config::get('laratrust.team'),
-            'user',
-            Config::get('laratrust.role_user_table'),
-            Config::get('laratrust.user_foreign_key'),
-            Config::get('laratrust.team_foreign_key')
-        )->withPivot(Config::get('laratrust.role_foreign_key'));
     }
 
     /**
@@ -369,7 +354,7 @@ trait LaratrustUserTrait
      * @param mixed $team
      * @return static
      */
-    protected function attachModel($relationship, $objectType, $object, $team)
+    private function attachModel($relationship, $objectType, $object, $team)
     {
         if (!in_array($relationship, ['roles', 'permissions'])) {
             throw new InvalidArgumentException;
@@ -399,7 +384,7 @@ trait LaratrustUserTrait
      * @param mixed $team
      * @return static
      */
-    protected function detachModel($relationship, $objectType, $object, $team)
+    private function detachModel($relationship, $objectType, $object, $team)
     {
         if (!in_array($relationship, ['roles', 'permissions'])) {
             throw new InvalidArgumentException;
@@ -413,7 +398,7 @@ trait LaratrustUserTrait
         return $this;
     }
 
-    protected function syncModels($relationship, $objectType, $objects, $team)
+    private function syncModels($relationship, $objectType, $objects, $team)
     {
         $mappedObjects = [];
 
@@ -580,7 +565,7 @@ trait LaratrustUserTrait
             $ownerKey = $thing->ownerKey();
         } else {
             $className = (new \ReflectionClass($this))->getShortName();
-            $foreignKeyName = $foreignKeyName ?: snake_case($className . 'Id');
+            $foreignKeyName = $foreignKeyName ?: Str::snake($className . 'Id');
             $ownerKey = $thing->$foreignKeyName;
         }
 
@@ -654,7 +639,7 @@ trait LaratrustUserTrait
      * @param  int $defaultIndex
      * @return array
      */
-    protected function checkOrSet($option, $array, $possibleValues)
+    private function checkOrSet($option, $array, $possibleValues)
     {
         if (!isset($array[$option])) {
             $array[$option] = $possibleValues[0];
@@ -711,5 +696,36 @@ trait LaratrustUserTrait
             ($method($team) ? null : $team),
             ($method($team) ? $team : $requireAllOrOptions),
         ];
+    }
+
+    /**
+     * Handles the call to the magic methods with can
+     * like $user->canEditSomething()
+     * @param  string $method
+     * @param  array $parameters
+     * @return boolean
+     */
+    private function handleMagicCan($method, $parameters)
+    {
+        $case = str_replace('_case', '', Config::get('laratrust.magic_can_method_case'));
+        $permission = Str::$case(preg_replace('/^can/', '', $method));
+
+        return $this->hasPermission($permission, array_shift($parameters), false);
+    }
+
+    /**
+     * Handle dynamic method calls into the model.
+     *
+     * @param  string  $method
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public function __call($method, $parameters)
+    {
+        if (!preg_match('/^can[A-Z].*/', $method)) {
+            return parent::__call($method, $parameters);
+        }
+
+        return $this->handleMagicCan($method, $parameters);
     }
 }

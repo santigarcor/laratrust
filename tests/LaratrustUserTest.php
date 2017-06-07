@@ -320,6 +320,40 @@ class LaratrustUserTest extends UserTest
         $this->assertFalse($user->hasPermission(['site.*']));
     }
 
+
+    public function testMagicCanPermissionMethod()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $user = m::mock('HasRoleUser')->makePartial();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Config::shouldReceive('get')->with('laratrust.magic_can_method_case')->andReturn('kebab_case')->once()->ordered();
+        $user->shouldReceive('hasPermission')->with('manage-user', null, false)->andReturn(true)->once()->ordered();
+        
+        Config::shouldReceive('get')->with('laratrust.magic_can_method_case')->andReturn('snake_case')->once()->ordered();
+        $user->shouldReceive('hasPermission')->with('manage_user', null, false)->andReturn(true)->once()->ordered();
+        
+        Config::shouldReceive('get')->with('laratrust.magic_can_method_case')->andReturn('camel_case')->once()->ordered();
+        $user->shouldReceive('hasPermission')->with('manageUser', null, false)->andReturn(true)->once()->ordered();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertTrue($user->publicMagicCan('canManageUser'));
+        $this->assertTrue($user->publicMagicCan('canManageUser'));
+        $this->assertTrue($user->publicMagicCan('canManageUser'));
+    }
+
     public function testAttachRole()
     {
         /*
@@ -901,6 +935,10 @@ class HasRoleUser extends Model implements LaratrustUserInterface
     public function getKey()
     {
         return $this->id;
+    }
+
+    public function publicMagicCan($method) {
+        return $this->handleMagicCan($method, []);
     }
 }
 
