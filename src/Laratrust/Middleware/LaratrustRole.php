@@ -23,7 +23,7 @@ class LaratrustRole
     /**
      * Creates a new instance of the middleware.
      *
-     * @param Guard $auth
+     * @param  Guard  $auth
      */
     public function __construct(Guard $auth)
     {
@@ -33,8 +33,8 @@ class LaratrustRole
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  Closure $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  Closure  $next
      * @param  $roles
      * @return mixed
      */
@@ -57,9 +57,10 @@ class LaratrustRole
     }
 
     /**
-     * Assing the real values to the team and requireAllOrOptions parameters
-     * @param  mixed $team
-     * @param  mixed $requireAllOrOptions
+     * Assing the real values to the team and requireAllOrOptions parameters.
+     *
+     * @param  mixed  $team
+     * @param  mixed  $requireAllOrOptions
      * @return array
      */
     private function assignRealValuesTo($team, $requireAllOrOptions)

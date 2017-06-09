@@ -13,11 +13,10 @@ namespace Laratrust\Contracts;
 interface LaratrustTeamInterface
 {
     /**
-     * Morph by Many relationship between the team
-     * and the one user by role models
+     * Morph by Many relationship between the role and the one of the possible user models.
      *
      * @param  string $relationship
-     * @return Illuminate\Database\Eloquent\Relations\MorphToMany
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function getMorphByUserRelation($relationship);
 }

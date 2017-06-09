@@ -29,7 +29,7 @@ class SetupCommand extends Command
     protected $description = 'Setup migration and models for Laratrust';
 
     /**
-     * Commands to call with their description
+     * Commands to call with their description.
      *
      * @var array
      */

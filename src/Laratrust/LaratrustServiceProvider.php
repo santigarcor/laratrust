@@ -43,7 +43,6 @@ class LaratrustServiceProvider extends ServiceProvider
     /**
      * Bootstrap the application events.
      *
-     * @param  Factory $view
      * @return void
      */
     public function boot()
@@ -78,9 +77,8 @@ class LaratrustServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the blade directives
+     * Register the blade directives.
      *
-     * @param  Factory $view
      * @return void
      */
     private function registerBladeDirectives()

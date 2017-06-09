@@ -12,8 +12,9 @@ use Illuminate\Support\Facades\Blade;
 class LaratrustRegistersBladeDirectives
 {
     /**
-     * Handles the registration of the blades directives
-     * @param  string $laravelVersion
+     * Handles the registration of the blades directives.
+     *
+     * @param  string  $laravelVersion
      * @return void
      */
     public function handle($laravelVersion = '5.3.0')
@@ -28,71 +29,74 @@ class LaratrustRegistersBladeDirectives
     }
 
     /**
-     * Registers the directives with parenthesis
+     * Registers the directives with parenthesis.
+     *
      * @return void
      */
     protected function registerWithParenthesis()
     {
-        // Call to Laratrust::hasRole
+        // Call to Laratrust::hasRole.
         Blade::directive('role', function ($expression) {
             return "<?php if (app('laratrust')->hasRole({$expression})) : ?>";
         });
 
-        // Call to Laratrust::can
+        // Call to Laratrust::can.
         Blade::directive('permission', function ($expression) {
             return "<?php if (app('laratrust')->can({$expression})) : ?>";
         });
 
-        // Call to Laratrust::ability
+        // Call to Laratrust::ability.
         Blade::directive('ability', function ($expression) {
             return "<?php if (app('laratrust')->ability({$expression})) : ?>";
         });
 
-        // Call to Laratrust::canAndOwns
+        // Call to Laratrust::canAndOwns.
         Blade::directive('canAndOwns', function ($expression) {
             return "<?php if (app('laratrust')->canAndOwns({$expression})) : ?>";
         });
 
-        // Call to Laratrust::hasRoleAndOwns
+        // Call to Laratrust::hasRoleAndOwns.
         Blade::directive('hasRoleAndOwns', function ($expression) {
             return "<?php if (app('laratrust')->hasRoleAndOwns({$expression})) : ?>";
         });
     }
 
     /**
-     * Registers the directives without parenthesis
+     * Registers the directives without parenthesis.
+     *
      * @return void
      */
     protected function registerWithoutParenthesis()
     {
-        // Call to Laratrust::hasRole
+        // Call to Laratrust::hasRole.
         Blade::directive('role', function ($expression) {
             return "<?php if (app('laratrust')->hasRole{$expression}) : ?>";
         });
 
-        // Call to Laratrust::can
+        // Call to Laratrust::can.
         Blade::directive('permission', function ($expression) {
             return "<?php if (app('laratrust')->can{$expression}) : ?>";
         });
 
-        // Call to Laratrust::ability
+        // Call to Laratrust::ability.
         Blade::directive('ability', function ($expression) {
             return "<?php if (app('laratrust')->ability{$expression}) : ?>";
         });
 
-        // Call to Laratrust::canAndOwns
+        // Call to Laratrust::canAndOwns.
         Blade::directive('canAndOwns', function ($expression) {
             return "<?php if (app('laratrust')->canAndOwns{$expression}) : ?>";
         });
 
-        // Call to Laratrust::hasRoleAndOwns
+        // Call to Laratrust::hasRoleAndOwns.
         Blade::directive('hasRoleAndOwns', function ($expression) {
             return "<?php if (app('laratrust')->hasRoleAndOwns{$expression}) : ?>";
         });
     }
 
     /**
-     * Registers the closing directives
+     * Registers the closing directives.
+     *
      * @return void
      */
     protected function registerClosingDirectives()

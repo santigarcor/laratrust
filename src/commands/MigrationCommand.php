@@ -121,11 +121,11 @@ class MigrationCommand extends Command
      * console command showing what tables are going
      * to be created.
      *
-     * @param  string $rolesTable
-     * @param  string $roleUserTable
-     * @param  string $permissionsTable
-     * @param  string $permissionRoleTable
-     * @param  string $permissionUserTable
+     * @param  string  $rolesTable
+     * @param  string  $roleUserTable
+     * @param  string  $permissionsTable
+     * @param  string  $permissionRoleTable
+     * @param  string  $permissionUserTable
      * @return string
      */
     protected function generateMigrationMessage(
@@ -141,9 +141,9 @@ class MigrationCommand extends Command
 
     /**
      * Build a warning regarding possible duplication
-     * due to already existing migrations
+     * due to already existing migrations.
      *
-     * @param  array $existingMigrations
+     * @param  array  $existingMigrations
      * @return string
      */
     protected function getExistingMigrationsWarning(array $existingMigrations)
@@ -180,7 +180,7 @@ class MigrationCommand extends Command
      * The date parameter is optional for ability
      * to provide a custom value or a wildcard.
      *
-     * @param  string|null $date
+     * @param  string|null  $date
      * @return string
      */
     protected function getMigrationPath($date = null)

@@ -17,7 +17,8 @@ trait LaratrustDynamicUserRelationsCalls
 {
     /**
      * Get a relationship.
-     * @param  string $key
+     *
+     * @param  string  $key
      * @return mixed
      */
     public function getUsersRelationValue($key)

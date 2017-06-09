@@ -60,7 +60,9 @@ class AddLaratrustUserTraitUseCommand extends Command
     }
 
     /**
-     * @param  string $model
+     * Check if the class already uses LaratrustUserTrait.
+     *
+     * @param  string  $model
      * @return bool
      */
     protected function alreadyUsesLaratrustUserTrait($model)
@@ -69,6 +71,8 @@ class AddLaratrustUserTraitUseCommand extends Command
     }
 
     /**
+     * Get the description of which clases the LaratrustUserTrait was added.
+     *
      * @return string
      */
     public function getDescription()
@@ -77,6 +81,8 @@ class AddLaratrustUserTraitUseCommand extends Command
     }
 
     /**
+     * Return the User models array.
+     *
      * @return array
      */
     protected function getUserModels()

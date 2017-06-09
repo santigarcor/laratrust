@@ -13,7 +13,7 @@ namespace Laratrust;
 class Laratrust
 {
     /**
-     * Laravel application
+     * Laravel application.
      *
      * @var \Illuminate\Foundation\Application
      */
@@ -22,8 +22,7 @@ class Laratrust
     /**
      * Create a new confide instance.
      *
-     * @param \Illuminate\Foundation\Application $app
-     *
+     * @param  \Illuminate\Foundation\Application  $app
      * @return void
      */
     public function __construct($app)
@@ -32,10 +31,9 @@ class Laratrust
     }
 
     /**
-     * Checks if the current user has a role by its name
+     * Checks if the current user has a role by its name.
      *
-     * @param string $name Role name.
-     *
+     * @param  string  $name  Role name.
      * @return bool
      */
     public function hasRole($role, $team = null, $requireAll = false)
@@ -48,10 +46,9 @@ class Laratrust
     }
 
     /**
-     * Check if the current user has a permission by its name
+     * Check if the current user has a permission by its name.
      *
-     * @param string $permission Permission string.
-     *
+     * @param  string  $permission Permission string.
      * @return bool
      */
     public function can($permission, $team = null, $requireAll = false)
@@ -64,12 +61,11 @@ class Laratrust
     }
 
     /**
-     * Check if the current user has a role or permission by its name
+     * Check if the current user has a role or permission by its name.
      *
-     * @param array|string $roles            The role(s) needed.
-     * @param array|string $permissions      The permission(s) needed.
-     * @param array $options                 The Options.
-     *
+     * @param  array|string  $roles            The role(s) needed.
+     * @param  array|string  $permissions      The permission(s) needed.
+     * @param  array  $options                 The Options.
      * @return bool
      */
     public function ability($roles, $permissions, $team = null, $options = [])
@@ -82,9 +78,10 @@ class Laratrust
     }
 
     /**
-     * Checks if the user owns the thing
-     * @param  Object $thing
-     * @param  string $foreignKeyName
+     * Checks if the user owns the thing.
+     *
+     * @param  Object  $thing
+     * @param  string  $foreignKeyName
      * @return boolean
      */
     public function owns($thing, $foreignKeyName = null)
@@ -97,9 +94,10 @@ class Laratrust
     }
 
     /**
-     * Checks if the user has some role and if he owns the thing
-     * @param  string|array $role
-     * @param  Object $thing
+     * Checks if the user has some role and if he owns the thing.
+     *
+     * @param  string|array  $role
+     * @param  Object  $thing
      * @param  array  $options
      * @return boolean
      */
@@ -113,9 +111,10 @@ class Laratrust
     }
 
     /**
-     * Checks if the user can do something and if he owns the thing
-     * @param  string|array $permission
-     * @param  Object $thing
+     * Checks if the user can do something and if he owns the thing.
+     *
+     * @param  string|array  $permission
+     * @param  Object  $thing
      * @param  array  $options
      * @return boolean
      */

@@ -20,7 +20,10 @@ trait LaratrustRoleTrait
     use LaratrustDynamicUserRelationsCalls;
 
     /**
-     * Big block of caching functionality
+     * Tries to return all the cached permissions of the role.
+     * If it can't bring the permissions from the cache,
+     * it brings them back from the DB.
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function cachedPermissions()
@@ -33,9 +36,9 @@ trait LaratrustRoleTrait
     }
 
     /**
-     * Morph by Many relationship between the role and the one of the possible user models
+     * Morph by Many relationship between the role and the one of the possible user models.
      *
-     * @param  string $relationship
+     * @param  string  $relationship
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function getMorphByUserRelation($relationship)
@@ -65,8 +68,8 @@ trait LaratrustRoleTrait
     }
 
     /**
-     * Boot the role model
-     * Attach event listener to remove the many-to-many records when trying to delete
+     * Boots the role model and attaches event listener to
+     * remove the many-to-many records when trying to delete.
      * Will NOT delete any records if the role model uses soft deletes.
      *
      * @return void|bool
@@ -78,7 +81,7 @@ trait LaratrustRoleTrait
             return true;
         };
         
-        // If the role doesn't use SoftDeletes
+        // If the role doesn't use SoftDeletes.
         if (method_exists(static::class, 'restored')) {
             static::restored($flushCache);
         }
@@ -98,13 +101,12 @@ trait LaratrustRoleTrait
             }
         });
     }
-    
+
     /**
      * Checks if the role has a permission by its name.
      *
-     * @param string|array $permission       Permission name or array of permission names.
-     * @param bool         $requireAll       All permissions in the array are required.
-     *
+     * @param  string|array  $permission       Permission name or array of permission names.
+     * @param  bool  $requireAll       All permissions in the array are required.
      * @return bool
      */
     public function hasPermission($permission, $requireAll = false)
@@ -120,9 +122,9 @@ trait LaratrustRoleTrait
                 }
             }
 
-            // If we've made it this far and $requireAll is FALSE, then NONE of the permissions were found
+            // If we've made it this far and $requireAll is FALSE, then NONE of the permissions were found.
             // If we've made it this far and $requireAll is TRUE, then ALL of the permissions were found.
-            // Return the value of $requireAll;
+            // Return the value of $requireAll.
             return $requireAll;
         }
 
@@ -138,13 +140,12 @@ trait LaratrustRoleTrait
     /**
      * Save the inputted permissions.
      *
-     * @param mixed $permissions
-     *
+     * @param  mixed  $permissions
      * @return array
      */
     public function syncPermissions($permissions)
     {
-        // If the permissions is empty it will delete all associations
+        // If the permissions is empty it will delete all associations.
         $changes = $this->permissions()->sync($permissions);
         $this->flushCache();
 
@@ -154,8 +155,7 @@ trait LaratrustRoleTrait
     /**
      * Attach permission to current role.
      *
-     * @param object|array $permission
-     *
+     * @param  object|array  $permission
      * @return void
      */
     public function attachPermission($permission)
@@ -169,8 +169,7 @@ trait LaratrustRoleTrait
     /**
      * Detach permission from current role.
      *
-     * @param object|array $permission
-     *
+     * @param  object|array  $permission
      * @return void
      */
     public function detachPermission($permission)
@@ -184,8 +183,7 @@ trait LaratrustRoleTrait
     /**
      * Attach multiple permissions to current role.
      *
-     * @param mixed $permissions
-     *
+     * @param  mixed  $permissions
      * @return void
      */
     public function attachPermissions($permissions)
@@ -200,8 +198,7 @@ trait LaratrustRoleTrait
     /**
      * Detach multiple permissions from current role
      *
-     * @param mixed $permissions
-     *
+     * @param  mixed  $permissions
      * @return void
      */
     public function detachPermissions($permissions = null)
@@ -218,7 +215,8 @@ trait LaratrustRoleTrait
     }
 
     /**
-     * Flush the role's cache
+     * Flush the role's cache.
+     *
      * @return void
      */
     public function flushCache()
@@ -227,8 +225,10 @@ trait LaratrustRoleTrait
     }
 
     /**
-     * @param $permission
-     * @return mixed
+     * Gets the it from an array, object or integer.
+     *
+     * @param  mixed  $permission
+     * @return int
      */
     private function getIdFor($permission)
     {

@@ -33,9 +33,9 @@ trait LaratrustPermissionTrait
     }
 
     /**
-     * Morph by Many relationship between the role and the one of the possible user models
+     * Morph by Many relationship between the permission and the one of the possible user models.
      *
-     * @param  string $relationship
+     * @param  string  $relationship
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
     public function getMorphByUserRelation($relationship)
@@ -50,8 +50,8 @@ trait LaratrustPermissionTrait
     }
 
     /**
-     * Boot the permission model
-     * Attach event listener to remove the many-to-many records when trying to delete
+     * Boots the permission model and attaches event listener to
+     * remove the many-to-many records when trying to delete.
      * Will NOT delete any records if the permission model uses soft deletes.
      *
      * @return void|bool

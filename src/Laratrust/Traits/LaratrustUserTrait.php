@@ -18,9 +18,10 @@ use InvalidArgumentException;
 trait LaratrustUserTrait
 {
     /**
-     * Tries to return all the cached roles of the user
-     * and if it can't bring the roles from the cache,
-     * it would bring them back from the DB
+     * Tries to return all the cached roles of the user.
+     * If it can't bring the roles from the cache,
+     * it brings them back from the DB.
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function cachedRoles()
@@ -35,7 +36,8 @@ trait LaratrustUserTrait
     /**
      * Tries to return all the cached permissions of the user
      * and if it can't bring the permissions from the cache,
-     * it would bring them back from the DB
+     * it brings them back from the DB.
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function cachedPermissions()
@@ -80,8 +82,8 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Boot the user model
-     * Attach event listener to remove the many-to-many records when trying to delete
+     * Boots the user model and attaches event listener to
+     * remove the many-to-many records when trying to delete.
      * Will NOT delete any records if the user model uses soft deletes.
      *
      * @return void|bool
@@ -90,10 +92,11 @@ trait LaratrustUserTrait
     {
         $flushCache = function ($user) {
             $user->flushCache();
+
             return true;
         };
 
-        // If the user doesn't use SoftDeletes
+        // If the user doesn't use SoftDeletes.
         if (method_exists(static::class, 'restored')) {
             static::restored($flushCache);
         }
@@ -114,7 +117,8 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Returns the team's foreign key
+     * Returns the team's foreign key.
+     *
      * @return string
      */
     private function teamForeignKey()
@@ -123,8 +127,8 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Check if a role or permission is attach to the user
-     * in a same team
+     * Check if a role or permission is attach to the user in a same team.
+     *
      * @param  mixed  $rolePermission
      * @param  \Illuminate\Database\Eloquent\Model  $team
      * @return boolean
@@ -136,8 +140,9 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Fetch the team model from the name
-     * @param  mixed $team
+     * Fetch the team model from the name.
+     *
+     * @param  mixed  $team
      * @return mixed
      */
     private function fetchTeam($team = null)
@@ -156,10 +161,9 @@ trait LaratrustUserTrait
     /**
      * Checks if the user has a role by its name.
      *
-     * @param string|array $name       Role name or array of role names.
-     * @param string|bool  $team      Team name or requiredAll roles.
-     * @param bool         $requireAll All roles in the array are required.
-     *
+     * @param  string|array  $name       Role name or array of role names.
+     * @param  string|bool   $team      Team name or requiredAll roles.
+     * @param  bool          $requireAll All roles in the array are required.
      * @return bool
      */
     public function hasRole($name, $team = null, $requireAll = false)
@@ -181,9 +185,9 @@ trait LaratrustUserTrait
                 }
             }
 
-            // If we've made it this far and $requireAll is FALSE, then NONE of the roles were found
+            // If we've made it this far and $requireAll is FALSE, then NONE of the roles were found.
             // If we've made it this far and $requireAll is TRUE, then ALL of the roles were found.
-            // Return the value of $requireAll;
+            // Return the value of $requireAll.
             return $requireAll;
         }
 
@@ -201,10 +205,9 @@ trait LaratrustUserTrait
     /**
      * Check if user has a permission by its name.
      *
-     * @param string|array $permission Permission string or array of permissions.
-     * @param string|bool  $team      Team name or requiredAll roles.
-     * @param bool         $requireAll All roles in the array are required.
-     *
+     * @param  string|array  $permission Permission string or array of permissions.
+     * @param  string|bool  $team      Team name or requiredAll roles.
+     * @param  bool  $requireAll All roles in the array are required.
      * @return bool
      */
     public function hasPermission($permission, $team = null, $requireAll = false)
@@ -226,9 +229,9 @@ trait LaratrustUserTrait
                 }
             }
 
-            // If we've made it this far and $requireAll is FALSE, then NONE of the perms were found
+            // If we've made it this far and $requireAll is FALSE, then NONE of the perms were found.
             // If we've made it this far and $requireAll is TRUE, then ALL of the perms were found.
-            // Return the value of $requireAll;
+            // Return the value of $requireAll.
             return $requireAll;
         }
 
@@ -262,10 +265,9 @@ trait LaratrustUserTrait
     /**
      * Check if user has a permission by its name.
      *
-     * @param string|array $permission Permission string or array of permissions.
-     * @param string|bool  $team      Team name or requiredAll roles.
-     * @param bool         $requireAll All permissions in the array are required.
-     *
+     * @param  string|array  $permission Permission string or array of permissions.
+     * @param  string|bool  $team      Team name or requiredAll roles.
+     * @param  bool  $requireAll All permissions in the array are required.
      * @return bool
      */
     public function can($permission, $team = null, $requireAll = false)
@@ -276,10 +278,9 @@ trait LaratrustUserTrait
     /**
      * Check if user has a permission by its name.
      *
-     * @param string|array $permission Permission string or array of permissions.
-     * @param string|bool  $team      Team name or requiredAll roles.
-     * @param bool         $requireAll All permissions in the array are required.
-     *
+     * @param  string|array  $permission  Permission string or array of permissions.
+     * @param  string|bool  $team  Team name or requiredAll roles.
+     * @param  bool  $requireAll  All permissions in the array are required.
      * @return bool
      */
     public function isAbleTo($permission, $team = null, $requireAll = false)
@@ -290,13 +291,11 @@ trait LaratrustUserTrait
     /**
      * Checks role(s) and permission(s).
      *
-     * @param string|array $roles       Array of roles or comma separated string
-     * @param string|array $permissions Array of permissions or comma separated string.
-     * @param string|bool  $team      Team name or requiredAll roles.
-     * @param array        $options     validate_all (true|false) or return_type (boolean|array|both)
-     *
+     * @param  string|array  $roles       Array of roles or comma separated string
+     * @param  string|array  $permissions Array of permissions or comma separated string.
+     * @param  string|bool  $team      Team name or requiredAll roles.
+     * @param  array  $options     validate_all (true|false) or return_type (boolean|array|both)
      * @throws \InvalidArgumentException
-     *
      * @return array|bool
      */
     public function ability($roles, $permissions, $team = null, $options = [])
@@ -325,7 +324,7 @@ trait LaratrustUserTrait
             $checkedPermissions[$permission] = $this->hasPermission($permission, $team);
         }
 
-        // If validate all and there is a false in either
+        // If validate all and there is a false in either.
         // Check that if validate all, then there should not be any false.
         // Check that if not validate all, there must be at least one true.
         if (($options['validate_all'] && !(in_array(false, $checkedRoles) || in_array(false, $checkedPermissions))) ||
@@ -335,7 +334,7 @@ trait LaratrustUserTrait
             $validateAll = false;
         }
 
-        // Return based on option
+        // Return based on option.
         if ($options['return_type'] == 'boolean') {
             return $validateAll;
         } elseif ($options['return_type'] == 'array') {
@@ -348,10 +347,10 @@ trait LaratrustUserTrait
     /**
      * Alias to eloquent many-to-many relation's attach() method.
      *
-     * @param string $relationship
-     * @param string $objectType
-     * @param mixed $object
-     * @param mixed $team
+     * @param  string  $relationship
+     * @param  string  $objectType
+     * @param  mixed  $object
+     * @param  mixed  $team
      * @return static
      */
     private function attachModel($relationship, $objectType, $object, $team)
@@ -378,10 +377,10 @@ trait LaratrustUserTrait
     /**
      * Alias to eloquent many-to-many relation's detach() method.
      *
-     * @param string $relationship
-     * @param string $objectType
-     * @param mixed $object
-     * @param mixed $team
+     * @param  string  $relationship
+     * @param  string  $objectType
+     * @param  mixed  $object
+     * @param  mixed  $team
      * @return static
      */
     private function detachModel($relationship, $objectType, $object, $team)
@@ -415,8 +414,8 @@ trait LaratrustUserTrait
     /**
      * Alias to eloquent many-to-many relation's attach() method.
      *
-     * @param mixed $role
-     * @param mixed $team
+     * @param  mixed  $role
+     * @param  mixed  $team
      * @return static
      */
     public function attachRole($role, $team = null)
@@ -427,8 +426,8 @@ trait LaratrustUserTrait
     /**
      * Alias to eloquent many-to-many relation's detach() method.
      *
-     * @param mixed $role
-     * @param mixed $team
+     * @param  mixed  $role
+     * @param  mixed  $team
      * @return static
      */
     public function detachRole($role, $team = null)
@@ -437,10 +436,10 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Attach multiple roles to a user
+     * Attach multiple roles to a user.
      *
-     * @param mixed $roles
-     * @param mixed $team
+     * @param  mixed  $roles
+     * @param  mixed  $team
      * @return static
      */
     public function attachRoles($roles = [], $team = null)
@@ -453,10 +452,10 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Detach multiple roles from a user
+     * Detach multiple roles from a user.
      *
-     * @param mixed $roles
-     * @param mixed $team
+     * @param  mixed  $roles
+     * @param  mixed  $team
      * @return static
      */
     public function detachRoles($roles = [], $team = null)
@@ -473,9 +472,10 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Sync roles to the user
-     * @param array $roles
-     * @param mixed $team
+     * Sync roles to the user.
+     *
+     * @param  array  $roles
+     * @param  mixed  $team
      * @return static
      */
     public function syncRoles($roles = [], $team = null)
@@ -486,8 +486,8 @@ trait LaratrustUserTrait
     /**
      * Alias to eloquent many-to-many relation's attach() method.
      *
-     * @param mixed $permission
-     * @param mixed $team
+     * @param  mixed  $permission
+     * @param  mixed  $team
      * @return static
      */
     public function attachPermission($permission, $team = null)
@@ -498,8 +498,8 @@ trait LaratrustUserTrait
     /**
      * Alias to eloquent many-to-many relation's detach() method.
      *
-     * @param mixed $permission
-     * @param mixed $team
+     * @param  mixed  $permission
+     * @param  mixed  $team
      * @return static
      */
     public function detachPermission($permission, $team = null)
@@ -508,10 +508,10 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Attach multiple permissions to a user
+     * Attach multiple permissions to a user.
      *
-     * @param mixed $permissions
-     * @param mixed $team
+     * @param  mixed  $permissions
+     * @param  mixed  $team
      * @return static
      */
     public function attachPermissions($permissions = [], $team = null)
@@ -524,10 +524,10 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Detach multiple permissions from a user
+     * Detach multiple permissions from a user.
      *
-     * @param mixed $permissions
-     * @param mixed $team
+     * @param  mixed  $permissions
+     * @param  mixed  $team
      * @return static
      */
     public function detachPermissions($permissions = [], $team = null)
@@ -544,7 +544,8 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Sync roles to the user
+     * Sync roles to the user.
+     *
      * @param  array  $permissions
      * @return static
      */
@@ -554,9 +555,10 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Checks if the user owns the thing
-     * @param  Object $thing
-     * @param  string $foreignKeyName
+     * Checks if the user owns the thing.
+     *
+     * @param  Object  $thing
+     * @param  string  $foreignKeyName
      * @return boolean
      */
     public function owns($thing, $foreignKeyName = null)
@@ -573,9 +575,10 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Checks if the user has some role and if he owns the thing
-     * @param  string|array $role
-     * @param  Object $thing
+     * Checks if the user has some role and if he owns the thing.
+     *
+     * @param  string|array  $role
+     * @param  Object  $thing
      * @param  array  $options
      * @return boolean
      */
@@ -590,9 +593,10 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Checks if the user can do something and if he owns the thing
-     * @param  string|array $permission
-     * @param  Object $thing
+     * Checks if the user can do something and if he owns the thing.
+     *
+     * @param  string|array  $permission
+     * @param  Object  $thing
      * @param  array  $options
      * @return boolean
      */
@@ -607,9 +611,10 @@ trait LaratrustUserTrait
     }
 
     /**
-     * This scope allows to retrive users with an specific role
-     * @param  Illuminate\Database\Eloquent\Builder $query
-     * @param  string $role
+     * This scope allows to retrive users with an specific role.
+     *
+     * @param  Illuminate\Database\Eloquent\Builder  $query
+     * @param  string  $role
      * @return Illuminate\Database\Eloquent\Builder
      */
     public function scopeWhereRoleIs($query, $role = '')
@@ -620,7 +625,8 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Flush the user's cache
+     * Flush the user's cache.
+     *
      * @return void
      */
     public function flushCache()
@@ -630,13 +636,13 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Checks if the option exists inside the array
-     * if not sets a the first option inside the default
-     * values array
-     * @param  string $option
-     * @param  array $array
-     * @param  array $possibleValues
-     * @param  int $defaultIndex
+     * Checks if the option exists inside the array,
+     * if not sets a the first option inside the default values array.
+     *
+     * @param  string  $option
+     * @param  array  $array
+     * @param  array  $possibleValues
+     * @param  int  $defaultIndex
      * @return array
      */
     private function checkOrSet($option, $array, $possibleValues)
@@ -657,9 +663,10 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Gets the it from an array or object
+     * Gets the it from an array, object or integer.
+     *
      * @param  mixed  $object
-     * @param  string $type
+     * @param  string  $type
      * @return int
      */
     private function getIdFor($object, $type)
@@ -683,11 +690,11 @@ trait LaratrustUserTrait
         );
     }
 
-    
     /**
-     * Assing the real values to the team and requireAllOrOptions parameters
-     * @param  mixed $team
-     * @param  mixed $requireAllOrOptions
+     * Assing the real values to the team and requireAllOrOptions parameters.
+     *
+     * @param  mixed  $team
+     * @param  mixed  $requireAllOrOptions
      * @return array
      */
     private function assignRealValuesTo($team, $requireAllOrOptions, $method)
@@ -699,10 +706,10 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Handles the call to the magic methods with can
-     * like $user->canEditSomething()
-     * @param  string $method
-     * @param  array $parameters
+     * Handles the call to the magic methods with can,
+     * like $user->canEditSomething().
+     * @param  string  $method
+     * @param  array  $parameters
      * @return boolean
      */
     private function handleMagicCan($method, $parameters)

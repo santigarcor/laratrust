@@ -18,7 +18,7 @@ trait LaratrustTeamTrait
     use LaratrustDynamicUserRelationsCalls;
 
     /**
-     * Morph by Many relationship between the role and the one of the possible user models
+     * Morph by Many relationship between the role and the one of the possible user models.
      *
      * @param  string $relationship
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
@@ -35,8 +35,8 @@ trait LaratrustTeamTrait
     }
 
     /**
-     * Boot the permission model
-     * Attach event listener to remove the many-to-many records when trying to delete
+     * Boots the team model and attaches event listener to
+     * remove the many-to-many records when trying to delete.
      * Will NOT delete any records if the team model uses soft deletes.
      *
      * @return void|bool
