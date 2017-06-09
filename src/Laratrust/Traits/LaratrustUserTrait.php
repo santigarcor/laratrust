@@ -17,9 +17,10 @@ use InvalidArgumentException;
 trait LaratrustUserTrait
 {
     /**
-     * Tries to return all the cached roles of the user
-     * and if it can't bring the roles from the cache,
-     * it would bring them back from the DB
+     * Tries to return all the cached roles of the user.
+     * If it can't bring the roles from the cache,
+     * it brings them back from the DB.
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function cachedRoles()
@@ -34,7 +35,8 @@ trait LaratrustUserTrait
     /**
      * Tries to return all the cached permissions of the user
      * and if it can't bring the permissions from the cache,
-     * it would bring them back from the DB
+     * it brings them back from the DB.
+     *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function cachedPermissions()
@@ -79,8 +81,8 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Boot the user model
-     * Attach event listener to remove the many-to-many records when trying to delete
+     * Boots the user model and attaches event listener to
+     * remove the many-to-many records when trying to delete.
      * Will NOT delete any records if the user model uses soft deletes.
      *
      * @return void|bool
@@ -89,6 +91,7 @@ trait LaratrustUserTrait
     {
         $flushCache = function ($user) {
             $user->flushCache();
+
             return true;
         };
 
@@ -117,7 +120,6 @@ trait LaratrustUserTrait
      *
      * @param string|array $name       Role name or array of role names.
      * @param bool         $requireAll All roles in the array are required.
-     *
      * @return bool
      */
     public function hasRole($name, $requireAll = false)
@@ -157,7 +159,6 @@ trait LaratrustUserTrait
      *
      * @param string|array $permission Permission string or array of permissions.
      * @param bool         $requireAll All permissions in the array are required.
-     *
      * @return bool
      */
     public function hasPermission($permission, $requireAll = false)
@@ -310,7 +311,7 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Attach multiple roles to a user
+     * Attach multiple roles to a user.
      *
      * @param mixed $roles
      * @return static
@@ -325,7 +326,7 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Detach multiple roles from a user
+     * Detach multiple roles from a user.
      *
      * @param mixed $roles
      * @return static
@@ -335,7 +336,7 @@ trait LaratrustUserTrait
         if (!$roles) {
             $roles = $this->roles()->get();
         }
-        
+
         foreach ($roles as $role) {
             $this->detachRole($role);
         }
@@ -344,8 +345,9 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Sync roles to the user
-     * @param  array  $roles
+     * Sync roles to the user.
+     *
+     * @param  array $roles
      * @return static
      */
     public function syncRoles($roles = [])
@@ -385,7 +387,7 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Attach multiple permissions to a user
+     * Attach multiple permissions to a user.
      *
      * @param mixed $permissions
      * @return static
@@ -400,7 +402,7 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Detach multiple permissions from a user
+     * Detach multiple permissions from a user.
      *
      * @param mixed $permissions
      * @return static
@@ -419,8 +421,9 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Sync roles to the user
-     * @param  array  $permissions
+     * Sync permissions to the user.
+     *
+     * @param  array $permissions
      * @return static
      */
     public function syncPermissions($permissions = [])
@@ -432,7 +435,8 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Checks if the user owns the thing
+     * Checks if the user owns the thing.
+     *
      * @param  Object $thing
      * @param  string $foreignKeyName
      * @return boolean
@@ -451,10 +455,11 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Checks if the user has some role and if he owns the thing
+     * Checks if the user has some role and if they own the thing.
+     *
      * @param  string|array $role
-     * @param  Object $thing
-     * @param  array  $options
+     * @param  Object       $thing
+     * @param  array        $options
      * @return boolean
      */
     public function hasRoleAndOwns($role, $thing, $options = [])
@@ -467,10 +472,11 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Checks if the user can do something and if he owns the thing
+     * Checks if the user can do something and if they own the thing.
+     *
      * @param  string|array $permission
-     * @param  Object $thing
-     * @param  array  $options
+     * @param  Object       $thing
+     * @param  array        $options
      * @return boolean
      */
     public function canAndOwns($permission, $thing, $options = [])
@@ -483,12 +489,12 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Checks if the option exists inside the arrayToCheck
-     * if not sets a the first option inside the default
-     * values array
+     * Checks if the option exists inside the arrayToCheck,
+     * if not sets a the first option inside the default values array.
+     *
      * @param  string $option
-     * @param  array $arrayToCheck
-     * @param  array $defaultValues
+     * @param  array  $arrayToCheck
+     * @param  array  $defaultValues
      * @return array
      */
     protected function checkOrSetDefaultOption($option, $arrayToCheck, $defaultValues)
@@ -507,9 +513,10 @@ trait LaratrustUserTrait
     }
 
     /**
-     * This scope allows to retrive users with an specific role
+     * This scope allows to retrive users with an specific role.
+     *
      * @param  Illuminate\Database\Eloquent\Builder $query
-     * @param  string $role
+     * @param  string                               $role
      * @return Illuminate\Database\Eloquent\Builder
      */
     public function scopeWhereRoleIs($query, $role = '')
@@ -520,7 +527,8 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Flush the user's cache
+     * Flush the user's cache.
+     *
      * @return void
      */
     public function flushCache()
@@ -530,7 +538,8 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Gets the it from an array or object
+     * Gets the id from an array or object.
+     *
      * @param  mixed  $object
      * @param  string $type
      * @return int
