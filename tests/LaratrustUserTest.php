@@ -864,6 +864,28 @@ class LaratrustUserTest extends UserTest
         ]));
     }
 
+    public function testAllPermissions()
+    {
+        $user = m::mock('HasRoleUser')->makePartial();
+        $roleA = $this->mockRole('RoleA');
+        $roleB = $this->mockRole('RoleB');
+        $permissionA = $this->mockPermission('PermA');
+        $permissionB = $this->mockPermission('PermB');
+        $permissionC = $this->mockPermission('PermC');
+
+        $roleA->permissions = [$permissionA, $permissionB];
+        $roleB->permissions = [$permissionB, $permissionC];
+        $user->permissions = [$permissionB, $permissionC];
+
+        $user->shouldReceive('roles->with->get')->andReturn(new Illuminate\Support\Collection([$roleA, $roleB]));
+        $user->shouldReceive('cachedPermissions')->andReturn(new Illuminate\Support\Collection($user->permissions));
+
+        $this->assertSame(
+            ['PermA', 'PermB', 'PermC'],
+            $user->allPermissions()->sortBy('name')->pluck('name')->all()
+        );
+    }
+
     public function testScopeWhereRoleIs()
     {
         /*

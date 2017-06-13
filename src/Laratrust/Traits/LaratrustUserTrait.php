@@ -611,6 +611,23 @@ trait LaratrustUserTrait
     }
 
     /**
+     * Return all the user permissions.
+     *
+     * @return boolean
+     */
+    public function allPermissions()
+    {
+        $roles = $this->roles()->with('permissions')->get();
+        $permissions = $this->cachedPermissions();
+
+        $roles = $roles->flatMap(function ($role) {
+            return $role->permissions;
+        });
+
+        return $permissions->merge($roles)->unique('name');
+    }
+
+    /**
      * This scope allows to retrive users with an specific role.
      *
      * @param  Illuminate\Database\Eloquent\Builder  $query

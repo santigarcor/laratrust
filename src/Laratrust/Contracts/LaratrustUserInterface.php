@@ -195,4 +195,11 @@ interface LaratrustUserInterface
      * @return boolean
      */
     public function canAndOwns($permission, $thing, $options = []);
+
+    /**
+     * Return all the user permissions.
+     *
+     * @return boolean
+     */
+    public function allPermissions();
 }
