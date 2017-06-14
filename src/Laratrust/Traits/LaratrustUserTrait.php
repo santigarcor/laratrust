@@ -10,6 +10,7 @@ namespace Laratrust\Traits;
  * @package Laratrust
  */
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
@@ -56,13 +57,19 @@ trait LaratrustUserTrait
      */
     public function roles()
     {
-        return $this->morphToMany(
+        $roles = $this->morphToMany(
             Config::get('laratrust.role'),
             'user',
             Config::get('laratrust.role_user_table'),
             Config::get('laratrust.user_foreign_key'),
             Config::get('laratrust.role_foreign_key')
-        )->withPivot(Config::get('laratrust.team_foreign_key'));
+        );
+        
+        if (Config::get('laratrust.use_teams')) {
+            $roles->withPivot(Config::get('laratrust.team_foreign_key'));
+        }
+
+        return $roles;
     }
 
     /**
@@ -72,13 +79,19 @@ trait LaratrustUserTrait
      */
     public function permissions()
     {
-        return $this->morphToMany(
+        $permissions = $this->morphToMany(
             Config::get('laratrust.permission'),
             'user',
             Config::get('laratrust.permission_user_table'),
             Config::get('laratrust.user_foreign_key'),
             Config::get('laratrust.permission_foreign_key')
-        )->withPivot(Config::get('laratrust.team_foreign_key'));
+        );
+        
+        if (Config::get('laratrust.use_teams')) {
+            $permissions->withPivot(Config::get('laratrust.team_foreign_key'));
+        }
+
+        return $permissions;
     }
 
     /**
@@ -359,15 +372,21 @@ trait LaratrustUserTrait
             throw new InvalidArgumentException;
         }
 
-        $team = $this->getIdFor($team, 'team');
+        $attributes = [];
 
-        if ($this->$relationship()->wherePivot($this->teamForeignKey(), $team)->count()) {
-            return $this;
+        if (Config::get('laratrust.use_teams')) {
+            $team = $this->getIdFor($team, 'team');
+
+            if ($this->$relationship()->wherePivot($this->teamForeignKey(), $team)->count()) {
+                return $this;
+            }
+
+            $attributes[$this->teamForeignKey()] = $team;
         }
 
         $this->$relationship()->attach(
             $this->getIdFor($object, $objectType),
-            [$this->teamForeignKey() => $team]
+            $attributes
         );
         $this->flushCache();
 
@@ -389,9 +408,19 @@ trait LaratrustUserTrait
             throw new InvalidArgumentException;
         }
 
-        $this->$relationship()
-            ->wherePivot($this->teamForeignKey(), $this->getIdFor($team, 'team'))
-            ->detach($this->getIdFor($object, $objectType));
+        $relationshipQuery = $this->$relationship();
+
+        if (Config::get('laratrust.use_teams')) {
+            $relationshipQuery->wherePivot(
+                    $this->teamForeignKey(),
+                    $this->getIdFor($team, 'team')
+                );
+        }
+
+        $relationshipQuery->detach(
+                $this->getIdFor($object, $objectType)
+            );
+
         $this->flushCache();
 
         return $this;
@@ -401,8 +430,12 @@ trait LaratrustUserTrait
     {
         $mappedObjects = [];
 
-        foreach ($objects as $object) {
-            $mappedObjects[$this->getIdFor($object, $objectType)] = [$this->teamForeignKey() => $team];
+        if (Config::get('laratrust.use_teams')) {
+            foreach ($objects as $object) {
+                $mappedObjects[$this->getIdFor($object, $objectType)] = [$this->teamForeignKey() => $team];
+            }
+        } else {
+            $mappedObjects = $objects;
         }
 
         $this->$relationship()->sync($mappedObjects);

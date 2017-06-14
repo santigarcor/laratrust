@@ -29,16 +29,18 @@ class LaratrustUserTest extends UserTest
         $user->shouldReceive('morphToMany')
             ->with('role', 'user', 'roles', 'user_id', 'role_id')
             ->andReturn($morphToMany)
-            ->once();
+            ->twice();
         $morphToMany->shouldReceive('withPivot')
             ->with('team_id')
             ->once()
             ->andReturn($morphToMany);
 
-        Config::shouldReceive('get')->once()->with('laratrust.role')->andReturn('role');
-        Config::shouldReceive('get')->once()->with('laratrust.role_user_table')->andReturn('roles');
-        Config::shouldReceive('get')->once()->with('laratrust.user_foreign_key')->andReturn('user_id');
-        Config::shouldReceive('get')->once()->with('laratrust.role_foreign_key')->andReturn('role_id');
+        Config::shouldReceive('get')->once()->with('laratrust.use_teams')->andReturn(false)->ordered();
+        Config::shouldReceive('get')->once()->with('laratrust.use_teams')->andReturn(true)->ordered();
+        Config::shouldReceive('get')->twice()->with('laratrust.role')->andReturn('role');
+        Config::shouldReceive('get')->twice()->with('laratrust.role_user_table')->andReturn('roles');
+        Config::shouldReceive('get')->twice()->with('laratrust.user_foreign_key')->andReturn('user_id');
+        Config::shouldReceive('get')->twice()->with('laratrust.role_foreign_key')->andReturn('role_id');
         Config::shouldReceive('get')->once()->with('laratrust.team_foreign_key')->andReturn('team_id');
 
         /*
@@ -46,6 +48,7 @@ class LaratrustUserTest extends UserTest
         | Assertion
         |------------------------------------------------------------
         */
+        $this->assertSame($morphToMany, $user->roles());
         $this->assertSame($morphToMany, $user->roles());
     }
 
@@ -67,22 +70,25 @@ class LaratrustUserTest extends UserTest
         $user->shouldReceive('morphToMany')
             ->with('permission', 'user', 'permissions', 'user_id', 'permission_id')
             ->andReturn($morphToMany)
-            ->once();
+            ->twice();
         $morphToMany->shouldReceive('withPivot')
             ->with('team_id')
             ->andReturn($morphToMany)
             ->once();
 
-        Config::shouldReceive('get')->once()->with('laratrust.permission')->andReturn('permission');
-        Config::shouldReceive('get')->once()->with('laratrust.permission_user_table')->andReturn('permissions');
-        Config::shouldReceive('get')->once()->with('laratrust.user_foreign_key')->andReturn('user_id');
-        Config::shouldReceive('get')->once()->with('laratrust.permission_foreign_key')->andReturn('permission_id');
+        Config::shouldReceive('get')->once()->with('laratrust.use_teams')->andReturn(false)->ordered();
+        Config::shouldReceive('get')->once()->with('laratrust.use_teams')->andReturn(true)->ordered();
+        Config::shouldReceive('get')->twice()->with('laratrust.permission')->andReturn('permission');
+        Config::shouldReceive('get')->twice()->with('laratrust.permission_user_table')->andReturn('permissions');
+        Config::shouldReceive('get')->twice()->with('laratrust.user_foreign_key')->andReturn('user_id');
+        Config::shouldReceive('get')->twice()->with('laratrust.permission_foreign_key')->andReturn('permission_id');
         Config::shouldReceive('get')->once()->with('laratrust.team_foreign_key')->andReturn('team_id');
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
+        $this->assertSame($morphToMany, $user->permissions());
         $this->assertSame($morphToMany, $user->permissions());
     }
 
@@ -371,11 +377,14 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->times(7)->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->twice()->ordered();
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->andReturn('team_id')->times(14);
         $user->shouldReceive('roles->wherePivot->count')->andReturn(0)->times(7);
-        $role->shouldReceive('getKey')->andReturn(1)->times(5);
-        $user->shouldReceive('roles->attach')->with(1, m::anyOf(['team_id' => null], ['team_id' => 1]))->times(7);
-        Cache::shouldReceive('forget')->times(14);
+        $role->shouldReceive('getKey')->andReturn(1)->times(7);
+        $user->shouldReceive('roles->attach')->with(1, m::anyOf(['team_id' => null], ['team_id' => 1]))->times(7)->ordered();
+        $user->shouldReceive('roles->attach')->with(1, [])->twice()->ordered();
+        Cache::shouldReceive('forget')->times(18);
         Config::shouldReceive('get')->with('laratrust.role')->andReturn($role)->once();
         $role->shouldReceive('where')->with('name', 'admin')->andReturn($role)->once();
         $role->shouldReceive('firstOrFail')->andReturn($role)->once();
@@ -402,6 +411,9 @@ class LaratrustUserTest extends UserTest
         $this->assertInstanceOf('HasRoleUser', $user->attachRole($role, $team->id));
         // Can attach role by passing the role and team name
         $this->assertInstanceOf('HasRoleUser', $user->attachRole($role, 'TeamA'));
+        // Not using teams
+        $this->assertInstanceOf('HasRoleUser', $user->attachRole($role));
+        $this->assertInstanceOf('HasRoleUser', $user->attachRole($role, 'TeamA'));
         
     }
 
@@ -422,10 +434,14 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->times(7)->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->twice()->ordered();
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->andReturn('team_id')->times(7);
-        $user->shouldReceive('roles->wherePivot->detach')->andReturn($user)->times(7);
-        Cache::shouldReceive('forget')->times(14);
-        $role->shouldReceive('getKey')->andReturn(1)->times(5);
+        $user->shouldReceive('roles')->andReturn($user)->times(9);
+        $user->shouldReceive('wherePivot')->with('team_id', m::anyOf(1, null))->andReturn($user)->times(7);
+        $user->shouldReceive('detach')->with(1)->times(9);
+        Cache::shouldReceive('forget')->times(18);
+        $role->shouldReceive('getKey')->andReturn(1)->times(7);
         Config::shouldReceive('get')->with('laratrust.role')->andReturn($role)->once();
         $role->shouldReceive('where')->with('name', 'admin')->andReturn($role)->once();
         $role->shouldReceive('firstOrFail')->andReturn($role)->once();
@@ -451,6 +467,9 @@ class LaratrustUserTest extends UserTest
         // Can detach role by passing the role and team id
         $this->assertInstanceOf('HasRoleUser', $user->detachRole($role, $team->id));
         // Can detach role by passing the role and team name
+        $this->assertInstanceOf('HasRoleUser', $user->detachRole($role, 'TeamA'));
+        // Not using teams
+        $this->assertInstanceOf('HasRoleUser', $user->detachRole($role));
         $this->assertInstanceOf('HasRoleUser', $user->detachRole($role, 'TeamA'));
     }
 
@@ -521,8 +540,10 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->times(2)->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->times(2)->ordered();
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->andReturn('team_id')->times(6);
-        $user->shouldReceive('roles')->andReturn($user);
+        $user->shouldReceive('roles')->andReturn($user)->times(4);
         $user->shouldReceive('sync')->with([
             1 => ['team_id' => null],
             2 => ['team_id' => null],
@@ -533,13 +554,17 @@ class LaratrustUserTest extends UserTest
             2 => ['team_id' => 'TeamA'],
             3 => ['team_id' => 'TeamA']
         ])->once()->ordered();
-        Cache::shouldReceive('forget')->times(4);
+        $user->shouldReceive('sync')->with([1, 2, 3])->twice()->ordered();
+        Cache::shouldReceive('forget')->times(8);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
+        $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds));
+        $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds, 'TeamA'));
+        // Not using teams
         $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds));
         $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds, 'TeamA'));
     }
@@ -561,11 +586,14 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->times(7)->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->twice()->ordered();
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->andReturn('team_id')->times(14);
         $user->shouldReceive('permissions->wherePivot->count')->andReturn(0)->times(7);
-        $permission->shouldReceive('getKey')->andReturn(1)->times(5);
-        $user->shouldReceive('permissions->attach')->with(1, m::anyOf(['team_id' => null], ['team_id' => 1]))->times(7);
-        Cache::shouldReceive('forget')->times(14);
+        $permission->shouldReceive('getKey')->andReturn(1)->times(7);
+        $user->shouldReceive('permissions->attach')->with(1, m::anyOf(['team_id' => null], ['team_id' => 1]))->times(7)->ordered();
+        $user->shouldReceive('permissions->attach')->with(1, [])->twice()->ordered();
+        Cache::shouldReceive('forget')->times(18);
         Config::shouldReceive('get')->with('laratrust.permission')->andReturn($permission)->times(1);
         $permission->shouldReceive('where')->with('name', 'admin.users')->andReturn($permission)->times(1);
         $permission->shouldReceive('firstOrFail')->andReturn($permission)->times(1);
@@ -592,6 +620,9 @@ class LaratrustUserTest extends UserTest
         $this->assertInstanceOf('HasRoleUser', $user->attachPermission($permission, $team->id));
         // Can attach role by passing the role and team name
         $this->assertInstanceOf('HasRoleUser', $user->attachPermission($permission, 'TeamA'));
+        // Not using teams
+        $this->assertInstanceOf('HasRoleUser', $user->attachPermission($permission));
+        $this->assertInstanceOf('HasRoleUser', $user->attachPermission($permission, 'TeamA'));
     }
 
     public function testDetachPermission()
@@ -611,10 +642,14 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->times(7)->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->twice()->ordered();
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->andReturn('team_id')->times(7);
-        $user->shouldReceive('permissions->wherePivot->detach')->andReturn($user)->times(7);
-        Cache::shouldReceive('forget')->times(14);
-        $permission->shouldReceive('getKey')->andReturn(1)->times(5);
+        $user->shouldReceive('permissions')->andReturn($user)->times(9);
+        $user->shouldReceive('wherePivot')->with('team_id', m::anyOf(1, null))->andReturn($user)->times(7);
+        $user->shouldReceive('detach')->with(1)->times(9);
+        Cache::shouldReceive('forget')->times(18);
+        $permission->shouldReceive('getKey')->andReturn(1)->times(7);
         Config::shouldReceive('get')->with('laratrust.permission')->andReturn($permission)->times(1);
         $permission->shouldReceive('where')->with('name', 'admin.users')->andReturn($permission)->times(1);
         $permission->shouldReceive('firstOrFail')->andReturn($permission)->times(1);
@@ -640,6 +675,9 @@ class LaratrustUserTest extends UserTest
         // Can detach role by passing the role and team id
         $this->assertInstanceOf('HasRoleUser', $user->detachPermission($permission, $team->id));
         // Can detach role by passing the role and team name
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermission($permission, 'TeamA'));
+        // Not using teams
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermission($permission));
         $this->assertInstanceOf('HasRoleUser', $user->detachPermission($permission, 'TeamA'));
     }
 
@@ -710,8 +748,10 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->times(2)->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->times(2)->ordered();
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->andReturn('team_id')->times(6);
-        $user->shouldReceive('permissions')->andReturn($user)->times(2);
+        $user->shouldReceive('permissions')->andReturn($user)->times(4);
         $user->shouldReceive('sync')->with([
             1 => ['team_id' => null],
             2 => ['team_id' => null],
@@ -722,13 +762,17 @@ class LaratrustUserTest extends UserTest
             2 => ['team_id' => 'TeamA'],
             3 => ['team_id' => 'TeamA']
         ])->once()->ordered();
-        Cache::shouldReceive('forget');
+        $user->shouldReceive('sync')->with([1, 2, 3])->twice()->ordered();
+        Cache::shouldReceive('forget')->times(8);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
+        $this->assertInstanceOf('HasRoleUser', $user->syncPermissions($permissionsIds));
+        $this->assertInstanceOf('HasRoleUser', $user->syncPermissions($permissionsIds, 'TeamA'));
+        // Not using teams
         $this->assertInstanceOf('HasRoleUser', $user->syncPermissions($permissionsIds));
         $this->assertInstanceOf('HasRoleUser', $user->syncPermissions($permissionsIds, 'TeamA'));
     }
