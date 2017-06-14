@@ -81,28 +81,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Laratrust Teams Model
-    |--------------------------------------------------------------------------
-    |
-    | This is the Team model used by Laratrust to create correct relations.
-    | Update the team if it is in a different namespace.
-    |
-    */
-    'team' => 'App\Team',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Laratrust Teams Table
-    |--------------------------------------------------------------------------
-    |
-    | This is the teams table used by Laratrust to save team to the
-    | database.
-    |
-    */
-    'teams_table' => 'teams',
-
-    /*
-    |--------------------------------------------------------------------------
     | Laratrust permission_role Table
     |--------------------------------------------------------------------------
     |
@@ -154,6 +132,38 @@ return [
     |--------------------------------------------------------------------------
     */
     'permission_foreign_key' => 'permission_id',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Use teams feature in the package
+    |--------------------------------------------------------------------------
+    |
+    | This defines is Laratrust is using the teams feature
+    |
+    */
+    'use_teams' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Laratrust Teams Model
+    |--------------------------------------------------------------------------
+    |
+    | This is the Team model used by Laratrust to create correct relations.
+    | Update the team if it is in a different namespace.
+    |
+    */
+    'team' => 'App\Team',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Laratrust Teams Table
+    |--------------------------------------------------------------------------
+    |
+    | This is the teams table used by Laratrust to save team to the
+    | database.
+    |
+    */
+    'teams_table' => 'teams',
 
     /*
     |--------------------------------------------------------------------------

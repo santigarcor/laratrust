@@ -52,7 +52,7 @@ class MigrationCommand extends Command
         $permissionUserTable = Config::get('laratrust.permission_user_table');
 
         $this->line('');
-        $this->info("Tables: $rolesTable, $roleUserTable, $permissionsTable, $permissionRoleTable, $permissionUserTable");
+        $this->info("Laratrust Migration Creation.");
 
         $message = $this->generateMigrationMessage(
             $rolesTable,

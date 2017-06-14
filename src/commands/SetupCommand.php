@@ -11,6 +11,7 @@ namespace Laratrust;
  */
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
 
 class SetupCommand extends Command
 {
@@ -37,9 +38,22 @@ class SetupCommand extends Command
         'laratrust:migration' => 'Creating migration',
         'laratrust:role' => 'Creating Role model',
         'laratrust:permission' => 'Creating Permission model',
-        'laratrust:team' => 'Creating Team model',
         'laratrust:add-trait' => 'Adding LaratrustUserTrait to User model'
     ];
+
+    /**
+     * Create a new command instance
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        if (Config::get('laratrust.use_teams')) {
+            $this->calls['laratrust:team'] = 'Creating Team model';
+        }
+
+        parent::__construct();
+    }
 
     /**
      * Execute the console command.

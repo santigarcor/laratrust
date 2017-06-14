@@ -13,28 +13,28 @@ namespace Laratrust;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 
-class UpgradeCommand extends Command
+class SetupTeamsCommand extends Command
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'laratrust:upgrade';
+    protected $name = 'laratrust:setup-teams';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Creates a migration to upgrade laratrust from version 3.2 to 3.3.';
+    protected $description = 'Setup the teams feature in case it is not used';
 
     /**
      * Suffix of the migration name.
      *
      * @var string
      */
-    protected $migrationSuffix = 'laratrust_upgrade_tables';
+    protected $migrationSuffix = 'laratrust_setup_teams';
 
     /**
      * Execute the console command.
@@ -43,10 +43,16 @@ class UpgradeCommand extends Command
      */
     public function fire()
     {
+        if (!Config::get('laratrust.use_teams')) {
+            $this->error('Not using teams in your Laratrust configuration file.');
+            $this->warn('Please enable the teams usage in your configuration.');
+            return;
+        }
+
         $this->laravel->view->addNamespace('laratrust', substr(__DIR__, 0, -8).'views');
 
         $this->line('');
-        $this->info("The Laratrust upgrade migration will be created in the database/migration directory");
+        $this->info("The Laratrust teams feature setup is going to add a migration and a model");
 
         $existingMigrations = $this->alreadyExistingMigrations();
 
@@ -75,6 +81,9 @@ class UpgradeCommand extends Command
             );
         }
 
+        $this->info('Creating Team model...');
+        $this->call('laratrust:team');
+
         $this->line('');
     }
 
@@ -97,7 +106,7 @@ class UpgradeCommand extends Command
         );
 
         $this->call('view:clear');
-        $output = $this->laravel->view->make('laratrust::generators.upgrade-migration')->with($data)->render();
+        $output = $this->laravel->view->make('laratrust::generators.setup-teams')->with($data)->render();
 
         if (!file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
             fwrite($fs, $output);
@@ -118,9 +127,9 @@ class UpgradeCommand extends Command
     protected function getExistingMigrationsWarning(array $existingMigrations)
     {
         if (count($existingMigrations) > 1) {
-            $base = "Laratrust upgrade migrations already exist.\nFollowing files were found: ";
+            $base = "Laratrust setup teams migrations already exist.\nFollowing files were found: ";
         } else {
-            $base = "Laratrust upgrade migration already exists.\nFollowing file was found: ";
+            $base = "Laratrust setup teams migration already exists.\nFollowing file was found: ";
         }
 
         return $base . array_reduce($existingMigrations, function ($carry, $fileName) {

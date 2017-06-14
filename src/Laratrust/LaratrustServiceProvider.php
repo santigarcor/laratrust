@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\Factory;
 use Laratrust\LaratrustRegistersBladeDirectives;
+use Laratrust\SetupTeamsCommand;
 
 class LaratrustServiceProvider extends ServiceProvider
 {
@@ -36,6 +37,7 @@ class LaratrustServiceProvider extends ServiceProvider
         'MakeTeam' => 'command.laratrust.team',
         'AddLaratrustUserTraitUse' => 'command.laratrust.add-trait',
         'Setup' => 'command.laratrust.setup',
+        'SetupTeams' => 'command.laratrust.setup-teams',
         'MakeSeeder' => 'command.laratrust.seeder',
         'Upgrade' => 'command.laratrust.upgrade'
     ];
@@ -115,21 +117,21 @@ class LaratrustServiceProvider extends ServiceProvider
 
         $this->commands(array_values($this->commands));
     }
-    
+
     protected function registerMigrationCommand()
     {
         $this->app->singleton('command.laratrust.migration', function () {
             return new MigrationCommand();
         });
     }
-    
+
     protected function registerMakeRoleCommand()
     {
         $this->app->singleton('command.laratrust.role', function ($app) {
             return new MakeRoleCommand($app['files']);
         });
     }
-    
+
     protected function registerMakePermissionCommand()
     {
         $this->app->singleton('command.laratrust.permission', function ($app) {
@@ -143,18 +145,25 @@ class LaratrustServiceProvider extends ServiceProvider
             return new MakeTeamCommand($app['files']);
         });
     }
-    
+
     protected function registerAddLaratrustUserTraitUseCommand()
     {
         $this->app->singleton('command.laratrust.add-trait', function () {
             return new AddLaratrustUserTraitUseCommand();
         });
     }
-    
+
     protected function registerSetupCommand()
     {
         $this->app->singleton('command.laratrust.setup', function () {
             return new SetupCommand();
+        });
+    }
+
+    protected function registerSetupTeamsCommand()
+    {
+        $this->app->singleton('command.laratrust.setup-teams', function () {
+            return new SetupTeamsCommand();
         });
     }
 

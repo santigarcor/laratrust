@@ -21,6 +21,7 @@ class LaratrustSetupTables extends Migration
             $table->timestamps();
         });
 
+@if ($laratrust['use_teams'])
         // Create table for storing teams
         Schema::create('{{ $laratrust['teams_table'] }}', function (Blueprint $table) {
             $table->increments('id');
@@ -30,19 +31,49 @@ class LaratrustSetupTables extends Migration
             $table->timestamps();
         });
 
+@endif
         // Create table for associating roles to users and teams (Many To Many Polymorphic)
         Schema::create('{{ $laratrust['role_user_table'] }}', function (Blueprint $table) {
             $table->integer('{{ $laratrust['user_foreign_key'] }}')->unsigned();
             $table->integer('{{ $laratrust['role_foreign_key'] }}')->unsigned();
-            $table->integer('{{ $laratrust['team_foreign_key'] }}')->unsigned()->nullable();
             $table->string('user_type');
+@if ($laratrust['use_teams'])
+            $table->integer('{{ $laratrust['team_foreign_key'] }}')->unsigned()->nullable();
+@endif
 
             $table->foreign('{{ $laratrust['role_foreign_key'] }}')->references('id')->on('{{ $laratrust['roles_table'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
+@if ($laratrust['use_teams'])
             $table->foreign('{{ $laratrust['team_foreign_key'] }}')->references('id')->on('{{ $laratrust['teams_table'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
 
             $table->unique(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}', 'user_type', '{{ $laratrust['team_foreign_key'] }}']);
+@else
+
+            $table->primary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}', 'user_type']);
+@endif
+        });
+
+        // Create table for associating permissions to users (Many To Many Polymorphic)
+        Schema::create('{{ $laratrust['permission_user_table'] }}', function (Blueprint $table) {
+            $table->integer('{{ $laratrust['permission_foreign_key'] }}')->unsigned();
+            $table->integer('{{ $laratrust['user_foreign_key'] }}')->unsigned();
+            $table->string('user_type');
+@if ($laratrust['use_teams'])
+            $table->integer('{{ $laratrust['team_foreign_key'] }}')->unsigned()->nullable();
+@endif
+
+            $table->foreign('{{ $laratrust['permission_foreign_key'] }}')->references('id')->on('{{ $laratrust['permissions_table'] }}')
+                ->onUpdate('cascade')->onDelete('cascade');
+@if ($laratrust['use_teams'])
+            $table->foreign('{{ $laratrust['team_foreign_key'] }}')->references('id')->on('{{ $laratrust['teams_table'] }}')
+                ->onUpdate('cascade')->onDelete('cascade');
+
+            $table->unique(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['permission_foreign_key'] }}', 'user_type', '{{ $laratrust['team_foreign_key'] }}']);
+@else
+
+            $table->primary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['permission_foreign_key'] }}', 'user_type']);
+@endif
         });
 
         // Create table for storing permissions
@@ -66,22 +97,6 @@ class LaratrustSetupTables extends Migration
 
             $table->primary(['{{ $laratrust['permission_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}']);
         });
-
-        // Create table for associating permissions to users (Many To Many Polymorphic)
-        Schema::create('{{ $laratrust['permission_user_table'] }}', function (Blueprint $table) {
-            $table->integer('{{ $laratrust['permission_foreign_key'] }}')->unsigned();
-            $table->integer('{{ $laratrust['user_foreign_key'] }}')->unsigned();
-            $table->string('user_type');
-            $table->integer('{{ $laratrust['team_foreign_key'] }}')->unsigned()->nullable();
-
-            $table->foreign('{{ $laratrust['permission_foreign_key'] }}')->references('id')->on('{{ $laratrust['permissions_table'] }}')
-                ->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('{{ $laratrust['team_foreign_key'] }}')->references('id')->on('{{ $laratrust['teams_table'] }}')
-                ->onUpdate('cascade')->onDelete('cascade');
-
-            $table->unique(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['permission_foreign_key'] }}', 'user_type', '{{ $laratrust['team_foreign_key'] }}']);
-        });
-
     }
 
     /**
@@ -95,7 +110,9 @@ class LaratrustSetupTables extends Migration
         Schema::dropIfExists('{{ $laratrust['permission_role_table'] }}');
         Schema::dropIfExists('{{ $laratrust['permissions_table'] }}');
         Schema::dropIfExists('{{ $laratrust['role_user_table'] }}');
-        Schema::dropIfExists('{{ $laratrust['teams_table'] }}');
         Schema::dropIfExists('{{ $laratrust['roles_table'] }}');
+@if ($laratrust['use_teams'])
+        Schema::dropIfExists('{{ $laratrust['teams_table'] }}');
+@endif
     }
 }
