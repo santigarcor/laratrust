@@ -7,26 +7,6 @@
         {
             "name": "Santiago Garcia",
             "homepage": "http://santigarcor.me"
-        },
-        {
-            "name": "Mateo Calle",
-            "homepage": "https://github.com/Mathius17"
-        },
-        {
-            "name": "Andrew Elkins",
-            "homepage": "http://andrewelkins.com"
-        },
-        {
-            "name": "Ben Batschelet",
-            "homepage": "http://github.com/bbatsche"
-        },
-        {
-            "name": "Michele Angioni",
-            "email": "michele.angioni@gmail.com"
-        },
-        {
-            "name": "Zizaco Zizuini",
-            "email": "zizaco@gmail.com"
         }
     ],
     "require": {
