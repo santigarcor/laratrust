@@ -112,8 +112,10 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(14)->andReturn('1440');
-        Cache::shouldReceive('remember')->times(14)->andReturn($user->roles);
+        Config::shouldReceive('get')->with('laratrust.use_teams')->times(18)->andReturn(true)->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->times(3)->andReturn(false)->ordered();
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(17)->andReturn('1440');
+        Cache::shouldReceive('remember')->times(17)->andReturn($user->roles);
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->times(13)->andReturn('team_id');
         Config::shouldReceive('get')->with('laratrust.team')->times(5)->andReturn($team);
         $team->shouldReceive('where')->with('name', 'TeamA')->times(5)->andReturn($team);
@@ -138,6 +140,9 @@ class LaratrustUserTest extends UserTest
         $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], 'TeamA', true));
         $this->assertFalse($user->hasRole(['RoleA', 'RoleC'], true));
         $this->assertFalse($user->hasRole(['RoleC', 'RoleD']));
+        // Not using teams
+        $this->assertTrue($user->hasRole(['RoleA', 'RoleC'], 'TeamA'));
+        $this->assertFalse($user->hasRole(['RoleC', 'RoleD'], true));
     }
 
     public function testHasPermission()
@@ -169,9 +174,11 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        $roleA->shouldReceive('cachedPermissions')->times(10)->andReturn($roleA->perms);
-        $roleB->shouldReceive('cachedPermissions')->twice()->andReturn($roleB->perms);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(27)->andReturn('1440');
+        Config::shouldReceive('get')->with('laratrust.use_teams')->times(51)->andReturn(true)->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->times()->andReturn(false)->ordered();
+        $roleA->shouldReceive('cachedPermissions')->times(12)->andReturn($roleA->perms);
+        $roleB->shouldReceive('cachedPermissions')->times(3 )->andReturn($roleB->perms);
+        Config::shouldReceive('get')->with('cache.ttl', 60)->times(32)->andReturn('1440');
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->times(48)->andReturn('team_id');
         Config::shouldReceive('get')->with('laratrust.team')->times(3)->andReturn($team);
         $team->shouldReceive('where')->with('name', 'TeamA')->times(3)->andReturn($team);
@@ -183,13 +190,13 @@ class LaratrustUserTest extends UserTest
                 "laratrust_permissions_for_user_{$user->getKey()}",
                 1440,
                 m::any()
-            )->times(15)->andReturn($user->permissions);
+            )->times(18)->andReturn($user->permissions);
         Cache::shouldReceive('remember')
             ->with(
                 "laratrust_roles_for_user_{$user->getKey()}",
                 1440,
                 m::any()
-            )->times(12)->andReturn($user->roles);
+            )->times(14)->andReturn($user->roles);
 
         /*
         |------------------------------------------------------------
@@ -209,6 +216,8 @@ class LaratrustUserTest extends UserTest
         $this->assertFalse($user->hasPermission(['manage_a', 'manage_b', 'manage_d'], 'TeamA', true));
         $this->assertFalse($user->hasPermission(['manage_a', 'manage_b', 'manage_e'], true));
         $this->assertFalse($user->hasPermission(['manage_e', 'manage_f']));
+        // Not using teams
+        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_d'], 'TeamA', true));
     }
 
     public function testCan()
@@ -286,6 +295,7 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
+       Config::shouldReceive('get')->with('laratrust.use_teams')->times(17)->andReturn(true)->ordered();
         $role->shouldReceive('cachedPermissions')->times(6)->andReturn($role->perms);
         Config::shouldReceive('get')->with('cache.ttl', 60)->times(15)->andReturn('1440');
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->times(15)->andReturn('team_id');

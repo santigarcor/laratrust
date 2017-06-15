@@ -148,6 +148,10 @@ trait LaratrustUserTrait
      */
     private function isInSameTeam($rolePermission, $team)
     {
+        if (!Config::get('laratrust.use_teams')) {
+            return true;
+        }
+
         $teamForeignKey = $this->teamForeignKey();
         return $rolePermission->pivot->$teamForeignKey == $team;
     }
@@ -160,8 +164,8 @@ trait LaratrustUserTrait
      */
     private function fetchTeam($team = null)
     {
-        if (is_null($team)) {
-            return $team;
+        if (is_null($team) || !Config::get('laratrust.use_teams')) {
+            return null;
         }
 
         $team = call_user_func_array(
