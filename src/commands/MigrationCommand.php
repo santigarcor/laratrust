@@ -11,6 +11,7 @@ namespace Laratrust;
  */
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 
 class MigrationCommand extends Command
@@ -44,25 +45,13 @@ class MigrationCommand extends Command
     public function fire()
     {
         $this->laravel->view->addNamespace('laratrust', substr(__DIR__, 0, -8).'views');
-
-        $rolesTable          = Config::get('laratrust.roles_table');
-        $roleUserTable       = Config::get('laratrust.role_user_table');
-        $permissionsTable    = Config::get('laratrust.permissions_table');
-        $permissionRoleTable = Config::get('laratrust.permission_role_table');
-        $permissionUserTable = Config::get('laratrust.permission_user_table');
-
         $this->line('');
         $this->info("Laratrust Migration Creation.");
-
-        $message = $this->generateMigrationMessage(
-            $rolesTable,
-            $roleUserTable,
-            $permissionsTable,
-            $permissionRoleTable,
-            $permissionUserTable
-        );
-
-        $this->comment($message);
+        if (Config::get('laratrust.use_teams')) {
+            $this->comment('You are using the teams feature.');
+        }
+        $this->line('');
+        $this->comment($this->generateMigrationMessage());
 
         $existingMigrations = $this->alreadyExistingMigrations();
 
@@ -80,10 +69,10 @@ class MigrationCommand extends Command
 
         $this->line('');
 
-        $this->info("Creating migration...");
+        $this->line("Creating migration");
 
         if ($this->createMigration()) {
-            $this->info("Migration successfully created!");
+            $this->info("Migration created successfully.");
         } else {
             $this->error(
                 "Couldn't create migration.\n".
@@ -121,22 +110,25 @@ class MigrationCommand extends Command
      * console command showing what tables are going
      * to be created.
      *
-     * @param  string  $rolesTable
-     * @param  string  $roleUserTable
-     * @param  string  $permissionsTable
-     * @param  string  $permissionRoleTable
-     * @param  string  $permissionUserTable
      * @return string
      */
-    protected function generateMigrationMessage(
-        $rolesTable,
-        $roleUserTable,
-        $permissionsTable,
-        $permissionRoleTable,
-        $permissionUserTable
-    ) {
-        return "A migration that creates '$rolesTable', '$roleUserTable', '$permissionsTable', '$permissionRoleTable', '$permissionUserTable'".
-            " tables will be created in database/migrations directory";
+    protected function generateMigrationMessage()
+    {
+        $laratrust = Config::get('laratrust');
+        $tables = Collection::make([
+            "'{$laratrust['roles_table']}'",
+            "'{$laratrust['permissions_table']}'",
+            "'{$laratrust['permission_role_table']}'",
+            "'{$laratrust['role_user_table']}'",
+            "'{$laratrust['permission_user_table']}'",
+        ]);
+
+        if ($laratrust['use_teams']) {
+            $tables->push("'{$laratrust['teams_table']}'");
+        }
+
+        return "A migration that creates {$tables->implode(',')} "
+            . "tables will be created in database/migrations directory";
     }
 
     /**

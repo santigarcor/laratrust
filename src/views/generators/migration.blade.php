@@ -21,6 +21,15 @@ class LaratrustSetupTables extends Migration
             $table->timestamps();
         });
 
+        // Create table for storing permissions
+        Schema::create('{{ $laratrust['permissions_table'] }}', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name')->unique();
+            $table->string('display_name')->nullable();
+            $table->string('description')->nullable();
+            $table->timestamps();
+        });
+
 @if ($laratrust['use_teams'])
         // Create table for storing teams
         Schema::create('{{ $laratrust['teams_table'] }}', function (Blueprint $table) {
@@ -74,15 +83,6 @@ class LaratrustSetupTables extends Migration
 
             $table->primary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['permission_foreign_key'] }}', 'user_type']);
 @endif
-        });
-
-        // Create table for storing permissions
-        Schema::create('{{ $laratrust['permissions_table'] }}', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name')->unique();
-            $table->string('display_name')->nullable();
-            $table->string('description')->nullable();
-            $table->timestamps();
         });
 
         // Create table for associating permissions to roles (Many-to-Many)
