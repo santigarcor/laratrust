@@ -130,52 +130,6 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Returns the team's foreign key.
-     *
-     * @return string
-     */
-    private function teamForeignKey()
-    {
-        return Config::get('laratrust.team_foreign_key');
-    }
-
-    /**
-     * Check if a role or permission is attach to the user in a same team.
-     *
-     * @param  mixed  $rolePermission
-     * @param  \Illuminate\Database\Eloquent\Model  $team
-     * @return boolean
-     */
-    private function isInSameTeam($rolePermission, $team)
-    {
-        if (!Config::get('laratrust.use_teams')) {
-            return true;
-        }
-
-        $teamForeignKey = $this->teamForeignKey();
-        return $rolePermission->pivot->$teamForeignKey == $team;
-    }
-
-    /**
-     * Fetch the team model from the name.
-     *
-     * @param  mixed  $team
-     * @return mixed
-     */
-    private function fetchTeam($team = null)
-    {
-        if (is_null($team) || !Config::get('laratrust.use_teams')) {
-            return null;
-        }
-
-        $team = call_user_func_array(
-                    [Config::get('laratrust.team'), 'where'],
-                    ['name', $team]
-                )->first();
-        return is_null($team) ? $team : $team->getKey();
-    }
-
-    /**
      * Checks if the user has a role by its name.
      *
      * @param  string|array  $name       Role name or array of role names.
@@ -377,11 +331,17 @@ trait LaratrustUserTrait
         }
 
         $attributes = [];
+        $object = $this->getIdFor($object, $objectType);
 
         if (Config::get('laratrust.use_teams')) {
             $team = $this->getIdFor($team, 'team');
 
-            if ($this->$relationship()->wherePivot($this->teamForeignKey(), $team)->count()) {
+            if (
+                    $this->$relationship()
+                    ->wherePivot($this->teamForeignKey(), $team)
+                    ->wherePivot(Config::get("laratrust.{$objectType}_foreign_key"), $object)
+                    ->count()
+                ) {
                 return $this;
             }
 
@@ -389,7 +349,7 @@ trait LaratrustUserTrait
         }
 
         $this->$relationship()->attach(
-            $this->getIdFor($object, $objectType),
+            $object,
             $attributes
         );
         $this->flushCache();
@@ -742,6 +702,52 @@ trait LaratrustUserTrait
         throw new InvalidArgumentException(
             'getIdFor function only accepts an integer, a Model object or an array with an "id" key'
         );
+    }
+
+    /**
+     * Returns the team's foreign key.
+     *
+     * @return string
+     */
+    private function teamForeignKey()
+    {
+        return Config::get('laratrust.team_foreign_key');
+    }
+
+    /**
+     * Check if a role or permission is attach to the user in a same team.
+     *
+     * @param  mixed  $rolePermission
+     * @param  \Illuminate\Database\Eloquent\Model  $team
+     * @return boolean
+     */
+    private function isInSameTeam($rolePermission, $team)
+    {
+        if (!Config::get('laratrust.use_teams')) {
+            return true;
+        }
+
+        $teamForeignKey = $this->teamForeignKey();
+        return $rolePermission->pivot->$teamForeignKey == $team;
+    }
+
+    /**
+     * Fetch the team model from the name.
+     *
+     * @param  mixed  $team
+     * @return mixed
+     */
+    private function fetchTeam($team = null)
+    {
+        if (is_null($team) || !Config::get('laratrust.use_teams')) {
+            return null;
+        }
+
+        $team = call_user_func_array(
+                    [Config::get('laratrust.team'), 'where'],
+                    ['name', $team]
+                )->first();
+        return is_null($team) ? $team : $team->getKey();
     }
 
     /**

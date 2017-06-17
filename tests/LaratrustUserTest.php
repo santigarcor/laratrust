@@ -390,7 +390,8 @@ class LaratrustUserTest extends UserTest
         Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->times(7)->ordered();
         Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->twice()->ordered();
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->andReturn('team_id')->times(14);
-        $user->shouldReceive('roles->wherePivot->count')->andReturn(0)->times(7);
+        Config::shouldReceive('get')->with('laratrust.role_foreign_key')->andReturn('role_id')->times(7);
+        $user->shouldReceive('roles->wherePivot->wherePivot->count')->andReturn(0)->times(7);
         $role->shouldReceive('getKey')->andReturn(1)->times(7);
         $user->shouldReceive('roles->attach')->with(1, m::anyOf(['team_id' => null], ['team_id' => 1]))->times(7)->ordered();
         $user->shouldReceive('roles->attach')->with(1, [])->twice()->ordered();
@@ -550,8 +551,8 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->times(2)->ordered();
-        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->times(2)->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->twice()->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->twice()->ordered();
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->andReturn('team_id')->times(6);
         $user->shouldReceive('roles')->andReturn($user)->times(4);
         $user->shouldReceive('sync')->with([
@@ -599,18 +600,19 @@ class LaratrustUserTest extends UserTest
         Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->times(7)->ordered();
         Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->twice()->ordered();
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->andReturn('team_id')->times(14);
-        $user->shouldReceive('permissions->wherePivot->count')->andReturn(0)->times(7);
+        Config::shouldReceive('get')->with('laratrust.permission_foreign_key')->andReturn('role_id')->times(7);
+        $user->shouldReceive('permissions->wherePivot->wherePivot->count')->andReturn(0)->times(7);
         $permission->shouldReceive('getKey')->andReturn(1)->times(7);
         $user->shouldReceive('permissions->attach')->with(1, m::anyOf(['team_id' => null], ['team_id' => 1]))->times(7)->ordered();
         $user->shouldReceive('permissions->attach')->with(1, [])->twice()->ordered();
         Cache::shouldReceive('forget')->times(18);
-        Config::shouldReceive('get')->with('laratrust.permission')->andReturn($permission)->times(1);
-        $permission->shouldReceive('where')->with('name', 'admin.users')->andReturn($permission)->times(1);
-        $permission->shouldReceive('firstOrFail')->andReturn($permission)->times(1);
-        $team->shouldReceive('getKey')->andReturn($team->id)->times(2);
-        Config::shouldReceive('get')->with('laratrust.team')->andReturn($team)->times(1);
-        $team->shouldReceive('where')->with('name', 'TeamA')->andReturn($team)->times(1);
-        $team->shouldReceive('firstOrFail')->andReturn($team)->times(1);
+        Config::shouldReceive('get')->with('laratrust.permission')->andReturn($permission)->once();
+        $permission->shouldReceive('where')->with('name', 'admin.users')->andReturn($permission)->once();
+        $permission->shouldReceive('firstOrFail')->andReturn($permission)->once();
+        $team->shouldReceive('getKey')->andReturn($team->id)->twice();
+        Config::shouldReceive('get')->with('laratrust.team')->andReturn($team)->once();
+        $team->shouldReceive('where')->with('name', 'TeamA')->andReturn($team)->once();
+        $team->shouldReceive('firstOrFail')->andReturn($team)->once();
 
         /*
         |------------------------------------------------------------
@@ -660,13 +662,13 @@ class LaratrustUserTest extends UserTest
         $user->shouldReceive('detach')->with(1)->times(9);
         Cache::shouldReceive('forget')->times(18);
         $permission->shouldReceive('getKey')->andReturn(1)->times(7);
-        Config::shouldReceive('get')->with('laratrust.permission')->andReturn($permission)->times(1);
-        $permission->shouldReceive('where')->with('name', 'admin.users')->andReturn($permission)->times(1);
-        $permission->shouldReceive('firstOrFail')->andReturn($permission)->times(1);
-        $team->shouldReceive('getKey')->andReturn($team->id)->times(2);
-        Config::shouldReceive('get')->with('laratrust.team')->andReturn($team)->times(1);
-        $team->shouldReceive('where')->with('name', 'TeamA')->andReturn($team)->times(1);
-        $team->shouldReceive('firstOrFail')->andReturn($team)->times(1);
+        Config::shouldReceive('get')->with('laratrust.permission')->andReturn($permission)->once();
+        $permission->shouldReceive('where')->with('name', 'admin.users')->andReturn($permission)->once();
+        $permission->shouldReceive('firstOrFail')->andReturn($permission)->once();
+        $team->shouldReceive('getKey')->andReturn($team->id)->twice();
+        Config::shouldReceive('get')->with('laratrust.team')->andReturn($team)->once();
+        $team->shouldReceive('where')->with('name', 'TeamA')->andReturn($team)->once();
+        $team->shouldReceive('firstOrFail')->andReturn($team)->once();
 
         /*
         |------------------------------------------------------------
@@ -758,8 +760,8 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->times(2)->ordered();
-        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->times(2)->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->twice()->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->twice()->ordered();
         Config::shouldReceive('get')->with('laratrust.team_foreign_key')->andReturn('team_id')->times(6);
         $user->shouldReceive('permissions')->andReturn($user)->times(4);
         $user->shouldReceive('sync')->with([
