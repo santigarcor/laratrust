@@ -63,7 +63,7 @@ class MakeRoleCommand extends GeneratorCommand
      */
     protected function getNameInput()
     {
-        return Config::get('laratrust.role', 'Role');
+        return Config::get('laratrust.models.role', 'Role');
     }
 
     /**

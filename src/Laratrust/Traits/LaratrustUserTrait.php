@@ -58,15 +58,15 @@ trait LaratrustUserTrait
     public function roles()
     {
         $roles = $this->morphToMany(
-            Config::get('laratrust.role'),
+            Config::get('laratrust.models.role'),
             'user',
-            Config::get('laratrust.role_user_table'),
-            Config::get('laratrust.user_foreign_key'),
-            Config::get('laratrust.role_foreign_key')
+            Config::get('laratrust.tables.role_user'),
+            Config::get('laratrust.foreign_keys.user'),
+            Config::get('laratrust.foreign_keys.role')
         );
         
         if (Config::get('laratrust.use_teams')) {
-            $roles->withPivot(Config::get('laratrust.team_foreign_key'));
+            $roles->withPivot(Config::get('laratrust.foreign_keys.team'));
         }
 
         return $roles;
@@ -80,15 +80,15 @@ trait LaratrustUserTrait
     public function permissions()
     {
         $permissions = $this->morphToMany(
-            Config::get('laratrust.permission'),
+            Config::get('laratrust.models.permission'),
             'user',
-            Config::get('laratrust.permission_user_table'),
-            Config::get('laratrust.user_foreign_key'),
-            Config::get('laratrust.permission_foreign_key')
+            Config::get('laratrust.tables.permission_user'),
+            Config::get('laratrust.foreign_keys.user'),
+            Config::get('laratrust.foreign_keys.permission')
         );
         
         if (Config::get('laratrust.use_teams')) {
-            $permissions->withPivot(Config::get('laratrust.team_foreign_key'));
+            $permissions->withPivot(Config::get('laratrust.foreign_keys.team'));
         }
 
         return $permissions;
@@ -339,7 +339,7 @@ trait LaratrustUserTrait
             if (
                     $this->$relationship()
                     ->wherePivot($this->teamForeignKey(), $team)
-                    ->wherePivot(Config::get("laratrust.{$objectType}_foreign_key"), $object)
+                    ->wherePivot(Config::get("laratrust.foreign_keys.{$objectType}"), $object)
                     ->count()
                 ) {
                 return $this;
@@ -695,7 +695,7 @@ trait LaratrustUserTrait
             return $object;
         } elseif (is_string($object)) {
             return call_user_func_array([
-                Config::get("laratrust.{$type}"), 'where'
+                Config::get("laratrust.models.{$type}"), 'where'
             ], ['name', $object])->firstOrFail()->getKey();
         }
 
@@ -711,7 +711,7 @@ trait LaratrustUserTrait
      */
     private function teamForeignKey()
     {
-        return Config::get('laratrust.team_foreign_key');
+        return Config::get('laratrust.foreign_keys.team');
     }
 
     /**
@@ -744,7 +744,7 @@ trait LaratrustUserTrait
         }
 
         $team = call_user_func_array(
-                    [Config::get('laratrust.team'), 'where'],
+                    [Config::get('laratrust.models.team'), 'where'],
                     ['name', $team]
                 )->first();
         return is_null($team) ? $team : $team->getKey();

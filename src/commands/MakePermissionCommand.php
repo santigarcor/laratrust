@@ -63,7 +63,7 @@ class MakePermissionCommand extends GeneratorCommand
      */
     protected function getNameInput()
     {
-        return Config::get('laratrust.permission', 'Permission');
+        return Config::get('laratrust.models.permission', 'Permission');
     }
 
     /**

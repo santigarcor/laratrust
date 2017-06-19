@@ -57,10 +57,10 @@ class MakeSeederCommand extends Command
      */
     protected function createSeeder()
     {
-        $permission = Config::get('laratrust.permission', 'App\Permission');
-        $role = Config::get('laratrust.role', 'App\Role');
-        $rolePermissions = Config::get('laratrust.permission_role_table');
-        $roleUsers = Config::get('laratrust.role_user_table');
+        $permission = Config::get('laratrust.models.permission', 'App\Permission');
+        $role = Config::get('laratrust.models.role', 'App\Role');
+        $rolePermissions = Config::get('laratrust.tables.permission_role');
+        $roleUsers = Config::get('laratrust.tables.role_user');
         $user = new Collection(Config::get('laratrust.user_models', ['App\User']));
         $user = $user->first();
 

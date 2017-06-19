@@ -25,10 +25,10 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         */
         $guard->shouldReceive('guest')->andReturn(true);
         Config::shouldReceive('get')
-            ->with('laratrust.middleware_handling', 'abort')
+            ->with('laratrust.middleware.handling', 'abort')
             ->andReturn('abort');
         Config::shouldReceive('get')
-            ->with('laratrust.middleware_params', '403')
+            ->with('laratrust.middleware.params', '403')
             ->andReturn('403');
 
         /*
@@ -65,9 +65,9 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
                 m::anyOf(true, false)
             )
             ->andReturn(false);
-        Config::shouldReceive('get')->with('laratrust.middleware_handling', 'abort')
+        Config::shouldReceive('get')->with('laratrust.middleware.handling', 'abort')
             ->andReturn('abort');
-        Config::shouldReceive('get')->with('laratrust.middleware_params', '403')
+        Config::shouldReceive('get')->with('laratrust.middleware.params', '403')
             ->andReturn('403');
 
         /*

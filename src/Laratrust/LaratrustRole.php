@@ -35,6 +35,6 @@ class LaratrustRole extends Model implements LaratrustRoleInterface
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->table = Config::get('laratrust.roles_table');
+        $this->table = Config::get('laratrust.tables.roles');
     }
 }

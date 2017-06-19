@@ -35,6 +35,6 @@ class LaratrustTeam extends Model implements LaratrustTeamInterface
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->table = Config::get('laratrust.teams_table');
+        $this->table = Config::get('laratrust.tables.teams');
     }
 }

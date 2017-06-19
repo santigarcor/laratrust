@@ -104,9 +104,9 @@ class LaratrustSeeder extends Seeder
     public function truncateLaratrustTables()
     {
 @if (Config::get('database.default') == 'pgsql')
-        DB::table('{{ config('laratrust.permission_role_table') }}')->truncate();
-        DB::table('{{ config('laratrust.permission_user_table') }}')->truncate();
-        DB::table('{{ config('laratrust.role_user_table') }}')->truncate();
+        DB::table('{{ config('laratrust.tables.permission_role') }}')->truncate();
+        DB::table('{{ config('laratrust.tables.permission_user') }}')->truncate();
+        DB::table('{{ config('laratrust.tables.role_user') }}')->truncate();
         $usersTable = (new \{{ $user }})->getTable();
         $rolesTable = (new \{{ $role }})->getTable();
         $permissionsTable = (new \{{ $permission }})->getTable();
@@ -115,18 +115,18 @@ class LaratrustSeeder extends Seeder
         DB::statement("TRUNCATE TABLE {$permissionsTable} CASCADE");
 @elseif(Config::get('database.default') == 'mysql')
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
-        DB::table('{{ config('laratrust.permission_role_table') }}')->truncate();
-        DB::table('{{ config('laratrust.permission_user_table') }}')->truncate();
-        DB::table('{{ config('laratrust.role_user_table') }}')->truncate();
+        DB::table('{{ config('laratrust.tables.permission_role') }}')->truncate();
+        DB::table('{{ config('laratrust.tables.permission_user') }}')->truncate();
+        DB::table('{{ config('laratrust.tables.role_user') }}')->truncate();
         \{{ $user }}::truncate();
         \{{ $role }}::truncate();
         \{{ $permission }}::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 @elseif(Config::get('database.default') == 'sqlsrv')
         DB::statement('EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all"');
-        DB::table('{{ config('laratrust.permission_role_table') }}')->truncate();
-        DB::table('{{ config('laratrust.permission_user_table') }}')->truncate();
-        DB::table('{{ config('laratrust.role_user_table') }}')->truncate();
+        DB::table('{{ config('laratrust.tables.permission_role') }}')->truncate();
+        DB::table('{{ config('laratrust.tables.permission_user') }}')->truncate();
+        DB::table('{{ config('laratrust.tables.role_user') }}')->truncate();
         \{{ $user }}::truncate();
         \{{ $role }}::truncate();
         \{{ $permission }}::truncate();

@@ -25,10 +25,10 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         */
         $guard->shouldReceive('guest')->andReturn(true);
         Config::shouldReceive('get')
-            ->with('laratrust.middleware_handling', 'abort')
+            ->with('laratrust.middleware.handling', 'abort')
             ->andReturn('abort');
         Config::shouldReceive('get')
-            ->with('laratrust.middleware_params', '403')
+            ->with('laratrust.middleware.params', '403')
             ->andReturn('403');
 
         /*
@@ -66,9 +66,9 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
                 m::anyOf(['validate_all' => true], ['validate_all' => false])
             )
             ->andReturn(false);
-        Config::shouldReceive('get')->with('laratrust.middleware_handling', 'abort')
+        Config::shouldReceive('get')->with('laratrust.middleware.handling', 'abort')
             ->andReturn('abort');
-        Config::shouldReceive('get')->with('laratrust.middleware_params', '403')
+        Config::shouldReceive('get')->with('laratrust.middleware.params', '403')
             ->andReturn('403');
 
         /*

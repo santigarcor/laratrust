@@ -25,10 +25,10 @@ trait LaratrustPermissionTrait
     public function roles()
     {
         return $this->belongsToMany(
-            Config::get('laratrust.role'),
-            Config::get('laratrust.permission_role_table'),
-            Config::get('laratrust.permission_foreign_key'),
-            Config::get('laratrust.role_foreign_key')
+            Config::get('laratrust.models.role'),
+            Config::get('laratrust.tables.permission_role'),
+            Config::get('laratrust.foreign_keys.permission'),
+            Config::get('laratrust.foreign_keys.role')
         );
     }
 
@@ -43,9 +43,9 @@ trait LaratrustPermissionTrait
         return $this->morphedByMany(
             Config::get('laratrust.user_models')[$relationship],
             'user',
-            Config::get('laratrust.permission_user_table'),
-            Config::get('laratrust.permission_foreign_key'),
-            Config::get('laratrust.user_foreign_key')
+            Config::get('laratrust.tables.permission_user'),
+            Config::get('laratrust.foreign_keys.permission'),
+            Config::get('laratrust.foreign_keys.user')
         );
     }
 
@@ -59,7 +59,7 @@ trait LaratrustPermissionTrait
     public static function bootLaratrustPermissionTrait()
     {
         static::deleting(function ($permission) {
-            if (!method_exists(Config::get('laratrust.permission'), 'bootSoftDeletes')) {
+            if (!method_exists(Config::get('laratrust.models.permission'), 'bootSoftDeletes')) {
                 $permission->roles()->sync([]);
             }
         });

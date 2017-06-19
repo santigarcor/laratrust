@@ -35,6 +35,6 @@ class LaratrustPermission extends Model implements LaratrustPermissionInterface
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->table = Config::get('laratrust.permissions_table');
+        $this->table = Config::get('laratrust.tables.permissions');
     }
 }

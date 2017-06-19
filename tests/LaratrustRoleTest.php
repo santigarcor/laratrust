@@ -31,11 +31,11 @@ class LaratrustRoleTest extends UserTest
 
         Config::shouldReceive('get')->once()->with('laratrust.user_models')
             ->andReturn(['users' => 'user_model']);
-        Config::shouldReceive('get')->once()->with('laratrust.role_user_table')
+        Config::shouldReceive('get')->once()->with('laratrust.tables.role_user')
             ->andReturn('assigned_users_table_name');
-        Config::shouldReceive('get')->once()->with('laratrust.role_foreign_key')
+        Config::shouldReceive('get')->once()->with('laratrust.foreign_keys.role')
             ->andReturn('role_id');
-        Config::shouldReceive('get')->once()->with('laratrust.user_foreign_key')
+        Config::shouldReceive('get')->once()->with('laratrust.foreign_keys.user')
             ->andReturn('user_id');
 
         /*
@@ -95,13 +95,13 @@ class LaratrustRoleTest extends UserTest
             ->andReturn($belongsToMany)
             ->once();
 
-        Config::shouldReceive('get')->once()->with('laratrust.permission')
+        Config::shouldReceive('get')->once()->with('laratrust.models.permission')
             ->andReturn('permission_table_name');
-        Config::shouldReceive('get')->once()->with('laratrust.permission_role_table')
+        Config::shouldReceive('get')->once()->with('laratrust.tables.permission_role')
             ->andReturn('assigned_permissions_table_name');
-        Config::shouldReceive('get')->once()->with('laratrust.role_foreign_key')
+        Config::shouldReceive('get')->once()->with('laratrust.foreign_keys.role')
             ->andReturn('role_id');
-        Config::shouldReceive('get')->once()->with('laratrust.permission_foreign_key')
+        Config::shouldReceive('get')->once()->with('laratrust.foreign_keys.permission')
             ->andReturn('permission_id');
 
         /*
@@ -302,10 +302,10 @@ class LaratrustRoleTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-        Config::shouldReceive('get')->with('laratrust.permission')->once()->andReturn('App\Permission');
-        Config::shouldReceive('get')->with('laratrust.permission_role_table')->once()->andReturn('permission_role');
-        Config::shouldReceive('get')->with('laratrust.role_foreign_key')->once()->andReturn('role_id');
-        Config::shouldReceive('get')->with('laratrust.permission_foreign_key')->once()->andReturn('permission_id');
+        Config::shouldReceive('get')->with('laratrust.models.permission')->once()->andReturn('App\Permission');
+        Config::shouldReceive('get')->with('laratrust.tables.permission_role')->once()->andReturn('permission_role');
+        Config::shouldReceive('get')->with('laratrust.foreign_keys.role')->once()->andReturn('role_id');
+        Config::shouldReceive('get')->with('laratrust.foreign_keys.permission')->once()->andReturn('permission_id');
 
         $relationship->shouldReceive('get')->andReturn($role->permissions)->once();
         $role->shouldReceive('belongsToMany')->andReturn($relationship)->once();

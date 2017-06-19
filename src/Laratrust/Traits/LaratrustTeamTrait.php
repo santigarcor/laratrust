@@ -28,9 +28,9 @@ trait LaratrustTeamTrait
         return $this->morphedByMany(
             Config::get('laratrust.user_models')[$relationship],
             'user',
-            Config::get('laratrust.role_user_table'),
-            Config::get('laratrust.team_foreign_key'),
-            Config::get('laratrust.user_foreign_key')
+            Config::get('laratrust.tables.role_user'),
+            Config::get('laratrust.foreign_keys.team'),
+            Config::get('laratrust.foreign_keys.user')
         );
     }
 

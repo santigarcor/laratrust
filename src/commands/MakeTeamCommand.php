@@ -63,7 +63,7 @@ class MakeTeamCommand extends GeneratorCommand
      */
     protected function getNameInput()
     {
-        return Config::get('laratrust.team', 'Team');
+        return Config::get('laratrust.models.team', 'Team');
     }
 
     /**
