@@ -13,7 +13,7 @@ class LaratrustUpgradeTables extends Migration
     public function up()
     {
         // Create table for storing teams
-        Schema::create('{{ $laratrust['teams_table'] }}', function (Blueprint $table) {
+        Schema::create('{{ $laratrust['tables']['teams'] }}', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('display_name')->nullable();
@@ -21,39 +21,39 @@ class LaratrustUpgradeTables extends Migration
             $table->timestamps();
         });
 
-        Schema::table('{{ $laratrust['role_user_table'] }}', function (Blueprint $table) {
+        Schema::table('{{ $laratrust['tables']['role_user'] }}', function (Blueprint $table) {
             // Drop role foreign key and primary key
-            $table->dropForeign(['{{ $laratrust['role_foreign_key'] }}']);
-            $table->dropPrimary(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}', 'user_type']);
+            $table->dropForeign(['{{ $laratrust['foreign_keys']['role'] }}']);
+            $table->dropPrimary(['{{ $laratrust['foreign_keys']['user'] }}', '{{ $laratrust['foreign_keys']['role'] }}', 'user_type']);
 
-            // Add {{ $laratrust['team_foreign_key'] }} column
-            $table->integer('{{ $laratrust['team_foreign_key'] }}')->unsigned()->nullable();
+            // Add {{ $laratrust['foreign_keys']['team'] }} column
+            $table->integer('{{ $laratrust['foreign_keys']['team'] }}')->unsigned()->nullable();
 
             // Create foreign keys
-            $table->foreign('{{ $laratrust['role_foreign_key'] }}')->references('id')->on('{{ $laratrust['roles_table'] }}')
+            $table->foreign('{{ $laratrust['foreign_keys']['role'] }}')->references('id')->on('{{ $laratrust['tables']['roles'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('{{ $laratrust['team_foreign_key'] }}')->references('id')->on('{{ $laratrust['teams_table'] }}')
+            $table->foreign('{{ $laratrust['foreign_keys']['team'] }}')->references('id')->on('{{ $laratrust['tables']['teams'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
 
             // Create a unique key
-            $table->unique(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['role_foreign_key'] }}', 'user_type', '{{ $laratrust['team_foreign_key'] }}']);
+            $table->unique(['{{ $laratrust['foreign_keys']['user'] }}', '{{ $laratrust['foreign_keys']['role'] }}', 'user_type', '{{ $laratrust['foreign_keys']['team'] }}']);
         });
 
-        Schema::table('{{ $laratrust['permission_user_table'] }}', function (Blueprint $table) {
+        Schema::table('{{ $laratrust['tables']['permission_user'] }}', function (Blueprint $table) {
            // Drop permission foreign key and primary key
-            $table->dropForeign(['{{ $laratrust['permission_foreign_key'] }}']);
-            $table->dropPrimary(['{{ $laratrust['permission_foreign_key'] }}', '{{ $laratrust['user_foreign_key'] }}', 'user_type']);
+            $table->dropForeign(['{{ $laratrust['foreign_keys']['permission'] }}']);
+            $table->dropPrimary(['{{ $laratrust['foreign_keys']['permission'] }}', '{{ $laratrust['foreign_keys']['user'] }}', 'user_type']);
 
-            $table->foreign('{{ $laratrust['permission_foreign_key'] }}')->references('id')->on('{{ $laratrust['permissions_table'] }}')
+            $table->foreign('{{ $laratrust['foreign_keys']['permission'] }}')->references('id')->on('{{ $laratrust['tables']['permissions'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
 
-            // Add {{ $laratrust['team_foreign_key'] }} column
-            $table->integer('{{ $laratrust['team_foreign_key'] }}')->unsigned()->nullable();
+            // Add {{ $laratrust['foreign_keys']['team'] }} column
+            $table->integer('{{ $laratrust['foreign_keys']['team'] }}')->unsigned()->nullable();
 
-            $table->foreign('{{ $laratrust['team_foreign_key'] }}')->references('id')->on('{{ $laratrust['teams_table'] }}')
+            $table->foreign('{{ $laratrust['foreign_keys']['team'] }}')->references('id')->on('{{ $laratrust['tables']['teams'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
 
-            $table->unique(['{{ $laratrust['user_foreign_key'] }}', '{{ $laratrust['permission_foreign_key'] }}', 'user_type', '{{ $laratrust['team_foreign_key'] }}']);
+            $table->unique(['{{ $laratrust['foreign_keys']['user'] }}', '{{ $laratrust['foreign_keys']['permission'] }}', 'user_type', '{{ $laratrust['foreign_keys']['team'] }}']);
         });
     }
 

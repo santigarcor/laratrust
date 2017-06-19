@@ -96,17 +96,11 @@ class SetupTeamsCommand extends Command
     {
         $migrationPath = $this->getMigrationPath();
 
-        $userModel   = Config::get('auth.providers.users.model');
-        $user = new $userModel;
-        $laratrust = Config::get('laratrust');
-
-        $data = compact(
-            'user',
-            'laratrust'
-        );
-
         $this->call('view:clear');
-        $output = $this->laravel->view->make('laratrust::generators.setup-teams')->with($data)->render();
+        $output = $this->laravel->view
+            ->make('laratrust::generators.setup-teams')
+            ->with(['laratrust' => Config::get('laratrust')])
+            ->render();
 
         if (!file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
             fwrite($fs, $output);

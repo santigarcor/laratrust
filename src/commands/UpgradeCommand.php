@@ -27,7 +27,7 @@ class UpgradeCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Creates a migration to upgrade laratrust from version 3.2 to 3.3.';
+    protected $description = 'Creates a migration to upgrade laratrust from version 3.3 to 4.0.';
 
     /**
      * Suffix of the migration name.
@@ -87,17 +87,11 @@ class UpgradeCommand extends Command
     {
         $migrationPath = $this->getMigrationPath();
 
-        $userModel   = Config::get('auth.providers.users.model');
-        $user = new $userModel;
-        $laratrust = Config::get('laratrust');
-
-        $data = compact(
-            'user',
-            'laratrust'
-        );
-
         $this->call('view:clear');
-        $output = $this->laravel->view->make('laratrust::generators.upgrade-migration')->with($data)->render();
+        $output = $this->laravel->view
+            ->make('laratrust::generators.upgrade-migration')
+            ->with(['laratrust' => Config::get('laratrust')])
+            ->render();
 
         if (!file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
             fwrite($fs, $output);

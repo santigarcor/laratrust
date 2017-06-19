@@ -91,10 +91,11 @@ class MigrationCommand extends Command
     protected function createMigration()
     {
         $migrationPath = $this->getMigrationPath();
-        $laratrust = Config::get('laratrust');
-        $data = compact('laratrust');
 
-        $output = $this->laravel->view->make('laratrust::generators.migration')->with($data)->render();
+        $output = $this->laravel->view
+            ->make('laratrust::generators.migration')
+            ->with(['laratrust' => Config::get('laratrust')])
+            ->render();
 
         if (!file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
             fwrite($fs, $output);
@@ -114,20 +115,13 @@ class MigrationCommand extends Command
      */
     protected function generateMigrationMessage()
     {
-        $laratrust = Config::get('laratrust');
-        $tables = Collection::make([
-            "'{$laratrust['roles_table']}'",
-            "'{$laratrust['permissions_table']}'",
-            "'{$laratrust['permission_role_table']}'",
-            "'{$laratrust['role_user_table']}'",
-            "'{$laratrust['permission_user_table']}'",
-        ]);
+        $tables = Collection::make(Config::get('laratrust.tables'))
+            ->reject(function ($value, $key) {
+                return $key == 'teams' && !Config::get('laratrust.use_teams');
+            })
+            ->sort();
 
-        if ($laratrust['use_teams']) {
-            $tables->push("'{$laratrust['teams_table']}'");
-        }
-
-        return "A migration that creates {$tables->implode(',')} "
+        return "A migration that creates {$tables->implode(', ')} "
             . "tables will be created in database/migrations directory";
     }
 
