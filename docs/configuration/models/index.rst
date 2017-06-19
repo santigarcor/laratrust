@@ -5,4 +5,5 @@ Models
 
     role
     permission
+    team
     user

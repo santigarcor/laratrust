@@ -6,6 +6,9 @@ Laratrust comes with a database seeder, this seeder helps you filling the permis
 .. NOTE::
     Laratrust now accepts multiple user models so the seeder is going to work with the first user model inside the user_models array.
 
+.. NOTE::
+    Laratrust now accepts has a teams feature, the seeder doesn't support it.
+
 To generate the seeder you have to run::
 
     php artisan laratrust:seeder

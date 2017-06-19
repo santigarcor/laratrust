@@ -1,7 +1,15 @@
 Laratrust Docs
 ==============
 
-.. image:: img/laratrust.png
+.. raw:: html
+
+    <p style="text-align: center;">
+
+.. image:: img/laratrust.svg
+
+.. raw:: html
+
+    </p>
 
 Table of Contents:
 ==================

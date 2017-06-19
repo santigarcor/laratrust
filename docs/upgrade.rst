@@ -1,32 +1,42 @@
-Upgrade from 3.1 to 3.2
+Upgrade from 3.3 to 4.0
 =======================
 
-In order to upgrade from Laratrust 3.1 to 3.2 you have to follow these steps:
+In order to upgrade from Laratrust 3.3 to 4.0 you have to follow these steps:
 
-1. Change your ``composer.json`` to require the 3.2 version of laratrust::
-    
-    "santigarcor/laratrust": "3.2.*"
+1. Change your ``composer.json`` to require the 4.0 version of laratrust::
+
+    "santigarcor/laratrust": "4.0.*"
 
 2. Run ``composer update`` to update the source code.
 
-3. Add in your ``config/laratrust.php`` file this block:
+3. Update your ``config/laratrust.php``:
 
-   .. code-block:: php
+    3.1. Backup your ``config/laratrust.php`` configuration values.
 
-        'user_models' => [
-            'users' => 'App\User',
-        ],
+    3.2. Delete the ``config/laratrust.php`` file.
 
-   And configure it with you user models information according to the new :ref:`multiple-user-models` explanation.
+    3.3. Run ``php artisan vendor:publish --tag=laratrust``.
 
-4. Run ``php artisan laratrust:add-trait`` to add the ``LaratrustUserTrait`` to the user models.
+    3.4. Update the ``config/laratrust.php`` file with your old values.
 
-5. Run ``php artisan laratrust:upgrade`` to create the migration with the database upgrade.
+    .. NOTE::
+        Leave the ``use_teams`` key in false during the upgrade proccess.
 
-6. Run ``php artisan migrate`` to apply the migration created in the previous step.
+4. If you use any values of the ``config/laratrust.php`` in your application code, update those values with the new file structure.
 
-7. Delete the ``LaratrustSeeder.php`` file and run ``php artisan laratrust:seeder``.
+5. If you use the ability middleware and pass a the third argument (require all), please change it like this::
 
-8. Run ``composer dump-autoload``.
+    // From
+    'middleware' => ['ability:admin|owner,create-post|edit-user,true']
+    // To
+    'middleware' => ['ability:admin|owner,create-post|edit-user,require_all']
 
-Now you can use the 3.2 version without any problem.
+6. Run ``php artisan laratrust:upgrade`` to create the migration with the database upgrade.
+
+7. Run ``php artisan migrate`` to apply the migration created in the previous step.
+
+8. Delete the ``LaratrustSeeder.php`` file and run ``php artisan laratrust:seeder``.
+
+9. Run ``composer dump-autoload``.
+
+Now you can use the 4.0 version without any problem.

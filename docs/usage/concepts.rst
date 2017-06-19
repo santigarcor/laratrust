@@ -190,6 +190,27 @@ You can also use placeholders (wildcards) to check any matching permission by do
    // match any permission about users
    $user->can('*_users'); // true
 
+Magic can method
+^^^^^^^^^^^^^^^^
+
+You can check if a user has some permissions by using the magic can method:
+
+.. code-block:: php
+
+   $user->canCreateUsers();
+   // Same as $user->can('create-users');
+
+If you want to change the case used when checking for the permission, you can change the ``magic_can_method_case`` value in your ``config/laratrust.php`` file.
+
+.. code-block:: php
+
+   // config/laratrust.php
+   'magic_can_method_case' => 'snake_case', // The default value is 'kebab_case'
+
+   // In you controller
+   $user->canCreateUsers();
+   // Same as $user->can('create_users');
+
 User ability
 ------------
 
@@ -261,6 +282,50 @@ The ``Laratrust`` class has a shortcut to ``ability()`` for the currently logged
 
    Auth::user()->ability('admin,owner', 'create-post,edit-user');
 
+Retrieving Relationships
+------------------------
+
+The ``LaratrustUserTrait`` has the ``roles`` and ``permissions`` relationship, that return a ``MorphToMany`` relationships.
+
+The ``roles`` relationship has all the roles attached to the user.
+
+The ``permissions`` relationship has all the direct permissions attached to the user.
+
+If you want to retrieve all the user permissions, you can use the ``allPermissions`` method. It returns a collection with all unified the permissions related to the user (via the roles and permissions relationships).
+
+.. code-block:: php
+
+   dump($user->allPermissions());
+   /*
+    Illuminate\Database\Eloquent\Collection {#646
+     #items: array:2 [
+       0 => App\Permission {#662
+         ...
+         #attributes: array:6 [
+           "id" => "1"
+           "name" => "edit-users"
+           "display_name" => "Edit Users"
+           "description" => null
+           "created_at" => "2017-06-19 04:58:30"
+           "updated_at" => "2017-06-19 04:58:30"
+         ]
+         ...
+       }
+       1 => App\Permission {#667
+         ...
+         #attributes: array:6 [
+           "id" => "2"
+           "name" => "manage-users"
+           "display_name" => "Manage Users"
+           "description" => null
+           "created_at" => "2017-06-19 04:58:30"
+           "updated_at" => "2017-06-19 04:58:30"
+         ]
+         ...
+       }
+     ]
+   }
+    */
 Objects's Ownership
 -----------------
 

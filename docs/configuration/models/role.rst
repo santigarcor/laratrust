@@ -5,7 +5,9 @@ Create a Role model inside ``app/Role.php`` using the following example:
 
 .. code-block:: php
 
-    <?php namespace App;
+    <?php
+
+    namespace App;
 
     use Laratrust\LaratrustRole;
 
