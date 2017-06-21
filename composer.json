@@ -40,5 +40,15 @@
         "sort-packages": true
     },
     "prefer-stable": true,
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Laratrust\\LaratrustServiceProvider"
+            ],
+            "aliases": {
+                "Laratrust": "Laratrust\\Laratrust"
+            }
+        }
+    }
 }
