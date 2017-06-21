@@ -42,7 +42,7 @@ For more complex situations use ``ability`` middleware which accepts 3 parameter
 Middleware Return
 ^^^^^^^^^^^^^^^^^
 
-The middleware supports two kinds of returns in case the check fails. You can configure the return type and the value in the ``config/laratrust.php`` file.
+The middleware supports two types of returns in case the check fails. You can configure the return type and the value in the ``config/laratrust.php`` file.
 
 Abort
 -----

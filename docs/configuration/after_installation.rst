@@ -9,14 +9,14 @@ In your ``config/laratrust.php`` file you will find all the package configuratio
 Teams Feature
 -------------
 
-If you want to use the teams feature that allows you to attach roles and permissions to an user depending on a team, you must change the ``use_teams`` key value to true in your ``config/laratrust.php`` file.
+If you want to use the teams feature that allows you to attach roles and permissions to an user depending on a team, you must change the ``use_teams`` key value to ``true`` in your ``config/laratrust.php`` file.
 
 .. _multiple-user-models:
 
 Multiple User Models
 --------------------
 
-Inside the ``config/laratrust.php`` file you will find an ``user_models`` array, it contains the information about the multiple user models and the name of the relationships inside the ``Role`` and ``Permission`` models. For example:
+In the ``config/laratrust.php`` file you will find an ``user_models`` array, it contains the information about the multiple user models and the name of the relationships inside the ``Role`` and ``Permission`` models. For example:
 
 .. code-block:: php
 
@@ -25,7 +25,7 @@ Inside the ``config/laratrust.php`` file you will find an ``user_models`` array,
     ],
 
 .. NOTE::
-    The value of the ``key`` inside the ``key => value`` pair defines the name of the relationship inside the ``Role`` and ``Permission`` models.
+    The value of the ``key`` in the ``key => value`` pair defines the name of the relationship inside the ``Role`` and ``Permission`` models.
 
 It means that there is only one user model using Laratrust, and the relationship with the ``Role`` and ``Permission`` models is going to be called like this:
 
@@ -35,9 +35,9 @@ It means that there is only one user model using Laratrust, and the relationship
     $role->users();
 
 .. NOTE::
-    Inside the ``role_user`` and ``permission_user`` table the ``user_type`` column will be set with the user's fully qualified class name, as the `polymorphic <https://laravel.com/docs/eloquent-relationships#polymorphic-relations>`_ relations describe it in Laravel docs.
+    Inside the ``role_user`` and ``permission_user`` tables the ``user_type`` column will be set with the user's fully qualified class name, as the `polymorphic <https://laravel.com/docs/eloquent-relationships#polymorphic-relations>`_ relations describe it in Laravel docs.
 
-    So if you want to use the MorphMap feature just change the ``use_morph_map`` value to ``true`` inside Laratrust's configuration file.
+    If you want to use the MorphMap feature just change the ``use_morph_map`` value to ``true`` in Laratrust's configuration file.
 
 Automatic setup (Recommended)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -291,7 +291,7 @@ The ``roles`` relationship has all the roles attached to the user.
 
 The ``permissions`` relationship has all the direct permissions attached to the user.
 
-If you want to retrieve all the user permissions, you can use the ``allPermissions`` method. It returns a collection with all unified the permissions related to the user (via the roles and permissions relationships).
+If you want to retrieve all the user permissions, you can use the ``allPermissions`` method. It returns a unified collection with all the permissions related to the user (via the roles and permissions relationships).
 
 .. code-block:: php
 
@@ -403,7 +403,7 @@ The ``Laratrust`` class has a shortcut to ``owns()``, ``canAndOwns`` and ``hasRo
 Ownable Interface
 ^^^^^^^^^^^^^^^^^
 
-If the object ownership is witha a more complex logic you can implement the Ownable interface so you can use the ``owns``, ``canAndOwns`` and ``hasRoleAndOwns`` methods in these cases:
+If the object ownership is resolved with a more complex logic you can implement the Ownable interface so you can use the ``owns``, ``canAndOwns`` and ``hasRoleAndOwns`` methods in these cases:
 
 .. code-block:: php
 

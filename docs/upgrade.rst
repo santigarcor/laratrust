@@ -1,6 +1,9 @@
 Upgrade from 3.3 to 4.0
 =======================
 
+.. IMPORTANT::
+    Laratrust 4.0 requires Laravel >= 5.2.0.
+
 In order to upgrade from Laratrust 3.3 to 4.0 you have to follow these steps:
 
 1. Change your ``composer.json`` to require the 4.0 version of laratrust::
@@ -24,7 +27,7 @@ In order to upgrade from Laratrust 3.3 to 4.0 you have to follow these steps:
 
 4. If you use any values of the ``config/laratrust.php`` in your application code, update those values with the new file structure.
 
-5. If you use the ability middleware and pass a the third argument (require all), please change it like this::
+5. If you use the ability middleware and you pass the third argument (require all), please change it like this::
 
     // From
     'middleware' => ['ability:admin|owner,create-post|edit-user,true']

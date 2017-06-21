@@ -5,6 +5,9 @@ Installation
 
         composer require "santigarcor/laratrust:4.0.*"
 
+.. NOTE::
+    If you are using Laravel 5.5 you don't need to to steps 2 and 3.
+
 2. Then in your ``config/app.php`` add the following to the providers array::
 
     Laratrust\LaratrustServiceProvider::class,
