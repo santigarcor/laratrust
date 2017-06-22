@@ -70,10 +70,10 @@ class SetupTeamsCommand extends Command
 
         $this->line('');
 
-        $this->info("Creating migration...");
+        $this->line("Creating migration");
 
         if ($this->createMigration()) {
-            $this->info("Migration successfully created!");
+            $this->info("Migration created successfully.");
         } else {
             $this->error(
                 "Couldn't create migration.\n".
@@ -81,7 +81,7 @@ class SetupTeamsCommand extends Command
             );
         }
 
-        $this->info('Creating Team model...');
+        $this->line('Creating Team model');
         $this->call('laratrust:team');
 
         $this->line('');

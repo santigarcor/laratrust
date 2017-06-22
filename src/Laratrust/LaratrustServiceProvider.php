@@ -51,7 +51,7 @@ class LaratrustServiceProvider extends ServiceProvider
     {
         // Register published configuration.
         $this->publishes([
-            __DIR__.'/../config/config.php' => config_path('laratrust.php'),
+            __DIR__.'/../config/laratrust.php' => config_path('laratrust.php'),
             __DIR__.'/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
         ], 'laratrust');
 
@@ -189,7 +189,7 @@ class LaratrustServiceProvider extends ServiceProvider
     private function mergeConfig()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/config.php',
+            __DIR__.'/../config/laratrust.php',
             'laratrust'
         );
     }
