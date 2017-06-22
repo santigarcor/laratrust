@@ -7,3 +7,4 @@ Configuration
     migrations
     models/index
     seeder
+    teams

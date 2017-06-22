@@ -41,9 +41,9 @@ Now we just need to add \ ``Permission``\s to those \ ``Role``\s:
 Role Permissions Assignment & Removal
 -------------------------------------
 By using the ``LaratrustRoleTrait`` we can do the following:
-   
+
 Assignment
-^^^^^^^^^^  
+^^^^^^^^^^
 
 .. code-block:: php
 
@@ -74,7 +74,7 @@ With both roles created let's assign them to the users.
 Thanks to the ``LaratrustUserTrait`` this is as easy as:
 
 Assignment
-^^^^^^^^^^  
+^^^^^^^^^^
 
 .. code-block:: php
 
@@ -327,7 +327,7 @@ If you want to retrieve all the user permissions, you can use the ``allPermissio
    }
     */
 Objects's Ownership
------------------
+-------------------
 
 If you need to check if the user owns an object you can use the user function ``owns``:
 
@@ -353,8 +353,8 @@ If you want to change the foreign key name to check for, you can pass a second a
       ...
    }
 
-Permissions, Roles and Ownership Checks
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Permissions, Roles & Ownership Checks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 If you want to check if an user can do something or has a role, and also is the owner of an object you can use the ``canAndOwns`` and ``hasRoleAndOwns`` methods:
 
@@ -429,3 +429,136 @@ And then in your code you can simply do:
    $user = User::find(1);
    $theObject = new SomeOwnedObject;
    $user->owns($theObject);            // This will return true or false depending of what the ownerKey method returns
+
+.. _teams-concepts:
+
+Teams
+-----
+
+.. NOTE::
+    The teams feature is **optional**, please go to the :ref:`teams-configuration` configuration in order to use th feature.
+
+Roles Assignment & Removal
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The roles assignment and removal are the same, but this time you can pass the team as an optional parameter.
+
+.. code-block:: php
+
+   $team = Team::where('name', 'my-awesome-team')->first();
+   $admin = Role::where('name', 'admin')->first();
+
+   $user->attachRole($admin, $team); // parameter can be an object, array, id or the string name.
+
+This will attach the ``admin`` role to the user but only within the ``my-awesome-team`` team.
+
+You can also attach multiple roles to the user within a team:
+
+.. code-block:: php
+
+   $team = Team::where('name', 'my-awesome-team')->first();
+   $admin = Role::where('name', 'admin')->first();
+   $user = Role::where('name', 'user')->first();
+
+   $user->attachRoles([$admin, $user], $team); // parameter can be an object, array, id or the string name.
+
+To remove the roles you can do:
+
+.. code-block:: php
+
+   $user->detachRole($admin, $team); // parameter can be an object, array, id or the string name.
+   $user->detachRoles([$admin, $user], $team); // parameter can be an object, array, id or the string name.
+
+You can also sync roles within a group:
+
+.. code-block:: php
+
+   $user->syncRoles([$admin, $user], $team); // parameter can be an object, array, id or the string name.
+
+Permissions Assignment & Removal
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The permissions assignment and removal are the same, but this time you can pass the team as an optional parameter.
+
+.. code-block:: php
+
+   $team = Team::where('name', 'my-awesome-team')->first();
+   $editUser = Permission::where('name', 'edit-user')->first();
+
+   $user->attachPermission($editUser, $team); // parameter can be an object, array, id or the string name.
+
+This will attach the ``edit-user`` permission to the user but only within the ``my-awesome-team`` team.
+
+You can also attach multiple permissions to the user within a team:
+
+.. code-block:: php
+
+   $team = Team::where('name', 'my-awesome-team')->first();
+   $editUser = Permission::where('name', 'edit-user')->first();
+   $manageUsers = Permission::where('name', 'manage-users')->first();
+
+   $user->attachPermission([$editUser, $manageUsers], $team); // parameter can be an object, array, id or the string name.
+
+To remove the permissions you can do:
+
+.. code-block:: php
+
+   $user->detachPermission($editUser, $team); // parameter can be an object, array, id or the string name.
+   $user->detachPermissions([$editUser, $manageUsers], $team); // parameter can be an object, array, id or the string name.
+
+You can also sync permissions within a group:
+
+.. code-block:: php
+
+   $user->syncRoles([$editUser, $manageUsers], $team); // parameter can be an object, array, id or the string name.
+
+Checking Roles & Permissions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The roles and permissions verification is the same, but this time you can pass the team parameter.
+
+Check roles:
+
+.. code-block:: php
+
+   $user->hasRole('admin', 'my-awesome-team');
+   $user->hasRole(['admin', 'user'], 'my-awesome-team', true);
+
+Check permissions:
+
+.. code-block:: php
+
+   $user->can('edit-user', 'my-awesome-team');
+   $user->can(['edit-user', 'manage-users'], 'my-awesome-team', true);
+
+User Ability
+^^^^^^^^^^^^
+
+The user ability is the same, but this time you can pass the team parameter.
+
+.. code-block:: php
+  
+   $options = [
+       'requireAll' => true | false (Default: false),
+       'foreignKeyName'  => 'canBeAnyString' (Default: null)
+   ];
+
+   $user->ability(['admin'], ['edit-user'], 'my-awesome-team');
+   $user->ability(['admin'], ['edit-user'], 'my-awesome-team', $options);
+
+Permissions, Roles & Ownership Checks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The permissions, roles and ownership checks work the same, but this time you can pass the team in the options array.
+
+.. code-block:: php
+   
+   $options = [
+      'team' => 'my-awesome-team',
+      'requireAll' => false,
+      'foreignKeyName' => 'writer_id'
+   ];
+
+   $post = Post::find(1);
+   $user->canAndOwns(['edit-post', 'delete-post'], $post, $options);
+   $user->hasRoleAndOwns(['admin', 'writer'], $post, $options);
