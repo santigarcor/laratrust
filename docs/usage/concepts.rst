@@ -146,12 +146,15 @@ Now we can check for roles and permissions simply by doing:
 .. NOTE::
    If you want to use the Authorizable trait alongside Laratrust please check :ref:`troubleshooting`.
 
-Both ``hasRole()`` and ``can()`` can receive an array of roles & permissions to check:
+Both ``can()`` and ``hasRole()`` can receive an array or pipe separated string of roles & permissions to check:
 
 .. code-block:: php
 
    $user->hasRole(['owner', 'admin']);       // true
    $user->can(['edit-user', 'create-post']); // true
+
+   $user->hasRole('owner|admin');       // true
+   $user->can('edit-user|create-post'); // true
 
 By default, if any of the roles or permissions are present for a user then the method will return true.
 Passing ``true`` as a second parameter instructs the method to require **all** of the items:
@@ -163,7 +166,7 @@ Passing ``true`` as a second parameter instructs the method to require **all** o
    $user->can(['edit-user', 'create-post']);       // true
    $user->can(['edit-user', 'create-post'], true); // false, user does not have edit-user permission
 
-You can have as many \ ``Role``\s as you want for each ``User`` and vice versa.
+You can have as many \ ``Role``\s as you want for each ``User`` and vice versa. Also you can have as many direct \ ``Permissions``\s as you want for each ``User`` and vice versa.
 
 The ``Laratrust`` class has shortcuts to both ``can()`` and ``hasRole()`` for the currently logged in user:
 
@@ -326,6 +329,21 @@ If you want to retrieve all the user permissions, you can use the ``allPermissio
      ]
    }
     */
+
+If you want to retrieve the users that have some role you can use the query scope ``whereRoleIs``:
+
+.. code-block:: php
+
+   // This will return the users with 'admin' role.
+   $users = User::whereRoleIs('admin')->get();
+
+Also if you want to retrieve the users that have some permission you can use the query scope ``wherePermissionIs``:
+
+.. code-block:: php
+
+   // This will return the users with 'edit-user' permission.
+   $users = User::wherePermissionIs('edit-user')->get();
+
 Objects's Ownership
 -------------------
 

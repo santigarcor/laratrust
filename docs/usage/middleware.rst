@@ -20,6 +20,9 @@ If you use the pipe symbol it will be an *OR* operation:
     'middleware' => ['role:admin|root']
     // $user->hasRole(['admin', 'root']);
 
+    'middleware' => ['permission:edit-post|edit-user']
+    // $user->hasRole(['edit-post', 'edit-user']);
+
 To emulate *AND* functionality you can do:
 
 .. code-block:: php
@@ -27,10 +30,8 @@ To emulate *AND* functionality you can do:
     'middleware' => ['role:owner|writer,require_all']
     // $user->hasRole(['owner', 'writer'], true);
 
-    // OR
-
-    'middleware' => ['role:owner', 'role:writer']
-    // $user->hasRole('owner') && $user->hasRole('writer')
+    'middleware' => ['permission:edit-post|edit-user,require_all']
+    // $user->hasRole(['edit-post', 'edit-user'], true);
 
 For more complex situations use ``ability`` middleware which accepts 3 parameters: roles, permissions, validate_all:
 
@@ -38,6 +39,26 @@ For more complex situations use ``ability`` middleware which accepts 3 parameter
 
     'middleware' => ['ability:admin|owner,create-post|edit-user,require_all']
     // $user->ability(['admin', 'owner'], ['create-post', 'edit-user'], true)
+
+
+Teams
+-----
+
+If you are using the teams feature and want to use the middleware checking for your teams, you can use:
+
+.. code-block:: php
+
+    'middleware' => ['role:admin|root,my-awesome-team,require_all']
+    // $user->hasRole(['admin', 'root'], 'my-awesome-team', true);
+
+    'middleware' => ['permission:edit-post|edit-user,my-awesome-team,require_all']
+    // $user->hasRole(['edit-post', 'edit-user'], 'my-awesome-team', true);
+
+    'middleware' => ['ability:admin|owner,create-post|edit-user,my-awesome-team,require_all']
+    // $user->ability(['admin', 'owner'], ['create-post', 'edit-user'], 'my-awesome-team', true);
+
+.. NOTE::
+    The ``require_all`` is optional.
 
 Middleware Return
 ^^^^^^^^^^^^^^^^^

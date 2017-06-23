@@ -4,12 +4,12 @@ After Installation
 Configuration Files
 ^^^^^^^^^^^^^^^^^^^
 
-In your ``config/laratrust.php`` file you will find all the package configuration that you can customize.
+In your ``config/laratrust.php`` file you will find all the package configurations that you can customize.
 
 Teams Feature
 -------------
 
-If you want to use the teams feature that allows you to attach roles and permissions to an user depending on a team, you must change the ``use_teams`` key value to ``true`` in your ``config/laratrust.php`` file.
+If you want to use the teams feature that allows you to attach roles and permissions to an user depending on a team, you must change the ``use_teams`` key value to ``true`` in your ``config/laratrust.php`` file. Then follow the :ref:`teams-configuration` configuration guide.
 
 .. _multiple-user-models:
 
