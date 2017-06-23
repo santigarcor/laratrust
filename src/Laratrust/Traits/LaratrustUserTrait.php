@@ -139,6 +139,7 @@ trait LaratrustUserTrait
      */
     public function hasRole($name, $team = null, $requireAll = false)
     {
+        $name = $this->standardValue($name);
         list($team, $requireAll) = $this->assignRealValuesTo($team, $requireAll, 'is_bool');
 
         if (is_array($name)) {
@@ -183,6 +184,7 @@ trait LaratrustUserTrait
      */
     public function hasPermission($permission, $team = null, $requireAll = false)
     {
+        $permission = $this->standardValue($permission);
         list($team, $requireAll) = $this->assignRealValuesTo($team, $requireAll, 'is_bool');
 
         if (is_array($permission)) {
@@ -778,6 +780,20 @@ trait LaratrustUserTrait
             ($method($team) ? null : $team),
             ($method($team) ? $team : $requireAllOrOptions),
         ];
+    }
+
+    /**
+     * Checks if the string passed contains a pipe '|' and explodes the string to an array.
+     * @param  string|array  $value
+     * @return string|array
+     */
+    private function standardValue($value)
+    {
+        if (is_array($value) || strpos($value, '|') === false) {
+            return $value;
+        }
+
+        return explode('|', $value);
     }
 
     /**
