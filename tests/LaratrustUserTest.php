@@ -970,6 +970,39 @@ class LaratrustUserTest extends UserTest
         $this->assertInstanceOf(get_class($query), $user->scopeWhereRoleIs($query, 'admin'));
     }
 
+    public function testScopeWherePermissionIs()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $query = m::mock();
+        $user = m::mock('HasRoleUser')->makePartial();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        $query->shouldReceive('whereHas')
+            ->with('roles.permissions', m::any())
+            ->once()
+            ->andReturn($query);
+
+        $query->shouldReceive('orWhereHas')
+            ->with('permissions', m::any())
+            ->once()
+            ->andReturn($query);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertInstanceOf(get_class($query), $user->scopeWherePermissionIs($query, 'create-users'));
+    }
+
     public function testBootLaratrustUserTrait()
     {
         /*
