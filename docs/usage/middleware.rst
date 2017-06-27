@@ -4,7 +4,7 @@ Middleware
 Concepts
 ^^^^^^^^
 
-You can use a middleware to filter routes and route groups by permission or role:
+You can use a middleware to filter routes and route groups by permission, role or ability:
 
 .. code-block:: php
 

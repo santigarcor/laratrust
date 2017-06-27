@@ -6,7 +6,7 @@ Installation
         composer require "santigarcor/laratrust:4.0.*"
 
 .. NOTE::
-    If you are using Laravel 5.5 you don't need to to steps 2 and 3.
+    If you are using Laravel 5.5 you don't need to do steps 2 and 3.
 
 2. Then in your ``config/app.php`` add the following to the providers array::
 
@@ -20,7 +20,7 @@ Installation
     
     php artisan vendor:publish --tag="laratrust"
 
-5. If you are going to use :doc:`usage/middleware` (requires Laravel 5.1 or later) you also need to add the following to ``routeMiddleware`` array in ``app/Http/Kernel.php``::
+5. If you are going to use :doc:`usage/middleware` you also need to add the following to ``routeMiddleware`` array in ``app/Http/Kernel.php``::
 
     'role' => \Laratrust\Middleware\LaratrustRole::class,
     'permission' => \Laratrust\Middleware\LaratrustPermission::class,

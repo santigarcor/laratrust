@@ -24,6 +24,14 @@ If you don't, then try ``php artisan vendor:publish`` and, if it does not appear
 
 ---
 
+If you make changes directly to the Laratrust tables and when you run your code the changes are not reflected, please clear your application cache using::
+
+    php artisan cache:clear
+
+Remember that Laratrust uses cache in the roles and permissions checks.
+
+---
+
 If you want to use the ``Authorizable`` trait yo have to do:
 
 .. code-block:: php

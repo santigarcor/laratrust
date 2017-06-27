@@ -20,7 +20,7 @@ Let's start by creating the following \ ``Role``\s:
    $admin->description  = 'User is allowed to manage and edit other users'; // optional
    $admin->save();
 
-Now we just need to add \ ``Permission``\s to those \ ``Role``\s:
+Now we need to add \ ``Permission``\s:
 
 .. code-block:: php
 
@@ -47,13 +47,13 @@ Assignment
 
 .. code-block:: php
 
-   $admin->attachPermission($createPost);
+   $admin->attachPermission($createPost); // parameter can be a Permission object, array or id
    // equivalent to $admin->permissions()->attach([$createPost->id]);
 
-   $owner->attachPermissions([$createPost, $editUser]);
+   $owner->attachPermissions([$createPost, $editUser]); // parameter can be a Permission object, array or id
    // equivalent to $owner->permissions()->attach([$createPost->id, $editUser->id]);
 
-   $owner->syncPermissions([$createPost, $editUser]);
+   $owner->syncPermissions([$createPost, $editUser]); // parameter can be a Permission object, array or id
    // equivalent to $owner->permissions()->sync([$createPost->id, $editUser->id]);
 
 Removal
@@ -61,10 +61,10 @@ Removal
 
 .. code-block:: php
 
-   $admin->detachPermission($createPost);
+   $admin->detachPermission($createPost); // parameter can be a Permission object, array or id
    // equivalent to $admin->permissions()->detach([$createPost->id]);
 
-   $owner->detachPermissions([$createPost, $editUser]);
+   $owner->detachPermissions([$createPost, $editUser]); // parameter can be a Permission object, array or id
    // equivalent to $owner->permissions()->detach([$createPost->id, $editUser->id]);
 
 User Roles Assignment & Removal
@@ -78,10 +78,10 @@ Assignment
 
 .. code-block:: php
 
-   $user->attachRole($admin); // parameter can be an Role object, array, id or the role string name
+   $user->attachRole($admin); // parameter can be a Role object, array, id or the role string name
    // equivalent to $user->roles()->attach([$admin->id]);
 
-   $user->attachRoles([$admin, $owner]); // parameter can be an Role object, array, id or the role string name
+   $user->attachRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
    // equivalent to $user->roles()->attach([$admin->id, $owner->id]);
 
    $user->syncRoles([$admin->id, $owner->id]);
@@ -92,10 +92,10 @@ Removal
 
 .. code-block:: php
 
-   $user->detachRole($admin); // parameter can be an Role object, array, id or the role string name
+   $user->detachRole($admin); // parameter can be a Role object, array, id or the role string name
    // equivalent to $user->roles()->detach([$admin->id]);
 
-   $user->detachRoles([$admin, $owner]); // parameter can be an Role object, array, id or the role string name
+   $user->detachRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
    // equivalent to $user->roles()->detach([$admin->id, $owner->id]);
 
 User Permissions Assignment & Removal
@@ -108,10 +108,10 @@ Assignment
 
 .. code-block:: php
 
-   $user->attachPermission($editUser); // parameter can be an Permission object, array, id or the permission string name
+   $user->attachPermission($editUser); // parameter can be a Permission object, array, id or the permission string name
    // equivalent to $user->permissions()->attach([$editUser->id]);
 
-   $user->attachPermissions([$editUser, $createPost]); // parameter can be an Permission object, array, id or the permission string name
+   $user->attachPermissions([$editUser, $createPost]); // parameter can be a Permission object, array, id or the permission string name
    // equivalent to $user->permissions()->attach([$editUser->id, $createPost->id]);
 
    $user->syncPermissions([$editUser->id, $createPost->id]);
@@ -122,10 +122,10 @@ Removal
 
 .. code-block:: php
 
-   $user->detachPermission($createPost); // parameter can be an Permission object, array, id or the permission string name
+   $user->detachPermission($createPost); // parameter can be a Permission object, array, id or the permission string name
    // equivalent to $user->roles()->detach([$createPost->id]);
 
-   $user->detachPermissions([$createPost, $editUser]); // parameter can be an Permission object, array, id or the permission string name
+   $user->detachPermissions([$createPost, $editUser]); // parameter can be a Permission object, array, id or the permission string name
    // equivalent to $user->roles()->detach([$createPost->id, $editUser->id]);
 
 Checking for Roles & Permissions
@@ -183,7 +183,7 @@ The ``Laratrust`` class has shortcuts to both ``can()`` and ``hasRole()`` for th
 .. WARNING::
    There aren't  ``Laratrust::hasPermission`` or ``Laratrust::isAbleTo`` facade methods, because you can use the ``Laratrust::can`` even when using the ``Authorizable`` trait.
 
-You can also use placeholders (wildcards) to check any matching permission by doing:
+You can also use wildcards to check any matching permission by doing:
 
 .. code-block:: php
 
@@ -196,7 +196,7 @@ You can also use placeholders (wildcards) to check any matching permission by do
 Magic can method
 ^^^^^^^^^^^^^^^^
 
-You can check if a user has some permissions by using the magic can method:
+You can check if an user has some permissions by using the magic can method:
 
 .. code-block:: php
 
@@ -421,7 +421,7 @@ The ``Laratrust`` class has a shortcut to ``owns()``, ``canAndOwns`` and ``hasRo
 Ownable Interface
 ^^^^^^^^^^^^^^^^^
 
-If the object ownership is resolved with a more complex logic you can implement the Ownable interface so you can use the ``owns``, ``canAndOwns`` and ``hasRoleAndOwns`` methods in these cases:
+If the object ownership is resolved with a more complex logic you can implement the Ownable interface so you can use the ``owns``, ``canAndOwns`` and ``hasRoleAndOwns`` methods in those cases:
 
 .. code-block:: php
 
@@ -454,7 +454,7 @@ Teams
 -----
 
 .. NOTE::
-    The teams feature is **optional**, please go to the :ref:`teams-configuration` configuration in order to use th feature.
+    The teams feature is **optional**, please go to the :ref:`teams-configuration` configuration in order to use the feature.
 
 Roles Assignment & Removal
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

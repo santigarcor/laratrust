@@ -1,7 +1,7 @@
 Blade Templates
 ===============
 
-Three directives are available for use within your Blade templates. What you give as the directive arguments will be directly passed to the corresponding ``Laratrust`` function. :
+Five directives are available for use within your Blade templates. What you give as the directive arguments will be directly passed to the corresponding ``Laratrust`` function. :
 
 .. code-block:: php
 
