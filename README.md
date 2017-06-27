@@ -31,3 +31,7 @@ Please note that this fork is not used on Zizaco's page at this time, nor is it 
 ## License
 
 Laratrust is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+
+## Contributing
+
+Please report any issue you find in the issues page. Pull requests are more than welcome.
