@@ -23,11 +23,6 @@ To install, configure and learn how to use Laratrust please go to the [Documenta
 - Objects ownership verification.
 - Multiple roles and permissions can be attached to users within teams.
 
-### Note
-This is a fork of Zizaco's [original code](https://github.com/Zizaco/entrust).
-
-Please note that this fork is not used on Zizaco's page at this time, nor is it maintained or contributed to by him.
-
 ## License
 
 Laratrust is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
@@ -35,3 +30,9 @@ Laratrust is open-sourced software licensed under the [MIT license](http://opens
 ## Contributing
 
 Please report any issue you find in the issues page. Pull requests are more than welcome.
+
+## Note
+
+This is a fork of Zizaco's [original code](https://github.com/Zizaco/entrust).
+
+Please note that this fork is not used on Zizaco's page at this time, nor is it maintained or contributed to by him.

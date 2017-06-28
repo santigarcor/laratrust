@@ -101,7 +101,7 @@ Removal
 User Permissions Assignment & Removal
 -------------------------------------
 
-You can attach single permissions to an user, so in order to do it you only have to make:
+You can attach single permissions to a user, so in order to do it you only have to make:
 
 Assignment
 ^^^^^^^^^^
@@ -166,7 +166,7 @@ Passing ``true`` as a second parameter instructs the method to require **all** o
    $user->can(['edit-user', 'create-post']);       // true
    $user->can(['edit-user', 'create-post'], true); // false, user does not have edit-user permission
 
-You can have as many \ ``Role``\s as you want for each ``User`` and vice versa. Also you can have as many direct \ ``Permissions``\s as you want for each ``User`` and vice versa.
+You can have as many \ ``Role``\s as you want for each ``User`` and vice versa. Also, you can have as many direct \ ``Permissions``\s as you want for each ``User`` and vice versa.
 
 The ``Laratrust`` class has shortcuts to both ``can()`` and ``hasRole()`` for the currently logged in user:
 
@@ -183,7 +183,7 @@ The ``Laratrust`` class has shortcuts to both ``can()`` and ``hasRole()`` for th
 .. WARNING::
    There aren't  ``Laratrust::hasPermission`` or ``Laratrust::isAbleTo`` facade methods, because you can use the ``Laratrust::can`` even when using the ``Authorizable`` trait.
 
-You can also use wildcards to check any matching permission by doing:
+You can also use wildcard to check any matching permission by doing:
 
 .. code-block:: php
 
@@ -196,7 +196,7 @@ You can also use wildcards to check any matching permission by doing:
 Magic can method
 ^^^^^^^^^^^^^^^^
 
-You can check if an user has some permissions by using the magic can method:
+You can check if a user has some permissions by using the magic can method:
 
 .. code-block:: php
 
@@ -337,7 +337,7 @@ If you want to retrieve the users that have some role you can use the query scop
    // This will return the users with 'admin' role.
    $users = User::whereRoleIs('admin')->get();
 
-Also if you want to retrieve the users that have some permission you can use the query scope ``wherePermissionIs``:
+Also, if you want to retrieve the users that have some permission you can use the query scope ``wherePermissionIs``:
 
 .. code-block:: php
 
@@ -374,12 +374,12 @@ If you want to change the foreign key name to check for, you can pass a second a
 Permissions, Roles & Ownership Checks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you want to check if an user can do something or has a role, and also is the owner of an object you can use the ``canAndOwns`` and ``hasRoleAndOwns`` methods:
+If you want to check if a user can do something or has a role, and also is the owner of an object you can use the ``canAndOwns`` and ``hasRoleAndOwns`` methods:
 
 Both methods accept three parameters:
 
 * ``permission`` or ``role`` are the permission or role to check (This can be an array of roles or permissions).
-* ``thing`` is the object used to check the ownership .
+* ``thing`` is the object used to check the ownership.
 * ``options`` is a set of options to change the method behavior (optional).
 
 The third parameter is an options array:
@@ -446,7 +446,7 @@ And then in your code you can simply do:
    
    $user = User::find(1);
    $theObject = new SomeOwnedObject;
-   $user->owns($theObject);            // This will return true or false depending of what the ownerKey method returns
+   $user->owns($theObject);            // This will return true or false depending on what the ownerKey method returns
 
 .. _teams-concepts:
 

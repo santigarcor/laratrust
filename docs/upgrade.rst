@@ -6,7 +6,7 @@ Upgrade from 3.3 to 4.0
 
 In order to upgrade from Laratrust 3.3 to 4.0 you have to follow these steps:
 
-1. Change your ``composer.json`` to require the 4.0 version of laratrust::
+1. Change your ``composer.json`` to require the 4.0 version of Laratrust::
 
     "santigarcor/laratrust": "4.0.*"
 
@@ -23,7 +23,7 @@ In order to upgrade from Laratrust 3.3 to 4.0 you have to follow these steps:
     3.4. Update the ``config/laratrust.php`` file with your old values.
 
     .. NOTE::
-        Leave the ``use_teams`` key in false during the upgrade proccess.
+        Leave the ``use_teams`` key in false during the upgrade process.
 
 4. If you use any values of the ``config/laratrust.php`` in your application code, update those values with the new file structure.
 
