@@ -1,4 +1,4 @@
-<p align="center"><img src="https://cdn.rawgit.com/santigarcor/laratrust/6c290a33ade9710a8373f9178c9591313cc905d3/docs/img/laratrust.svg"></p>
+<p align="center"><img src="https://cdn.rawgit.com/santigarcor/laratrust/135aa15fecd22a512c444389d1f8cb94e72d0fa7/docs/img/laratrust.svg"></p>
 
 # Laratrust (Laravel 5 Package)
 
