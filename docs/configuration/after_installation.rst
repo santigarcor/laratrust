@@ -42,7 +42,7 @@ It means that there is only one user model using Laratrust, and the relationship
 Automatic setup (Recommended)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you want to let laratrust to setup by itselft, just run the following command::
+If you want to let laratrust to setup by itself, just run the following command::
 
     php artisan laratrust:setup
 
