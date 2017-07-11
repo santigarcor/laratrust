@@ -105,8 +105,6 @@ trait LaratrustUserTrait
     {
         $flushCache = function ($user) {
             $user->flushCache();
-
-            return true;
         };
 
         // If the user doesn't use SoftDeletes.
@@ -119,13 +117,11 @@ trait LaratrustUserTrait
 
         static::deleting(function ($user) {
             if (method_exists($user, 'bootSoftDeletes') && !$user->forceDeleting) {
-                return true;
+                return;
             }
 
             $user->roles()->sync([]);
             $user->permissions()->sync([]);
-
-            return true;
         });
     }
 

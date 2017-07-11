@@ -66,7 +66,7 @@ trait LaratrustPermissionTrait
 
         static::deleting(function ($permission) {
             if (method_exists($permission, 'bootSoftDeletes') && $permission->forceDeleting) {
-                return true;
+                return;
             }
 
             $permission->roles()->sync([]);

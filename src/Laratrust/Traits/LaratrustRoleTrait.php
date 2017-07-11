@@ -78,7 +78,6 @@ trait LaratrustRoleTrait
     {
         $flushCache = function ($role) {
             $role->flushCache();
-            return true;
         };
         
         // If the role doesn't use SoftDeletes.
@@ -91,7 +90,7 @@ trait LaratrustRoleTrait
 
         static::deleting(function ($role) {
             if (method_exists($role, 'bootSoftDeletes') && $role->forceDeleting) {
-                return true;
+                return;
             }
 
             $role->permissions()->sync([]);

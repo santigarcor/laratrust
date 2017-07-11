@@ -45,7 +45,7 @@ trait LaratrustTeamTrait
     {
         static::deleting(function ($team) {
             if (method_exists($team, 'bootSoftDeletes') && $team->forceDeleting) {
-                return true;
+                return;
             }
 
             foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
