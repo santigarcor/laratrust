@@ -28,7 +28,7 @@ class LaratrustUpgradeTables extends Migration
             $table->dropPrimary(['{{ $laratrust['foreign_keys']['user'] }}', '{{ $laratrust['foreign_keys']['role'] }}', 'user_type']);
 
             // Add {{ $laratrust['foreign_keys']['team'] }} column
-            $table->integer('{{ $laratrust['foreign_keys']['team'] }}')->unsigned()->nullable();
+            $table->unsignedInteger('{{ $laratrust['foreign_keys']['team'] }}')->nullable();
 
             // Create foreign keys
             $table->foreign('{{ $laratrust['foreign_keys']['role'] }}')->references('id')->on('{{ $laratrust['tables']['roles'] }}')
@@ -51,7 +51,7 @@ class LaratrustUpgradeTables extends Migration
 
 @if ($laratrust['use_teams'])
             // Add {{ $laratrust['foreign_keys']['team'] }} column
-            $table->integer('{{ $laratrust['foreign_keys']['team'] }}')->unsigned()->nullable();
+            $table->unsignedInteger('{{ $laratrust['foreign_keys']['team'] }}')->nullable();
 
             $table->foreign('{{ $laratrust['foreign_keys']['team'] }}')->references('id')->on('{{ $laratrust['tables']['teams'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
