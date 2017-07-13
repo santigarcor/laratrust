@@ -43,11 +43,11 @@ class LaratrustSetupTables extends Migration
 @endif
         // Create table for associating roles to users and teams (Many To Many Polymorphic)
         Schema::create('{{ $laratrust['tables']['role_user'] }}', function (Blueprint $table) {
-            $table->integer('{{ $laratrust['foreign_keys']['user'] }}')->unsigned();
-            $table->integer('{{ $laratrust['foreign_keys']['role'] }}')->unsigned();
+            $table->unsignedInteger('{{ $laratrust['foreign_keys']['role'] }}');
+            $table->unsignedInteger('{{ $laratrust['foreign_keys']['user'] }}');
             $table->string('user_type');
 @if ($laratrust['use_teams'])
-            $table->integer('{{ $laratrust['foreign_keys']['team'] }}')->unsigned()->nullable();
+            $table->unsignedInteger('{{ $laratrust['foreign_keys']['team'] }}')->nullable();
 @endif
 
             $table->foreign('{{ $laratrust['foreign_keys']['role'] }}')->references('id')->on('{{ $laratrust['tables']['roles'] }}')
@@ -65,11 +65,11 @@ class LaratrustSetupTables extends Migration
 
         // Create table for associating permissions to users (Many To Many Polymorphic)
         Schema::create('{{ $laratrust['tables']['permission_user'] }}', function (Blueprint $table) {
-            $table->integer('{{ $laratrust['foreign_keys']['user'] }}')->unsigned();
-            $table->integer('{{ $laratrust['foreign_keys']['permission'] }}')->unsigned();
+            $table->unsignedInteger('{{ $laratrust['foreign_keys']['permission'] }}');
+            $table->unsignedInteger('{{ $laratrust['foreign_keys']['user'] }}');
             $table->string('user_type');
 @if ($laratrust['use_teams'])
-            $table->integer('{{ $laratrust['foreign_keys']['team'] }}')->unsigned()->nullable();
+            $table->unsignedInteger('{{ $laratrust['foreign_keys']['team'] }}')->nullable();
 @endif
 
             $table->foreign('{{ $laratrust['foreign_keys']['permission'] }}')->references('id')->on('{{ $laratrust['tables']['permissions'] }}')
@@ -87,8 +87,8 @@ class LaratrustSetupTables extends Migration
 
         // Create table for associating permissions to roles (Many-to-Many)
         Schema::create('{{ $laratrust['tables']['permission_role'] }}', function (Blueprint $table) {
-            $table->integer('{{ $laratrust['foreign_keys']['permission'] }}')->unsigned();
-            $table->integer('{{ $laratrust['foreign_keys']['role'] }}')->unsigned();
+            $table->unsignedInteger('{{ $laratrust['foreign_keys']['permission'] }}');
+            $table->unsignedInteger('{{ $laratrust['foreign_keys']['role'] }}');
 
             $table->foreign('{{ $laratrust['foreign_keys']['permission'] }}')->references('id')->on('{{ $laratrust['tables']['permissions'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
