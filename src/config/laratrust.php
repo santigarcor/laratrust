@@ -121,7 +121,7 @@ return [
     | Laratrust Foreign Keys
     |--------------------------------------------------------------------------
     |
-    | These are the foreing keys used by laratrust in the intermediate tables.
+    | These are the foreign keys used by laratrust in the intermediate tables.
     |
     */
     'foreign_keys' => [
