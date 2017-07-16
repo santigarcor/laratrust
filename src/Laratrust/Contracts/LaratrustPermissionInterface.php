@@ -20,7 +20,7 @@ interface LaratrustPermissionInterface
      */
     public function roles();
 
-/**
+    /**
      * Morph by Many relationship between the permission and the one of the possible user models.
      *
      * @param  string  $relationship
