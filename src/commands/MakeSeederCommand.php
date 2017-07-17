@@ -53,6 +53,7 @@ class MakeSeederCommand extends Command
 
     /**
      * Create the seeder
+     *
      * @return bool
      */
     protected function createSeeder()
