@@ -3,6 +3,32 @@
 Troubleshooting
 ===============
 
+---
+
+If you make changes directly to the Laratrust tables and when you run your code the changes are not reflected, please clear your application cache using::
+
+    php artisan cache:clear
+
+Remember that Laratrust uses cache in the roles and permissions checks.
+
+---
+
+If you want to use the ``Authorizable`` trait you have to do:
+
+.. code-block:: php
+
+    use Authorizable {
+        Authorizable::can insteadof LaratrustUserTrait;
+        LaratrustUserTrait::can as laratrustCan;
+    }
+
+And then replace all the uses of ``can`` with ``hasPermission`` or ``isAbleTo``.
+
+.. NOTE::
+    If you use the ``Laratrust::can`` facade method you don't have to change this method because it calls the ``hasPermission`` method.
+
+---
+
 If you encounter an error when doing the migration that looks like::
 
     SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter.#sql-42c_f8' (errno: 150)
@@ -24,26 +50,3 @@ If you don't, then try ``php artisan vendor:publish`` and, if it does not appear
 
 ---
 
-If you make changes directly to the Laratrust tables and when you run your code the changes are not reflected, please clear your application cache using::
-
-    php artisan cache:clear
-
-Remember that Laratrust uses cache in the roles and permissions checks.
-
----
-
-If you want to use the ``Authorizable`` trait yo have to do:
-
-.. code-block:: php
-
-    use Authorizable {
-        Authorizable::can insteadof LaratrustUserTrait;
-        LaratrustUserTrait::can as laratrustCan;
-    }
-
-And then replace all the uses of ``can`` with ``hasPermission`` or ``isAbleTo``.
-
-.. NOTE::
-    If you use the ``Laratrust::can`` facade method you don't have to change this method because it calls the ``hasPermission`` method.
-
----
