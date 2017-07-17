@@ -2,7 +2,7 @@ Upgrade from 3.2 to 4.0
 =======================
 
 .. IMPORTANT::
-    Laratrust 4.0 requires Laravel >= 5.2.0.
+    Laratrust 4.0 requires Laravel >= 5.1.40.
 
 In order to upgrade from Laratrust 3.3 to 4.0 you have to follow these steps:
 

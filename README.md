@@ -8,7 +8,7 @@
 [![StyleCI](https://styleci.io/repos/59691202/shield)](https://styleci.io/repos/59691202)
 [![License](https://poser.pugx.org/santigarcor/laratrust/license)](https://packagist.org/packages/santigarcor/laratrust)
 
-Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel 5 (>=5.2)**.
+Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel 5 (>=5.1.40)**.
 
 ## Installation, Configuration and Usage
 To install, configure and learn how to use Laratrust please go to the [Documentation](http://laratrust.readthedocs.io/).
