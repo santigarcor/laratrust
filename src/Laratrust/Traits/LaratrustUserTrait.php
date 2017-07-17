@@ -736,7 +736,7 @@ trait LaratrustUserTrait
      */
     private function isInSameTeam($rolePermission, $team)
     {
-        if (!Config::get('laratrust.use_teams')) {
+        if (!Config::get('laratrust.use_teams') || is_null($team)) {
             return true;
         }
 
