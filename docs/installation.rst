@@ -19,6 +19,11 @@ Installation
 4. Run the next command to publish all the configuration files::
     
     php artisan vendor:publish --tag="laratrust"
+    
+.. NOTE::
+    If this command did not publish any files, chances are, the Laratrust service provider hasn't been registered. Try clearing your configuration cache::
+
+        php artisan config:clear
 
 5. If you are going to use :doc:`usage/middleware` you also need to add the following to ``routeMiddleware`` array in ``app/Http/Kernel.php``::
 
