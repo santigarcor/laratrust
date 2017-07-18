@@ -20,7 +20,7 @@ Installation
     
     php artisan vendor:publish --tag="laratrust"
     
-.. NOTE::
+.. WARNING::
     If this command did not publish any files, chances are, the Laratrust service provider hasn't been registered. Try clearing your configuration cache::
 
         php artisan config:clear
