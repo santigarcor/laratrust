@@ -45,6 +45,11 @@ Automatic setup (Recommended)
 If you want to let laratrust to setup by itself, just run the following command::
 
     php artisan laratrust:setup
+    
+.. WARNING::
+    If Laravel does not recognize this command, the Laratrust service provider hasn't been registered. Check ``providers`` array in ``config/app.php`` and try clearing your configuration cache::
+
+        php artisan config:clear
 
 This command will generate the migrations, create the ``Role`` and ``Permission`` models (if you are using the teams feature it will also create a ``Team`` model) and will add the trait to the configured user models.
 
