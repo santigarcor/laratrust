@@ -37,16 +37,6 @@ class MakeRoleCommand extends GeneratorCommand
     protected $type = 'Role model';
 
     /**
-     * Execute the console command.
-     *
-     * @return void
-     */
-    public function fire()
-    {
-        parent::fire();
-    }
-
-    /**
      * Get the stub file for the generator.
      *
      * @return string
