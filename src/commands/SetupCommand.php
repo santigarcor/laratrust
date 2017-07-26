@@ -60,7 +60,7 @@ class SetupCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         foreach ($this->calls as $command => $info) {
             $this->line(PHP_EOL . $info);

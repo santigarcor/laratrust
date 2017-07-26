@@ -37,16 +37,6 @@ class MakeTeamCommand extends GeneratorCommand
     protected $type = 'Team model';
 
     /**
-     * Execute the console command.
-     *
-     * @return void
-     */
-    public function fire()
-    {
-        parent::fire();
-    }
-
-    /**
      * Get the stub file for the generator.
      *
      * @return string

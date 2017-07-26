@@ -42,7 +42,7 @@ class MigrationCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         $this->laravel->view->addNamespace('laratrust', substr(__DIR__, 0, -8).'views');
         $this->line('');

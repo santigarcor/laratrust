@@ -41,7 +41,7 @@ class SetupTeamsCommand extends Command
      *
      * @return void
      */
-    public function fire()
+    public function handle()
     {
         if (!Config::get('laratrust.use_teams')) {
             $this->error('Not using teams in your Laratrust configuration file.');
