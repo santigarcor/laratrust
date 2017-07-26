@@ -559,7 +559,7 @@ trait LaratrustUserTrait
     public function owns($thing, $foreignKeyName = null)
     {
         if ($thing instanceof \Laratrust\Contracts\Ownable) {
-            $ownerKey = $thing->ownerKey();
+            $ownerKey = $thing->ownerKey($this);
         } else {
             $className = (new \ReflectionClass($this))->getShortName();
             $foreignKeyName = $foreignKeyName ?: Str::snake($className . 'Id');

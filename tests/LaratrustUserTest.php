@@ -1057,7 +1057,7 @@ class HasRoleUser extends Model implements LaratrustUserInterface
 
 class OwnableObject implements Ownable
 {
-    public function ownerKey()
+    public function ownerKey($owner)
     {
         return 1;
     }
