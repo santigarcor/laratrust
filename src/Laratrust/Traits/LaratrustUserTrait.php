@@ -388,7 +388,7 @@ trait LaratrustUserTrait
         return $this;
     }
 
-    private function syncModels($relationship, $objectType, $objects, $team)
+    private function syncModels($relationship, $objectType, $objects, $team, $detaching)
     {
         $mappedObjects = [];
 
@@ -400,7 +400,7 @@ trait LaratrustUserTrait
             $mappedObjects = $objects;
         }
 
-        $this->$relationship()->sync($mappedObjects);
+        $this->$relationship()->sync($mappedObjects, $detaching);
         $this->flushCache();
 
         return $this;
@@ -471,11 +471,24 @@ trait LaratrustUserTrait
      *
      * @param  array  $roles
      * @param  mixed  $team
+     * @param  boolean  $detaching
      * @return static
      */
-    public function syncRoles($roles = [], $team = null)
+    public function syncRoles($roles = [], $team = null, $detaching = true)
     {
-        return $this->syncModels('roles', 'role', $roles, $team);
+        return $this->syncModels('roles', 'role', $roles, $team, $detaching);
+    }
+
+    /**
+     * Sync roles to the user without detaching.
+     *
+     * @param  array  $roles
+     * @param  mixed  $team
+     * @return static
+     */
+    public function syncRolesWithoutDetaching($roles = [], $team = null)
+    {
+        return $this->syncRoles($roles, $team, false);
     }
 
     /**
@@ -539,14 +552,28 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Sync roles to the user.
+     * Sync permissions to the user.
      *
      * @param  array  $permissions
+     * @param  mixed  $team
+     * @param  boolean  $detaching
      * @return static
      */
-    public function syncPermissions($permissions = [], $team = null)
+    public function syncPermissions($permissions = [], $team = null, $detaching = true)
     {
-        return $this->syncModels('permissions', 'permission', $permissions, $team);
+        return $this->syncModels('permissions', 'permission', $permissions, $team, $detaching);
+    }
+
+    /**
+     * Sync permissions to the user without detaching.
+     *
+     * @param  array  $permissions
+     * @param  mixed  $team
+     * @return static
+     */
+    public function syncPermissionsWithoutDetaching($permissions = [], $team = null)
+    {
+        return $this->syncModels('permissions', 'permission', $permissions, $team, false);
     }
 
     /**

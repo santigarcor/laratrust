@@ -561,13 +561,14 @@ class LaratrustUserTest extends UserTest
             1 => ['team_id' => null],
             2 => ['team_id' => null],
             3 => ['team_id' => null]
-        ])->once()->ordered();
+        ], true)->once()->ordered();
         $user->shouldReceive('sync')->with([
             1 => ['team_id' => 'TeamA'],
             2 => ['team_id' => 'TeamA'],
             3 => ['team_id' => 'TeamA']
-        ])->once()->ordered();
-        $user->shouldReceive('sync')->with([1, 2, 3])->twice()->ordered();
+        ], true)->once()->ordered();
+        $user->shouldReceive('sync')->with([1, 2, 3], true)->once()->ordered();
+        $user->shouldReceive('sync')->with([1, 2, 3], false)->once()->ordered();
         Cache::shouldReceive('forget')->times(8);
 
         /*
@@ -578,8 +579,53 @@ class LaratrustUserTest extends UserTest
         $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds));
         $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds, 'TeamA'));
         // Not using teams
-        $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds));
-        $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds, 'TeamA'));
+        $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds, null));
+        $this->assertInstanceOf('HasRoleUser', $user->syncRoles($rolesIds, 'TeamA', false));
+    }
+
+    public function testSyncRolesWithoutDetaching()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $rolesIds = [1, 2, 3];
+        $user = m::mock('HasRoleUser')->makePartial();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->twice()->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->twice()->ordered();
+        Config::shouldReceive('get')->with('laratrust.foreign_keys.team')->andReturn('team_id')->times(6);
+        $user->shouldReceive('roles')->andReturn($user)->times(4);
+        $user->shouldReceive('sync')->with([
+            1 => ['team_id' => null],
+            2 => ['team_id' => null],
+            3 => ['team_id' => null]
+        ], false)->once()->ordered();
+        $user->shouldReceive('sync')->with([
+            1 => ['team_id' => 'TeamA'],
+            2 => ['team_id' => 'TeamA'],
+            3 => ['team_id' => 'TeamA']
+        ], false)->once()->ordered();
+        $user->shouldReceive('sync')->with([1, 2, 3], false)->once()->ordered();
+        $user->shouldReceive('sync')->with([1, 2, 3], false)->once()->ordered();
+        Cache::shouldReceive('forget')->times(8);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertInstanceOf('HasRoleUser', $user->syncRolesWithoutDetaching($rolesIds));
+        $this->assertInstanceOf('HasRoleUser', $user->syncRolesWithoutDetaching($rolesIds, 'TeamA'));
+        // Not using teams
+        $this->assertInstanceOf('HasRoleUser', $user->syncRolesWithoutDetaching($rolesIds, null));
+        $this->assertInstanceOf('HasRoleUser', $user->syncRolesWithoutDetaching($rolesIds, 'TeamA'));
     }
 
     public function testAttachPermission()
@@ -770,13 +816,14 @@ class LaratrustUserTest extends UserTest
             1 => ['team_id' => null],
             2 => ['team_id' => null],
             3 => ['team_id' => null]
-        ])->once()->ordered();
+        ], true)->once()->ordered();
         $user->shouldReceive('sync')->with([
             1 => ['team_id' => 'TeamA'],
             2 => ['team_id' => 'TeamA'],
             3 => ['team_id' => 'TeamA']
-        ])->once()->ordered();
-        $user->shouldReceive('sync')->with([1, 2, 3])->twice()->ordered();
+        ], true)->once()->ordered();
+        $user->shouldReceive('sync')->with([1, 2, 3], true)->once()->ordered();
+        $user->shouldReceive('sync')->with([1, 2, 3], false)->once()->ordered();
         Cache::shouldReceive('forget')->times(8);
 
         /*
@@ -788,7 +835,51 @@ class LaratrustUserTest extends UserTest
         $this->assertInstanceOf('HasRoleUser', $user->syncPermissions($permissionsIds, 'TeamA'));
         // Not using teams
         $this->assertInstanceOf('HasRoleUser', $user->syncPermissions($permissionsIds));
-        $this->assertInstanceOf('HasRoleUser', $user->syncPermissions($permissionsIds, 'TeamA'));
+        $this->assertInstanceOf('HasRoleUser', $user->syncPermissions($permissionsIds, 'TeamA', false));
+    }
+
+    public function testSyncPermissionsWithoutDetaching()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $permissionsIds = [1, 2, 3];
+        $user = m::mock('HasRoleUser')->makePartial();
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(true)->twice()->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->andReturn(false)->twice()->ordered();
+        Config::shouldReceive('get')->with('laratrust.foreign_keys.team')->andReturn('team_id')->times(6);
+        $user->shouldReceive('permissions')->andReturn($user)->times(4);
+        $user->shouldReceive('sync')->with([
+            1 => ['team_id' => null],
+            2 => ['team_id' => null],
+            3 => ['team_id' => null]
+        ], false)->once()->ordered();
+        $user->shouldReceive('sync')->with([
+            1 => ['team_id' => 'TeamA'],
+            2 => ['team_id' => 'TeamA'],
+            3 => ['team_id' => 'TeamA']
+        ], false)->once()->ordered();
+        $user->shouldReceive('sync')->with([1, 2, 3], false)->twice()->ordered();
+        Cache::shouldReceive('forget')->times(8);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertInstanceOf('HasRoleUser', $user->syncPermissionsWithoutDetaching($permissionsIds));
+        $this->assertInstanceOf('HasRoleUser', $user->syncPermissionsWithoutDetaching($permissionsIds, 'TeamA'));
+        // Not using teams
+        $this->assertInstanceOf('HasRoleUser', $user->syncPermissionsWithoutDetaching($permissionsIds));
+        $this->assertInstanceOf('HasRoleUser', $user->syncPermissionsWithoutDetaching($permissionsIds, 'TeamA'));
     }
 
     public function testUserOwnsaPostModel()
