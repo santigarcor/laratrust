@@ -27,6 +27,7 @@ class LaratrustSeeder extends Seeder
                 'display_name' => ucwords(str_replace('_', ' ', $key)),
                 'description' => ucwords(str_replace('_', ' ', $key))
             ]);
+            $permissions = [];
 
             $this->command->info('Creating Role '. strtoupper($key));
 
@@ -76,6 +77,7 @@ class LaratrustSeeder extends Seeder
                         'password' => bcrypt('password'),
                         'remember_token' => str_random(10),
                     ]);
+                    $permissions = [];
 
                     foreach (explode(',', $value) as $p => $perm) {
 
