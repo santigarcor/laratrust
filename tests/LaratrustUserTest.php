@@ -299,7 +299,7 @@ class LaratrustUserTest extends UserTest
         | Expectation
         |------------------------------------------------------------
         */
-       Config::shouldReceive('get')->with('laratrust.use_teams')->times(18)->andReturn(true)->ordered();
+        Config::shouldReceive('get')->with('laratrust.use_teams')->times(18)->andReturn(true)->ordered();
         $role->shouldReceive('cachedPermissions')->times(6)->andReturn($role->perms);
         Config::shouldReceive('get')->with('cache.ttl', 60)->times(16)->andReturn('1440');
         Config::shouldReceive('get')->with('laratrust.teams_strict_check')->times(16)->andReturn(false);
@@ -431,7 +431,6 @@ class LaratrustUserTest extends UserTest
         // Not using teams
         $this->assertInstanceOf('HasRoleUser', $user->attachRole($role));
         $this->assertInstanceOf('HasRoleUser', $user->attachRole($role, 'TeamA'));
-
     }
 
     public function testDetachRole()
@@ -792,7 +791,7 @@ class LaratrustUserTest extends UserTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertInstanceOf('HasRoleUser', $user->detachPermissions( [1, 2, 3]));
+        $this->assertInstanceOf('HasRoleUser', $user->detachPermissions([1, 2, 3]));
         $this->assertInstanceOf('HasRoleUser', $user->detachPermissions([]));
         $this->assertInstanceOf('HasRoleUser', $user->detachPermissions([1, 2, 3], 'TeamA'));
     }
@@ -1145,7 +1144,8 @@ class HasRoleUser extends Model implements LaratrustUserInterface
         return $this->id;
     }
 
-    public function publicMagicCan($method) {
+    public function publicMagicCan($method)
+    {
         return $this->handleMagicCan($method, []);
     }
 }

@@ -36,7 +36,8 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $middleware->handle($request, function () {}, 'users-create|users-update');
+        $middleware->handle($request, function () {
+        }, 'users-create|users-update');
         $this->assertAbortCode(403);
     }
 
@@ -75,13 +76,16 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $middleware->handle($request, function () {}, 'users-create|users-update');
+        $middleware->handle($request, function () {
+        }, 'users-create|users-update');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {}, 'users-create|users-update', 'require_all');
+        $middleware->handle($request, function () {
+        }, 'users-create|users-update', 'require_all');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {}, 'users-create|users-update', 'TeamA', 'require_all');
+        $middleware->handle($request, function () {
+        }, 'users-create|users-update', 'TeamA', 'require_all');
         $this->assertAbortCode(403);
     }
 
@@ -117,13 +121,16 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $this->assertDidNotAbort();
-        $middleware->handle($request, function () {}, 'users-create|users-update');
+        $middleware->handle($request, function () {
+        }, 'users-create|users-update');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {}, 'users-create|users-update', 'require_all');
+        $middleware->handle($request, function () {
+        }, 'users-create|users-update', 'require_all');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {}, 'users-create|users-update', 'TeamA', 'require_all');
+        $middleware->handle($request, function () {
+        }, 'users-create|users-update', 'TeamA', 'require_all');
         $this->assertDidNotAbort();
     }
 }

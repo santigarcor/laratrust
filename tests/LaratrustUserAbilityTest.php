@@ -1,17 +1,11 @@
 <?php
 
-use Laratrust\Contracts\LaratrustUserInterface;
-use Laratrust\Traits\LaratrustUserTrait;
-use Illuminate\Cache\ArrayStore;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Cache;
 use Laratrust\Permission;
 use Laratrust\Role;
 use Mockery as m;
 
-class LaratrustUserAbilityTest extends UserTest {
-
+class LaratrustUserAbilityTest extends UserTest
+{
     protected $permissions;
     protected $roles;
     protected $user;

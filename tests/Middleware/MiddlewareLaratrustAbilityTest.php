@@ -36,7 +36,8 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users');
+        $middleware->handle($request, function () {
+        }, 'admin|user', 'edit-users|update-users');
         $this->assertAbortCode(403);
     }
 
@@ -76,13 +77,16 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users');
+        $middleware->handle($request, function () {
+        }, 'admin|user', 'edit-users|update-users');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'require_all');
+        $middleware->handle($request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'require_all');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all');
+        $middleware->handle($request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all');
         $this->assertAbortCode(403);
     }
 
@@ -119,13 +123,16 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $this->assertDidNotAbort();
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users');
+        $middleware->handle($request, function () {
+        }, 'admin|user', 'edit-users|update-users');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'require_all');
+        $middleware->handle($request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'require_all');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all');
+        $middleware->handle($request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all');
         $this->assertDidNotAbort();
     }
 

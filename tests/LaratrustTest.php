@@ -1,7 +1,6 @@
 <?php
 
 use Laratrust\Laratrust;
-use Illuminate\Support\Facades\Facade;
 use Mockery as m;
 
 class LaratrustTest extends PHPUnit_Framework_TestCase

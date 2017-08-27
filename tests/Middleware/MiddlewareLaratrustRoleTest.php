@@ -36,7 +36,8 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $middleware->handle($request, function () {}, 'admin|user');
+        $middleware->handle($request, function () {
+        }, 'admin|user');
         $this->assertAbortCode(403);
     }
 
@@ -75,13 +76,16 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $middleware->handle($request, function () {}, 'admin|user');
+        $middleware->handle($request, function () {
+        }, 'admin|user');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {}, 'admin|user', 'require_all');
+        $middleware->handle($request, function () {
+        }, 'admin|user', 'require_all');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {}, 'admin|user', 'TeamA', 'require_all');
+        $middleware->handle($request, function () {
+        }, 'admin|user', 'TeamA', 'require_all');
         $this->assertAbortCode(403);
     }
 
@@ -117,13 +121,16 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $this->assertDidNotAbort();
-        $middleware->handle($request, function () {}, 'admin|user');
+        $middleware->handle($request, function () {
+        }, 'admin|user');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {}, 'admin|user', 'require_all');
+        $middleware->handle($request, function () {
+        }, 'admin|user', 'require_all');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {}, 'admin|user', 'TeamA', 'require_all');
+        $middleware->handle($request, function () {
+        }, 'admin|user', 'TeamA', 'require_all');
         $this->assertDidNotAbort();
     }
 }
