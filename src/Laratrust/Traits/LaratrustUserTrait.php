@@ -10,7 +10,6 @@ namespace Laratrust\Traits;
  * @package Laratrust
  */
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
@@ -64,7 +63,7 @@ trait LaratrustUserTrait
             Config::get('laratrust.foreign_keys.user'),
             Config::get('laratrust.foreign_keys.role')
         );
-        
+
         if (Config::get('laratrust.use_teams')) {
             $roles->withPivot(Config::get('laratrust.foreign_keys.team'));
         }
@@ -86,7 +85,7 @@ trait LaratrustUserTrait
             Config::get('laratrust.foreign_keys.user'),
             Config::get('laratrust.foreign_keys.permission')
         );
-        
+
         if (Config::get('laratrust.use_teams')) {
             $permissions->withPivot(Config::get('laratrust.foreign_keys.team'));
         }
@@ -763,7 +762,10 @@ trait LaratrustUserTrait
      */
     private function isInSameTeam($rolePermission, $team)
     {
-        if (!Config::get('laratrust.use_teams')) {
+        if (
+            !Config::get('laratrust.use_teams')
+            || (!Config::get('laratrust.teams_strict_check') && is_null($team))
+        ) {
             return true;
         }
 
