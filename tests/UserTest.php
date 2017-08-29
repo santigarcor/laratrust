@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Cache;
 use Mockery as m;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 
 abstract class UserTest extends PHPUnit_Framework_TestCase
 {

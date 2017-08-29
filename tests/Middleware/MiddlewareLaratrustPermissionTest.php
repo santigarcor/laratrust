@@ -1,8 +1,9 @@
 <?php
 
+use Mockery as m;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Middleware\LaratrustPermission;
-use Mockery as m;
 
 class MiddlewareLaratrustPermissionTest extends MiddlewareTest
 {
@@ -14,8 +15,6 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard = m::mock('Illuminate\Contracts\Auth\Guard[guest]');
-        $request = $this->mockRequest();
-
         $middleware = new LaratrustPermission($guard);
 
         /*
@@ -24,6 +23,8 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(true);
+        Config::shouldReceive('get')->with('auth.defaults.guard')->andReturn('web');
+        Auth::shouldReceive('guard')->with(m::anyOf('web', 'api'))->andReturn($guard);
         Config::shouldReceive('get')
             ->with('laratrust.middleware.handling', 'abort')
             ->andReturn('abort');
@@ -36,7 +37,7 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
         }, 'users-create|users-update');
         $this->assertAbortCode(403);
     }
@@ -49,8 +50,7 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard = m::mock('Illuminate\Contracts\Auth\Guard');
-        $request = $this->mockRequest();
-
+        $user = m::mock('_mockedUser')->makePartial();
         $middleware = new LaratrustPermission($guard);
 
         /*
@@ -59,7 +59,10 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('hasPermission')
+        Config::shouldReceive('get')->with('auth.defaults.guard')->andReturn('web');
+        Auth::shouldReceive('guard')->with(m::anyOf('web', 'api'))->andReturn($guard);
+        $guard->shouldReceive('user')->andReturn($user);
+        $user->shouldReceive('hasPermission')
             ->with(
                 ['users-create', 'users-update'],
                 m::anyOf(null, 'TeamA'),
@@ -76,16 +79,28 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
         }, 'users-create|users-update');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'guard:api');
+        $this->assertAbortCode(403);
+
+        $middleware->handle($this->request, function () {
         }, 'users-create|users-update', 'require_all');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'require_all|guard:api');
+        $this->assertAbortCode(403);
+
+        $middleware->handle($this->request, function () {
         }, 'users-create|users-update', 'TeamA', 'require_all');
+        $this->assertAbortCode(403);
+
+        $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'TeamA', 'guard:api|require_all');
         $this->assertAbortCode(403);
     }
 
@@ -97,8 +112,7 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard = m::mock('Illuminate\Contracts\Auth\Guard');
-        $request = $this->mockRequest();
-
+        $user = m::mock('_mockedUser')->makePartial();
         $middleware = new LaratrustPermission($guard);
 
         /*
@@ -107,7 +121,10 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('hasPermission')
+        Config::shouldReceive('get')->with('auth.defaults.guard')->andReturn('web');
+        Auth::shouldReceive('guard')->with(m::anyOf('web', 'api'))->andReturn($guard);
+        $guard->shouldReceive('user')->andReturn($user);
+        $user->shouldReceive('hasPermission')
             ->with(
                 ['users-create', 'users-update'],
                 m::anyOf(null, 'TeamA'),
@@ -120,17 +137,28 @@ class MiddlewareLaratrustPermissionTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertDidNotAbort();
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
         }, 'users-create|users-update');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'guard:api');
+        $this->assertDidNotAbort();
+
+        $middleware->handle($this->request, function () {
         }, 'users-create|users-update', 'require_all');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'guard:api|require_all');
+        $this->assertDidNotAbort();
+
+        $middleware->handle($this->request, function () {
         }, 'users-create|users-update', 'TeamA', 'require_all');
+        $this->assertDidNotAbort();
+
+        $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'TeamA', 'guard:api|require_all');
         $this->assertDidNotAbort();
     }
 }

@@ -1,22 +1,24 @@
 <?php
 
-use Illuminate\Support\Facades\Config;
 use Mockery as m;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 
 abstract class MiddlewareTest extends PHPUnit_Framework_TestCase
 {
     public static $abortCode = null;
+    protected $request;
 
     public function setUp()
     {
         parent::setUp();
 
         $app = m::mock('app')->shouldReceive('instance')->getMock();
-
-        $this->facadeMocks['config'] = m::mock('config');
+        $this->request = m::mock('Illuminate\Http\Request');
 
         Config::setFacadeApplication($app);
-        Config::swap($this->facadeMocks['config']);
+        Config::swap(m::mock('config'));
+        Auth::swap(m::mock('auth'));
     }
 
     public static function setupBeforeClass()
@@ -86,17 +88,5 @@ abstract class MiddlewareTest extends PHPUnit_Framework_TestCase
     public function getAbortCode()
     {
         return static::$abortCode;
-    }
-
-    protected function mockRequest()
-    {
-        $user = m::mock('_mockedUser')->makePartial();
-
-        $request = m::mock('Illuminate\Http\Request')
-            ->shouldReceive('user')
-            ->andReturn($user)
-            ->getMock();
-
-        return $request;
     }
 }

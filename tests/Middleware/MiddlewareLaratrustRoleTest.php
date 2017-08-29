@@ -1,8 +1,9 @@
 <?php
 
+use Mockery as m;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Middleware\LaratrustRole;
-use Mockery as m;
 
 class MiddlewareLaratrustRoleTest extends MiddlewareTest
 {
@@ -14,8 +15,6 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard = m::mock('Illuminate\Contracts\Auth\Guard[guest]');
-        $request = $this->mockRequest();
-
         $middleware = new LaratrustRole($guard);
 
         /*
@@ -23,7 +22,9 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         | Expectation
         |------------------------------------------------------------
         */
+        Auth::shouldReceive('guard')->with('web')->andReturn($guard);
         $guard->shouldReceive('guest')->andReturn(true);
+        Config::shouldReceive('get')->with('auth.defaults.guard')->andReturn('web');
         Config::shouldReceive('get')
             ->with('laratrust.middleware.handling', 'abort')
             ->andReturn('abort');
@@ -36,7 +37,7 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
         }, 'admin|user');
         $this->assertAbortCode(403);
     }
@@ -49,8 +50,7 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard = m::mock('Illuminate\Contracts\Auth\Guard');
-        $request = $this->mockRequest();
-
+        $user = m::mock('_mockedUser')->makePartial();
         $middleware = new LaratrustRole($guard);
 
         /*
@@ -59,7 +59,10 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('hasRole')
+        Config::shouldReceive('get')->with('auth.defaults.guard')->andReturn('web');
+        Auth::shouldReceive('guard')->with(m::anyOf('web', 'api'))->andReturn($guard);
+        $guard->shouldReceive('user')->andReturn($user);
+        $user->shouldReceive('hasRole')
             ->with(
                 ['admin', 'user'],
                 m::anyOf(null, 'TeamA'),
@@ -76,16 +79,28 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
         }, 'admin|user');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
+        }, 'admin|user', 'guard:api');
+        $this->assertAbortCode(403);
+
+        $middleware->handle($this->request, function () {
         }, 'admin|user', 'require_all');
         $this->assertAbortCode(403);
 
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
+        }, 'admin|user', 'require_all|guard:api');
+        $this->assertAbortCode(403);
+
+        $middleware->handle($this->request, function () {
         }, 'admin|user', 'TeamA', 'require_all');
+        $this->assertAbortCode(403);
+
+        $middleware->handle($this->request, function () {
+        }, 'admin|user', 'TeamA', 'require_all|guard:api');
         $this->assertAbortCode(403);
     }
 
@@ -97,8 +112,7 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard = m::mock('Illuminate\Contracts\Auth\Guard');
-        $request = $this->mockRequest();
-
+        $user = m::mock('_mockedUser')->makePartial();
         $middleware = new LaratrustRole($guard);
 
         /*
@@ -107,7 +121,10 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('hasRole')
+        Config::shouldReceive('get')->with('auth.defaults.guard')->andReturn('web');
+        Auth::shouldReceive('guard')->with(m::anyOf('web', 'api'))->andReturn($guard);
+        $guard->shouldReceive('user')->andReturn($user);
+        $user->shouldReceive('hasRole')
             ->with(
                 ['admin', 'user'],
                 m::anyOf(null, 'TeamA'),
@@ -120,17 +137,28 @@ class MiddlewareLaratrustRoleTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertDidNotAbort();
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
         }, 'admin|user');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
+        }, 'admin|user', 'guard:api');
+        $this->assertDidNotAbort();
+
+        $middleware->handle($this->request, function () {
         }, 'admin|user', 'require_all');
         $this->assertDidNotAbort();
 
-        $middleware->handle($request, function () {
+        $middleware->handle($this->request, function () {
+        }, 'admin|user', 'require_all|guard:api');
+        $this->assertDidNotAbort();
+
+        $middleware->handle($this->request, function () {
         }, 'admin|user', 'TeamA', 'require_all');
+        $this->assertDidNotAbort();
+
+        $middleware->handle($this->request, function () {
+        }, 'admin|user', 'TeamA', 'require_all|guard:api');
         $this->assertDidNotAbort();
     }
 }

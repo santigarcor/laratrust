@@ -11,63 +11,25 @@ namespace Laratrust\Middleware;
  */
 
 use Closure;
-use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Support\Facades\Config;
 
-class LaratrustPermission
+class LaratrustPermission extends LaratrustMiddleware
 {
-    const DELIMITER = '|';
-
-    protected $auth;
-
     /**
-     * Creates a new instance of the middleware.
-     *
-     * @param  Guard  $auth
-     */
-    public function __construct(Guard $auth)
-    {
-        $this->auth = $auth;
-    }
-
-    /**
-     * Handle an incoming request.
+     * Handle incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Closure  $next
-     * @param  $permissions
+     * @param  Closure $next
+     * @param  string  $permissions
+     * @param  string|null  $team
+     * @param  string|null  $options
      * @return mixed
      */
-    public function handle($request, Closure $next, $permissions, $team = null, $requireAll = false)
+    public function handle($request, Closure $next, $permissions, $team = null, $options = '')
     {
-        list($team, $requireAll) = $this->assignRealValuesTo($team, $requireAll);
-
-        if (!is_array($permissions)) {
-            $permissions = explode(self::DELIMITER, $permissions);
-        }
-
-        if ($this->auth->guest() || !$request->user()->hasPermission($permissions, $team, $requireAll)) {
-            return call_user_func(
-                Config::get('laratrust.middleware.handling', 'abort'),
-                Config::get('laratrust.middleware.params', '403')
-            );
+        if (!$this->authorization('permissions', $permissions, $team, $options)) {
+            return $this->unauthorized();
         }
 
         return $next($request);
-    }
-
-    /**
-     * Assing the real values to the team and requireAllOrOptions parameters.
-     *
-     * @param  mixed  $team
-     * @param  mixed  $requireAllOrOptions
-     * @return array
-     */
-    private function assignRealValuesTo($team, $requireAllOrOptions)
-    {
-        return [
-            ($team == 'require_all' ? null : $team),
-            ($team == 'require_all' ? true : ($requireAllOrOptions== 'require_all' ? true : false)),
-        ];
     }
 }

@@ -11,38 +11,25 @@ namespace Laratrust\Middleware;
  */
 
 use Closure;
-use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Auth;
 
-class LaratrustAbility
+class LaratrustAbility extends LaratrustMiddleware
 {
-    const DELIMITER = '|';
-
-    protected $auth;
 
     /**
-     * Creates a new instance of the middleware.
-     *
-     * @param  Guard  $auth
-     */
-    public function __construct(Guard $auth)
-    {
-        $this->auth = $auth;
-    }
-
-    /**
-     * Handle an incoming request.
+     * Handle incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Closure  $next
-     * @param  $roles
-     * @param  $permissions
-     * @param  bool  $validateAll
+     * @param  Closure $next
+     * @param  string  $roles
+     * @param  string  $permissions
+     * @param  string|null  $team
+     * @param  string|null  $options
      * @return mixed
      */
-    public function handle($request, Closure $next, $roles, $permissions, $team = null, $validateAll = false)
+    public function handle($request, Closure $next, $roles, $permissions, $team = null, $options = '')
     {
-        list($team, $validateAll) = $this->assignRealValuesTo($team, $validateAll);
+        list($team, $validateAll, $guard) = $this->assignRealValuesTo($team, $options);
 
         if (!is_array($roles)) {
             $roles = explode(self::DELIMITER, $roles);
@@ -52,29 +39,16 @@ class LaratrustAbility
             $permissions = explode(self::DELIMITER, $permissions);
         }
 
-        if ($this->auth->guest() ||
-             !$request->user()->ability($roles, $permissions, $team, [ 'validate_all' => $validateAll ])) {
-            return call_user_func(
-                Config::get('laratrust.middleware.handling', 'abort'),
-                Config::get('laratrust.middleware.params', '403')
-            );
+        if (
+            Auth::guard($guard)->guest()
+            || !Auth::guard($guard)->user()
+                    ->ability($roles, $permissions, $team, [
+                        'validate_all' => $validateAll
+                    ])
+         ) {
+            return $this->unauthorized();
         }
 
         return $next($request);
-    }
-
-    /**
-     * Assing the real values to the team and requireAllOrOptions parameters.
-     *
-     * @param  mixed  $team
-     * @param  mixed  $requireAllOrOptions
-     * @return array
-     */
-    private function assignRealValuesTo($team, $requireAllOrOptions)
-    {
-        return [
-            ($team == 'require_all' ? null : $team),
-            ($team == 'require_all' ? true : ($requireAllOrOptions== 'require_all' ? true : false)),
-        ];
     }
 }
