@@ -170,6 +170,32 @@ trait LaratrustUserTrait
     }
 
     /**
+     * Checks if the user has a role by its name.
+     *
+     * @param  string|array  $name       Role name or array of role names.
+     * @param  string|bool   $team      Team name or requiredAll roles.
+     * @param  bool          $requireAll All roles in the array are required.
+     * @return bool
+     */
+    public function isA($role, $team = null, $requireAll = false)
+    {
+        return $this->hasRole($role, $team, $requireAll);
+    }
+
+    /**
+     * Checks if the user has a role by its name.
+     *
+     * @param  string|array  $name       Role name or array of role names.
+     * @param  string|bool   $team      Team name or requiredAll roles.
+     * @param  bool          $requireAll All roles in the array are required.
+     * @return bool
+     */
+    public function isAn($role, $team = null, $requireAll = false)
+    {
+        return $this->hasRole($role, $team, $requireAll);
+    }
+
+    /**
      * Check if user has a permission by its name.
      *
      * @param  string|array  $permission Permission string or array of permissions.
@@ -206,24 +232,17 @@ trait LaratrustUserTrait
         $team = $this->fetchTeam($team);
 
         foreach ($this->cachedPermissions() as $perm) {
-            if (!$this->isInSameTeam($perm, $team)) {
-                continue;
-            }
-
-            if (str_is($permission, $perm->name)) {
+            if ($this->isInSameTeam($perm, $team)
+                && str_is($permission, $perm->name)) {
                 return true;
             }
         }
 
         foreach ($this->cachedRoles() as $role) {
-            if (!$this->isInSameTeam($role, $team)) {
-                continue;
-            }
-
-            foreach ($role->cachedPermissions() as $perm) {
-                if (str_is($permission, $perm->name)) {
-                    return true;
-                }
+            if ($this->isInSameTeam($role, $team)
+                && $role->hasPermission($permission)
+            ) {
+                return true;
             }
         }
 

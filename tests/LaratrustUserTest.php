@@ -1,13 +1,13 @@
 <?php
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Mockery as m;
+use Laratrust\Contracts\Ownable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
-use Laratrust\Contracts\LaratrustUserInterface;
-use Laratrust\Contracts\Ownable;
+use Illuminate\Database\Eloquent\Model;
 use Laratrust\Traits\LaratrustUserTrait;
-use Mockery as m;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Laratrust\Contracts\LaratrustUserInterface;
 
 class LaratrustUserTest extends UserTest
 {

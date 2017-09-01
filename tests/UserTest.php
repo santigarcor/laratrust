@@ -45,7 +45,9 @@ abstract class UserTest extends PHPUnit_Framework_TestCase
 
     protected function mockRole($roleName, $team_id = null)
     {
-        $roleMock = m::mock('Laratrust\Role');
+        $roleMock = m::mock('Laratrust\LaratrustRole')->makePartial();
+
+        Config::shouldReceive('get')->with('laratrust.user_models')->andReturn([]);
         $roleMock->name = $roleName;
         $roleMock->perms = [];
         $roleMock->permissions = [];

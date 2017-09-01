@@ -79,7 +79,7 @@ trait LaratrustRoleTrait
         $flushCache = function ($role) {
             $role->flushCache();
         };
-        
+
         // If the role doesn't use SoftDeletes.
         if (method_exists(static::class, 'restored')) {
             static::restored($flushCache);
@@ -111,6 +111,10 @@ trait LaratrustRoleTrait
     public function hasPermission($permission, $requireAll = false)
     {
         if (is_array($permission)) {
+            if (empty($permission)) {
+                return true;
+            }
+
             foreach ($permission as $permissionName) {
                 $hasPermission = $this->hasPermission($permissionName);
 
