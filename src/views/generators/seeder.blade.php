@@ -1,5 +1,6 @@
 <?php echo '<?php' ?>
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -106,6 +107,7 @@ class LaratrustSeeder extends Seeder
      */
     public function truncateLaratrustTables()
     {
+        Schema::enableForeignKeyConstraints();
 @if (Config::get('database.default') == 'pgsql')
         DB::table('{{ config('laratrust.tables.permission_role') }}')->truncate();
         DB::table('{{ config('laratrust.tables.permission_user') }}')->truncate();
@@ -117,23 +119,20 @@ class LaratrustSeeder extends Seeder
         DB::statement("TRUNCATE TABLE {$rolesTable} CASCADE");
         DB::statement("TRUNCATE TABLE {$permissionsTable} CASCADE");
 @elseif(Config::get('database.default') == 'mysql')
-        DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         DB::table('{{ config('laratrust.tables.permission_role') }}')->truncate();
         DB::table('{{ config('laratrust.tables.permission_user') }}')->truncate();
         DB::table('{{ config('laratrust.tables.role_user') }}')->truncate();
         \{{ $user }}::truncate();
         \{{ $role }}::truncate();
         \{{ $permission }}::truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS = 1');
 @elseif(Config::get('database.default') == 'sqlsrv')
-        DB::statement('EXEC sp_msforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all"');
         DB::table('{{ config('laratrust.tables.permission_role') }}')->truncate();
         DB::table('{{ config('laratrust.tables.permission_user') }}')->truncate();
         DB::table('{{ config('laratrust.tables.role_user') }}')->truncate();
         \{{ $user }}::truncate();
         \{{ $role }}::truncate();
         \{{ $permission }}::truncate();
-        DB::statement('EXEC sp_msforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all"');
 @endif
+        Schema::disableForeignKeyConstraints();
     }
 }
