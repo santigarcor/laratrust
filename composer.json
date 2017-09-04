@@ -14,7 +14,7 @@
         "illuminate/auth": "~5.2",
         "illuminate/cache": "~5.2",
         "illuminate/console": "~5.2",
-        "illuminate/database": "~5.2",
+        "illuminate/database": "^5.2.32",
         "illuminate/support": "~5.2",
         "kkszymanowski/traitor": "^0.2.0"
     },

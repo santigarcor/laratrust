@@ -107,7 +107,7 @@ class LaratrustSeeder extends Seeder
      */
     public function truncateLaratrustTables()
     {
-        Schema::enableForeignKeyConstraints();
+        Schema::disableForeignKeyConstraints();
 @if (Config::get('database.default') == 'pgsql')
         DB::table('{{ config('laratrust.tables.permission_role') }}')->truncate();
         DB::table('{{ config('laratrust.tables.permission_user') }}')->truncate();
@@ -118,14 +118,7 @@ class LaratrustSeeder extends Seeder
         DB::statement("TRUNCATE TABLE {$usersTable} CASCADE");
         DB::statement("TRUNCATE TABLE {$rolesTable} CASCADE");
         DB::statement("TRUNCATE TABLE {$permissionsTable} CASCADE");
-@elseif(Config::get('database.default') == 'mysql')
-        DB::table('{{ config('laratrust.tables.permission_role') }}')->truncate();
-        DB::table('{{ config('laratrust.tables.permission_user') }}')->truncate();
-        DB::table('{{ config('laratrust.tables.role_user') }}')->truncate();
-        \{{ $user }}::truncate();
-        \{{ $role }}::truncate();
-        \{{ $permission }}::truncate();
-@elseif(Config::get('database.default') == 'sqlsrv')
+@else
         DB::table('{{ config('laratrust.tables.permission_role') }}')->truncate();
         DB::table('{{ config('laratrust.tables.permission_user') }}')->truncate();
         DB::table('{{ config('laratrust.tables.role_user') }}')->truncate();
@@ -133,6 +126,6 @@ class LaratrustSeeder extends Seeder
         \{{ $role }}::truncate();
         \{{ $permission }}::truncate();
 @endif
-        Schema::disableForeignKeyConstraints();
+        Schema::enableForeignKeyConstraints();
     }
 }
