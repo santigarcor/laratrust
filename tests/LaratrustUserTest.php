@@ -100,12 +100,13 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         $team = $this->mockTeam('TeamA');
-        $roleA = $this->mockRole('RoleA');
-        $roleB = $this->mockRole('RoleB');
-        $roleC = $this->mockRole('RoleC', $team->id);
 
         $user = new HasRoleUser();
-        $user->roles = [$roleA, $roleB, $roleC];
+        $user->roles = [
+            $this->mockRole('RoleA'),
+            $this->mockRole('RoleB'),
+            $this->mockRole('RoleC', $team->id)
+        ];
 
         /*
         |------------------------------------------------------------
@@ -156,20 +157,18 @@ class LaratrustUserTest extends UserTest
         */
         $team = $this->mockTeam('TeamA');
 
-        $permA = $this->mockPermission('manage_a');
-        $permB = $this->mockPermission('manage_b');
-        $permC = $this->mockPermission('manage_c', $team->id);
-        $permD = $this->mockPermission('manage_d');
-
         $roleA = $this->mockRole('RoleA');
         $roleB = $this->mockRole('RoleB', $team->id);
 
-        $roleA->perms = [$permA];
-        $roleB->perms = [$permB];
+        $roleA->perms = [$this->mockPermission('permission_a')];
+        $roleB->perms = [$this->mockPermission('permission_b')];
 
         $user = new HasRoleUser();
         $user->roles = [$roleA, $roleB];
-        $user->permissions = [$permC, $permD];
+        $user->permissions = [
+            $this->mockPermission('permission_c', $team->id),
+            $this->mockPermission('permission_d'),
+        ];
 
         /*
         |------------------------------------------------------------
@@ -207,21 +206,21 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         $this->assertTrue($user->hasPermission([]));
-        $this->assertTrue($user->hasPermission('manage_a'));
-        $this->assertTrue($user->hasPermission('manage_b', 'TeamA'));
-        $this->assertTrue($user->hasPermission('manage_c', 'TeamA'));
-        $this->assertTrue($user->hasPermission('manage_d'));
-        $this->assertFalse($user->hasPermission('manage_e'));
+        $this->assertTrue($user->hasPermission('permission_a'));
+        $this->assertTrue($user->hasPermission('permission_b', 'TeamA'));
+        $this->assertTrue($user->hasPermission('permission_c', 'TeamA'));
+        $this->assertTrue($user->hasPermission('permission_d'));
+        $this->assertFalse($user->hasPermission('permission_e'));
 
-        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_c', 'manage_d', 'manage_e']));
-        $this->assertTrue($user->hasPermission('manage_a|manage_b|manage_c|manage_d|manage_e'));
-        $this->assertTrue($user->hasPermission(['manage_a', 'manage_d'], true));
-        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_d'], true));
-        $this->assertFalse($user->hasPermission(['manage_a', 'manage_b', 'manage_d'], 'TeamA', true));
-        $this->assertFalse($user->hasPermission(['manage_a', 'manage_b', 'manage_e'], true));
-        $this->assertFalse($user->hasPermission(['manage_e', 'manage_f']));
+        $this->assertTrue($user->hasPermission(['permission_a', 'permission_b', 'permission_c', 'permission_d', 'permission_e']));
+        $this->assertTrue($user->hasPermission('permission_a|permission_b|permission_c|permission_d|permission_e'));
+        $this->assertTrue($user->hasPermission(['permission_a', 'permission_d'], true));
+        $this->assertTrue($user->hasPermission(['permission_a', 'permission_b', 'permission_d'], true));
+        $this->assertFalse($user->hasPermission(['permission_a', 'permission_b', 'permission_d'], 'TeamA', true));
+        $this->assertFalse($user->hasPermission(['permission_a', 'permission_b', 'permission_e'], true));
+        $this->assertFalse($user->hasPermission(['permission_e', 'permission_f']));
         // Not using teams
-        $this->assertTrue($user->hasPermission(['manage_a', 'manage_b', 'manage_d'], 'TeamA', true));
+        $this->assertTrue($user->hasPermission(['permission_a', 'permission_b', 'permission_d'], 'TeamA', true));
     }
 
     public function testCan()
@@ -280,19 +279,17 @@ class LaratrustUserTest extends UserTest
         |------------------------------------------------------------
         */
         $team = $this->mockTeam('TeamA');
-
-        $permA = $this->mockPermission('admin.posts');
-        $permB = $this->mockPermission('admin.pages');
-        $permC = $this->mockPermission('admin.users');
-        $permD = $this->mockPermission('config.things', $team->id);
-
         $role = $this->mockRole('Role');
 
-        $role->perms = [$permA, $permB, $permC];
+        $role->perms = [
+            $this->mockPermission('admin.posts'),
+            $this->mockPermission('admin.pages'),
+            $this->mockPermission('admin.users')
+        ];
 
         $user = new HasRoleUser();
         $user->roles = [$role];
-        $user->permissions = [$permD];
+        $user->permissions = [$this->mockPermission('config.things', $team->id)];
 
         /*
         |------------------------------------------------------------
