@@ -39,6 +39,14 @@ class MakeSeederCommand extends Command
     {
         $this->laravel->view->addNamespace('laratrust', substr(__DIR__, 0, -8).'views');
 
+        if (file_exists($this->seederPath())) {
+            $this->line('');
+
+            $this->warn("The LaratrustSeeder file already exists. Delete the existing one if you want to create a new one.");
+            $this->line('');
+            return;
+        }
+
         if ($this->createSeeder()) {
             $this->info("Seeder successfully created!");
         } else {
@@ -65,7 +73,6 @@ class MakeSeederCommand extends Command
         $user = new Collection(Config::get('laratrust.user_models', ['App\User']));
         $user = $user->first();
 
-        $migrationPath = $this->getMigrationPath();
         $output = $this->laravel->view->make('laratrust::generators.seeder')
             ->with(compact([
                 'role',
@@ -76,7 +83,7 @@ class MakeSeederCommand extends Command
             ]))
             ->render();
 
-        if (!file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
+        if ($fs = fopen($this->seederPath(), 'x')) {
             fwrite($fs, $output);
             fclose($fs);
             return true;
@@ -90,7 +97,7 @@ class MakeSeederCommand extends Command
      *
      * @return string
      */
-    protected function getMigrationPath()
+    protected function seederPath()
     {
         return database_path("seeds/LaratrustSeeder.php");
     }
