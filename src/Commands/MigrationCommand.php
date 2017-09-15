@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratrust;
+namespace Laratrust\Commands;
 
 /**
  * This file is part of Laratrust,
@@ -11,30 +11,31 @@ namespace Laratrust;
  */
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 
-class UpgradeCommand extends Command
+class MigrationCommand extends Command
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'laratrust:upgrade';
+    protected $name = 'laratrust:migration';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Creates a migration to upgrade laratrust from version 3.2 to 4.0.';
+    protected $description = 'Creates a migration following the Laratrust specifications.';
 
     /**
      * Suffix of the migration name.
      *
      * @var string
      */
-    protected $migrationSuffix = 'laratrust_upgrade_tables';
+    protected $migrationSuffix = 'laratrust_setup_tables';
 
     /**
      * Execute the console command.
@@ -44,15 +45,19 @@ class UpgradeCommand extends Command
     public function handle()
     {
         $this->laravel->view->addNamespace('laratrust', substr(__DIR__, 0, -8).'views');
-
         $this->line('');
-        $this->info("The Laratrust upgrade migration will be created in the database/migration directory");
+        $this->info("Laratrust Migration Creation.");
+        if (Config::get('laratrust.use_teams')) {
+            $this->comment('You are using the teams feature.');
+        }
+        $this->line('');
+        $this->comment($this->generateMigrationMessage());
 
         $existingMigrations = $this->alreadyExistingMigrations();
 
         if ($existingMigrations) {
             $this->line('');
-            
+
             $this->warn($this->getExistingMigrationsWarning($existingMigrations));
         }
 
@@ -64,10 +69,10 @@ class UpgradeCommand extends Command
 
         $this->line('');
 
-        $this->info("Creating migration...");
+        $this->line("Creating migration");
 
         if ($this->createMigration()) {
-            $this->info("Migration successfully created!");
+            $this->info("Migration created successfully.");
         } else {
             $this->error(
                 "Couldn't create migration.\n".
@@ -87,9 +92,8 @@ class UpgradeCommand extends Command
     {
         $migrationPath = $this->getMigrationPath();
 
-        $this->call('view:clear');
         $output = $this->laravel->view
-            ->make('laratrust::generators.upgrade-migration')
+            ->make('laratrust::migration')
             ->with(['laratrust' => Config::get('laratrust')])
             ->render();
 
@@ -103,18 +107,37 @@ class UpgradeCommand extends Command
     }
 
     /**
+     * Generate the message to display when running the
+     * console command showing what tables are going
+     * to be created.
+     *
+     * @return string
+     */
+    protected function generateMigrationMessage()
+    {
+        $tables = Collection::make(Config::get('laratrust.tables'))
+            ->reject(function ($value, $key) {
+                return $key == 'teams' && !Config::get('laratrust.use_teams');
+            })
+            ->sort();
+
+        return "A migration that creates {$tables->implode(', ')} "
+            . "tables will be created in database/migrations directory";
+    }
+
+    /**
      * Build a warning regarding possible duplication
      * due to already existing migrations.
      *
-     * @param  array $existingMigrations
+     * @param  array  $existingMigrations
      * @return string
      */
     protected function getExistingMigrationsWarning(array $existingMigrations)
     {
         if (count($existingMigrations) > 1) {
-            $base = "Laratrust upgrade migrations already exist.\nFollowing files were found: ";
+            $base = "Laratrust migrations already exist.\nFollowing files were found: ";
         } else {
-            $base = "Laratrust upgrade migration already exists.\nFollowing file was found: ";
+            $base = "Laratrust migration already exists.\nFollowing file was found: ";
         }
 
         return $base . array_reduce($existingMigrations, function ($carry, $fileName) {
@@ -143,7 +166,7 @@ class UpgradeCommand extends Command
      * The date parameter is optional for ability
      * to provide a custom value or a wildcard.
      *
-     * @param  string|null $date
+     * @param  string|null  $date
      * @return string
      */
     protected function getMigrationPath($date = null)

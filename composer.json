@@ -23,11 +23,8 @@
         "phpunit/phpunit": "~4.1"
     },
     "autoload": {
-        "classmap": [
-            "src/commands"
-        ],
         "psr-4": {
-            "Laratrust\\": "src/Laratrust/"
+            "Laratrust\\": "src/"
         }
     },
     "autoload-dev": {

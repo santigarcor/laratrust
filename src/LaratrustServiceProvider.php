@@ -54,8 +54,8 @@ class LaratrustServiceProvider extends ServiceProvider
     {
         // Register published configuration.
         $this->publishes([
-            __DIR__.'/../config/laratrust.php' => config_path('laratrust.php'),
-            __DIR__.'/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
+            __DIR__.'/config/laratrust.php' => config_path('laratrust.php'),
+            __DIR__.'/config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
         ], 'laratrust');
 
         $this->useMorphMapForRelationships();
@@ -162,63 +162,63 @@ class LaratrustServiceProvider extends ServiceProvider
     protected function registerMigrationCommand()
     {
         $this->app->singleton('command.laratrust.migration', function () {
-            return new MigrationCommand();
+            return new \Laratrust\Commands\MigrationCommand();
         });
     }
 
     protected function registerMakeRoleCommand()
     {
         $this->app->singleton('command.laratrust.role', function ($app) {
-            return new MakeRoleCommand($app['files']);
+            return new \Laratrust\Commands\MakeRoleCommand($app['files']);
         });
     }
 
     protected function registerMakePermissionCommand()
     {
         $this->app->singleton('command.laratrust.permission', function ($app) {
-            return new MakePermissionCommand($app['files']);
+            return new \Laratrust\Commands\MakePermissionCommand($app['files']);
         });
     }
 
     protected function registerMakeTeamCommand()
     {
         $this->app->singleton('command.laratrust.team', function ($app) {
-            return new MakeTeamCommand($app['files']);
+            return new \Laratrust\Commands\MakeTeamCommand($app['files']);
         });
     }
 
     protected function registerAddLaratrustUserTraitUseCommand()
     {
         $this->app->singleton('command.laratrust.add-trait', function () {
-            return new AddLaratrustUserTraitUseCommand();
+            return new \Laratrust\Commands\AddLaratrustUserTraitUseCommand();
         });
     }
 
     protected function registerSetupCommand()
     {
         $this->app->singleton('command.laratrust.setup', function () {
-            return new SetupCommand();
+            return new \Laratrust\Commands\SetupCommand();
         });
     }
 
     protected function registerSetupTeamsCommand()
     {
         $this->app->singleton('command.laratrust.setup-teams', function () {
-            return new SetupTeamsCommand();
+            return new \Laratrust\Commands\SetupTeamsCommand();
         });
     }
 
     protected function registerMakeSeederCommand()
     {
         $this->app->singleton('command.laratrust.seeder', function () {
-            return new MakeSeederCommand();
+            return new \Laratrust\Commands\MakeSeederCommand();
         });
     }
 
     protected function registerUpgradeCommand()
     {
         $this->app->singleton('command.laratrust.upgrade', function () {
-            return new UpgradeCommand();
+            return new \Laratrust\Commands\UpgradeCommand();
         });
     }
 
@@ -230,7 +230,7 @@ class LaratrustServiceProvider extends ServiceProvider
     private function mergeConfig()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/laratrust.php',
+            __DIR__.'/config/laratrust.php',
             'laratrust'
         );
     }

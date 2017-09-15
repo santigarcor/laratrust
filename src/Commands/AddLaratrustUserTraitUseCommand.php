@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratrust;
+namespace Laratrust\Commands;
 
 /**
  * This file is part of Laratrust,

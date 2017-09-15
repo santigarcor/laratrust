@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratrust;
+namespace Laratrust\Commands;
 
 /**
  * This file is part of Laratrust,
@@ -73,7 +73,7 @@ class MakeSeederCommand extends Command
         $user = new Collection(Config::get('laratrust.user_models', ['App\User']));
         $user = $user->first();
 
-        $output = $this->laravel->view->make('laratrust::generators.seeder')
+        $output = $this->laravel->view->make('laratrust::seeder')
             ->with(compact([
                 'role',
                 'permission',

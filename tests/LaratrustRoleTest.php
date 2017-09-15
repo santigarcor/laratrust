@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Mockery as m;
+use Laratrust\Models\LaratrustRole;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
-use Laratrust\LaratrustRole;
-use Mockery as m;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class LaratrustRoleTest extends UserTest
 {

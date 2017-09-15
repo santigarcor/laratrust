@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratrust;
+namespace Laratrust\Commands;
 
 /**
  * This file is part of Laratrust,
@@ -13,28 +13,28 @@ namespace Laratrust;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Facades\Config;
 
-class MakeRoleCommand extends GeneratorCommand
+class MakeTeamCommand extends GeneratorCommand
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'laratrust:role';
+    protected $name = 'laratrust:team';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create Role model if it does not exist';
+    protected $description = 'Create Team model if it does not exist';
 
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Role model';
+    protected $type = 'Team model';
 
     /**
      * Get the stub file for the generator.
@@ -43,7 +43,7 @@ class MakeRoleCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/role.stub';
+        return __DIR__.'/stubs/team.stub';
     }
 
     /**
@@ -53,7 +53,7 @@ class MakeRoleCommand extends GeneratorCommand
      */
     protected function getNameInput()
     {
-        return Config::get('laratrust.models.role', 'Role');
+        return Config::get('laratrust.models.team', 'Team');
     }
 
     /**
@@ -66,7 +66,7 @@ class MakeRoleCommand extends GeneratorCommand
     {
         return $rootNamespace;
     }
-    
+
     /**
      * Get the console command arguments.
      *

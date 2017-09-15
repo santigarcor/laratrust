@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratrust;
+namespace Laratrust\Models;
 
 /**
  * This file is part of Laratrust,
@@ -10,14 +10,14 @@ namespace Laratrust;
  * @package Laratrust
  */
 
-use Laratrust\Contracts\LaratrustTeamInterface;
-use Laratrust\Traits\LaratrustTeamTrait;
+use Laratrust\Contracts\LaratrustRoleInterface;
+use Laratrust\Traits\LaratrustRoleTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 
-class LaratrustTeam extends Model implements LaratrustTeamInterface
+class LaratrustRole extends Model implements LaratrustRoleInterface
 {
-    use LaratrustTeamTrait;
+    use LaratrustRoleTrait;
 
     /**
      * The database table used by the model.
@@ -35,6 +35,6 @@ class LaratrustTeam extends Model implements LaratrustTeamInterface
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->table = Config::get('laratrust.tables.teams');
+        $this->table = Config::get('laratrust.tables.roles');
     }
 }

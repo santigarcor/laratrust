@@ -31,7 +31,7 @@ abstract class UserTest extends PHPUnit_Framework_TestCase
 
     protected function mockPermission($permName, $team_id = null)
     {
-        $permMock = m::mock('Laratrust\Permission');
+        $permMock = m::mock('Laratrust\Models\Permission');
         $permMock->name = $permName;
         $permMock->display_name = ucwords(str_replace('_', ' ', $permName));
         $permMock->id = 1;
@@ -45,7 +45,7 @@ abstract class UserTest extends PHPUnit_Framework_TestCase
 
     protected function mockRole($roleName, $team_id = null)
     {
-        $roleMock = m::mock('Laratrust\LaratrustRole')->makePartial();
+        $roleMock = m::mock('Laratrust\Models\LaratrustRole')->makePartial();
 
         Config::shouldReceive('get')->with('laratrust.user_models')->andReturn([]);
         $roleMock->name = $roleName;
@@ -62,7 +62,9 @@ abstract class UserTest extends PHPUnit_Framework_TestCase
 
     protected function mockTeam($teamName)
     {
-        $teamMock = m::mock('Laratrust\Team');
+        $teamMock = m::mock('Laratrust\Models\LaratrustTeam')->makePartial();
+
+        Config::shouldReceive('get')->with('laratrust.user_models')->andReturn([]);
         $teamMock->name = $teamName;
         $teamMock->id = 1;
 
