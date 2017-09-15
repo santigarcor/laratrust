@@ -170,6 +170,11 @@ return [
     */
     'middleware' => [
         /**
+         * Define if the laratrust middlewares are registered automatically in the service provider
+         */
+        'register' => false,
+
+        /**
          * Method to be called in the middleware return case.
          * Available: abort|redirect
          */

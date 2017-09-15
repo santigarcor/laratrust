@@ -12,9 +12,6 @@ namespace Laratrust;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\View\Factory;
-use Laratrust\LaratrustRegistersBladeDirectives;
-use Laratrust\SetupTeamsCommand;
 
 class LaratrustServiceProvider extends ServiceProvider
 {
@@ -42,6 +39,12 @@ class LaratrustServiceProvider extends ServiceProvider
         'Upgrade' => 'command.laratrust.upgrade'
     ];
 
+    protected $middlewares = [
+        'role' => \Laratrust\Middleware\LaratrustRole::class,
+        'permission' => \Laratrust\Middleware\LaratrustPermission::class,
+        'ability' => \Laratrust\Middleware\LaratrustAbility::class,
+    ];
+
     /**
      * Bootstrap the application events.
      *
@@ -55,12 +58,50 @@ class LaratrustServiceProvider extends ServiceProvider
             __DIR__.'/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
         ], 'laratrust');
 
-        if ($this->app['config']->get('laratrust.use_morph_map')) {
-            Relation::morphMap($this->app['config']->get('laratrust.user_models'));
-        }
+        $this->useMorphMapForRelationships();
+
+        $this->autoRegisterMiddlewares();
 
         if (class_exists('\Blade')) {
             $this->registerBladeDirectives();
+        }
+    }
+
+    /**
+     * If the user wants to use the morphMap it uses the morphMap.
+     *
+     * @return void
+     */
+    protected function useMorphMapForRelationships()
+    {
+        if ($this->app['config']->get('laratrust.use_morph_map')) {
+            Relation::morphMap($this->app['config']->get('laratrust.user_models'));
+        }
+    }
+
+    /**
+     * Register the middlewares automatically.
+     *
+     * @return void
+     */
+    protected function autoRegisterMiddlewares()
+    {
+        if (!$this->app['config']->get('laratrust.middleware.register')) {
+            return;
+        }
+
+        $router = $this->app['router'];
+
+        if (method_exists($router, 'middleware')) {
+            $registerMethod = 'middleware';
+        } elseif (method_exists($router, 'aliasMiddleware')) {
+            $registerMethod = 'aliasMiddleware';
+        } else {
+            return;
+        }
+
+        foreach ($this->middlewares as $key => $class) {
+            $router->$registerMethod($key, $class);
         }
     }
 
