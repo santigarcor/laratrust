@@ -39,6 +39,11 @@ class LaratrustServiceProvider extends ServiceProvider
         'Upgrade' => 'command.laratrust.upgrade'
     ];
 
+    /**
+     * The middlewares to be registered.
+     *
+     * @var array
+     */
     protected $middlewares = [
         'role' => \Laratrust\Middleware\LaratrustRole::class,
         'permission' => \Laratrust\Middleware\LaratrustPermission::class,

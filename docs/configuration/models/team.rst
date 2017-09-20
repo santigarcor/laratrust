@@ -12,7 +12,7 @@ Create a Team model inside ``app/Team.php`` using the following example:
 
     namespace App;
 
-    use Laratrust\LaratrustTeam;
+    use Laratrust\Models\LaratrustTeam;
 
     class Team extends LaratrustTeam
     {

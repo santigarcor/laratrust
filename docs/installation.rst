@@ -17,15 +17,15 @@ Installation
     'Laratrust'   => Laratrust\LaratrustFacade::class,
 
 4. Run the next command to publish all the configuration files::
-    
+
     php artisan vendor:publish --tag="laratrust"
-    
+
 .. WARNING::
     If this command did not publish any files, chances are, the Laratrust service provider hasn't been registered. Try clearing your configuration cache::
 
         php artisan config:clear
 
-5. If you are going to use :doc:`usage/middleware` you also need to add the following to ``routeMiddleware`` array in ``app/Http/Kernel.php``::
+5. The :doc:`usage/middleware`\s are registered automatically as ``role``, ``permission`` and ``ability`` . If you want to change that, go to your ``config/laratrust.php`` and set the ``middleware.register`` value to ``false`` and add  the following to the ``routeMiddleware`` array in ``app/Http/Kernel.php``::
 
     'role' => \Laratrust\Middleware\LaratrustRole::class,
     'permission' => \Laratrust\Middleware\LaratrustPermission::class,

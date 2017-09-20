@@ -9,7 +9,7 @@ Create a Permission model inside ``app/Permission.php`` using the following exam
 
     namespace App;
 
-    use Laratrust\LaratrustPermission;
+    use Laratrust\Models\LaratrustPermission;
 
     class Permission extends LaratrustPermission
     {

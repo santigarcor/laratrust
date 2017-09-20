@@ -31,7 +31,7 @@ To emulate *AND* functionality you can do:
     // $user->hasRole(['owner', 'writer'], true);
 
     'middleware' => ['permission:edit-post|edit-user,require_all']
-    // $user->hasRole(['edit-post', 'edit-user'], true);
+    // $user->can(['edit-post', 'edit-user'], true);
 
 For more complex situations use ``ability`` middleware which accepts 3 parameters: roles, permissions, validate_all:
 
@@ -40,6 +40,13 @@ For more complex situations use ``ability`` middleware which accepts 3 parameter
     'middleware' => ['ability:admin|owner,create-post|edit-user,require_all']
     // $user->ability(['admin', 'owner'], ['create-post', 'edit-user'], true)
 
+If you want yo use a different guard for the user check you can specify it as an option:
+
+.. code-block:: php
+
+    'middleware' => ['role:owner|writer,require_all|guard:api']
+    'middleware' => ['permission:edit-post|edit-user,require_all|guard:some_new_guard']
+    'middleware' => ['ability:admin|owner,create-post|edit-user,require_all|guard:web']
 
 Teams
 -----

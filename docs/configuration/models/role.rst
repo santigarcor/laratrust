@@ -9,7 +9,7 @@ Create a Role model inside ``app/Role.php`` using the following example:
 
     namespace App;
 
-    use Laratrust\LaratrustRole;
+    use Laratrust\Models\LaratrustRole;
 
     class Role extends LaratrustRole
     {

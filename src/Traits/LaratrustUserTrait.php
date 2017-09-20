@@ -405,10 +405,11 @@ trait LaratrustUserTrait
     private function syncModels($relationship, $objectType, $objects, $team, $detaching)
     {
         $mappedObjects = [];
-        $team = Config::get('laratrust.use_teams') ? Helper::getIdFor($team, 'team') : null;
+        $useTeams = Config::get('laratrust.use_teams');
+        $team = $useTeams ? Helper::getIdFor($team, 'team') : null;
 
         foreach ($objects as $object) {
-            if (Config::get('laratrust.use_teams') && $team) {
+            if ($useTeams && $team) {
                 $mappedObjects[Helper::getIdFor($object, $objectType)] = [Helper::teamForeignKey() => $team];
             } else {
                 $mappedObjects[] = Helper::getIdFor($object, $objectType);
@@ -417,7 +418,7 @@ trait LaratrustUserTrait
 
         $relationshipToSync = $this->$relationship();
 
-        if (Config::get('laratrust.use_teams') && $team) {
+        if ($useTeams && $team) {
             $relationshipToSync->wherePivot(Helper::teamForeignKey(), $team);
         }
 

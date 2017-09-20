@@ -56,6 +56,9 @@ Assignment
    $owner->syncPermissions([$createPost, $editUser]); // parameter can be a Permission object, array or id
    // equivalent to $owner->permissions()->sync([$createPost->id, $editUser->id]);
 
+   $owner->syncPermissionsWithoutDetaching([$createPost, $editUser]); // parameter can be a Permission object, array or id
+   // equivalent to $owner->permissions()->syncWithoutDetaching([$createPost->id, $editUser->id]);
+
 Removal
 ^^^^^^^
 
@@ -85,7 +88,10 @@ Assignment
    // equivalent to $user->roles()->attach([$admin->id, $owner->id]);
 
    $user->syncRoles([$admin->id, $owner->id]);
-   // equivalent to $user->roles()->sync([$admin->id]);
+   // equivalent to $user->roles()->sync([$admin->id, $owner->id]);
+
+   $user->syncRolesWithoutDetaching([$admin->id, $owner->id]);
+   // equivalent to $user->roles()->syncWithoutDetaching([$admin->id, $owner->id]);
 
 Removal
 ^^^^^^^
@@ -142,6 +148,9 @@ Now we can check for roles and permissions simply by doing:
 
 .. NOTE::
    If you want, you can use the ``hasPermission`` and ``isAbleTo`` methods instead of the ``can`` method.
+
+.. NOTE::
+   If you want, you can use the ``isA`` and ``isAn`` methods instead of the ``hasRole`` method.
 
 .. NOTE::
    If you want to use the Authorizable trait alongside Laratrust please check :ref:`troubleshooting`.
@@ -219,12 +228,12 @@ User ability
 
 More advanced checking can be done using the awesome ``ability`` function.
 It takes in three parameters (roles, permissions, options):
-   
+
 * ``roles`` is a set of roles to check.
 * ``permissions`` is a set of permissions to check.
 * ``options`` is a set of options to change the method behavior.
 
-Either of the roles or permissions variable can be a comma separated string or array:
+Either of the roles or permissions variable can be a pipe separated string or an array:
 
 .. code-block:: php
 
@@ -232,7 +241,7 @@ Either of the roles or permissions variable can be a comma separated string or a
 
    // or
 
-   $user->ability('admin,owner', 'create-post,edit-user');
+   $user->ability('admin|owner', 'create-post|edit-user');
 
 This will check whether the user has any of the provided roles and permissions.
 In this case it will return true since the user is an ``admin`` and has the ``create-post`` permission.
@@ -279,11 +288,11 @@ The ``Laratrust`` class has a shortcut to ``ability()`` for the currently logged
 
 .. code-block:: php
 
-   Laratrust::ability('admin,owner', 'create-post,edit-user');
+   Laratrust::ability('admin|owner', 'create-post|edit-user');
 
    // is identical to
 
-   Auth::user()->ability('admin,owner', 'create-post,edit-user');
+   Auth::user()->ability('admin|owner', 'create-post|edit-user');
 
 Retrieving Relationships
 ------------------------
@@ -344,13 +353,13 @@ Also, if you want to retrieve the users that have some permission you can use th
    // This will return the users with 'edit-user' permission.
    $users = User::wherePermissionIs('edit-user')->get();
 
-Objects's Ownership
+Objects Ownership
 -------------------
 
 If you need to check if the user owns an object you can use the user function ``owns``:
 
 .. code-block:: php
-   
+
    public function update (Post $post) {
       if ($user->owns($post)) { //This will check the 'user_id' inside the $post
          abort(403);
@@ -362,7 +371,7 @@ If you need to check if the user owns an object you can use the user function ``
 If you want to change the foreign key name to check for, you can pass a second attribute to the method:
 
 .. code-block:: php
-   
+
    public function update (Post $post) {
       if ($user->owns($post, 'idUser')) { //This will check for 'idUser' inside the $post
          abort(403);
@@ -394,7 +403,7 @@ The third parameter is an options array:
 Here's an example of the usage of both methods:
 
 .. code-block:: php
-   
+
    $post = Post::find(1);
    $user->canAndOwns('edit-post', $post);
    $user->canAndOwns(['edit-post', 'delete-post'], $post);
@@ -429,7 +438,7 @@ If the object ownership is resolved with a more complex logic you can implement 
    {
       ...
 
-      public function ownerKey()
+      public function ownerKey($owner)
       {
          return $this->someRelationship->user->id;
       }
@@ -440,10 +449,13 @@ If the object ownership is resolved with a more complex logic you can implement 
 .. NOTE::
    The ``ownerKey`` method **must** return the object's owner id value.
 
+.. NOTE::
+   The ``ownerKey`` method receives as a parameter the object that called the ``owns`` method.
+
 And then in your code you can simply do:
 
 .. code-block:: php
-   
+
    $user = User::find(1);
    $theObject = new SomeOwnedObject;
    $user->owns($theObject);            // This will return true or false depending on what the ownerKey method returns
@@ -555,7 +567,7 @@ User Ability
 The user ability is the same, but this time you can pass the team parameter.
 
 .. code-block:: php
-  
+
    $options = [
        'requireAll' => true | false (Default: false),
        'foreignKeyName'  => 'canBeAnyString' (Default: null)
@@ -570,7 +582,7 @@ Permissions, Roles & Ownership Checks
 The permissions, roles and ownership checks work the same, but this time you can pass the team in the options array.
 
 .. code-block:: php
-   
+
    $options = [
       'team' => 'my-awesome-team',
       'requireAll' => false,
