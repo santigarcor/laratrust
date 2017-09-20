@@ -4,8 +4,10 @@ namespace Laratrust\Middleware;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Redirect;
 
 class LaratrustMiddleware
 {
@@ -40,10 +42,13 @@ class LaratrustMiddleware
      */
     protected function unauthorized()
     {
-        return call_user_func(
-                Config::get('laratrust.middleware.handling', 'abort'),
-                Config::get('laratrust.middleware.params', '403')
-            );
+        $parameter = Config::get('laratrust.middleware.params');
+
+        if (Config::get('laratrust.middleware.handling') == 'abort') {
+            return App::abort($parameter);
+        }
+
+        return Redirect::to($parameter);
     }
 
     /**

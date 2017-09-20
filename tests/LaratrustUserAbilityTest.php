@@ -1,67 +1,40 @@
 <?php
 
-use Laratrust\Permission;
-use Laratrust\Role;
-use Mockery as m;
+namespace Laratrust\Tests;
 
-class LaratrustUserAbilityTest extends UserTest
+use Laratrust\Tests\Models\Role;
+use Laratrust\Tests\Models\Team;
+use Laratrust\Tests\Models\User;
+use Laratrust\Tests\Models\Permission;
+
+class LaratrustUserAbilityTest extends LaratrustTestCase
 {
-    protected $permissions;
-    protected $roles;
     protected $user;
 
     public function setUp()
     {
         parent::setUp();
 
-        $this->permissions['A'] = $this->mockPermission('user_can_a');
-        $this->permissions['B'] = $this->mockPermission('user_can_b');
-        $this->permissions['C'] = $this->mockPermission('user_can_c');
+        $this->migrate();
+        $this->app['config']->set('laratrust.use_teams', true);
 
-        $this->team = $this->mockTeam('TeamA');
-        $this->roles['A'] = $this->mockRole('UserRoleA');
-        $this->roles['B'] = $this->mockRole('UserRoleB', $this->team->id);
+        $permissionA = Permission::create(['name' => 'permission_a']);
+        $permissionB = Permission::create(['name' => 'permission_b']);
+        $permissionC = Permission::create(['name' => 'permission_c']);
 
-        $this->roles['A']->perms = [$this->permissions['A']];
-        $this->roles['B']->perms = [$this->permissions['B'], $this->permissions['C']];
+        $team = Team::create(['name' => 'team_a']);
+        $roleA = Role::create(['name' => 'role_a']);
+        $roleB = Role::create(['name' => 'role_b']);
 
-        $this->user = m::mock('HasRoleUser')->makePartial();
-        $this->user->roles = [$this->roles['A'], $this->roles['B']];
-        $this->user->id = 4;
-        $this->user->primaryKey = 'id';
-    }
+        $roleA->attachPermission($permissionA);
+        $roleB->attachPermissions([$permissionB, $permissionC]);
 
-    protected function hasRoleAndHasPermissionExpectations()
-    {
-        $this->user->shouldReceive('hasRole')->with('UserRoleA', null)->andReturn(true);
-        $this->user->shouldReceive('hasRole')->with('UserRoleA', 'TeamA')->andReturn(false);
-        $this->user->shouldReceive('hasRole')->with('UserRoleB', 'TeamA')->andReturn(true);
-        $this->user->shouldReceive('hasRole')->with('UserRoleB', null)->andReturn(false);
-        $this->user->shouldReceive('hasRole')
-            ->with(m::anyOf('NonUserRoleA', 'NonUserRoleB'), m::anyOf('TeamA', null))
-            ->andReturn(false);
-        $this->user->shouldReceive('hasPermission')->with('user_can_a', null)->andReturn(true);
-        $this->user->shouldReceive('hasPermission')->with('user_can_a', 'TeamA')->andReturn(false);
-        $this->user->shouldReceive('hasPermission')
-            ->with(m::anyOf('user_can_b', 'user_can_c'), 'TeamA')
-            ->andReturn(true);
-        $this->user->shouldReceive('hasPermission')
-            ->with(m::anyOf('user_can_b', 'user_can_c'), null)
-            ->andReturn(false);
-        $this->user->shouldReceive('hasPermission')
-            ->with(m::anyOf('user_cannot_a', 'user_cannot_b'), m::anyOf('TeamA', null))
-            ->andReturn(false);
+        $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
+        $this->user->attachRole($roleA)->attachRole($roleB, $team);
     }
 
     public function testAbilityShouldReturnBoolean()
     {
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $this->hasRoleAndHasPermissionExpectations();
-
         /*
         |------------------------------------------------------------
         | Assertion
@@ -70,21 +43,21 @@ class LaratrustUserAbilityTest extends UserTest
         // Case: User has everything.
         $this->assertTrue(
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b']
+                ['role_a', 'role_b'],
+                ['permission_a', 'permission_c']
             )
         );
         $this->assertTrue(
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b'],
-                'TeamA'
+                ['role_a', 'role_b'],
+                ['permission_a', 'permission_c'],
+                'team_a'
             )
         );
         $this->assertTrue(
             $this->user->ability(
-                ['UserRoleA'],
-                ['user_can_a'],
+                ['role_a'],
+                ['permission_a'],
                 ['validate_all' => true]
             )
         );
@@ -92,14 +65,14 @@ class LaratrustUserAbilityTest extends UserTest
         // Case: User lacks a role.
         $this->assertTrue(
             $this->user->ability(
-                ['NonUserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b']
+                ['Nonrole_a', 'role_b'],
+                ['permission_a', 'permission_b']
             )
         );
         $this->assertFalse(
             $this->user->ability(
-                ['NonUserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b'],
+                ['Nonrole_a', 'role_b'],
+                ['permission_a', 'permission_b'],
                 ['validate_all' => true]
             )
         );
@@ -107,14 +80,14 @@ class LaratrustUserAbilityTest extends UserTest
         // Case: User lacks a permission.
         $this->assertTrue(
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_cannot_a', 'user_can_b']
+                ['role_a', 'role_b'],
+                ['user_cannot_a', 'permission_b']
             )
         );
         $this->assertFalse(
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_cannot_a', 'user_can_b'],
+                ['role_a', 'role_b'],
+                ['user_cannot_a', 'permission_b'],
                 ['validate_all' => true]
             )
         );
@@ -122,13 +95,13 @@ class LaratrustUserAbilityTest extends UserTest
         // Case: User lacks everything.
         $this->assertFalse(
             $this->user->ability(
-                ['NonUserRoleA', 'NonUserRoleB'],
+                ['Nonrole_a', 'Nonrole_b'],
                 ['user_cannot_a', 'user_cannot_b']
             )
         );
         $this->assertFalse(
             $this->user->ability(
-                ['NonUserRoleA', 'NonUserRoleB'],
+                ['Nonrole_a', 'Nonrole_b'],
                 ['user_cannot_a', 'user_cannot_b'],
                 ['validate_all' => true]
             )
@@ -139,48 +112,41 @@ class LaratrustUserAbilityTest extends UserTest
     {
         /*
         |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $this->hasRoleAndHasPermissionExpectations();
-
-        /*
-        |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
         // Case: User has everything.
         $this->assertSame(
             [
-                'roles'       => ['UserRoleA' => true, 'UserRoleB' => false],
-                'permissions' => ['user_can_a' => true, 'user_can_b' => false]
+                'roles'       => ['role_a' => true, 'role_b' => true],
+                'permissions' => ['permission_a' => true, 'permission_b' => true]
             ],
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b'],
+                ['role_a', 'role_b'],
+                ['permission_a', 'permission_b'],
                 ['return_type' => 'array']
             )
         );
         $this->assertSame(
             [
-                'roles'       => ['UserRoleA' => false, 'UserRoleB' => true],
-                'permissions' => ['user_can_a' => false, 'user_can_b' => true]
+                'roles'       => ['role_a' => false, 'role_b' => true],
+                'permissions' => ['permission_a' => false, 'permission_b' => true]
             ],
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b'],
-                'TeamA',
+                ['role_a', 'role_b'],
+                ['permission_a', 'permission_b'],
+                'team_a',
                 ['validate_all' => true, 'return_type' => 'array']
             )
         );
         $this->assertSame(
             [
-                'roles'       => ['UserRoleA' => true],
-                'permissions' => ['user_can_a' => true]
+                'roles'       => ['role_a' => true],
+                'permissions' => ['permission_a' => true]
             ],
             $this->user->ability(
-                ['UserRoleA'],
-                ['user_can_a'],
+                ['role_a'],
+                ['permission_a'],
                 ['validate_all' => true, 'return_type' => 'array']
             )
         );
@@ -190,13 +156,6 @@ class LaratrustUserAbilityTest extends UserTest
     {
         /*
         |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $this->hasRoleAndHasPermissionExpectations();
-
-        /*
-        |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
@@ -204,13 +163,13 @@ class LaratrustUserAbilityTest extends UserTest
             [
                 true,
                 [
-                    'roles'       => ['UserRoleA' => true, 'UserRoleB' => false],
-                    'permissions' => ['user_can_a' => true, 'user_can_b' => false]
+                    'roles'       => ['role_a' => true, 'role_b' => true],
+                    'permissions' => ['permission_a' => true, 'permission_b' => true]
                 ]
             ],
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b'],
+                ['role_a', 'role_b'],
+                ['permission_a', 'permission_b'],
                 ['return_type' => 'both']
             )
         );
@@ -218,28 +177,28 @@ class LaratrustUserAbilityTest extends UserTest
             [
                 true,
                 [
-                    'roles'       => ['UserRoleA' => false, 'UserRoleB' => true],
-                    'permissions' => ['user_can_a' => false, 'user_can_b' => true]
+                    'roles'       => ['role_a' => false, 'role_b' => true],
+                    'permissions' => ['permission_a' => false, 'permission_b' => true]
                 ]
             ],
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b'],
-                'TeamA',
+                ['role_a', 'role_b'],
+                ['permission_a', 'permission_b'],
+                'team_a',
                 ['return_type' => 'both']
             )
         );
         $this->assertSame(
             [
-                false,
+                true,
                 [
-                    'roles'       => ['UserRoleA' => true, 'UserRoleB' => false],
-                    'permissions' => ['user_can_a' => true, 'user_can_b' => false]
+                    'roles'       => ['role_a' => true, 'role_b' => true],
+                    'permissions' => ['permission_a' => true, 'permission_b' => true]
                 ]
             ],
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b'],
+                ['role_a', 'role_b'],
+                ['permission_a', 'permission_b'],
                 ['validate_all' => true, 'return_type' => 'both']
             )
         );
@@ -249,25 +208,18 @@ class LaratrustUserAbilityTest extends UserTest
     {
         /*
         |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $this->hasRoleAndHasPermissionExpectations();
-
-        /*
-        |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
         $this->assertSame(
             $this->user->ability(
-                ['UserRoleA', 'NonUserRoleB'],
-                ['user_can_a', 'user_cannot_b'],
+                ['role_a', 'Nonrole_b'],
+                ['permission_a', 'user_cannot_b'],
                 ['return_type' => 'both']
             ),
             $this->user->ability(
-                'UserRoleA,NonUserRoleB',
-                'user_can_a,user_cannot_b',
+                'role_a|Nonrole_b',
+                'permission_a|user_cannot_b',
                 ['return_type' => 'both']
             )
         );
@@ -277,39 +229,32 @@ class LaratrustUserAbilityTest extends UserTest
     {
         /*
         |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $this->hasRoleAndHasPermissionExpectations();
-
-        /*
-        |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
         // Case: User has everything.
         $this->assertSame(
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b']
+                ['role_a', 'role_b'],
+                ['permission_a', 'permission_b']
             ),
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b'],
+                ['role_a', 'role_b'],
+                ['permission_a', 'permission_b'],
                 ['validate_all' => false, 'return_type' => 'boolean']
             )
         );
 
         $this->assertSame(
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b'],
-                'TeamA'
+                ['role_a', 'role_b'],
+                ['permission_a', 'permission_b'],
+                'team_a'
             ),
             $this->user->ability(
-                ['UserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b'],
-                'TeamA',
+                ['role_a', 'role_b'],
+                ['permission_a', 'permission_b'],
+                'team_a',
                 ['validate_all' => false, 'return_type' => 'boolean']
             )
         );
@@ -317,12 +262,12 @@ class LaratrustUserAbilityTest extends UserTest
         // Case: User lacks a role.
         $this->assertSame(
             $this->user->ability(
-                ['NonUserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b']
+                ['Nonrole_a', 'role_b'],
+                ['permission_a', 'permission_b']
             ),
             $this->user->ability(
-                ['NonUserRoleA', 'UserRoleB'],
-                ['user_can_a', 'user_can_b'],
+                ['Nonrole_a', 'role_b'],
+                ['permission_a', 'permission_b'],
                 ['validate_all' => false, 'return_type' => 'boolean']
             )
         );
@@ -332,55 +277,34 @@ class LaratrustUserAbilityTest extends UserTest
     {
         /*
         |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $permA = $this->mockPermission('manage_a');
-
-        $roleA = $this->mockRole('RoleA');
-        $roleA->perms = [$permA];
-
-        $user = m::mock('HasRoleUser')->makePartial();
-        $user->roles = [$roleA];
-        $user->id = 4;
-        $user->primaryKey = 'id';
-
-        function isExceptionThrown(
-            HasRoleUser $user,
-            array $roles,
-            array $perms,
-            array $options
-        ) {
-            $isExceptionThrown = false;
-
-            try {
-                $user->ability($roles, $perms, $options);
-            } catch (InvalidArgumentException $e) {
-                $isExceptionThrown = true;
-            }
-
-            return $isExceptionThrown;
-        }
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $user->shouldReceive('hasRole')
-            ->times(3);
-        $user->shouldReceive('hasPermission')
-            ->times(3);
-
-        /*
-        |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertFalse(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['return_type' => 'boolean']));
-        $this->assertFalse(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['return_type' => 'array']));
-        $this->assertFalse(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['return_type' => 'both']));
-        $this->assertTrue(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['return_type' => 'potato']));
-        $this->assertTrue(isExceptionThrown($user, ['RoleA'], ['manage_a'], ['validate_all' => 'potato']));
+        $this->assertFalse($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['return_type' => 'boolean']));
+        $this->assertFalse($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['return_type' => 'array']));
+        $this->assertFalse($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['return_type' => 'both']));
+        $this->assertTrue($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['return_type' => 'potato']));
+        $this->assertTrue($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['validate_all' => 'potato']));
+    }
+
+    /**
+     * Check if an exception is thrown when checking the user ability
+     * @param  \Laratrust\Tests\Models\User  $user
+     * @param  array  $roles
+     * @param  array  $perms
+     * @param  arary  $options
+     * @return boolean
+     */
+    public function isExceptionThrown($user, $roles, $perms, $options)
+    {
+        $isExceptionThrown = false;
+
+        try {
+            $user->ability($roles, $perms, $options);
+        } catch (\InvalidArgumentException $e) {
+            $isExceptionThrown = true;
+        }
+
+        return $isExceptionThrown;
     }
 }

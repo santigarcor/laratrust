@@ -19,8 +19,9 @@
         "kkszymanowski/traitor": "^0.2.0"
     },
     "require-dev": {
-        "mockery/mockery": "~0.9.2",
-        "phpunit/phpunit": "~4.1"
+        "mockery/mockery": "^0.9.2",
+        "phpunit/phpunit": "~4.1",
+        "orchestra/testbench": "~3.2"
     },
     "autoload": {
         "psr-4": {
@@ -28,10 +29,9 @@
         }
     },
     "autoload-dev": {
-        "classmap": [
-            "tests/Middleware/MiddlewareTest.php",
-            "tests/UserTest.php"
-        ]
+        "psr-4": {
+            "Laratrust\\Tests\\": "tests/"
+        }
     },
     "config": {
         "sort-packages": true
