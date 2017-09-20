@@ -288,14 +288,9 @@ trait LaratrustUserTrait
     public function ability($roles, $permissions, $team = null, $options = [])
     {
         list($team, $options) = $this->assignRealValuesTo($team, $options, 'is_array');
-
         // Convert string to array if that's what is passed in.
-        if (!is_array($roles)) {
-            $roles = explode(',', $roles);
-        }
-        if (!is_array($permissions)) {
-            $permissions = explode(',', $permissions);
-        }
+        $roles = $this->standardValue($roles);
+        $permissions = $this->standardValue($permissions);
 
         // Set up default values and validate options.
         $options = $this->checkOrSet('validate_all', $options, [false, true]);
@@ -409,16 +404,24 @@ trait LaratrustUserTrait
     private function syncModels($relationship, $objectType, $objects, $team, $detaching)
     {
         $mappedObjects = [];
+        $team = Config::get('laratrust.use_teams') ? $this->getIdFor($team, 'team') : null;
 
-        if (Config::get('laratrust.use_teams')) {
-            foreach ($objects as $object) {
+        foreach ($objects as $object) {
+            if (Config::get('laratrust.use_teams') && $team) {
                 $mappedObjects[$this->getIdFor($object, $objectType)] = [$this->teamForeignKey() => $team];
+            } else {
+                $mappedObjects[] = $this->getIdFor($object, $objectType);
             }
-        } else {
-            $mappedObjects = $objects;
         }
 
-        $this->$relationship()->sync($mappedObjects, $detaching);
+        $relationshipToSync = $this->$relationship();
+
+        if (Config::get('laratrust.use_teams') && $team) {
+            $relationshipToSync->wherePivot($this->teamForeignKey(), $team);
+        }
+
+        $relationshipToSync->sync($mappedObjects, $detaching);
+
         $this->flushCache();
 
         return $this;
@@ -709,7 +712,7 @@ trait LaratrustUserTrait
 
     /**
      * Checks if the option exists inside the array,
-     * if not sets a the first option inside the default values array.
+     * otherwise, sets the first option inside the default values array.
      *
      * @param  string  $option
      * @param  array  $array
