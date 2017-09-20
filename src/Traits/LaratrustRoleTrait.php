@@ -10,10 +10,9 @@ namespace Laratrust\Traits;
  * @package Laratrust
  */
 
+use Laratrust\Helper;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
-use InvalidArgumentException;
-use Laratrust\Traits\LaratrustDynamicUserRelationsCalls;
 
 trait LaratrustRoleTrait
 {
@@ -163,7 +162,7 @@ trait LaratrustRoleTrait
      */
     public function attachPermission($permission)
     {
-        $this->permissions()->attach($this->getIdFor($permission));
+        $this->permissions()->attach(Helper::getIdFor($permission, 'permission'));
         $this->flushCache();
 
         return $this;
@@ -177,7 +176,7 @@ trait LaratrustRoleTrait
      */
     public function detachPermission($permission)
     {
-        $this->permissions()->detach($this->getIdFor($permission));
+        $this->permissions()->detach(Helper::getIdFor($permission, 'permission'));
         $this->flushCache();
 
         return $this;
@@ -225,26 +224,5 @@ trait LaratrustRoleTrait
     public function flushCache()
     {
         Cache::forget('laratrust_permissions_for_role_' . $this->getKey());
-    }
-
-    /**
-     * Gets the it from an array, object or integer.
-     *
-     * @param  mixed  $permission
-     * @return int
-     */
-    private function getIdFor($permission)
-    {
-        if (is_object($permission)) {
-            return $permission->getKey();
-        } elseif (is_numeric($permission)) {
-            return $permission;
-        } elseif (is_array($permission)) {
-            return $permission['id'];
-        }
-
-        throw new InvalidArgumentException(
-            'getIdFor function only accepts an integer, a Model object or an array with an "id" key'
-        );
     }
 }

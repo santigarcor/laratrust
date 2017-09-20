@@ -10,10 +10,11 @@ namespace Laratrust\Traits;
  * @package Laratrust
  */
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
+use Laratrust\Helper;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 
 trait LaratrustUserTrait
 {
@@ -134,8 +135,8 @@ trait LaratrustUserTrait
      */
     public function hasRole($name, $team = null, $requireAll = false)
     {
-        $name = $this->standardValue($name);
-        list($team, $requireAll) = $this->assignRealValuesTo($team, $requireAll, 'is_bool');
+        $name = Helper::standardize($name);
+        list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
 
         if (is_array($name)) {
             if (empty($name)) {
@@ -158,10 +159,10 @@ trait LaratrustUserTrait
             return $requireAll;
         }
 
-        $team = $this->fetchTeam($team);
+        $team = Helper::fetchTeam($team);
 
         foreach ($this->cachedRoles() as $role) {
-            if ($role->name == $name && $this->isInSameTeam($role, $team)) {
+            if ($role->name == $name && Helper::isInSameTeam($role, $team)) {
                 return true;
             }
         }
@@ -205,8 +206,8 @@ trait LaratrustUserTrait
      */
     public function hasPermission($permission, $team = null, $requireAll = false)
     {
-        $permission = $this->standardValue($permission);
-        list($team, $requireAll) = $this->assignRealValuesTo($team, $requireAll, 'is_bool');
+        $permission = Helper::standardize($permission);
+        list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
 
         if (is_array($permission)) {
             if (empty($permission)) {
@@ -229,17 +230,17 @@ trait LaratrustUserTrait
             return $requireAll;
         }
 
-        $team = $this->fetchTeam($team);
+        $team = Helper::fetchTeam($team);
 
         foreach ($this->cachedPermissions() as $perm) {
-            if ($this->isInSameTeam($perm, $team)
+            if (Helper::isInSameTeam($perm, $team)
                 && str_is($permission, $perm->name)) {
                 return true;
             }
         }
 
         foreach ($this->cachedRoles() as $role) {
-            if ($this->isInSameTeam($role, $team)
+            if (Helper::isInSameTeam($role, $team)
                 && $role->hasPermission($permission)
             ) {
                 return true;
@@ -287,14 +288,14 @@ trait LaratrustUserTrait
      */
     public function ability($roles, $permissions, $team = null, $options = [])
     {
-        list($team, $options) = $this->assignRealValuesTo($team, $options, 'is_array');
+        list($team, $options) = Helper::assignRealValuesTo($team, $options, 'is_array');
         // Convert string to array if that's what is passed in.
-        $roles = $this->standardValue($roles);
-        $permissions = $this->standardValue($permissions);
+        $roles = Helper::standardize($roles);
+        $permissions = Helper::standardize($permissions);
 
         // Set up default values and validate options.
-        $options = $this->checkOrSet('validate_all', $options, [false, true]);
-        $options = $this->checkOrSet('return_type', $options, ['boolean', 'array', 'both']);
+        $options = Helper::checkOrSet('validate_all', $options, [false, true]);
+        $options = Helper::checkOrSet('return_type', $options, ['boolean', 'array', 'both']);
 
         // Loop through roles and permissions and check each.
         $checkedRoles = [];
@@ -342,21 +343,21 @@ trait LaratrustUserTrait
         }
 
         $attributes = [];
-        $object = $this->getIdFor($object, $objectType);
+        $object = Helper::getIdFor($object, $objectType);
 
         if (Config::get('laratrust.use_teams')) {
-            $team = $this->getIdFor($team, 'team');
+            $team = Helper::getIdFor($team, 'team');
 
             if (
                     $this->$relationship()
-                    ->wherePivot($this->teamForeignKey(), $team)
+                    ->wherePivot(Helper::teamForeignKey(), $team)
                     ->wherePivot(Config::get("laratrust.foreign_keys.{$objectType}"), $object)
                     ->count()
                 ) {
                 return $this;
             }
 
-            $attributes[$this->teamForeignKey()] = $team;
+            $attributes[Helper::teamForeignKey()] = $team;
         }
 
         $this->$relationship()->attach(
@@ -387,13 +388,13 @@ trait LaratrustUserTrait
 
         if (Config::get('laratrust.use_teams')) {
             $relationshipQuery->wherePivot(
-                    $this->teamForeignKey(),
-                    $this->getIdFor($team, 'team')
+                    Helper::teamForeignKey(),
+                    Helper::getIdFor($team, 'team')
                 );
         }
 
         $relationshipQuery->detach(
-                $this->getIdFor($object, $objectType)
+                Helper::getIdFor($object, $objectType)
             );
 
         $this->flushCache();
@@ -404,20 +405,20 @@ trait LaratrustUserTrait
     private function syncModels($relationship, $objectType, $objects, $team, $detaching)
     {
         $mappedObjects = [];
-        $team = Config::get('laratrust.use_teams') ? $this->getIdFor($team, 'team') : null;
+        $team = Config::get('laratrust.use_teams') ? Helper::getIdFor($team, 'team') : null;
 
         foreach ($objects as $object) {
             if (Config::get('laratrust.use_teams') && $team) {
-                $mappedObjects[$this->getIdFor($object, $objectType)] = [$this->teamForeignKey() => $team];
+                $mappedObjects[Helper::getIdFor($object, $objectType)] = [Helper::teamForeignKey() => $team];
             } else {
-                $mappedObjects[] = $this->getIdFor($object, $objectType);
+                $mappedObjects[] = Helper::getIdFor($object, $objectType);
             }
         }
 
         $relationshipToSync = $this->$relationship();
 
         if (Config::get('laratrust.use_teams') && $team) {
-            $relationshipToSync->wherePivot($this->teamForeignKey(), $team);
+            $relationshipToSync->wherePivot(Helper::teamForeignKey(), $team);
         }
 
         $relationshipToSync->sync($mappedObjects, $detaching);
@@ -627,9 +628,9 @@ trait LaratrustUserTrait
      */
     public function hasRoleAndOwns($role, $thing, $options = [])
     {
-        $options = $this->checkOrSet('requireAll', $options, [false, true]);
-        $options = $this->checkOrSet('team', $options, [null]);
-        $options = $this->checkOrSet('foreignKeyName', $options, [null]);
+        $options = Helper::checkOrSet('requireAll', $options, [false, true]);
+        $options = Helper::checkOrSet('team', $options, [null]);
+        $options = Helper::checkOrSet('foreignKeyName', $options, [null]);
 
         return $this->hasRole($role, $options['team'], $options['requireAll'])
                 && $this->owns($thing, $options['foreignKeyName']);
@@ -645,9 +646,9 @@ trait LaratrustUserTrait
      */
     public function canAndOwns($permission, $thing, $options = [])
     {
-        $options = $this->checkOrSet('requireAll', $options, [false, true]);
-        $options = $this->checkOrSet('foreignKeyName', $options, [null]);
-        $options = $this->checkOrSet('team', $options, [null]);
+        $options = Helper::checkOrSet('requireAll', $options, [false, true]);
+        $options = Helper::checkOrSet('foreignKeyName', $options, [null]);
+        $options = Helper::checkOrSet('team', $options, [null]);
 
         return $this->hasPermission($permission, $options['team'], $options['requireAll'])
                 && $this->owns($thing, $options['foreignKeyName']);
@@ -708,139 +709,6 @@ trait LaratrustUserTrait
     {
         Cache::forget('laratrust_roles_for_user_' . $this->getKey());
         Cache::forget('laratrust_permissions_for_user_' . $this->getKey());
-    }
-
-    /**
-     * Checks if the option exists inside the array,
-     * otherwise, sets the first option inside the default values array.
-     *
-     * @param  string  $option
-     * @param  array  $array
-     * @param  array  $possibleValues
-     * @param  int  $defaultIndex
-     * @return array
-     */
-    private function checkOrSet($option, $array, $possibleValues)
-    {
-        if (!isset($array[$option])) {
-            $array[$option] = $possibleValues[0];
-
-            return $array;
-        }
-
-        $ignoredOptions = ['team', 'foreignKeyName'];
-
-        if (!in_array($option, $ignoredOptions) && !in_array($array[$option], $possibleValues, true)) {
-            throw new InvalidArgumentException();
-        }
-
-        return $array;
-    }
-
-    /**
-     * Gets the it from an array, object or integer.
-     *
-     * @param  mixed  $object
-     * @param  string  $type
-     * @return int
-     */
-    private function getIdFor($object, $type)
-    {
-        if (is_null($object)) {
-            return null;
-        } elseif (is_object($object)) {
-            return $object->getKey();
-        } elseif (is_array($object)) {
-            return $object['id'];
-        } elseif (is_numeric($object)) {
-            return $object;
-        } elseif (is_string($object)) {
-            return call_user_func_array([
-                Config::get("laratrust.models.{$type}"), 'where'
-            ], ['name', $object])->firstOrFail()->getKey();
-        }
-
-        throw new InvalidArgumentException(
-            'getIdFor function only accepts an integer, a Model object or an array with an "id" key'
-        );
-    }
-
-    /**
-     * Returns the team's foreign key.
-     *
-     * @return string
-     */
-    private function teamForeignKey()
-    {
-        return Config::get('laratrust.foreign_keys.team');
-    }
-
-    /**
-     * Check if a role or permission is attach to the user in a same team.
-     *
-     * @param  mixed  $rolePermission
-     * @param  \Illuminate\Database\Eloquent\Model  $team
-     * @return boolean
-     */
-    private function isInSameTeam($rolePermission, $team)
-    {
-        if (
-            !Config::get('laratrust.use_teams')
-            || (!Config::get('laratrust.teams_strict_check') && is_null($team))
-        ) {
-            return true;
-        }
-
-        $teamForeignKey = $this->teamForeignKey();
-        return $rolePermission->pivot->$teamForeignKey == $team;
-    }
-
-    /**
-     * Fetch the team model from the name.
-     *
-     * @param  mixed  $team
-     * @return mixed
-     */
-    private function fetchTeam($team = null)
-    {
-        if (is_null($team) || !Config::get('laratrust.use_teams')) {
-            return null;
-        }
-
-        $team = call_user_func_array(
-                    [Config::get('laratrust.models.team'), 'where'],
-                    ['name', $team]
-                )->first();
-        return is_null($team) ? $team : $team->getKey();
-    }
-
-    /**
-     * Assing the real values to the team and requireAllOrOptions parameters.
-     *
-     * @param  mixed  $team
-     * @param  mixed  $requireAllOrOptions
-     * @return array
-     */
-    private function assignRealValuesTo($team, $requireAllOrOptions, $method)
-    {
-        return [
-            ($method($team) ? null : $team),
-            ($method($team) ? $team : $requireAllOrOptions),
-        ];
-    }
-
-    /**
-     * Checks if the string passed contains a pipe '|' and explodes the string to an array.
-     * @param  string|array  $value
-     * @return string|array
-     */
-    private function standardValue($value)
-    {
-        if (is_array($value) || strpos($value, '|') === false) {
-            return $value;
-        }
-
-        return explode('|', $value);
     }
 
     /**
