@@ -85,7 +85,11 @@ class LaratrustRoleTest extends LaratrustTestCase
         $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->attachPermission($permC->id));
         $this->assertCount(3, $this->role->permissions()->get()->toArray());
 
-        $this->setExpectedException('InvalidArgumentException');
+        if (method_exists($this, 'setExpectedException')) {
+            $this->setExpectedException('InvalidArgumentException');
+        } else {
+            $this->expectException('InvalidArgumentException');
+        }
         $this->role->attachPermission(true);
     }
 
