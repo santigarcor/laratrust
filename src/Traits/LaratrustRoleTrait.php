@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Config;
 trait LaratrustRoleTrait
 {
     use LaratrustDynamicUserRelationsCalls;
+    use LaratrustHasEvents;
 
     /**
      * Tries to return all the cached permissions of the role.
@@ -147,9 +148,15 @@ trait LaratrustRoleTrait
      */
     public function syncPermissions($permissions)
     {
-        // If the permissions is empty it will delete all associations.
+        $mappedPermissions = [];
+
+        foreach ($permissions as $permission) {
+            $mappedPermissions[] = Helper::getIdFor($permission, $permission);
+        }
+
         $changes = $this->permissions()->sync($permissions);
         $this->flushCache();
+        $this->fireLaratrustEvent("permission.synced", [$this, $changes]);
 
         return $this;
     }
@@ -162,8 +169,11 @@ trait LaratrustRoleTrait
      */
     public function attachPermission($permission)
     {
-        $this->permissions()->attach(Helper::getIdFor($permission, 'permission'));
+        $permission = Helper::getIdFor($permission, 'permission');
+
+        $this->permissions()->attach($permission);
         $this->flushCache();
+        $this->fireLaratrustEvent("permission.attached", [$this, $permission]);
 
         return $this;
     }
@@ -176,8 +186,11 @@ trait LaratrustRoleTrait
      */
     public function detachPermission($permission)
     {
-        $this->permissions()->detach(Helper::getIdFor($permission, 'permission'));
+        $permission = Helper::getIdFor($permission, 'permission');
+
+        $this->permissions()->detach($permission);
         $this->flushCache();
+        $this->fireLaratrustEvent("permission.detached", [$this, $permission]);
 
         return $this;
     }

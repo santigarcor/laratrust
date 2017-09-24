@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Config;
 
 trait LaratrustUserTrait
 {
+    use LaratrustHasEvents;
+
     /**
      * Tries to return all the cached roles of the user.
      * If it can't bring the roles from the cache,
@@ -365,6 +367,7 @@ trait LaratrustUserTrait
             $attributes
         );
         $this->flushCache();
+        $this->fireLaratrustEvent("{$objectType}.attached", [$this, $object, $team]);
 
         return $this;
     }
@@ -393,11 +396,11 @@ trait LaratrustUserTrait
                 );
         }
 
-        $relationshipQuery->detach(
-                Helper::getIdFor($object, $objectType)
-            );
+        $object = Helper::getIdFor($object, $objectType);
+        $relationshipQuery->detach($object);
 
         $this->flushCache();
+        $this->fireLaratrustEvent("{$objectType}.detached", [$this, $object, $team]);
 
         return $this;
     }
@@ -422,9 +425,10 @@ trait LaratrustUserTrait
             $relationshipToSync->wherePivot(Helper::teamForeignKey(), $team);
         }
 
-        $relationshipToSync->sync($mappedObjects, $detaching);
+        $result = $relationshipToSync->sync($mappedObjects, $detaching);
 
         $this->flushCache();
+        $this->fireLaratrustEvent("{$objectType}.synced", [$this, $result, $team]);
 
         return $this;
     }
