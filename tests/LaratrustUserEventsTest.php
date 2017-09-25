@@ -138,4 +138,22 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
 
         $this->user->syncPermissions([]);
     }
+
+    public function testCanAddObservableClasses()
+    {
+        $events = [
+            'role.attached',
+            'role.detached',
+            'permission.attached',
+            'permission.detached',
+            'role.synced',
+            'permission.synced',
+        ];
+
+        User::laratrustObserve(\Laratrust\Tests\Models\UserObserver::class);
+
+        foreach ($events as $event) {
+            $this->assertTrue(User::getEventDispatcher()->hasListeners("laratrust.{$event}: " . User::class));
+        }
+    }
 }

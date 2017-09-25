@@ -5,6 +5,32 @@ namespace Laratrust\Traits;
 trait LaratrustHasEvents
 {
     /**
+     * Register an observer to the Laratrust events.
+     *
+     * @param  object|string  $class
+     * @return void
+     */
+    public static function laratrustObserve($class)
+    {
+        $observables = [
+            'roleAttached',
+            'roleDetached',
+            'permissionAttached',
+            'permissionDetached',
+            'roleSynced',
+            'permissionSynced',
+        ];
+
+        $className = is_string($class) ? $class : get_class($class);
+
+        foreach ($observables as $event) {
+            if (method_exists($class, $event)) {
+                static::registerLaratrustEvent(\Illuminate\Support\Str::snake($event, '.'), $className.'@'.$event);
+            }
+        }
+    }
+
+    /**
      * Fire the given event for the model.
      *
      * @param  string  $event

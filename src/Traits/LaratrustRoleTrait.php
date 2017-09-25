@@ -20,6 +20,40 @@ trait LaratrustRoleTrait
     use LaratrustHasEvents;
 
     /**
+     * Boots the role model and attaches event listener to
+     * remove the many-to-many records when trying to delete.
+     * Will NOT delete any records if the role model uses soft deletes.
+     *
+     * @return void|bool
+     */
+    public static function bootLaratrustRoleTrait()
+    {
+        $flushCache = function ($role) {
+            $role->flushCache();
+        };
+
+        // If the role doesn't use SoftDeletes.
+        if (method_exists(static::class, 'restored')) {
+            static::restored($flushCache);
+        }
+
+        static::deleted($flushCache);
+        static::saved($flushCache);
+
+        static::deleting(function ($role) {
+            if (method_exists($role, 'bootSoftDeletes') && $role->forceDeleting) {
+                return;
+            }
+
+            $role->permissions()->sync([]);
+
+            foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
+                $role->$key()->sync([]);
+            }
+        });
+    }
+
+    /**
      * Tries to return all the cached permissions of the role.
      * If it can't bring the permissions from the cache,
      * it brings them back from the DB.
@@ -65,40 +99,6 @@ trait LaratrustRoleTrait
             Config::get('laratrust.foreign_keys.role'),
             Config::get('laratrust.foreign_keys.permission')
         );
-    }
-
-    /**
-     * Boots the role model and attaches event listener to
-     * remove the many-to-many records when trying to delete.
-     * Will NOT delete any records if the role model uses soft deletes.
-     *
-     * @return void|bool
-     */
-    public static function bootLaratrustRoleTrait()
-    {
-        $flushCache = function ($role) {
-            $role->flushCache();
-        };
-
-        // If the role doesn't use SoftDeletes.
-        if (method_exists(static::class, 'restored')) {
-            static::restored($flushCache);
-        }
-
-        static::deleted($flushCache);
-        static::saved($flushCache);
-
-        static::deleting(function ($role) {
-            if (method_exists($role, 'bootSoftDeletes') && $role->forceDeleting) {
-                return;
-            }
-
-            $role->permissions()->sync([]);
-
-            foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
-                $role->$key()->sync([]);
-            }
-        });
     }
 
     /**

@@ -21,6 +21,37 @@ trait LaratrustUserTrait
     use LaratrustHasEvents;
 
     /**
+     * Boots the user model and attaches event listener to
+     * remove the many-to-many records when trying to delete.
+     * Will NOT delete any records if the user model uses soft deletes.
+     *
+     * @return void|bool
+     */
+    public static function bootLaratrustUserTrait()
+    {
+        $flushCache = function ($user) {
+            $user->flushCache();
+        };
+
+        // If the user doesn't use SoftDeletes.
+        if (method_exists(static::class, 'restored')) {
+            static::restored($flushCache);
+        }
+
+        static::deleted($flushCache);
+        static::saved($flushCache);
+
+        static::deleting(function ($user) {
+            if (method_exists($user, 'bootSoftDeletes') && !$user->forceDeleting) {
+                return;
+            }
+
+            $user->roles()->sync([]);
+            $user->permissions()->sync([]);
+        });
+    }
+
+    /**
      * Tries to return all the cached roles of the user.
      * If it can't bring the roles from the cache,
      * it brings them back from the DB.
@@ -94,37 +125,6 @@ trait LaratrustUserTrait
         }
 
         return $permissions;
-    }
-
-    /**
-     * Boots the user model and attaches event listener to
-     * remove the many-to-many records when trying to delete.
-     * Will NOT delete any records if the user model uses soft deletes.
-     *
-     * @return void|bool
-     */
-    public static function bootLaratrustUserTrait()
-    {
-        $flushCache = function ($user) {
-            $user->flushCache();
-        };
-
-        // If the user doesn't use SoftDeletes.
-        if (method_exists(static::class, 'restored')) {
-            static::restored($flushCache);
-        }
-
-        static::deleted($flushCache);
-        static::saved($flushCache);
-
-        static::deleting(function ($user) {
-            if (method_exists($user, 'bootSoftDeletes') && !$user->forceDeleting) {
-                return;
-            }
-
-            $user->roles()->sync([]);
-            $user->permissions()->sync([]);
-        });
     }
 
     /**
