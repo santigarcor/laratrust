@@ -484,22 +484,29 @@ You can also attach multiple roles to the user within a team:
 
     $team = Team::where('name', 'my-awesome-team')->first();
     $admin = Role::where('name', 'admin')->first();
-    $user = Role::where('name', 'user')->first();
+    $owner = Role::where('name', 'owner')->first();
 
-    $user->attachRoles([$admin, $user], $team); // parameter can be an object, array, id or the string name.
+    $user->attachRoles([$admin, $owner], $team); // parameter can be an object, array, id or the string name.
 
 To remove the roles you can do:
 
 .. code-block:: php
 
     $user->detachRole($admin, $team); // parameter can be an object, array, id or the string name.
-    $user->detachRoles([$admin, $user], $team); // parameter can be an object, array, id or the string name.
+    $user->detachRoles([$admin, $owner], $team); // parameter can be an object, array, id or the string name.
+
+.. _new-sync-behavior:
 
 You can also sync roles within a group:
 
 .. code-block:: php
 
-    $user->syncRoles([$admin, $user], $team); // parameter can be an object, array, id or the string name.
+    $user->syncRoles([$admin, $owner], $team); // parameter can be an object, array, id or the string name.
+
+.. IMPORTANT::
+    It will sync the roles depending of the team passed, because there is a ``wherePivot`` constraint in the syncing method. So if you pass a team with id of 1, it will sync all the roles that are attached to the user where the team id is 1.
+
+    So if you don't pass any team, it will sync the roles where the team id is ``null`` in the pivot table.
 
 Permissions Assignment & Removal
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -536,7 +543,12 @@ You can also sync permissions within a group:
 
 .. code-block:: php
 
-    $user->syncRoles([$editUser, $manageUsers], $team); // parameter can be an object, array, id or the string name.
+    $user->syncPermissions([$editUser, $manageUsers], $team); // parameter can be an object, array, id or the string name.
+
+.. IMPORTANT::
+    It will sync the permissions depending of the team passed, because there is a ``wherePivot`` constraint in the syncing method. So if you pass a team with id of 1, it will sync all the permissions that are attached to the user where the team id is 1 in the pivot table.
+
+    So if you don't pass any team, it will sync the permissions where the team id is ``null`` in the pivot table.
 
 Checking Roles & Permissions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

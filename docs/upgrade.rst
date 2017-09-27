@@ -1,45 +1,57 @@
-Upgrade from 3.2 to 4.0
+Upgrade from 4.0 to 5.0
 =======================
 
 .. IMPORTANT::
-    Laratrust 4.0 requires Laravel >= 5.1.40.
+    Laratrust 5.0 requires Laravel >= 5.2.32.
 
-In order to upgrade from Laratrust 3.3 to 4.0 you have to follow these steps:
+In order to upgrade from Laratrust 4.0 to 5.0 you have to follow these steps:
 
 1. Change your ``composer.json`` to require the 4.0 version of Laratrust::
 
-    "santigarcor/laratrust": "4.0.*"
+    "santigarcor/laratrust": "5.0.*"
 
 2. Run ``composer update`` to update the source code.
 
-3. Update your ``config/laratrust.php``:
+3. Run ``php artisan config:clear`` and ``php artisan cache:clear``.
 
-    3.1. Backup your ``config/laratrust.php`` configuration values.
+4. Update your ``config/laratrust.php``:
 
-    3.2. Delete the ``config/laratrust.php`` file.
+    4.1. Backup your ``config/laratrust.php`` configuration values.
 
-    3.3. Run ``php artisan vendor:publish --tag=laratrust``.
+    4.2. Delete the ``config/laratrust.php`` file.
 
-    3.4. Update the ``config/laratrust.php`` file with your old values.
+    4.3. Run ``php artisan vendor:publish --tag=laratrust``.
 
-    .. NOTE::
-        Leave the ``use_teams`` key in false during the upgrade process.
+    4.4. Update the ``config/laratrust.php`` file with your old values.
 
-4. If you use any values of the ``config/laratrust.php`` in your application code, update those values with the new file structure.
+    4.5. Set the ``middleware.register`` value to false.
 
-5. If you use the ability middleware and you pass the third argument (require all), please change it like this::
+    4.6. Set the ``teams_strict_check`` value to true if you are using teams.
+
+5. Inside your ``Role``, ``Permission`` and ``Team`` models update the ``use`` statement from:
+
+    - ``use Laratrust\LaratrustRole`` to ``use Laratrust\Models\LaratrustRole``;
+    - ``use Laratrust\LaratrustPermission`` to ``use Laratrust\Models\LaratrustPermission``;
+    - ``use Laratrust\LaratrustTeam`` to ``use Laratrust\Models\LaratrustTeam``;
+
+6. If you use the ability method and pass coma separated roles or permissions, change them to a pipe separated string::
 
     // From
-    'middleware' => ['ability:admin|owner,create-post|edit-user,true']
+    $user->ability('admin,owner', 'create-post,edit-user');
     // To
-    'middleware' => ['ability:admin|owner,create-post|edit-user,require_all']
+    $user->ability('admin|owner', 'create-post|edit-user');
 
-6. Run ``php artisan laratrust:upgrade`` to create the migration with the database upgrade.
+7. If you are using the ``Ownable`` interface, please update all the classes implementing it::
 
-7. Run ``php artisan migrate`` to apply the migration created in the previous step.
+    // From
+    public function ownerKey() {}
+    // To
+    public function ownerKey($owner) {}
 
-8. Delete the ``LaratrustSeeder.php`` file and run ``php artisan laratrust:seeder``.
+8. If you use teams and in your code you use the ``syncRoles`` and ``syncPermissions`` read the new :ref:`sync method behavior <new-sync-behavior>`.
 
-9. Run ``composer dump-autoload``.
+9. Delete the ``LaratrustSeeder.php`` file and run ``php artisan laratrust:seeder``.
 
-Now you can use the 4.0 version without any problem.
+10. Run ``composer dump-autoload``.
+
+Now you can use the 5.0 version without any problem.
