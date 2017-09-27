@@ -9,7 +9,7 @@ In your ``config/laratrust.php`` file you will find all the package configuratio
 Teams Feature
 -------------
 
-If you want to use the teams feature that allows you to attach roles and permissions to an user depending on a team, you must change the ``use_teams`` key value to ``true`` in your ``config/laratrust.php`` file. Then follow the :ref:`teams-configuration` configuration guide.
+If you want to use the teams feature that allows you to attach roles and permissions to an user depending on a team, you must change the ``use_teams`` key value to ``true`` in your ``config/laratrust.php`` file. Then follow the :ref:`teams configuration<teams-configuration>` guide.
 
 .. _multiple-user-models:
 
@@ -30,7 +30,7 @@ In the ``config/laratrust.php`` file you will find an ``user_models`` array, it 
 It means that there is only one user model using Laratrust, and the relationship with the ``Role`` and ``Permission`` models is going to be called like this:
 
 .. code-block:: php
-    
+
     $role->users;
     $role->users();
 
@@ -45,7 +45,7 @@ Automatic setup (Recommended)
 If you want to let laratrust to setup by itself, just run the following command::
 
     php artisan laratrust:setup
-    
+
 .. WARNING::
     If Laravel does not recognize this command, the Laratrust service provider hasn't been registered. Check ``providers`` array in ``config/app.php`` and try clearing your configuration cache::
 

@@ -31,26 +31,26 @@ Your ``config/laratrust_seeder.php`` file looks like this:
 .. code-block:: php
 
     return [
-       'role_structure' => [
-           'superadministrator' => [
-               'users' => 'c,r,u,d',
-               'acl' => 'c,r,u,d',
-               'profile' => 'r,u'
-           ],
-           'administrator' => [
-               'users' => 'c,r,u,d',
-               'profile' => 'r,u'
-           ],
-           'user' => [
+        'role_structure' => [
+            'superadministrator' => [
+                'users' => 'c,r,u,d',
+                'acl' => 'c,r,u,d',
                 'profile' => 'r,u'
-           ],
-       ],
-       'permission_structure' => [
-           'cru_user' => [
-               'profile' => 'c,r,u'
-           ],
-       ],
-       ...
+            ],
+            'administrator' => [
+                'users' => 'c,r,u,d',
+                'profile' => 'r,u'
+            ],
+            'user' => [
+                 'profile' => 'r,u'
+            ],
+        ],
+        'permission_structure' => [
+            'cru_user' => [
+                'profile' => 'c,r,u'
+            ],
+        ],
+        ...
     ];
 
 To understand the ``role_structure`` you must know:
@@ -64,11 +64,11 @@ With that in mind, you should arrange your roles, modules and permissions like t
 .. code-block:: php
 
     return [
-       'role_structure' => [
-           'role' => [
-                'module' => 'permissions',
-           ],
-       ]
+        'role_structure' => [
+            'role' => [
+               'module' => 'permissions',
+            ],
+        ]
     ];
 
 To understand the ``permission_structure`` you must know:
@@ -82,11 +82,11 @@ With that in mind, you should arrange your users, modules and permissions like t
 .. code-block:: php
 
     return [
-       'permission_structure' => [
-           'user' => [
+        'permission_structure' => [
+            'user' => [
                 'module' => 'permissions',
-           ],
-       ]
+            ],
+        ]
     ];
 
 Permissions

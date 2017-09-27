@@ -1,6 +1,19 @@
 Middleware
 ==========
 
+.. _middleware-configuration:
+
+Configuration
+^^^^^^^^^^^^^
+
+The middlewares are registered automatically as ``role``, ``permission`` and ``ability`` . If you want to change or customize them, go to your ``config/laratrust.php`` and set the ``middleware.register`` value to ``false`` and add  the following to the ``routeMiddleware`` array in ``app/Http/Kernel.php``::
+
+    'role' => \Laratrust\Middleware\LaratrustRole::class,
+    'permission' => \Laratrust\Middleware\LaratrustPermission::class,
+    'ability' => \Laratrust\Middleware\LaratrustAbility::class,
+
+asdfasdfasd
+
 Concepts
 ^^^^^^^^
 
@@ -65,7 +78,7 @@ If you are using the teams feature and want to use the middleware checking for y
     // $user->ability(['admin', 'owner'], ['create-post', 'edit-user'], 'my-awesome-team', true);
 
 .. NOTE::
-    The ``require_all`` is optional.
+    The ``require_all`` and ``guard`` parameters are optional.
 
 Middleware Return
 ^^^^^^^^^^^^^^^^^
