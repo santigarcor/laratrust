@@ -2,8 +2,10 @@
 
 namespace Laratrust;
 
-use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
 class Helper
 {
@@ -137,5 +139,30 @@ class Helper
         }
 
         return $array;
+    }
+
+    /**
+     * Creates a model from an array filled with the class data.
+     *
+     * @param string $class
+     * @param string|\Illuminate\Database\Eloquent\Model $data
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public static function hidrateModel($class, $data)
+    {
+        if ($data instanceof Model) {
+            return $data;
+        }
+
+        $model = (new $class)
+            ->setAttribute('id', $data['id'])
+            ->setAttribute('name', $data['name']);
+
+        $model->setRelation(
+            'pivot',
+            MorphPivot::fromRawAttributes($model, $data['pivot'], 'pivot_table')
+        );
+
+        return $model;
     }
 }

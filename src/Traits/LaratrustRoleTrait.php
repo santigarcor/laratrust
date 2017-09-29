@@ -64,8 +64,12 @@ trait LaratrustRoleTrait
     {
         $cacheKey = 'laratrust_permissions_for_role_' . $this->getKey();
 
-        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
+        if (! Config::get('laratrust.use_cache')) {
             return $this->permissions()->get();
+        }
+
+        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
+            return $this->permissions()->get()->toArray();
         });
     }
 
@@ -132,6 +136,8 @@ trait LaratrustRoleTrait
         }
 
         foreach ($this->cachedPermissions() as $perm) {
+            $perm = Helper::hidrateModel(Config::get('laratrust.models.permission'), $perm);
+
             if (str_is($permission, $perm->name)) {
                 return true;
             }

@@ -62,8 +62,12 @@ trait LaratrustUserTrait
     {
         $cacheKey = 'laratrust_roles_for_user_' . $this->getKey();
 
-        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
+        if (! Config::get('laratrust.use_cache')) {
             return $this->roles()->get();
+        }
+
+        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
+            return $this->roles()->get()->toArray();
         });
     }
 
@@ -78,8 +82,12 @@ trait LaratrustUserTrait
     {
         $cacheKey = 'laratrust_permissions_for_user_' . $this->getKey();
 
-        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
+        if (! Config::get('laratrust.use_cache')) {
             return $this->permissions()->get();
+        }
+
+        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
+            return $this->permissions()->get()->toArray();
         });
     }
 
@@ -164,6 +172,8 @@ trait LaratrustUserTrait
         $team = Helper::fetchTeam($team);
 
         foreach ($this->cachedRoles() as $role) {
+            $role = Helper::hidrateModel(Config::get('laratrust.models.role'), $role);
+
             if ($role->name == $name && Helper::isInSameTeam($role, $team)) {
                 return true;
             }
@@ -235,6 +245,8 @@ trait LaratrustUserTrait
         $team = Helper::fetchTeam($team);
 
         foreach ($this->cachedPermissions() as $perm) {
+            $perm = Helper::hidrateModel(Config::get('laratrust.models.permission'), $perm);
+
             if (Helper::isInSameTeam($perm, $team)
                 && str_is($permission, $perm->name)) {
                 return true;
@@ -242,6 +254,8 @@ trait LaratrustUserTrait
         }
 
         foreach ($this->cachedRoles() as $role) {
+            $role = Helper::hidrateModel(Config::get('laratrust.models.role'), $role);
+
             if (Helper::isInSameTeam($role, $team)
                 && $role->hasPermission($permission)
             ) {
@@ -667,13 +681,12 @@ trait LaratrustUserTrait
     public function allPermissions()
     {
         $roles = $this->roles()->with('permissions')->get();
-        $permissions = $this->cachedPermissions();
 
         $roles = $roles->flatMap(function ($role) {
             return $role->permissions;
         });
 
-        return $permissions->merge($roles)->unique('name');
+        return $this->permissions->merge($roles)->unique('name');
     }
 
     /**
