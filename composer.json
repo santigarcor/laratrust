@@ -46,7 +46,7 @@
                 "Laratrust\\LaratrustServiceProvider"
             ],
             "aliases": {
-                "Laratrust": "Laratrust\\Laratrust"
+                "Laratrust": "Laratrust\\LaratrustFacade"
             }
         }
     }
