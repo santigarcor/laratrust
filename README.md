@@ -8,7 +8,9 @@
 [![StyleCI](https://styleci.io/repos/59691202/shield)](https://styleci.io/repos/59691202)
 [![License](https://poser.pugx.org/santigarcor/laratrust/license)](https://packagist.org/packages/santigarcor/laratrust)
 
-Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel 5 (>=5.1.40)**.
+Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel 5 (>=5.2.32)**.
+
+For Laravel < 5.2.32 please use the [4.0 branch](https://github.com/santigarcor/laratrust/tree/4.0).
 
 ## Installation, Configuration and Usage
 To install, configure and learn how to use Laratrust please go to the [Documentation](http://laratrust.readthedocs.io/).
@@ -18,10 +20,12 @@ To install, configure and learn how to use Laratrust please go to the [Documenta
 - Multiple user models.
 - Multiple roles and permissions can be attached to users.
 - Multiple permissions can be attached to roles.
-- Roles verification.
-- Permissions verification.
-- Objects ownership verification.
+- Roles and permissions verification.
+- Roles and permissions caching.
 - Multiple roles and permissions can be attached to users within teams.
+- Objects ownership verification.
+- Multiple guards for the middlewares.
+- [Laravel gates and policies](http://laratrust.readthedocs.io/en/5.0/troubleshooting.html).
 
 ## License
 
