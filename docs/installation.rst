@@ -3,7 +3,7 @@ Installation
 
 1. In order to install Laratrust in your Laravel project, just run the `composer require` command from your terminal::
 
-        composer require "santigarcor/laratrust:4.0.*"
+        composer require "santigarcor/laratrust:5.0.*"
 
 .. NOTE::
     If you are using Laravel 5.5 you don't need to do steps 2 and 3.
@@ -16,7 +16,7 @@ Installation
 
     'Laratrust'   => Laratrust\LaratrustFacade::class,
 
-4. Run the next command to publish all the configuration files::
+4. Publish all the configuration files::
 
     php artisan vendor:publish --tag="laratrust"
 

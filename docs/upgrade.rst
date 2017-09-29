@@ -24,9 +24,9 @@ In order to upgrade from Laratrust 4.0 to 5.0 you have to follow these steps:
 
     4.4. Update the ``config/laratrust.php`` file with your old values.
 
-    4.5. Set the ``middleware.register`` value to false.
+    4.5. Set the ``middleware.register`` value to ``false``.
 
-    4.6. Set the ``teams_strict_check`` value to true if you are using teams.
+    4.6. Set the ``teams_strict_check`` value to ``true`` **only** if you are using teams.
 
 5. Inside your ``Role``, ``Permission`` and ``Team`` models update the ``use`` statement from:
 
@@ -34,7 +34,9 @@ In order to upgrade from Laratrust 4.0 to 5.0 you have to follow these steps:
     - ``use Laratrust\LaratrustPermission`` to ``use Laratrust\Models\LaratrustPermission``;
     - ``use Laratrust\LaratrustTeam`` to ``use Laratrust\Models\LaratrustTeam``;
 
-6. If you use the ability method and pass coma separated roles or permissions, change them to a pipe separated string::
+6. If you use the ability method and pass coma separated roles or permissions, change them to a pipe separated string:
+
+.. code-block:: php
 
     // From
     $user->ability('admin,owner', 'create-post,edit-user');
@@ -43,6 +45,8 @@ In order to upgrade from Laratrust 4.0 to 5.0 you have to follow these steps:
 
 7. If you are using the ``Ownable`` interface, please update all the classes implementing it::
 
+.. code-block:: php
+
     // From
     public function ownerKey() {}
     // To
@@ -50,8 +54,10 @@ In order to upgrade from Laratrust 4.0 to 5.0 you have to follow these steps:
 
 8. If you use teams and in your code you use the ``syncRoles`` and ``syncPermissions`` read the new :ref:`sync method behavior <new-sync-behavior>`.
 
-9. Delete the ``LaratrustSeeder.php`` file and run ``php artisan laratrust:seeder``.
+9. The ``cachedRoles`` and ``cachedPermissions`` methods now return an array when you have the ``laratrust.use_cache`` option set to ``true``. So if you use these methods, please check your code.
 
-10. Run ``composer dump-autoload``.
+10. Delete the ``LaratrustSeeder.php`` file and run ``php artisan laratrust:seeder``.
+
+11. Run ``composer dump-autoload``.
 
 Now you can use the 5.0 version without any problem.
