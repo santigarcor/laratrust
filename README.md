@@ -34,9 +34,3 @@ Laratrust is open-sourced software licensed under the [MIT license](http://opens
 ## Contributing
 
 Please report any issue you find in the issues page. Pull requests are more than welcome.
-
-## Note
-
-This is a fork of Zizaco's [original code](https://github.com/Zizaco/entrust).
-
-Please note that this fork is not used on Zizaco's page at this time, nor is it maintained or contributed to by him.
