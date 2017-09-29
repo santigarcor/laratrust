@@ -2,7 +2,7 @@
 
 namespace DummyNamespace;
 
-use Laratrust\LaratrustRole;
+use Laratrust\Models\LaratrustRole;
 
 class DummyClass extends LaratrustRole
 {
