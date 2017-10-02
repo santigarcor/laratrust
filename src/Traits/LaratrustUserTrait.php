@@ -347,18 +347,18 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param  string  $relationship
-     * @param  string  $objectType
      * @param  mixed  $object
      * @param  mixed  $team
      * @return static
      */
-    private function attachModel($relationship, $objectType, $object, $team)
+    private function attachModel($relationship, $object, $team)
     {
-        if (!in_array($relationship, ['roles', 'permissions'])) {
+        if (!Helper::isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
         $attributes = [];
+        $objectType = Str::singular($relationship);
         $object = Helper::getIdFor($object, $objectType);
 
         if (Config::get('laratrust.use_teams')) {
@@ -390,17 +390,17 @@ trait LaratrustUserTrait
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param  string  $relationship
-     * @param  string  $objectType
      * @param  mixed  $object
      * @param  mixed  $team
      * @return static
      */
-    private function detachModel($relationship, $objectType, $object, $team)
+    private function detachModel($relationship, $object, $team)
     {
-        if (!in_array($relationship, ['roles', 'permissions'])) {
+        if (!Helper::isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
+        $objectType = Str::singular($relationship);
         $relationshipQuery = $this->$relationship();
 
         if (Config::get('laratrust.use_teams')) {
@@ -419,8 +419,22 @@ trait LaratrustUserTrait
         return $this;
     }
 
-    private function syncModels($relationship, $objectType, $objects, $team, $detaching)
+    /**
+     * Alias to eloquent many-to-many relation's sync() method.
+     *
+     * @param  string  $relationship
+     * @param  mixed  $objects
+     * @param  mixed  $team
+     * @param  boolean  $detaching
+     * @return static
+     */
+    private function syncModels($relationship, $objects, $team, $detaching)
     {
+        if (!Helper::isValidRelationship($relationship)) {
+            throw new InvalidArgumentException;
+        }
+
+        $objectType = Str::singular($relationship);
         $mappedObjects = [];
         $useTeams = Config::get('laratrust.use_teams');
         $team = $useTeams ? Helper::getIdFor($team, 'team') : null;
@@ -456,7 +470,7 @@ trait LaratrustUserTrait
      */
     public function attachRole($role, $team = null)
     {
-        return $this->attachModel('roles', 'role', $role, $team);
+        return $this->attachModel('roles', $role, $team);
     }
 
     /**
@@ -468,7 +482,7 @@ trait LaratrustUserTrait
      */
     public function detachRole($role, $team = null)
     {
-        return $this->detachModel('roles', 'role', $role, $team);
+        return $this->detachModel('roles', $role, $team);
     }
 
     /**
@@ -517,7 +531,7 @@ trait LaratrustUserTrait
      */
     public function syncRoles($roles = [], $team = null, $detaching = true)
     {
-        return $this->syncModels('roles', 'role', $roles, $team, $detaching);
+        return $this->syncModels('roles', $roles, $team, $detaching);
     }
 
     /**
@@ -541,7 +555,7 @@ trait LaratrustUserTrait
      */
     public function attachPermission($permission, $team = null)
     {
-        return $this->attachModel('permissions', 'permission', $permission, $team);
+        return $this->attachModel('permissions', $permission, $team);
     }
 
     /**
@@ -553,7 +567,7 @@ trait LaratrustUserTrait
      */
     public function detachPermission($permission, $team = null)
     {
-        return $this->detachModel('permissions', 'permission', $permission, $team);
+        return $this->detachModel('permissions', $permission, $team);
     }
 
     /**
@@ -602,7 +616,7 @@ trait LaratrustUserTrait
      */
     public function syncPermissions($permissions = [], $team = null, $detaching = true)
     {
-        return $this->syncModels('permissions', 'permission', $permissions, $team, $detaching);
+        return $this->syncModels('permissions', $permissions, $team, $detaching);
     }
 
     /**
@@ -614,7 +628,7 @@ trait LaratrustUserTrait
      */
     public function syncPermissionsWithoutDetaching($permissions = [], $team = null)
     {
-        return $this->syncModels('permissions', 'permission', $permissions, $team, false);
+        return $this->syncPermissions($permissions, $team, false);
     }
 
     /**

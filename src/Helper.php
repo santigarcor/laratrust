@@ -38,6 +38,17 @@ class Helper
     }
 
     /**
+     * Check if a string is a valid relationship name.
+     *
+     * @param string $relationship
+     * @return boolean
+     */
+    public static function isValidRelationship($relationship)
+    {
+        return in_array($relationship, ['roles', 'permissions']);
+    }
+
+    /**
      * Returns the team's foreign key.
      *
      * @return string
