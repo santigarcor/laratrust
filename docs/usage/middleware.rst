@@ -12,8 +12,6 @@ The middlewares are registered automatically as ``role``, ``permission`` and ``a
     'permission' => \Laratrust\Middleware\LaratrustPermission::class,
     'ability' => \Laratrust\Middleware\LaratrustAbility::class,
 
-asdfasdfasd
-
 Concepts
 ^^^^^^^^
 
@@ -46,7 +44,7 @@ To emulate *AND* functionality you can do:
     'middleware' => ['permission:edit-post|edit-user,require_all']
     // $user->can(['edit-post', 'edit-user'], true);
 
-For more complex situations use ``ability`` middleware which accepts 3 parameters: roles, permissions, validate_all:
+For more complex situations use ``ability`` middleware which accepts 3 parameters; roles, permissions and options:
 
 .. code-block:: php
 
@@ -58,7 +56,7 @@ If you want yo use a different guard for the user check you can specify it as an
 .. code-block:: php
 
     'middleware' => ['role:owner|writer,require_all|guard:api']
-    'middleware' => ['permission:edit-post|edit-user,require_all|guard:some_new_guard']
+    'middleware' => ['permission:edit-post|edit-user,guard:some_new_guard']
     'middleware' => ['ability:admin|owner,create-post|edit-user,require_all|guard:web']
 
 Teams

@@ -34,7 +34,7 @@ In order to upgrade from Laratrust 4.0 to 5.0 you have to follow these steps:
     - ``use Laratrust\LaratrustPermission`` to ``use Laratrust\Models\LaratrustPermission``;
     - ``use Laratrust\LaratrustTeam`` to ``use Laratrust\Models\LaratrustTeam``;
 
-6. If you use the ability method and pass coma separated roles or permissions, change them to a pipe separated string:
+6. If you use the ability method and you pass it comma separated roles or permissions, change them to a pipe separated string:
 
 .. code-block:: php
 
