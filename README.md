@@ -11,7 +11,7 @@
 Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel 5 (>=5.1.40)**.
 
 ## Installation, Configuration and Usage
-To install, configure and learn how to use Laratrust please go to the [Documentation](http://laratrust.readthedocs.io/).
+To install, configure and learn how to use Laratrust please go to the [Documentation](http://laratrust.readthedocs.io/en/4.0/).
 
 ## What does Laratrust support?
 
