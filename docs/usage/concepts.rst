@@ -56,9 +56,6 @@ Assignment
     $owner->syncPermissions([$createPost, $editUser]); // parameter can be a Permission object, array or id
     // equivalent to $owner->permissions()->sync([$createPost->id, $editUser->id]);
 
-    $owner->syncPermissionsWithoutDetaching([$createPost, $editUser]); // parameter can be a Permission object, array or id
-    // equivalent to $owner->permissions()->syncWithoutDetaching([$createPost->id, $editUser->id]);
-
 Removal
 ^^^^^^^
 
@@ -122,6 +119,9 @@ Assignment
 
     $user->syncPermissions([$editUser->id, $createPost->id]);
     // equivalent to $user->permissions()->sync([$editUser->id, createPost->id]);
+
+    $user->syncPermissionsWithoutDetaching([$editUser, $createPost]); // parameter can be a Permission object, array or id
+    // equivalent to $user->permissions()->syncWithoutDetaching([$createPost->id, $editUser->id]);
 
 Removal
 ^^^^^^^

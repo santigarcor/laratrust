@@ -5,6 +5,6 @@ Usage
 
    concepts
    events
+   middleware
    soft_deleting
    blade_templates
-   middleware

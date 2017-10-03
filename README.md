@@ -22,6 +22,7 @@ To install, configure and learn how to use Laratrust please go to the [Documenta
 - Multiple permissions can be attached to roles.
 - Roles and permissions verification.
 - Roles and permissions caching.
+- Events when roles and permissions are attached, detached or synced.
 - Multiple roles and permissions can be attached to users within teams.
 - Objects ownership verification.
 - Multiple guards for the middlewares.
