@@ -54,16 +54,19 @@ class MigrationCommand extends Command
         $this->comment($this->generateMigrationMessage());
 
         $existingMigrations = $this->alreadyExistingMigrations();
+        $defaultAnswer = true;
 
         if ($existingMigrations) {
             $this->line('');
 
             $this->warn($this->getExistingMigrationsWarning($existingMigrations));
+
+            $defaultAnswer = false;
         }
 
         $this->line('');
 
-        if (! $this->confirm("Proceed with the migration creation?", "yes")) {
+        if (! $this->confirm("Proceed with the migration creation?", $defaultAnswer)) {
             return;
         }
 
