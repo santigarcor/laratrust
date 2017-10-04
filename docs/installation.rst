@@ -25,6 +25,6 @@ Installation
 
         php artisan config:clear
 
-5. The :doc:`middlewares </usage/middleware>` are registered automatically as ``role``, ``permission`` and ``ability`` . If you want to customize or change them, please refer to the :ref:`middleware configuration <middleware-configuration>`.
+5. The :doc:`middleware </usage/middleware>` are registered automatically as ``role``, ``permission`` and ``ability`` . If you want to customize or change them, please refer to the :ref:`middleware configuration <middleware-configuration>`.
 
 

@@ -65,7 +65,7 @@ class LaratrustServiceProvider extends ServiceProvider
 
         $this->useMorphMapForRelationships();
 
-        $this->autoRegisterMiddlewares();
+        $this->registerMiddlewares();
 
         if (class_exists('\Blade')) {
             $this->registerBladeDirectives();
@@ -89,7 +89,7 @@ class LaratrustServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function autoRegisterMiddlewares()
+    protected function registerMiddlewares()
     {
         if (!$this->app['config']->get('laratrust.middleware.register')) {
             return;

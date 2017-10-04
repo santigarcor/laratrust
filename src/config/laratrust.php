@@ -175,12 +175,12 @@ return [
     | Laratrust Middleware
     |--------------------------------------------------------------------------
     |
-    | This configuration helps to customize the Laratrust middlewares behavior.
+    | This configuration helps to customize the Laratrust middleware behavior.
     |
     */
     'middleware' => [
         /**
-         * Define if the laratrust middlewares are registered automatically in the service provider
+         * Define if the laratrust middleware are registered automatically in the service provider
          */
         'register' => true,
 

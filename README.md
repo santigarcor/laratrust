@@ -25,7 +25,7 @@ To install, configure and learn how to use Laratrust please go to the [Documenta
 - Events when roles and permissions are attached, detached or synced.
 - Multiple roles and permissions can be attached to users within teams.
 - Objects ownership verification.
-- Multiple guards for the middlewares.
+- Multiple guards for the middleware.
 - [Laravel gates and policies](http://laratrust.readthedocs.io/en/5.0/troubleshooting.html).
 
 ## License

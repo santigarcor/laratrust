@@ -6,7 +6,7 @@ Middleware
 Configuration
 ^^^^^^^^^^^^^
 
-The middlewares are registered automatically as ``role``, ``permission`` and ``ability`` . If you want to change or customize them, go to your ``config/laratrust.php`` and set the ``middleware.register`` value to ``false`` and add  the following to the ``routeMiddleware`` array in ``app/Http/Kernel.php``::
+The middleware are registered automatically as ``role``, ``permission`` and ``ability`` . If you want to change or customize them, go to your ``config/laratrust.php`` and set the ``middleware.register`` value to ``false`` and add  the following to the ``routeMiddleware`` array in ``app/Http/Kernel.php``::
 
     'role' => \Laratrust\Middleware\LaratrustRole::class,
     'permission' => \Laratrust\Middleware\LaratrustPermission::class,

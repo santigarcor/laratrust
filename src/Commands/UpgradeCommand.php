@@ -27,7 +27,7 @@ class UpgradeCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Creates a migration to upgrade laratrust from version 3.2 to 4.0.';
+    protected $description = 'Creates a migration to upgrade laratrust from version 4.0 to 5.0.';
 
     /**
      * Suffix of the migration name.
@@ -43,6 +43,8 @@ class UpgradeCommand extends Command
      */
     public function handle()
     {
+        $this->info("There is nothing to upgrade through the command.");
+        return;
         $this->laravel->view->addNamespace('laratrust', substr(__DIR__, 0, -8).'views');
 
         $this->line('');
