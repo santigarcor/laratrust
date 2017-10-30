@@ -223,6 +223,19 @@ class LaratrustUserAbilityTest extends LaratrustTestCase
                 ['return_type' => 'both']
             )
         );
+
+        $this->assertSame(
+            $this->user->ability(
+                ['role_a'],
+                ['permission_a'],
+                ['return_type' => 'both']
+            ),
+            $this->user->ability(
+                'role_a',
+                'permission_a',
+                ['return_type' => 'both']
+            )
+        );
     }
 
     public function testAbilityDefaultOptions()

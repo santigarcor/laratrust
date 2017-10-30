@@ -306,8 +306,8 @@ trait LaratrustUserTrait
     {
         list($team, $options) = Helper::assignRealValuesTo($team, $options, 'is_array');
         // Convert string to array if that's what is passed in.
-        $roles = Helper::standardize($roles);
-        $permissions = Helper::standardize($permissions);
+        $roles = Helper::standardize($roles, true);
+        $permissions = Helper::standardize($permissions, true);
 
         // Set up default values and validate options.
         $options = Helper::checkOrSet('validate_all', $options, [false, true]);

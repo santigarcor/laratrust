@@ -97,9 +97,9 @@ class Helper
      * @param  string|array  $value
      * @return string|array
      */
-    public static function standardize($value)
+    public static function standardize($value, $toArray = false)
     {
-        if (is_array($value) || strpos($value, '|') === false) {
+        if (is_array($value) || ((strpos($value, '|') === false) && !$toArray)) {
             return $value;
         }
 

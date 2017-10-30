@@ -13,7 +13,7 @@ class LaratrustTestCase extends TestCase
 
     protected function getPackageAliases($app)
     {
-        return ['Laratrust' => 'Laratrust\LaratrustServiceProvider'];
+        return ['Laratrust' => 'Laratrust\LaratrustFacade'];
     }
 
     protected function getEnvironmentSetUp($app)
