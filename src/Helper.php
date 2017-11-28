@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Laratrust\Contracts\LaratrustTeamInterface;
 
 class Helper
 {
