@@ -69,6 +69,10 @@ class Helper
         if (is_null($team) || !Config::get('laratrust.use_teams')) {
             return null;
         }
+        
+        if ($team instanceof LaratrustTeamInterface) {
+            return $team->getKey();
+        }
 
         $team = call_user_func_array(
                     [Config::get('laratrust.models.team'), 'where'],
