@@ -140,11 +140,13 @@ class LaratrustUserTest extends LaratrustTestCase
         $this->assertTrue($this->user->hasPermission([]));
         $this->assertTrue($this->user->hasPermission('permission_a'));
         $this->assertTrue($this->user->hasPermission('permission_b', 'team_a'));
+        $this->assertTrue($this->user->hasPermission('permission_b', $team));
         $this->app['config']->set('laratrust.teams_strict_check', true);
         $this->assertFalse($this->user->hasPermission('permission_c'));
         $this->app['config']->set('laratrust.teams_strict_check', false);
         $this->assertTrue($this->user->hasPermission('permission_c'));
         $this->assertTrue($this->user->hasPermission('permission_c', 'team_a'));
+        $this->assertTrue($this->user->hasPermission('permission_c', $team));
         $this->assertTrue($this->user->hasPermission('permission_d'));
         $this->assertFalse($this->user->hasPermission('permission_e'));
 
@@ -153,11 +155,13 @@ class LaratrustUserTest extends LaratrustTestCase
         $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_d'], true));
         $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], true));
         $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], 'team_a', true));
+        $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], $team, true));
         $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b', 'permission_e'], true));
         $this->assertFalse($this->user->hasPermission(['permission_e', 'permission_f']));
 
         $this->app['config']->set('laratrust.use_teams', false);
         $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], 'team_a', true));
+        $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], $team, true));
     }
 
     public function testCan()
