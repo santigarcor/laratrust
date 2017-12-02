@@ -157,10 +157,10 @@ trait LaratrustRoleTrait
         $mappedPermissions = [];
 
         foreach ($permissions as $permission) {
-            $mappedPermissions[] = Helper::getIdFor($permission, $permission);
+            $mappedPermissions[] = Helper::getIdFor($permission, 'permission');
         }
 
-        $changes = $this->permissions()->sync($permissions);
+        $changes = $this->permissions()->sync($mappedPermissions);
         $this->flushCache();
         $this->fireLaratrustEvent("permission.synced", [$this, $changes]);
 

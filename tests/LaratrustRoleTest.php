@@ -208,5 +208,10 @@ class LaratrustRoleTest extends LaratrustTestCase
         */
         $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->syncPermissions($perms));
         $this->assertCount(2, $this->role->permissions()->get()->toArray());
+
+        $this->role->syncPermissions([]);
+        $this->role->syncPermissions(['permission_a', 'permission_b']);
+        $this->assertCount(2, $this->role->permissions()->get()->toArray());
+
     }
 }
