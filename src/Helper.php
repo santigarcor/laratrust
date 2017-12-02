@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Laratrust\Contracts\LaratrustTeamInterface;
 
 class Helper
 {
@@ -68,6 +69,10 @@ class Helper
     {
         if (is_null($team) || !Config::get('laratrust.use_teams')) {
             return null;
+        }
+        
+        if ($team instanceof LaratrustTeamInterface) {
+            return $team->getKey();
         }
 
         $team = call_user_func_array(
