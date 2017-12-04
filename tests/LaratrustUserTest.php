@@ -64,6 +64,7 @@ class LaratrustUserTest extends LaratrustTestCase
             $this->user->permissions()
         );
     }
+
     public function testHasRole()
     {
         /*
@@ -243,11 +244,11 @@ class LaratrustUserTest extends LaratrustTestCase
         $this->assertTrue($this->user->hasPermission('admin.posts'));
         $this->assertTrue($this->user->hasPermission('admin.pages'));
         $this->assertTrue($this->user->hasPermission('admin.users'));
-        $this->assertFalse($this->user->hasPermission('admin.config', 'TeamA'));
+        $this->assertFalse($this->user->hasPermission('admin.config', 'team_a'));
 
         $this->assertTrue($this->user->hasPermission(['admin.*']));
         $this->assertTrue($this->user->hasPermission(['admin.*']));
-        $this->assertTrue($this->user->hasPermission(['config.*'], 'TeamA'));
+        $this->assertTrue($this->user->hasPermission(['config.*'], 'team_a'));
         $this->assertTrue($this->user->hasPermission(['config.*']));
         $this->assertFalse($this->user->hasPermission(['site.*']));
     }
