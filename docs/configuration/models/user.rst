@@ -16,7 +16,7 @@ Next, use the ``LaratrustUserTrait`` trait in your existing user models. For exa
        ...
     }
 
-This will enable the relation with ``Role`` and ``Permission``, and add the following methods ``roles()``, ``hasRole($name)``, ``hasPermission($permission)``, ``isAbleTo($permission)``, ``can($permission)``, and ``ability($roles, $permissions, $options)`` within your ``User`` model.
+This will enable the relation with ``Role`` and ``Permission``, and add the following methods ``roles()``, ``hasRole($name)``, ``hasPermission($permission)``, ``isAbleTo($permission)``, ``can($permission)``, ``ability($roles, $permissions, $options)``, and ``teams()`` within your ``User`` model.
 
 Do not forget to dump composer autoload::
 
