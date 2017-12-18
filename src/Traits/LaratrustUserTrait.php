@@ -338,9 +338,9 @@ trait LaratrustUserTrait
             return $validateAll;
         } elseif ($options['return_type'] == 'array') {
             return ['roles' => $checkedRoles, 'permissions' => $checkedPermissions];
-        } else {
-            return [$validateAll, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
         }
+
+        return [$validateAll, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
     }
 
     /**
