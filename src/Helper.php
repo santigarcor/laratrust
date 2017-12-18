@@ -6,7 +6,6 @@ use InvalidArgumentException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
-use Laratrust\Contracts\LaratrustTeamInterface;
 
 class Helper
 {
@@ -162,10 +161,12 @@ class Helper
             return $data;
         }
 
-        $model = (new $class)
-            ->setAttribute('id', $data['id'])
-            ->setAttribute('name', $data['name']);
+        if (!isset($data['pivot'])) {
+            throw new \Exception("The 'pivot' attribute in the {$class} is hidden");
+        }
 
+        $model = new $class;
+        $model->setAttribute('id', $data['id'])->setAttribute('name', $data['name']);
         $model->setRelation(
             'pivot',
             MorphPivot::fromRawAttributes($model, $data['pivot'], 'pivot_table')
