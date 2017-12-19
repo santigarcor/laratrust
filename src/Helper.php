@@ -119,7 +119,8 @@ class Helper
         }
 
         $teamForeignKey = static::teamForeignKey();
-        return $rolePermission->pivot->$teamForeignKey == $team;
+
+        return $rolePermission['pivot'][$teamForeignKey] == $team;
     }
 
     /**

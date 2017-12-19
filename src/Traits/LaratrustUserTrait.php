@@ -172,9 +172,7 @@ trait LaratrustUserTrait
         $team = Helper::fetchTeam($team);
 
         foreach ($this->cachedRoles() as $role) {
-            $role = Helper::hidrateModel(Config::get('laratrust.models.role'), $role);
-
-            if ($role->name == $name && Helper::isInSameTeam($role, $team)) {
+            if ($role['name'] == $name && Helper::isInSameTeam($role, $team)) {
                 return true;
             }
         }
@@ -245,10 +243,7 @@ trait LaratrustUserTrait
         $team = Helper::fetchTeam($team);
 
         foreach ($this->cachedPermissions() as $perm) {
-            $perm = Helper::hidrateModel(Config::get('laratrust.models.permission'), $perm);
-
-            if (Helper::isInSameTeam($perm, $team)
-                && str_is($permission, $perm->name)) {
+            if (Helper::isInSameTeam($perm, $team) && str_is($permission, $perm['name'])) {
                 return true;
             }
         }
@@ -256,9 +251,7 @@ trait LaratrustUserTrait
         foreach ($this->cachedRoles() as $role) {
             $role = Helper::hidrateModel(Config::get('laratrust.models.role'), $role);
 
-            if (Helper::isInSameTeam($role, $team)
-                && $role->hasPermission($permission)
-            ) {
+            if (Helper::isInSameTeam($role, $team) && $role->hasPermission($permission)) {
                 return true;
             }
         }
