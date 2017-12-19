@@ -1,5 +1,8 @@
 preset: psr2
 
+enabled:
+  - no_useless_else
+
 linting: true
 
 finder:
