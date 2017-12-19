@@ -136,9 +136,7 @@ trait LaratrustRoleTrait
         }
 
         foreach ($this->cachedPermissions() as $perm) {
-            $perm = Helper::hidrateModel(Config::get('laratrust.models.permission'), $perm);
-
-            if (str_is($permission, $perm->name)) {
+            if (str_is($permission, $perm['name'])) {
                 return true;
             }
         }
