@@ -33,7 +33,7 @@ class Laratrust
     /**
      * Checks if the current user has a role by its name.
      *
-     * @param  string  $name  Role name.
+     * @param  string  $role  Role name.
      * @return bool
      */
     public function hasRole($role, $team = null, $requireAll = false)

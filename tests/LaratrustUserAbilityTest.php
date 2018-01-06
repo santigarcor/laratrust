@@ -305,7 +305,7 @@ class LaratrustUserAbilityTest extends LaratrustTestCase
      * @param  \Laratrust\Tests\Models\User  $user
      * @param  array  $roles
      * @param  array  $perms
-     * @param  arary  $options
+     * @param  array  $options
      * @return boolean
      */
     public function isExceptionThrown($user, $roles, $perms, $options)
