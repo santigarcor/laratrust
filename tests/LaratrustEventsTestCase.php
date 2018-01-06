@@ -53,7 +53,7 @@ class LaratrustEventsTestCase extends LaratrustTestCase
      *
      * @param  string $event
      * @param  array  $payload
-     * @param  string $model
+     * @param  string $modelClass
      * @return void
      */
     protected function dispatcherShouldFire($event, array $payload, $modelClass)
