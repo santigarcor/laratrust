@@ -112,13 +112,13 @@ trait LaratrustUserTrait
 
         return $roles;
     }
-    
+
     /**
-     * Many-to-Many relations with Team.
+     * Many-to-Many relations with Team associated through the roles.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function teams()
+    public function rolesTeams()
     {
         $teams = $this->morphToMany(
             Config::get('laratrust.models.team'),

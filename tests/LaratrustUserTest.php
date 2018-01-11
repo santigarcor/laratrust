@@ -65,6 +65,27 @@ class LaratrustUserTest extends LaratrustTestCase
         );
     }
 
+    public function testRolesTeams()
+    {
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->app['config']->set('laratrust.use_teams', false);
+        $this->assertInstanceOf(
+            'Illuminate\Database\Eloquent\Relations\MorphToMany',
+            $this->user->rolesTeams()
+        );
+
+        $this->app['config']->set('laratrust.use_teams', true);
+        $this->assertInstanceOf(
+            'Illuminate\Database\Eloquent\Relations\MorphToMany',
+            $this->user->rolesTeams()
+        );
+    }
+
+
     public function testHasRole()
     {
         /*
