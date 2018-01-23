@@ -73,10 +73,7 @@ class LaratrustUserTest extends LaratrustTestCase
         |------------------------------------------------------------
         */
         $this->app['config']->set('laratrust.use_teams', false);
-        $this->assertInstanceOf(
-            'Illuminate\Database\Eloquent\Relations\MorphToMany',
-            $this->user->rolesTeams()
-        );
+        $this->assertNull($this->user->rolesTeams());
 
         $this->app['config']->set('laratrust.use_teams', true);
         $this->assertInstanceOf(
@@ -851,8 +848,8 @@ class LaratrustUserTest extends LaratrustTestCase
         |------------------------------------------------------------
         */
         $roleA = Role::create(['name' => 'role_a']);
-        $roleB =  Role::create(['name' => 'role_b']);
-        $permissionA =  Permission::create(['name' => 'permission_a']);
+        $roleB = Role::create(['name' => 'role_b']);
+        $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);
         $permissionC = Permission::create(['name' => 'permission_c']);
 

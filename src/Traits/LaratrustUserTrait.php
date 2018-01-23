@@ -120,19 +120,18 @@ trait LaratrustUserTrait
      */
     public function rolesTeams()
     {
-        if (Config::get('laratrust.use_teams')) {
-            $teams = $this->morphToMany(
+        if (!Config::get('laratrust.use_teams')) {
+            return null;
+        }
+
+        return $this->morphToMany(
                 Config::get('laratrust.models.team'),
                 'user',
                 Config::get('laratrust.tables.role_user'),
                 Config::get('laratrust.foreign_keys.user'),
                 Config::get('laratrust.foreign_keys.team')
-            );
-
-            return $teams;
-        }
-        
-        return null;
+            )
+            ->withPivot(Config::get('laratrust.foreign_keys.role'));
     }
 
     /**
