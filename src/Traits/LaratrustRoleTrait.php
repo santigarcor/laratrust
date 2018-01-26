@@ -41,7 +41,7 @@ trait LaratrustRoleTrait
         static::saved($flushCache);
 
         static::deleting(function ($role) {
-            if (method_exists($role, 'bootSoftDeletes') && $role->forceDeleting) {
+            if (method_exists($role, 'bootSoftDeletes') && !$role->forceDeleting) {
                 return;
             }
 
