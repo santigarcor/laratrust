@@ -33,7 +33,7 @@ trait LaratrustPermissionTrait
         });
 
         static::deleting(function ($permission) {
-            if (method_exists($permission, 'bootSoftDeletes') && $permission->forceDeleting) {
+            if (method_exists($permission, 'bootSoftDeletes') && !$permission->forceDeleting) {
                 return;
             }
 

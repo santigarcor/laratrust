@@ -44,7 +44,7 @@ trait LaratrustTeamTrait
     public static function bootLaratrustTeamTrait()
     {
         static::deleting(function ($team) {
-            if (method_exists($team, 'bootSoftDeletes') && $team->forceDeleting) {
+            if (method_exists($team, 'bootSoftDeletes') && !$team->forceDeleting) {
                 return;
             }
 
