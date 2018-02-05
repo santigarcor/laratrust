@@ -37,7 +37,7 @@ Laratrust is open-sourced software licensed under the [MIT license](http://opens
 
 Please report any issue you find in the issues page. Pull requests are more than welcome.
 
-## Buy me a coffe
+## Buy me a coffee
 <p align="center">
 <a href='https://ko-fi.com/V7V48I5Y' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://az743702.vo.msecnd.net/cdn/kofi1.png?v=0' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 </p>
