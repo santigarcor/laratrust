@@ -530,7 +530,7 @@ You can also attach multiple permissions to the user within a team:
     $editUser = Permission::where('name', 'edit-user')->first();
     $manageUsers = Permission::where('name', 'manage-users')->first();
 
-    $user->attachPermission([$editUser, $manageUsers], $team); // parameter can be an object, array, id or the string name.
+    $user->attachPermissions([$editUser, $manageUsers], $team); // parameter can be an object, array, id or the string name.
 
 To remove the permissions you can do:
 
