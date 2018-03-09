@@ -9,7 +9,6 @@ namespace Laratrust\Commands;
  * @license MIT
  * @package Laratrust
  */
-
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
@@ -37,7 +36,7 @@ class MakeSeederCommand extends Command
      */
     public function handle()
     {
-        $this->laravel->view->addNamespace('laratrust', substr(__DIR__, 0, -8).'views');
+        $this->laravel->view->addNamespace('laratrust', __DIR__.'/../../views');
 
         if (file_exists($this->seederPath())) {
             $this->line('');

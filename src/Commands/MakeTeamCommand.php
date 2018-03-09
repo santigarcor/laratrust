@@ -9,9 +9,8 @@ namespace Laratrust\Commands;
  * @license MIT
  * @package Laratrust
  */
-
-use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Console\GeneratorCommand;
 
 class MakeTeamCommand extends GeneratorCommand
 {
@@ -43,7 +42,7 @@ class MakeTeamCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/stubs/team.stub';
+        return __DIR__. '/../../stubs/team.stub';
     }
 
     /**
