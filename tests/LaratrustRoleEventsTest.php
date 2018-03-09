@@ -2,10 +2,7 @@
 
 namespace Laratrust\Tests;
 
-use Mockery as m;
 use Laratrust\Tests\Models\Role;
-use Laratrust\Tests\Models\User;
-use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
 class LaratrustRoleEventsTest extends LaratrustEventsTestCase
@@ -16,7 +13,6 @@ class LaratrustRoleEventsTest extends LaratrustEventsTestCase
     {
         parent::setUp();
         $this->role = Role::create(['name' => 'role']);
-
     }
 
     public function testCanListenToThePermissionAttachedEvent()

@@ -118,7 +118,7 @@ class LaratrustUserAbilityTest extends LaratrustTestCase
         // Case: User has everything.
         $this->assertSame(
             [
-                'roles'       => ['role_a' => true, 'role_b' => true],
+                'roles' => ['role_a' => true, 'role_b' => true],
                 'permissions' => ['permission_a' => true, 'permission_b' => true]
             ],
             $this->user->ability(
@@ -129,7 +129,7 @@ class LaratrustUserAbilityTest extends LaratrustTestCase
         );
         $this->assertSame(
             [
-                'roles'       => ['role_a' => false, 'role_b' => true],
+                'roles' => ['role_a' => false, 'role_b' => true],
                 'permissions' => ['permission_a' => false, 'permission_b' => true]
             ],
             $this->user->ability(
@@ -141,7 +141,7 @@ class LaratrustUserAbilityTest extends LaratrustTestCase
         );
         $this->assertSame(
             [
-                'roles'       => ['role_a' => true],
+                'roles' => ['role_a' => true],
                 'permissions' => ['permission_a' => true]
             ],
             $this->user->ability(
@@ -163,7 +163,7 @@ class LaratrustUserAbilityTest extends LaratrustTestCase
             [
                 true,
                 [
-                    'roles'       => ['role_a' => true, 'role_b' => true],
+                    'roles' => ['role_a' => true, 'role_b' => true],
                     'permissions' => ['permission_a' => true, 'permission_b' => true]
                 ]
             ],
@@ -177,7 +177,7 @@ class LaratrustUserAbilityTest extends LaratrustTestCase
             [
                 true,
                 [
-                    'roles'       => ['role_a' => false, 'role_b' => true],
+                    'roles' => ['role_a' => false, 'role_b' => true],
                     'permissions' => ['permission_a' => false, 'permission_b' => true]
                 ]
             ],
@@ -192,7 +192,7 @@ class LaratrustUserAbilityTest extends LaratrustTestCase
             [
                 true,
                 [
-                    'roles'       => ['role_a' => true, 'role_b' => true],
+                    'roles' => ['role_a' => true, 'role_b' => true],
                     'permissions' => ['permission_a' => true, 'permission_b' => true]
                 ]
             ],

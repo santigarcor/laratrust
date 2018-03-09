@@ -9,9 +9,7 @@ namespace Laratrust\Traits;
  * @license MIT
  * @package Laratrust
  */
-
 use Illuminate\Support\Facades\Config;
-use Laratrust\Traits\LaratrustDynamicUserRelationsCalls;
 
 trait LaratrustTeamTrait
 {

@@ -9,9 +9,7 @@ namespace Laratrust\Traits;
  * @license MIT
  * @package Laratrust
  */
-
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Cache;
 
 trait LaratrustDynamicUserRelationsCalls
 {

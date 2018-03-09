@@ -212,6 +212,5 @@ class LaratrustRoleTest extends LaratrustTestCase
         $this->role->syncPermissions([]);
         $this->role->syncPermissions(['permission_a', 'permission_b']);
         $this->assertCount(2, $this->role->permissions()->get()->toArray());
-
     }
 }

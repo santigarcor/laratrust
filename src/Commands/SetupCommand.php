@@ -9,7 +9,6 @@ namespace Laratrust\Commands;
  * @license MIT
  * @package Laratrust
  */
-
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 

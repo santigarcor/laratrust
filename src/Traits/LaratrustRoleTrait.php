@@ -9,7 +9,6 @@ namespace Laratrust\Traits;
  * @license MIT
  * @package Laratrust
  */
-
 use Laratrust\Helper;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;

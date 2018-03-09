@@ -9,11 +9,10 @@ namespace Laratrust\Models;
  * @license MIT
  * @package Laratrust
  */
-
-use Laratrust\Contracts\LaratrustPermissionInterface;
-use Laratrust\Traits\LaratrustPermissionTrait;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
+use Laratrust\Traits\LaratrustPermissionTrait;
+use Laratrust\Contracts\LaratrustPermissionInterface;
 
 class LaratrustPermission extends Model implements LaratrustPermissionInterface
 {

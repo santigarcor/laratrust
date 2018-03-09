@@ -21,9 +21,9 @@ class LaratrustTestCase extends TestCase
         $app['config']->set('cache.default', 'array');
         $app['config']->set('database.default', 'testing');
         $app['config']->set('database.connections.testing', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
         $app['config']->set('laratrust.user_models.users', 'Laratrust\Tests\Models\User');
         $app['config']->set('laratrust.models', [

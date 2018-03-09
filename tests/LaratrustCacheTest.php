@@ -2,16 +2,13 @@
 
 namespace Laratrust\Test;
 
-use Mockery as m;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
-use Laratrust\Tests\Models\OwnableObject;
 
 class LaratrustCacheTest extends LaratrustTestCase
 {

@@ -9,11 +9,10 @@ namespace Laratrust\Models;
  * @license MIT
  * @package Laratrust
  */
-
-use Laratrust\Contracts\LaratrustTeamInterface;
-use Laratrust\Traits\LaratrustTeamTrait;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
+use Laratrust\Traits\LaratrustTeamTrait;
+use Laratrust\Contracts\LaratrustTeamInterface;
 
 class LaratrustTeam extends Model implements LaratrustTeamInterface
 {

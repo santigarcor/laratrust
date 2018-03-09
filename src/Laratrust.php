@@ -9,7 +9,6 @@ namespace Laratrust;
  * @license MIT
  * @package Laratrust
  */
-
 class Laratrust
 {
     /**
