@@ -96,6 +96,11 @@ return [
          */
         'team' => 'App\Team',
 
+        /**
+         * Permission rule model
+         */
+        'permission_rule' => 'App\PermissionRule',
+
     ],
 
     /*

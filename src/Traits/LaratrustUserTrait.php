@@ -9,11 +9,14 @@ namespace Laratrust\Traits;
  * @license MIT
  * @package Laratrust
  */
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Laratrust\Helper;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Laratrust\RuleInterface;
 
 trait LaratrustUserTrait
 {
@@ -226,6 +229,54 @@ trait LaratrustUserTrait
         return $this->hasRole($role, $team, $requireAll);
     }
 
+    private function getCachedPermissionRule($permission)
+    {
+        $cacheKey = 'laratrust_permissions_for_' . $permission;
+        $rule = Cache::remember($cacheKey, Config::get('cache.ttl', 3600), function() use($permission){
+            $rule = $this->getPermissionRule($permission);
+
+            if (null === $rule) {
+                return false;
+            }
+
+            return $rule->rule;
+        });
+        return unserialize($rule);
+    }
+
+    private function getPermissionRule($permission)
+    {
+        $class = Config::get('laratrust.models.permission_rule');
+        return $class::query()->where('permission_name', $permission)->first();
+    }
+
+    private function checkPermissionRule($permission, $requiredAll = false) {
+        if (is_array($permission)) {
+            foreach($permission as $p) {
+                $passed = $this->checkPermissionRule($p);
+                if ($passed && !$requiredAll) {
+                    return true;
+                } elseif (!$passed && $requiredAll) {
+                    return false;
+                }
+            }
+        }
+
+        if (!is_string($permission)) {
+            throw new \ErrorException('permission name error.');
+        }
+        $rule = $this->getCachedPermissionRule($permission);
+
+        if (false === $rule) {
+            return true;
+        }
+
+        if ($rule instanceof RuleInterface) {
+            return $rule->handle(Auth::id(), request());
+        }
+
+        return false;
+    }
     /**
      * Check if user has a permission by its name.
      *
@@ -289,7 +340,7 @@ trait LaratrustUserTrait
      */
     public function can($permission, $team = null, $requireAll = false)
     {
-        return $this->hasPermission($permission, $team, $requireAll);
+        return $this->hasPermission($permission, $team, $requireAll) && $this->checkPermissionRule($permission, $requireAll);
     }
 
     /**

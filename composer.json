@@ -11,6 +11,7 @@
     ],
     "require": {
         "php": ">=5.5.9",
+        "barryvdh/laravel-ide-helper": "^2.4",
         "illuminate/auth": "~5.2",
         "illuminate/cache": "~5.2",
         "illuminate/console": "~5.2",
