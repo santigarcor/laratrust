@@ -29,6 +29,7 @@ class LaratrustTestCase extends TestCase
         $app['config']->set('laratrust.models', [
             'role' => 'Laratrust\Tests\Models\Role',
             'permission' => 'Laratrust\Tests\Models\Permission',
+            'permission_rule' => 'Laratrust\Tests\Models\Permission',
             'team' => 'Laratrust\Tests\Models\Team',
         ]);
     }

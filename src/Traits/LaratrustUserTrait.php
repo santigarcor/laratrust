@@ -246,9 +246,8 @@ trait LaratrustUserTrait
 
     private function getPermissionRule($permission)
     {
-        /* @var $model Model*/
-        $model = Config::get('laratrust.models.permission_rule');
-        return $model->where('permission_name', $permission)->first();
+        $class = Config::get('laratrust.models.permission_rule');
+        return $class::query()->where('permission_name', $permission)->first();
     }
 
     private function checkPermissionRule($permission, $requiredAll = false) {
