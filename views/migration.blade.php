@@ -30,6 +30,13 @@ class LaratrustSetupTables extends Migration
             $table->timestamps();
         });
 
+        // Create table for storing permissions
+        Schema::create('{{ $laratrust['tables']['permission_rule'] }}', function (Blueprint $table) {
+            $table->string('permission_name')->primary();
+            $table->binary('rule');
+            $table->foreign('permission_name')->on('{{ $laratrust['tables']['permissions'] }}')->references('name')->onUpdate('cascade')->onDelete('cascade');
+        });
+
 @if ($laratrust['use_teams'])
         // Create table for storing teams
         Schema::create('{{ $laratrust['tables']['teams'] }}', function (Blueprint $table) {
