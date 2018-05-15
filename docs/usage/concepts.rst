@@ -198,7 +198,7 @@ You can also use wildcard to check any matching permission by doing:
     $user->can('admin.*'); // true
 
     // match any permission about users
-    $user->can('*_users'); // true
+    $user->can('*-users'); // true
 
 Magic can method
 ^^^^^^^^^^^^^^^^
