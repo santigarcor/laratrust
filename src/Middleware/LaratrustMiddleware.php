@@ -45,10 +45,14 @@ class LaratrustMiddleware
         $parameter = Config::get('laratrust.middleware.params');
 
         if (Config::get('laratrust.middleware.handling') == 'abort') {
-            return App::abort($parameter);
+            return App::abort($parameter['status']);
         }
 
-        return Redirect::to($parameter);
+	$redirect = Redirect::to($parameter['destination']);
+	if(!empty($parameter['message'])) {
+		$redirect->with($parameter['message_type'], $parameter['message']);
+	}
+	return $redirect;
     }
 
     /**

@@ -191,9 +191,16 @@ return [
         'handling' => 'abort',
 
         /**
-         * Parameter passed to the middleware_handling method
+	 * Parameter passed to the middleware_handling method.
+	 * If message is blank no message is passed to the session.
+	 * destination and message only used on redirect.
          */
-        'params' => '403',
+	'params' => [
+		'status' => '403',
+		'destination'=>'/home', 
+		'message' => '',
+		'message_type' => 'error'
+	],
 
     ],
 
