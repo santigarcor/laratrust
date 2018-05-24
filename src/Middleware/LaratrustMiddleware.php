@@ -42,17 +42,17 @@ class LaratrustMiddleware
      */
     protected function unauthorized()
     {
-        $parameter = Config::get('laratrust.middleware.params');
+        $parameter = Config::get('laratrust.middleware.handlers');
 
         if (Config::get('laratrust.middleware.handling') == 'abort') {
-            return App::abort($parameter['status']);
+            return App::abort($parameter['abort']['code']);
         }
 
-	$redirect = Redirect::to($parameter['destination']);
-	if(!empty($parameter['message'])) {
-		$redirect->with($parameter['message_type'], $parameter['message']);
-	}
-	return $redirect;
+        $redirect = Redirect::to($parameter['redirect']['url']);
+        if(!empty($parameter['redirect']['message']['content'])) {
+            $redirect->with($parameter['redirect']['message']['type'], $parameter['redirect']['message']['content']);
+        }
+        return $redirect;
     }
 
     /**
