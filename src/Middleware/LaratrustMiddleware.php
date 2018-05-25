@@ -42,16 +42,18 @@ class LaratrustMiddleware
      */
     protected function unauthorized()
     {
-        $parameter = Config::get('laratrust.middleware.handlers');
+        $handling = Config::get('laratrust.middleware.handling');
+        $handler = Config::get("laratrust.middleware.handlers.{$handling}");
 
-        if (Config::get('laratrust.middleware.handling') == 'abort') {
-            return App::abort($parameter['abort']['code']);
+        if ($handling == 'abort') {
+            return App::abort($handler['code']);
         }
 
-        $redirect = Redirect::to($parameter['redirect']['url']);
-        if(!empty($parameter['redirect']['message']['content'])) {
-            $redirect->with($parameter['redirect']['message']['type'], $parameter['redirect']['message']['content']);
+        $redirect = Redirect::to($handler['url']);
+        if (!empty($handler['message']['content'])) {
+            $redirect->with($handler['message']['type'], $handler['message']['content']);
         }
+
         return $redirect;
     }
 

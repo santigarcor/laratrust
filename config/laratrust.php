@@ -191,14 +191,21 @@ return [
         'handling' => 'abort',
 
         /**
-         * Parameter passed to the middleware_handling method.
-         * If message is blank no message is passed to the session.
-         * destination and message only used on redirect.
+         * Handlers for the unauthorized method in the middlewares.
+         * The name of the handler must be the same as the handling.
          */
         'handlers' => [
+            /**
+             * Aborts the execution with a 403 code.
+             */
             'abort' => [
                 'code' => 403
             ],
+            /**
+             * Redirects the user to the given url.
+             * If a message is needed to show, set the type and the message content.
+             * If the message content is empty it won't be added to the redirection.
+             */
             'redirect' => [
                 'url' => '/home',
                 'message' => [
