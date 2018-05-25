@@ -1,14 +1,14 @@
-Upgrade from 4.0 to 5.0
+Upgrade from 5.0 to 5.1
 =======================
 
 .. IMPORTANT::
-    Laratrust 5.0 requires Laravel >= 5.2.32.
+    Laratrust 5.1 requires Laravel >= 5.2.32.
 
-In order to upgrade from Laratrust 4.0 to 5.0 you have to follow these steps:
+In order to upgrade from Laratrust 5.0 to 5.1 you have to follow these steps:
 
-1. Change your ``composer.json`` to require the 4.0 version of Laratrust::
+1. Change your ``composer.json`` to require the 5.0 version of Laratrust::
 
-    "santigarcor/laratrust": "5.0.*"
+    "santigarcor/laratrust": "5.1.*"
 
 2. Run ``composer update`` to update the source code.
 
@@ -24,40 +24,8 @@ In order to upgrade from Laratrust 4.0 to 5.0 you have to follow these steps:
 
     4.4. Update the ``config/laratrust.php`` file with your old values.
 
-    4.5. Set the ``middleware.register`` value to ``false``.
+5. Delete the ``LaratrustSeeder.php`` file and run ``php artisan laratrust:seeder``.
 
-    4.6. Set the ``teams_strict_check`` value to ``true`` **only** if you are using teams.
+6. Run ``composer dump-autoload``.
 
-5. Inside your ``Role``, ``Permission`` and ``Team`` models update the ``use`` statement from:
-
-    - ``use Laratrust\LaratrustRole`` to ``use Laratrust\Models\LaratrustRole``;
-    - ``use Laratrust\LaratrustPermission`` to ``use Laratrust\Models\LaratrustPermission``;
-    - ``use Laratrust\LaratrustTeam`` to ``use Laratrust\Models\LaratrustTeam``;
-
-6. If you use the ability method and you pass it comma separated roles or permissions, change them to a pipe separated string:
-
-.. code-block:: php
-
-    // From
-    $user->ability('admin,owner', 'create-post,edit-user');
-    // To
-    $user->ability('admin|owner', 'create-post|edit-user');
-
-7. If you are using the ``Ownable`` interface, please update all the classes implementing it::
-
-.. code-block:: php
-
-    // From
-    public function ownerKey() {}
-    // To
-    public function ownerKey($owner) {}
-
-8. If you use teams and in your code you use the ``syncRoles`` and ``syncPermissions`` read the new :ref:`sync method behavior <new-sync-behavior>`.
-
-9. The ``cachedRoles`` and ``cachedPermissions`` methods now return an array when you have the ``laratrust.use_cache`` option set to ``true``. So if you use these methods, please check your code.
-
-10. Delete the ``LaratrustSeeder.php`` file and run ``php artisan laratrust:seeder``.
-
-11. Run ``composer dump-autoload``.
-
-Now you can use the 5.0 version without any problem.
+Now you can use the 5.1 version without any problem.

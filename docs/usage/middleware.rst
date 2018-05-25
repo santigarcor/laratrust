@@ -86,14 +86,25 @@ The middleware supports two types of returns in case the check fails. You can co
 Abort
 -----
 
-By default the middleware aborts with a code ``403`` but you can customize it by changing the ``middleware_params`` value.
+By default the middleware aborts with a code ``403`` but you can customize it by changing the ``middleware.handlers.abort.code`` value.
 
 Redirect
 --------
 
-To make a redirection in case the middleware check fails, you will need to change the ``middleware_handling`` value to ``redirect`` and the ``middleware_params`` to the route you need to be redirected. Leaving the configuration like this:
+To make a redirection in case the middleware check fails, you will need to change the ``middleware.handling`` value to ``redirect`` and the ``middleware.handlers.redirect.url`` to the route you need to be redirected. Leaving the configuration like this:
 
 .. code-block:: php
 
-    'middleware_handling' => 'redirect',
-    'middleware_params'   => '/home',       // Change this to the route you need
+    'handling' => 'redirect',
+    'handlers' => [
+        'abort' => [
+            'code' => 403
+        ],
+        'redirect' => [
+            'url' => ''/home',       // Change this to the route you need
+            'message' => [
+                'type' => 'error',
+                'content' => ''
+            ]
+        ]
+    ]
