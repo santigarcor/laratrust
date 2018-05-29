@@ -137,6 +137,11 @@ return [
          */
         'permission_role' => 'permission_role',
 
+        /**
+         * Permission - Models intermediate table.
+         */
+        'permission_models' => 'permission_models',
+
     ],
 
     /*

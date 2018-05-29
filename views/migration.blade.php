@@ -97,6 +97,15 @@ class LaratrustSetupTables extends Migration
 
             $table->primary(['{{ $laratrust['foreign_keys']['permission'] }}', '{{ $laratrust['foreign_keys']['role'] }}']);
         });
+
+        // Create table for associating permissions to models (Many-to-Many)
+        Schema::create('{{ $laratrust['tables']['permission_models'] }}', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger(''{{ $laratrust['foreign_keys']['permission'] }}'');
+            $table->morphs('model');
+            //--Foreign keys RULEs
+            $table->foreign('{{ $laratrust['foreign_keys']['permission'] }}')->references('id')->on('{{ $laratrust['tables']['permissions'] }}')->onDelete('cascade');
+        });
     }
 
     /**
@@ -108,6 +117,7 @@ class LaratrustSetupTables extends Migration
     {
         Schema::dropIfExists('{{ $laratrust['tables']['permission_user'] }}');
         Schema::dropIfExists('{{ $laratrust['tables']['permission_role'] }}');
+        Schema::dropIfExists('{{ $laratrust['tables']['permission_models'] }}');
         Schema::dropIfExists('{{ $laratrust['tables']['permissions'] }}');
         Schema::dropIfExists('{{ $laratrust['tables']['role_user'] }}');
         Schema::dropIfExists('{{ $laratrust['tables']['roles'] }}');
