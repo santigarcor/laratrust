@@ -7,7 +7,7 @@
 [![Total Downloads](https://poser.pugx.org/santigarcor/laratrust/downloads)](https://packagist.org/packages/santigarcor/laratrust)
 [![StyleCI](https://styleci.io/repos/59691202/shield)](https://styleci.io/repos/59691202)
 [![License](https://poser.pugx.org/santigarcor/laratrust/license)](https://packagist.org/packages/santigarcor/laratrust)
-[![Donate](https://img.shields.io/badge/donate-Ko--fi-blue.svg)](https://ko-fi.com/V7V48I5Y)
+[![Donate](https://img.shields.io/badge/donate-Ko--fi-blue.svg)](https://ko-fi.com/V7V48I5Y) [![Join the chat at https://gitter.im/santigarcor/laratrust](https://badges.gitter.im/santigarcor/laratrust.svg)](https://gitter.im/santigarcor/laratrust?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel 5 (>=5.2.32)**.
 
