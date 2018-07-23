@@ -226,15 +226,8 @@ trait LaratrustHasAssignedPermissionsTrait
 	 * @return  array
 	 */
 	private function prepareData($argument)
-	{
-		if (is_null($argument)) {
-			return [];
-		}
-		if (is_array($argument)) {
-			return $argument;
-		}
-
-		return [$argument];
+	{	
+		return (array) $argument;
 	}
 
 
