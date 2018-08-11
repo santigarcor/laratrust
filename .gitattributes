@@ -8,3 +8,4 @@
 .styleci.yml export-ignore
 .travis.yml export-ignore
 phpunit.xml export-ignore
+deploy.sh export-ignore
