@@ -6,7 +6,7 @@ Upgrade from 5.0 to 5.1
 
 In order to upgrade from Laratrust 5.0 to 5.1 you have to follow these steps:
 
-1. Change your ``composer.json`` to require the 5.0 version of Laratrust::
+1. Change your ``composer.json`` to require the 5.1 version of Laratrust::
 
     "santigarcor/laratrust": "5.1.*"
 
