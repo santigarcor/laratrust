@@ -15,4 +15,4 @@ If you had your `use_teams` set to `true` during the installation and automatic 
 
 Now you can use the teams feature in you code.
 
-Please refer to the <docs-link to="/usage/concepts.html#teams-concepts">teams concepts</docs-link> concepts to learn how to use them.
+Please refer to the <docs-link to="/usage/concepts.html#teams">teams concepts</docs-link> concepts to learn how to use them.
