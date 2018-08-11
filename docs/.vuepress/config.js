@@ -10,6 +10,19 @@ module.exports = {
     activeVersion: getActiveVersion(),
     displayAllHeaders: true,
     sidebar: {
+      '/docs/5.1/': [
+        '',
+        'installation',
+        {
+          title: 'Configuration',
+          children: [
+            'configuration/after_installation',
+            'configuration/migrations',
+            // 'configuration/models',
+            'configuration/teams',
+          ]
+        }
+      ],
 
     },
     nav: [
@@ -22,9 +35,9 @@ module.exports = {
 
 function getVersionsLinks() {
   return [
-    { text: '5.0', link: '/docs/5.0/' },
     { text: '5.1', link: '/docs/5.1/' },
-  ].sort(item => item.text);
+    { text: '<5.1', link: 'https://laratrust.readthedocs.io/' },
+  ].sort((a, b) => a.text > b.text);
 }
 
 function getActiveVersion() {
