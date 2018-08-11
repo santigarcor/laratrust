@@ -30,6 +30,6 @@ php artisan config:clear
 ```
 :::
 
-5. The <docs-link to="/usage/middleware.html/">middleware</docs-link> are registered automatically as `role`, `permission` and `ability` . If you want to customize or change them, please refer to the <docs-link to="/usage/middleware.html#configuration">middleware configuration</docs-link>
+5. The <docs-link to="/usage/middleware.html">middleware</docs-link> are registered automatically as `role`, `permission` and `ability` . If you want to customize or change them, please refer to the <docs-link to="/usage/middleware.html#configuration">middleware configuration</docs-link>
 
 

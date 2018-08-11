@@ -8,7 +8,7 @@ module.exports = {
   ],
   themeConfig: {
     activeVersion: getActiveVersion(),
-    displayAllHeaders: true,
+    lastUpdated: 'Last Updated',
     sidebar: {
       '/docs/5.1/': [
         '',
@@ -16,14 +16,27 @@ module.exports = {
         {
           title: 'Configuration',
           children: [
-            'configuration/after_installation',
+            'configuration/after-installation',
             'configuration/migrations',
-            // 'configuration/models',
             'configuration/teams',
+            ['configuration/models/role', 'Model - Role'],
+            ['configuration/models/permission', 'Model - Permission'],
+            ['configuration/models/team', 'Model - Team'],
+            ['configuration/models/user', 'Model - User'],
+            'configuration/seeder',
           ]
-        }
+        },
+        {
+          title: 'Usage',
+          children: [
+            'usage/concepts',
+            'usage/events',
+            'usage/middleware',
+            'usage/soft-deleting',
+            'usage/blade-templates',
+          ]
+        },
       ],
-
     },
     nav: [
       { text: 'Docs', link: getActiveVersion().link },
