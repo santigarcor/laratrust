@@ -2,7 +2,7 @@ Upgrade from 5.0 to 5.1
 =======================
 
 .. IMPORTANT::
-    Laratrust 5.1 requires Laravel >= 5.2.32.
+    Laratrust 5.1 requires Laravel >= 5.2.32 and php >= 5.6.0.
 
 In order to upgrade from Laratrust 5.0 to 5.1 you have to follow these steps:
 
