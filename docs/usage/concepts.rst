@@ -337,14 +337,14 @@ If you want to retrieve all the user permissions, you can use the ``allPermissio
     }
      */
 
-If you want to retrieve the users that have some role you can use the query scope ``whereRoleIs``:
+If you want to retrieve the users that have some role you can use the query scope ``whereRoleIs`` or ``orWhereRoleIs``:
 
 .. code-block:: php
 
     // This will return the users with 'admin' role.
     $users = User::whereRoleIs('admin')->get();
 
-Also, if you want to retrieve the users that have some permission you can use the query scope ``wherePermissionIs``:
+Also, if you want to retrieve the users that have some permission you can use the query scope ``wherePermissionIs`` or ``orWherePermissionIs``:
 
 .. code-block:: php
 
