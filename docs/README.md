@@ -1,7 +1,7 @@
 ---
 layout: 'CustomHome'
-heroText: false
 heroImage: /laratrust.svg
+heroText: ' '
 actionText: Get Started →
 actionLink: /docs/
 footer: MIT Licensed | Copyright © 2018-present Santiago Garcia

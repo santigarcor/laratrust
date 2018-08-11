@@ -2,11 +2,13 @@ const activeVersion = '5.1';
 
 module.exports = {
   title: 'Laratrust',
+  // base: '/laratrust/',
   description: 'Laravel 5 role-based access control package',
   head: [
     ['link', { rel: 'icon', href: '/laratrust.svg' }]
   ],
   themeConfig: {
+    logo: '/logo.svg',
     activeVersion: getActiveVersion(),
     lastUpdated: 'Last Updated',
     // Assumes GitHub. Can also be a full GitLab url.
@@ -62,8 +64,8 @@ module.exports = {
     },
     nav: [
       { text: 'Docs', link: getActiveVersion().link },
+      { text: 'Version', items: getVersionsLinks() },
       { text: 'GitHub', link: 'https://github.com/santigarcor/laratrust' },
-      { text: 'Versions', items: getVersionsLinks() }
     ]
   }
 }
