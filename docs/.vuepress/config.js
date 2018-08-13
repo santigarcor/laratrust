@@ -30,37 +30,8 @@ module.exports = {
     // custom text for edit link. Defaults to "Edit this page"
     editLinkText: 'Help us improve this page!',
     sidebar: {
-      '/docs/5.1/': [
-        '',
-        'upgrade',
-        'installation',
-        {
-          title: 'Configuration',
-          children: [
-            'configuration/after-installation',
-            'configuration/migrations',
-            'configuration/teams',
-            ['configuration/models/role', 'Model - Role'],
-            ['configuration/models/permission', 'Model - Permission'],
-            ['configuration/models/team', 'Model - Team'],
-            ['configuration/models/user', 'Model - User'],
-            'configuration/seeder',
-          ]
-        },
-        {
-          title: 'Usage',
-          children: [
-            'usage/concepts',
-            'usage/events',
-            'usage/middleware',
-            'usage/soft-deleting',
-            'usage/blade-templates',
-          ]
-        },
-        'troubleshooting',
-        'license',
-        'contributing',
-      ],
+      '/docs/5.0/': getDocsNavBar(),
+      '/docs/5.1/': getDocsNavBar(),
     },
     nav: [
       { text: 'Docs', link: getActiveVersion().link },
@@ -73,10 +44,45 @@ module.exports = {
 function getVersionsLinks() {
   return [
     { text: '5.1', link: '/docs/5.1/' },
-    { text: '<5.1', link: 'https://laratrust.readthedocs.io/' },
+    { text: '5.0', link: '/docs/5.0/' },
+    { text: '<5.0', link: 'https://laratrust.readthedocs.io/' },
   ].sort((a, b) => a.text > b.text);
 }
 
 function getActiveVersion() {
   return getVersionsLinks().find(item => item.text == activeVersion);
+}
+
+function getDocsNavBar() {
+  return [
+    '',
+    'upgrade',
+    'installation',
+    {
+      title: 'Configuration',
+      children: [
+        'configuration/after-installation',
+        'configuration/migrations',
+        'configuration/teams',
+        ['configuration/models/role', 'Model - Role'],
+        ['configuration/models/permission', 'Model - Permission'],
+        ['configuration/models/team', 'Model - Team'],
+        ['configuration/models/user', 'Model - User'],
+        'configuration/seeder',
+      ]
+    },
+    {
+      title: 'Usage',
+      children: [
+        'usage/concepts',
+        'usage/events',
+        'usage/middleware',
+        'usage/soft-deleting',
+        'usage/blade-templates',
+      ]
+    },
+    'troubleshooting',
+    'license',
+    'contributing',
+  ];
 }
