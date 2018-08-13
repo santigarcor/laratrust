@@ -5,7 +5,7 @@ module.exports = {
   base: '/laratrust/',
   description: 'Laravel 5 role-based access control package',
   head: [
-    ['link', { rel: 'icon', href: '/laratrust.svg' }]
+    ['link', { rel: 'icon', href: '/favicon.ico' }]
   ],
   themeConfig: {
     logo: '/logo.svg',
