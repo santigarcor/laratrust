@@ -2,7 +2,7 @@ const activeVersion = '5.1';
 
 module.exports = {
   title: 'Laratrust',
-  base: '/laratrust/',
+  // base: '/laratrust/',
   description: 'Laravel 5 role-based access control package',
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }]
@@ -55,8 +55,8 @@ function getActiveVersion() {
 
 function getDocsNavBar() {
   return [
-    '',
     'upgrade',
+    '',
     'installation',
     {
       title: 'Configuration',
