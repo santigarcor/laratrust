@@ -5,7 +5,8 @@ module.exports = {
   ga: 'UA-84408499-3',
   description: 'Laravel 5 role-based access control package',
   head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }]
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['meta', { name: 'robots', content: 'noindex, nofollow' }],
   ],
   themeConfig: {
     logo: '/logo.svg',
