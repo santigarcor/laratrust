@@ -30,7 +30,7 @@ For Laravel < 5.2.32 please use the [4.0 branch](https://github.com/santigarcor/
 - Multiple roles and permissions can be attached to users within teams.
 - Objects ownership verification.
 - Multiple guards for the middleware.
-- [Laravel gates and policies](http://laratrust.readthedocs.io/en/5.0/troubleshooting.html).
+- <docs-link to="/troubleshooting.html">Laravel gates and policies</docs-link>.
 
 ## Contributing
 

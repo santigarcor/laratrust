@@ -7,23 +7,36 @@
 <script>
   export default {
     props: ['to'],
+    data() {
+      return {
+        activeVersion: '',
+        currentPageVersion: '',
+      }
+    },
+    created() {
+      this.activeVersion = this.$site.themeConfig.activeVersion;
+      this.currentPageVersion = this.getCurrentPageVersion();
+    },
     computed: {
       finalTo() {
-        const currentPageVersion = this.getCurrentPageVersion();
-        const activeVersion = this.$site.themeConfig.activeVersion.link;
         const tempTo = this.to.startsWith('/')
           ? this.to.slice(1)
           : this.to;
-        const versionLink = activeVersion == currentPageVersion
-          ? this.$site.themeConfig.activeVersion.link
-          : `/docs/${currentPageVersion}/`;
+
+        const versionLink = this.activeVersion.text == this.currentPageVersion
+          ? this.activeVersion.link
+          : `/docs/${this.currentPageVersion}/`;
 
         return `${versionLink}${tempTo}`;
       }
     },
     methods: {
       getCurrentPageVersion() {
-        return this.$page.path.match(/([0-9]*[.])?[0-9]+/)[0];
+        const matches = this.$page.path.match(/([0-9]*[.])?[0-9]+/);
+
+        return matches == null || matches.length == 0
+          ? this.activeVersion.text
+          : matches[0];
       }
     },
   }
