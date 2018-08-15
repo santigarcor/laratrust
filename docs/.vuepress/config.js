@@ -33,21 +33,27 @@ module.exports = {
     sidebar: {
       '/docs/5.0/': getDocsNavBar(),
       '/docs/5.1/': getDocsNavBar(),
+      // '/api/5.1/': [''],
     },
     nav: [
       { text: 'Docs', link: getActiveVersion().link },
       { text: 'Version', items: getVersionsLinks() },
-      { text: 'GitHub', link: 'https://github.com/santigarcor/laratrust' },
+      // { text: 'Api', items: getVersionsLinks('api') },
     ]
   }
 }
 
-function getVersionsLinks() {
-  return [
-    { text: '5.1', link: '/docs/5.1/' },
-    { text: '5.0', link: '/docs/5.0/' },
-    { text: '<5.0', link: 'https://laratrust.readthedocs.io/' },
-  ].sort((a, b) => a.text > b.text);
+function getVersionsLinks(preLink = 'docs') {
+  let links = [
+      { text: '5.1', link: `/${preLink}/5.1/` },
+      { text: '5.0', link: `/${preLink}/5.0/` },
+    ].sort((a, b) => a.text < b.text);
+
+  if (preLink == 'docs') {
+    links.push({ text: '<5.0', link: 'https://laratrust.readthedocs.io/' });
+  }
+
+  return links;
 }
 
 function getActiveVersion() {

@@ -82,7 +82,7 @@ export default {
     text-align center
     img
       max-height 280px
-      height 100px
+      height 90px
       display block
       margin 1rem auto 1.5rem
     h1

@@ -20,7 +20,6 @@ Laratrust is an easy and flexible way to add roles, permissions and teams author
 For Laravel < 5.2.32 please use the [4.0 branch](https://github.com/santigarcor/laratrust/tree/4.0).
 
 ## What does Laratrust support?
-
 - Multiple user models.
 - Multiple roles and permissions can be attached to users.
 - Multiple permissions can be attached to roles.
@@ -31,7 +30,3 @@ For Laravel < 5.2.32 please use the [4.0 branch](https://github.com/santigarcor/
 - Objects ownership verification.
 - Multiple guards for the middleware.
 - <docs-link to="/troubleshooting.html">Laravel gates and policies</docs-link>.
-
-## Contributing
-
-Please report any issue you find in the issues page. Pull requests are more than welcome.
