@@ -103,8 +103,8 @@ sidebarDepth: 2
     Check if an user has some role(s) or/and permission(s).
     ```php
     $user->ability('admin', 'edit-user');
-    $user->hasPermission(['admin', 'regular'], ['edit-user', 'create-user']);
-    $user->hasPermission(
+    $user->ability(['admin', 'regular'], ['edit-user', 'create-user']);
+    $user->ability(
           ['admin', 'regular']
         , ['edit-user', 'create-user']
         , ['validate_all' => true]
@@ -114,13 +114,47 @@ sidebarDepth: 2
     And if teams are being used:
     ```php
     $user->ability('admin', 'edit-user', 'human-resources');
-    $user->hasPermission(['admin', 'regular'], ['edit-user', 'create-user'], 'human-resources');
-    $user->hasPermission(
+    $user->ability(['admin', 'regular'], ['edit-user', 'create-user'], 'human-resources');
+    $user->ability(
           ['admin', 'regular']
         , ['edit-user', 'create-user']
         , 'human-resources'
         , ['validate_all' => true]
     ); // Will require all
+    ```
+
+- ### `public attachRole`
+  - **Arguments:**
+    - `$role (string, int, Illuminate\Database\Eloquent\Model)`
+    - `$team = null`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Attach a role to an user.
+    ```php
+    $user->attachRole('admin');
+    ```
+
+    And if teams are being used:
+    ```php
+    $user->attachRole('admin', 'human-resources');
+    ```
+
+- ### `public detachRole`
+  - **Arguments:**
+    - `$role (string, int, Illuminate\Database\Eloquent\Model)`
+    - `$team = null`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Detach a role to an user.
+    ```php
+    $user->detachRole('admin');
+    ```
+
+    And if teams are being used:
+    ```php
+    $user->detachRole('admin', 'human-resources');
     ```
 
 ## Role
