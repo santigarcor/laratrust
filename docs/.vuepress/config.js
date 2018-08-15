@@ -33,12 +33,12 @@ module.exports = {
     sidebar: {
       '/docs/5.0/': getDocsNavBar(),
       '/docs/5.1/': getDocsNavBar(),
-      // '/api/5.1/': [''],
+      '/api/5.1/': [''],
     },
     nav: [
       { text: 'Docs', link: getActiveVersion().link },
       { text: 'Version', items: getVersionsLinks() },
-      // { text: 'Api', items: getVersionsLinks('api') },
+      { text: 'Api', items: getVersionsLinks('api') },
     ]
   }
 }
