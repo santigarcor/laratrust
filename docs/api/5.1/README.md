@@ -170,7 +170,7 @@ sidebarDepth: 2
   - **Returns:** `$this`
   - **Usage:**
 
-    Detach multiple roles an user.
+    Detach multiple roles from an user.
     ```php
     $user->detachRoles(['admin', 'regular']);
     ```
@@ -260,7 +260,7 @@ sidebarDepth: 2
   - **Returns:** `$this`
   - **Usage:**
 
-    Detach multiple permissions an user.
+    Detach multiple permissions from an user.
     ```php
     $user->detachPermissions(['edit-user', 'create-user']);
     ```
@@ -289,6 +289,7 @@ sidebarDepth: 2
     $user->syncPermissions(['edit-user', 'create-user'], 'human-resources');
     $user->syncPermissions(['edit-user', 'create-user'], 'human-resources', false);
     ```
+
 - ### `public syncPermissionsWithoutDetaching`
   Is the same as [synRoles](#public-syncpermissions) but with `$detaching = false`.
 
@@ -453,7 +454,110 @@ sidebarDepth: 2
 
 
 ## Role
+- ### `public attachPermission`
+  - **Arguments:**
+    - `$permission (string, int, Illuminate\Database\Eloquent\Model)`
+  - **Returns:** `$this`
+  - **Usage:**
 
+    Attach a permission to a role.
+    ```php
+    $role->attachPermission('edit-user');
+    ```
+
+- ### `public detachPermission`
+  - **Arguments:**
+    - `$permission (string, int, Illuminate\Database\Eloquent\Model)`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Detach a permission from a role.
+    ```php
+    $role->detachPermission('edit-user');
+    ```
+
+- ### `public attachPermissions`
+  - **Arguments:**
+    - `$permissions array`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Attach multiple permissions to a role.
+    ```php
+    $role->attachPermissions(['edit-user', 'create-user']);
+    ```
+
+- ### `public detachPermissions`
+  - **Arguments:**
+    - `$permissions array`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Detach multiple permissions from a role.
+    ```php
+    $role->detachPermissions(['edit-user', 'create-user']);
+    ```
+
+- ### `public syncPermissions`
+  - **Arguments:**
+    - `$permissions array`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Sync permissions to the role.
+    ```php
+    $role->syncPermissions(['edit-user', 'create-user']);
+    ```
+
+- ### `public static laratrustObserve`
+  - **Arguments:**
+    - `$class (string, Object)`
+  - **Returns:** `void`
+  - **Usage:**
+
+    Register an observer to the Laratrust events.
+
+    ```php
+    Role::laratrustObserve(RoleObserver::class);
+    Role::laratrustObserve(new RoleObserver);
+    ```
+
+
+- ### `public static permissionAttached`
+  - **Arguments:**
+    - `$callback (Closure, string)`
+  - **Returns:** `void`
+  - **Usage:**
+
+    Register a permission attached laratrust event with the dispatcher.
+
+    ```php
+    Role::permissionAttached(function (...) {});
+    ```
+
+- ### `public static permissionDetached`
+  - **Arguments:**
+    - `$callback (Closure, string)`
+  - **Returns:** `void`
+  - **Usage:**
+
+    Register a permission detached laratrust event with the dispatcher.
+
+    ```php
+    Role::permissionDetached(function (...) {});
+    ```
+
+- ### `public static permissionSynced`
+  - **Arguments:**
+    - `$callback (Closure, string)`
+  - **Returns:** `void`
+  - **Usage:**
+
+    Register a permission synced laratrust event with the dispatcher.
+
+    ```php
+    Role::permissionSynced(function (...) {});
+    ```
 ## Permission
 
 ## Team
