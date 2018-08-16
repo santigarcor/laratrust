@@ -5,17 +5,6 @@ sidebarDepth: 2
 # API
 
 ## User
-* ### `public cachedRoles`
-  - **Returns:** `Illuminate\Database\Eloquent\Collection|array`
-  - **Usage:**
-
-    Get the user cached roles. If the `laratrust.use_cache` is set to `true` it will return an array and if it set to `false` it will return a collection.
-
-- ### `public cachedPermissions`
-  - **Returns:** `Illuminate\Database\Eloquent\Collection|array`
-  - **Usage:**
-
-    Get the user cached permissions. If `laratrust.use_cache` is set to `true` it will return an array and if it set to `false` it will return a collection.
 
 - ### `public roles`
   - **Returns:** `Illuminate\Database\Eloquent\Relations\MorphToMany`
@@ -38,7 +27,7 @@ sidebarDepth: 2
 - ### `public hasRole`
   - **Arguments:**
     - `$role (string, int, Illuminate\Database\Eloquent\Model)`
-    - `$team = null`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
     - `$requireAll = false`
   - **Returns:** `bool`
   - **Usage:**
@@ -66,7 +55,7 @@ sidebarDepth: 2
 - ### `public hasPermission`
   - **Arguments:**
     - `$permission (string, int, Illuminate\Database\Eloquent\Model)`
-    - `$team = null`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
     - `$requireAll = false`
   - **Returns:** `bool`
   - **Usage:**
@@ -95,7 +84,7 @@ sidebarDepth: 2
   - **Arguments:**
     - `$roles (string, array)`
     - `$permissions (string, array)`
-    - `$team = null`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
     - `$options = array`
   - **Returns:** `bool|array`
   - **Usage:**
@@ -126,7 +115,7 @@ sidebarDepth: 2
 - ### `public attachRole`
   - **Arguments:**
     - `$role (string, int, Illuminate\Database\Eloquent\Model)`
-    - `$team = null`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
   - **Returns:** `$this`
   - **Usage:**
 
@@ -143,11 +132,11 @@ sidebarDepth: 2
 - ### `public detachRole`
   - **Arguments:**
     - `$role (string, int, Illuminate\Database\Eloquent\Model)`
-    - `$team = null`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
   - **Returns:** `$this`
   - **Usage:**
 
-    Detach a role to an user.
+    Detach a role from an user.
     ```php
     $user->detachRole('admin');
     ```
@@ -156,6 +145,312 @@ sidebarDepth: 2
     ```php
     $user->detachRole('admin', 'human-resources');
     ```
+
+- ### `public attachRoles`
+  - **Arguments:**
+    - `$roles array`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Attach multiple roles to an user.
+    ```php
+    $user->attachRoles(['admin', 'regular']);
+    ```
+
+    And if teams are being used:
+    ```php
+    $user->attachRoles(['admin', 'regular'], 'human-resources');
+    ```
+
+- ### `public detachRoles`
+  - **Arguments:**
+    - `$roles array`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Detach multiple roles an user.
+    ```php
+    $user->detachRoles(['admin', 'regular']);
+    ```
+
+    And if teams are being used:
+    ```php
+    $user->detachRoles(['admin', 'regular'], 'human-resources');
+    ```
+
+- ### `public syncRoles`
+  - **Arguments:**
+    - `$roles array`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
+    - `$detaching = true`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Sync roles to the user.
+    ```php
+    $user->syncRoles(['admin', 'regular']);
+    $user->syncRoles(['admin', 'regular'], null, false);
+    ```
+
+    And if teams are being used:
+    ```php
+    $user->syncRoles(['admin', 'regular'], 'human-resources');
+    $user->syncRoles(['admin', 'regular'], 'human-resources', false);
+    ```
+- ### `public syncRolesWithoutDetaching`
+  Is the same as [synRoles](#public-syncroles) but with `$detaching = false`.
+
+- ### `public attachPermission`
+  - **Arguments:**
+    - `$permission (string, int, Illuminate\Database\Eloquent\Model)`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Attach a permission to an user.
+    ```php
+    $user->attachPermission('edit-user');
+    ```
+
+    And if teams are being used:
+    ```php
+    $user->attachPermission('edit-user', 'human-resources');
+    ```
+
+- ### `public detachPermission`
+  - **Arguments:**
+    - `$permission (string, int, Illuminate\Database\Eloquent\Model)`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Detach a permission from an user.
+    ```php
+    $user->detachPermission('edit-user');
+    ```
+
+    And if teams are being used:
+    ```php
+    $user->detachPermission('edit-user', 'human-resources');
+    ```
+
+- ### `public attachPermissions`
+  - **Arguments:**
+    - `$permissions array`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Attach multiple permissions to an user.
+    ```php
+    $user->attachPermissions(['edit-user', 'create-user']);
+    ```
+
+    And if teams are being used:
+    ```php
+    $user->attachPermissions(['edit-user', 'create-user'], 'human-resources');
+    ```
+
+- ### `public detachPermissions`
+  - **Arguments:**
+    - `$permissions array`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Detach multiple permissions an user.
+    ```php
+    $user->detachPermissions(['edit-user', 'create-user']);
+    ```
+
+    And if teams are being used:
+    ```php
+    $user->detachPermissions(['edit-user', 'create-user'], 'human-resources');
+    ```
+
+- ### `public syncPermissions`
+  - **Arguments:**
+    - `$permissions array`
+    - `$team = null (string, int, Illuminate\Database\Eloquent\Model)`
+    - `$detaching = true`
+  - **Returns:** `$this`
+  - **Usage:**
+
+    Sync permissions to the user.
+    ```php
+    $user->syncPermissions(['edit-user', 'create-user']);
+    $user->syncPermissions(['edit-user', 'create-user'], null, false);
+    ```
+
+    And if teams are being used:
+    ```php
+    $user->syncPermissions(['edit-user', 'create-user'], 'human-resources');
+    $user->syncPermissions(['edit-user', 'create-user'], 'human-resources', false);
+    ```
+- ### `public syncPermissionsWithoutDetaching`
+  Is the same as [synRoles](#public-syncpermissions) but with `$detaching = false`.
+
+- ### `public owns`
+  - **Arguments:**
+    - `$thing Object`
+    - `$foreignKeyName = null (string)`
+  - **Returns:** `bool`
+  - **Usage:**
+
+    Check if an user owns an object.
+    ```php
+    $car = Car::find(1);
+
+    $user->owns($car);
+    $user->owns($car, 'owner_key_id'); // Will compare $user->id == $car->owner_key_id
+    ```
+
+- ### `public hasRoleAndOwns`
+  - **Arguments:**
+    - `$role (string, int, Illuminate\Database\Eloquent\Model)`
+    - `$thing Object`
+    - `$options = []`
+  - **Returns:** `bool`
+  - **Usage:**
+
+    Check if an user owns an object and has a role.
+
+    ```php
+    $car = Car::find(1);
+
+    $user->hasRoleAndOwns('admin' ,$car, [
+      'requireAll' => false,
+      'team' => 'some_team', // can be null
+      'foreignKeyName' => 'owner_key_id', // can be null
+    ]);
+    ```
+
+- ### `public canAndOwns`
+  - **Arguments:**
+    - `$permission (string, int, Illuminate\Database\Eloquent\Model)`
+    - `$thing Object`
+    - `$options = []`
+  - **Returns:** `bool`
+  - **Usage:**
+
+    Check if an user owns an object and has a permission.
+
+    ```php
+    $car = Car::find(1);
+
+    $user->canAndOwns('edit-car' ,$car, [
+      'requireAll' => false,
+      'team' => 'some_team', // can be null
+      'foreignKeyName' => 'owner_key_id', // can be null
+    ]);
+    ```
+
+- ### `public allPermissions`
+  - **Returns:** `Illuminate\Database\Eloquent\Collection`
+  - **Usage:**
+
+    Get all the user permissions.
+
+    ```php
+    $user->allPermissions();
+    ```
+
+- ### `public flushCache`
+  - **Usage:**
+
+    Flush the cache related with the user roles and permissions.
+
+    ```php
+    $user->flushCache();
+    ```
+
+- ### `public static laratrustObserve`
+  - **Arguments:**
+    - `$class (string, Object)`
+  - **Returns:** `void`
+  - **Usage:**
+
+    Register an observer to the Laratrust events.
+
+    ```php
+    User::laratrustObserve(UserObserver::class);
+    User::laratrustObserve(new UserObserver);
+    ```
+
+- ### `public static roleAttached`
+  - **Arguments:**
+    - `$callback (Closure, string)`
+  - **Returns:** `void`
+  - **Usage:**
+
+    Register a role attached laratrust event with the dispatcher.
+
+    ```php
+    User::roleAttached(function (...) {});
+    ```
+
+- ### `public static roleDetached`
+  - **Arguments:**
+    - `$callback (Closure, string)`
+  - **Returns:** `void`
+  - **Usage:**
+
+    Register a role detached laratrust event with the dispatcher.
+
+    ```php
+    User::roleDetached(function (...) {});
+    ```
+
+- ### `public static permissionAttached`
+  - **Arguments:**
+    - `$callback (Closure, string)`
+  - **Returns:** `void`
+  - **Usage:**
+
+    Register a permission attached laratrust event with the dispatcher.
+
+    ```php
+    User::permissionAttached(function (...) {});
+    ```
+
+- ### `public static permissionDetached`
+  - **Arguments:**
+    - `$callback (Closure, string)`
+  - **Returns:** `void`
+  - **Usage:**
+
+    Register a permission detached laratrust event with the dispatcher.
+
+    ```php
+    User::permissionDetached(function (...) {});
+    ```
+
+- ### `public static roleSynced`
+  - **Arguments:**
+    - `$callback (Closure, string)`
+  - **Returns:** `void`
+  - **Usage:**
+
+    Register a role synced laratrust event with the dispatcher.
+
+    ```php
+    User::roleSynced(function (...) {});
+    ```
+
+- ### `public static permissionSynced`
+  - **Arguments:**
+    - `$callback (Closure, string)`
+  - **Returns:** `void`
+  - **Usage:**
+
+    Register a permission synced laratrust event with the dispatcher.
+
+    ```php
+    User::permissionSynced(function (...) {});
+    ```
+
 
 ## Role
 
