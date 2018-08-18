@@ -452,8 +452,13 @@ sidebarDepth: 2
     User::permissionSynced(function (...) {});
     ```
 
-
 ## Role
+- ### `public permissions`
+  - **Returns:** `Illuminate\Database\Eloquent\Relations\MorphToMany`
+  - **Usage:**
+
+    Get the morph to many user relationship with the permissions.
+
 - ### `public attachPermission`
   - **Arguments:**
     - `$permission (string, int, Illuminate\Database\Eloquent\Model)`
@@ -559,5 +564,8 @@ sidebarDepth: 2
     Role::permissionSynced(function (...) {});
     ```
 ## Permission
+- ### `public roles`
+  - **Returns:** `Illuminate\Database\Eloquent\Relations\MorphToMany`
+  - **Usage:**
 
-## Team
+    Get the morph to many permission relationship with the roles.
