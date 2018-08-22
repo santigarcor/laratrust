@@ -11,6 +11,11 @@ module.exports = {
   themeConfig: {
     logo: '/logo.svg',
     activeVersion: getActiveVersion(),
+    algolia: {
+      apiKey: 'feb79d4f7397b8f410909711f924d524',
+      indexName: 'laratrust',
+      algoliaOptions: { facetFilters: [ "version:$VERSION$"] },
+    },
     lastUpdated: 'Last Updated',
     // Assumes GitHub. Can also be a full GitLab url.
     repo: 'santigarcor/laratrust',
