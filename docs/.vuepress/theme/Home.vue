@@ -24,6 +24,8 @@
       </p>
     </div>
 
+    <div class="divider"></div>
+
     <div
       class="features"
       v-if="data.features && data.features.length"
@@ -61,7 +63,7 @@ export default {
 
     actionLink () {
       return {
-        link: this.data.actionLink,
+        link: this.$site.themeConfig.activeVersion.link,
         text: this.data.actionText
       }
     }
@@ -80,8 +82,9 @@ export default {
     text-align center
     img
       max-height 280px
+      height 90px
       display block
-      margin 3rem auto 1.5rem
+      margin 1rem auto 1.5rem
     h1
       font-size 3rem
     h1, .description, .action
@@ -103,6 +106,11 @@ export default {
       border-bottom 1px solid darken($accentColor, 10%)
       &:hover
         background-color lighten($accentColor, 10%)
+  .divider
+    border-top 1px solid $borderColor
+    padding 1.2rem 0
+    margin-top 2.5rem
+    display flex
   .features
     border-top 1px solid $borderColor
     padding 1.2rem 0

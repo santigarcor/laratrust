@@ -1,5 +1,5 @@
 ---
-layout: 'CustomHome'
+layout: 'Home'
 heroImage: /laratrust.svg
 heroText: ' '
 actionText: Get Started →
