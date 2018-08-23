@@ -26,9 +26,8 @@ export default {
         import(/* webpackChunkName: "docsearch" */ 'docsearch.js/dist/cdn/docsearch.min.css')
       ]).then(([docsearch]) => {
         docsearch = docsearch.default
-        let { algoliaOptions = {}} = userOptions
-
-        algoliaOptions.facetFilters = this.createFacets(algoliaOptions.facetFilters);
+        const { algoliaOptions = {}} = userOptions
+        const facetFilters = this.createFacets(algoliaOptions.facetFilters || []);
 
         docsearch(Object.assign(
           {},
@@ -36,9 +35,9 @@ export default {
           {
             inputSelector: '#algolia-search-input',
             // #697 Make docsearch work well at i18n mode.
-            algoliaOptions: Object.assign({
-              'facetFilters': [`lang:${lang}`].concat(algoliaOptions.facetFilters || [])
-            }, algoliaOptions)
+            algoliaOptions: Object.assign({}, algoliaOptions, {
+              'facetFilters': facetFilters
+            })
           }
         ))
       })
@@ -50,8 +49,7 @@ export default {
     },
 
     createFacets(userFacets, lang) {
-      return userFacets.concat(userFacets)
-        .map(facetFilter => {
+      return userFacets.map(facetFilter => {
 
           if (facetFilter.includes('$VERSION$')) {
             const currentPageVersion = getCurrentPageVersion(
