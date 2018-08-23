@@ -3,8 +3,8 @@ export const extRE = /\.(md|html)$/
 export const endingSlashRE = /\/$/
 export const outboundRE = /^(https?:|mailto:|tel:)/
 
-export function getCurrentPageVersion(page, activeVersion) {
-  const matches = page.match(/([0-9]*[.])?[0-9]+/);
+export function getCurrentPageVersion(pageUrl, activeVersion) {
+  const matches = pageUrl.match(/([0-9]*[.])?[0-9]+/);
 
   return matches == null || matches.length == 0
     ? activeVersion
