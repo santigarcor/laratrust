@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratrust\Test;
+namespace Laratrust\Test\Checkers;
 
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Config;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
-class LaratrustCacheTest extends LaratrustTestCase
+class LaratrustUserDefaultCheckerCacheTest extends LaratrustTestCase
 {
     protected $user;
 
@@ -51,19 +51,18 @@ class LaratrustCacheTest extends LaratrustTestCase
         */
         // With cache
         $this->app['config']->set('laratrust.use_cache', true);
-        $this->assertInternalType('array', $user->cachedRoles());
-        $this->assertEquals($user->roles()->get()->toArray(), $user->cachedRoles());
-
-        $this->assertInternalType('array', $user->cachedPermissions());
-        $this->assertEquals($user->permissions()->get()->toArray(), $user->cachedPermissions());
+        $user->hasRole('some_role');
+        $user->hasPermission('some_permission');
+        $this->assertTrue(Cache::has("laratrust_roles_for_user_{$user->id}"));
+        $this->assertTrue(Cache::has("laratrust_permissions_for_user_{$user->id}"));
+        $user->flushCache();
 
         // Without cache
         $this->app['config']->set('laratrust.use_cache', false);
-        $this->assertInstanceOf('Illuminate\Support\Collection', $user->cachedRoles());
-        $this->assertEquals($user->roles()->get(), $user->cachedRoles());
-
-        $this->assertInstanceOf('Illuminate\Support\Collection', $user->cachedPermissions());
-        $this->assertEquals($user->permissions()->get(), $user->cachedPermissions());
+        $user->hasRole('some_role');
+        $user->hasPermission('some_permission');
+        $this->assertFalse(Cache::has("laratrust_roles_for_user_{$user->id}"));
+        $this->assertFalse(Cache::has("laratrust_permissions_for_user_{$user->id}"));
 
         /*
         |------------------------------------------------------------
