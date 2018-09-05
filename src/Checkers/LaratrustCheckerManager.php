@@ -29,10 +29,8 @@ class LaratrustCheckerManager
         switch (Config::get('laratrust.checker', 'default')) {
             case 'default':
                 return new LaratrustUserDefaultChecker($this->model);
-                break;
             case 'query':
                 return;
-                break;
         }
     }
 }
