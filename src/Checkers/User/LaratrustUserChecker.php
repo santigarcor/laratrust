@@ -9,18 +9,18 @@ abstract class LaratrustUserChecker
     /**
      * @var \Illuminate\Database\Eloquent\Model
      */
-    protected $model;
+    protected $user;
 
-    public function __construct(Model $model)
+    public function __construct(Model $user)
     {
-        $this->model = $model;
+        $this->user = $user;
     }
 
-    abstract public function currentModelHasRole($name, $team = null, $requireAll = false);
+    abstract public function currentUserHasRole($name, $team = null, $requireAll = false);
 
-    abstract public function currentModelHasPermission($permission, $team = null, $requireAll = false);
+    abstract public function currentUserHasPermission($permission, $team = null, $requireAll = false);
 
-    abstract public function currentModelHasAbility($roles, $permissions, $team = null, $options = []);
+    abstract public function currentUserHasAbility($roles, $permissions, $team = null, $options = []);
 
-    abstract public function currentModelFlushCache();
+    abstract public function currentUserFlushCache();
 }

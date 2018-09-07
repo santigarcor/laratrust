@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratrust\Tests\Checkers;
+namespace Laratrust\Tests\Checkers\User;
 
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;

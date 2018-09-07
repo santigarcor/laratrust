@@ -33,33 +33,6 @@ class LaratrustRoleTest extends LaratrustTestCase
         $this->assertInstanceOf('\Illuminate\Database\Eloquent\Relations\BelongsToMany', $this->role->permissions());
     }
 
-    public function testHasPermission()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $permA = Permission::create(['name' => 'permission_a']);
-        $permB = Permission::create(['name' => 'permission_b']);
-
-        $this->role->permissions()->attach([$permA->id, $permB->id]);
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($this->role->hasPermission('permission_a'));
-        $this->assertTrue($this->role->hasPermission('permission_b'));
-        $this->assertFalse($this->role->hasPermission('permission_c'));
-
-        $this->assertTrue($this->role->hasPermission(['permission_a', 'permission_b']));
-        $this->assertTrue($this->role->hasPermission(['permission_a', 'permission_c']));
-        $this->assertFalse($this->role->hasPermission(['permission_a', 'permission_c'], true));
-        $this->assertFalse($this->role->hasPermission(['permission_c', 'permission_d']));
-    }
-
     public function testAttachPermission()
     {
         /*

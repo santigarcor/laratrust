@@ -117,6 +117,11 @@ trait LaratrustUserTrait
         return $permissions;
     }
 
+    /**
+     * Return the right checker for the user model.
+     *
+     * @return \Laratrust\Checkers\User\LaratrustUserChecker
+     */
     protected function laratrustUserChecker()
     {
         return (new LaratrustCheckerManager($this))->getUserChecker();
@@ -132,7 +137,7 @@ trait LaratrustUserTrait
      */
     public function hasRole($name, $team = null, $requireAll = false)
     {
-        return $this->laratrustUserChecker()->currentModelHasRole(
+        return $this->laratrustUserChecker()->currentUserHasRole(
             $name,
             $team,
             $requireAll
@@ -175,7 +180,7 @@ trait LaratrustUserTrait
      */
     public function hasPermission($permission, $team = null, $requireAll = false)
     {
-        return $this->laratrustUserChecker()->currentModelHasPermission(
+        return $this->laratrustUserChecker()->currentUserHasPermission(
             $permission,
             $team,
             $requireAll
@@ -220,7 +225,7 @@ trait LaratrustUserTrait
      */
     public function ability($roles, $permissions, $team = null, $options = [])
     {
-        return $this->laratrustUserChecker()->currentModelHasAbility(
+        return $this->laratrustUserChecker()->currentUserHasAbility(
             $roles,
             $permissions,
             $team,
@@ -595,7 +600,7 @@ trait LaratrustUserTrait
      */
     public function flushCache()
     {
-        return $this->laratrustUserChecker()->currentModelFlushCache();
+        return $this->laratrustUserChecker()->currentUserFlushCache();
     }
 
     /**

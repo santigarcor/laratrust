@@ -16,7 +16,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
      * @param  bool          $requireAll All roles in the array are required.
      * @return bool
      */
-    public function currentModelHasRole($name, $team = null, $requireAll = false)
+    public function currentUserHasRole($name, $team = null, $requireAll = false)
     {
         $name = Helper::standardize($name);
         list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
@@ -27,7 +27,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
             }
 
             foreach ($name as $roleName) {
-                $hasRole = $this->currentModelHasRole($roleName, $team);
+                $hasRole = $this->currentUserHasRole($roleName, $team);
 
                 if ($hasRole && !$requireAll) {
                     return true;
@@ -44,7 +44,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
 
         $team = Helper::fetchTeam($team);
 
-        foreach ($this->modelCachedRoles() as $role) {
+        foreach ($this->userCachedRoles() as $role) {
             if ($role['name'] == $name && Helper::isInSameTeam($role, $team)) {
                 return true;
             }
@@ -61,7 +61,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
      * @param  bool  $requireAll All roles in the array are required.
      * @return bool
      */
-    public function currentModelHasPermission($permission, $team = null, $requireAll = false)
+    public function currentUserHasPermission($permission, $team = null, $requireAll = false)
     {
         $permission = Helper::standardize($permission);
         list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
@@ -72,7 +72,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
             }
 
             foreach ($permission as $permissionName) {
-                $hasPermission = $this->currentModelHasPermission($permissionName, $team);
+                $hasPermission = $this->currentUserHasPermission($permissionName, $team);
 
                 if ($hasPermission && !$requireAll) {
                     return true;
@@ -89,13 +89,13 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
 
         $team = Helper::fetchTeam($team);
 
-        foreach ($this->modelCachedPermissions() as $perm) {
+        foreach ($this->userCachedPermissions() as $perm) {
             if (Helper::isInSameTeam($perm, $team) && str_is($permission, $perm['name'])) {
                 return true;
             }
         }
 
-        foreach ($this->modelCachedRoles() as $role) {
+        foreach ($this->userCachedRoles() as $role) {
             $role = Helper::hidrateModel(Config::get('laratrust.models.role'), $role);
 
             if (Helper::isInSameTeam($role, $team) && $role->hasPermission($permission)) {
@@ -116,7 +116,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
      * @throws \InvalidArgumentException
      * @return array|bool
      */
-    public function currentModelHasAbility($roles, $permissions, $team = null, $options = [])
+    public function currentUserHasAbility($roles, $permissions, $team = null, $options = [])
     {
         list($team, $options) = Helper::assignRealValuesTo($team, $options, 'is_array');
         // Convert string to array if that's what is passed in.
@@ -131,10 +131,10 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
         $checkedRoles = [];
         $checkedPermissions = [];
         foreach ($roles as $role) {
-            $checkedRoles[$role] = $this->currentModelHasRole($role, $team);
+            $checkedRoles[$role] = $this->currentUserHasRole($role, $team);
         }
         foreach ($permissions as $permission) {
-            $checkedPermissions[$permission] = $this->currentModelHasPermission($permission, $team);
+            $checkedPermissions[$permission] = $this->currentUserHasPermission($permission, $team);
         }
 
         // If validate all and there is a false in either.
@@ -156,10 +156,10 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
         return [$validateAll, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
     }
 
-    public function currentModelFlushCache()
+    public function currentUserFlushCache()
     {
-        Cache::forget('laratrust_roles_for_user_' . $this->model->getKey());
-        Cache::forget('laratrust_permissions_for_user_' . $this->model->getKey());
+        Cache::forget('laratrust_roles_for_user_' . $this->user->getKey());
+        Cache::forget('laratrust_permissions_for_user_' . $this->user->getKey());
     }
 
     /**
@@ -170,16 +170,16 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
      * @param \Illuminate\Database\Eloquent\Model $model
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    protected function modelCachedRoles()
+    protected function userCachedRoles()
     {
-        $cacheKey = 'laratrust_roles_for_user_' . $this->model->getKey();
+        $cacheKey = 'laratrust_roles_for_user_' . $this->user->getKey();
 
         if (!Config::get('laratrust.use_cache')) {
-            return $this->model->roles()->get();
+            return $this->user->roles()->get();
         }
 
         return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
-            return $this->model->roles()->get()->toArray();
+            return $this->user->roles()->get()->toArray();
         });
     }
 
@@ -190,16 +190,16 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function modelCachedPermissions()
+    public function userCachedPermissions()
     {
-        $cacheKey = 'laratrust_permissions_for_user_' . $this->model->getKey();
+        $cacheKey = 'laratrust_permissions_for_user_' . $this->user->getKey();
 
         if (!Config::get('laratrust.use_cache')) {
-            return $this->model->permissions()->get();
+            return $this->user->permissions()->get();
         }
 
         return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
-            return $this->model->permissions()->get()->toArray();
+            return $this->user->permissions()->get()->toArray();
         });
     }
 }

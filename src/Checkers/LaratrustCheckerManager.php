@@ -3,6 +3,7 @@
 namespace Laratrust\Checkers;
 
 use Illuminate\Support\Facades\Config;
+use Laratrust\Checkers\Role\LaratrustRoleDefaultChecker;
 use Laratrust\Checkers\User\LaratrustUserDefaultChecker;
 
 class LaratrustCheckerManager
@@ -29,6 +30,21 @@ class LaratrustCheckerManager
         switch (Config::get('laratrust.checker', 'default')) {
             case 'default':
                 return new LaratrustUserDefaultChecker($this->model);
+            case 'query':
+                return;
+        }
+    }
+
+    /**
+     * Return the right checker according to the configuration.
+     *
+     * @return \Laratrust\Checkers\LaratrustChecker
+     */
+    public function getRoleChecker()
+    {
+        switch (Config::get('laratrust.checker', 'default')) {
+            case 'default':
+                return new LaratrustRoleDefaultChecker($this->model);
             case 'query':
                 return;
         }
