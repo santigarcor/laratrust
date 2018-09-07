@@ -1,13 +1,14 @@
 <?php
 
-namespace Laratrust\Tests;
+namespace Laratrust\Tests\Checkers\User;
 
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
+use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
-class LaratrustUserAbilityTest extends LaratrustTestCase
+class LaratrustUserDefaultCheckerAbilityTest extends LaratrustTestCase
 {
     protected $user;
 
@@ -17,6 +18,7 @@ class LaratrustUserAbilityTest extends LaratrustTestCase
 
         $this->migrate();
         $this->app['config']->set('laratrust.use_teams', true);
+        $this->app['config']->set('laratrust.checker', 'default');
 
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);
