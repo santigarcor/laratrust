@@ -25,9 +25,9 @@ return [
     | Which permissions and role checker to use.
     |--------------------------------------------------------------------------
     |
-    | Defines if you want to use the roles and permissions checker. Available : queries, object
-    | - object: Check for the roles and permissions using Laravel relationships
-    |            by bringing all the roles and permissions of an user.
+    | Defines if you want to use the roles and permissions checker. Available : default, query
+    | - default: Check for the roles and permissions using the method that Laratrust
+                 has always used.
     | - query: Check for the roles and permissions using direct queries to the database.
     |
      */
