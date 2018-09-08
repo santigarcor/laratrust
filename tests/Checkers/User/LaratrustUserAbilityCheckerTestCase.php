@@ -8,7 +8,7 @@ use Laratrust\Tests\Models\User;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
-class LaratrustUserDefaultCheckerAbilityTest extends LaratrustTestCase
+class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
 {
     protected $user;
 
@@ -18,7 +18,6 @@ class LaratrustUserDefaultCheckerAbilityTest extends LaratrustTestCase
 
         $this->migrate();
         $this->app['config']->set('laratrust.use_teams', true);
-        $this->app['config']->set('laratrust.checker', 'default');
 
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);
@@ -35,7 +34,7 @@ class LaratrustUserDefaultCheckerAbilityTest extends LaratrustTestCase
         $this->user->attachRole($roleA)->attachRole($roleB, $team);
     }
 
-    public function testAbilityShouldReturnBoolean()
+    protected function abilityShouldReturnBooleanAssertions()
     {
         /*
         |------------------------------------------------------------
@@ -110,7 +109,7 @@ class LaratrustUserDefaultCheckerAbilityTest extends LaratrustTestCase
         );
     }
 
-    public function testAbilityShouldReturnArray()
+    protected function abilityShouldReturnArrayAssertions()
     {
         /*
         |------------------------------------------------------------
@@ -154,7 +153,7 @@ class LaratrustUserDefaultCheckerAbilityTest extends LaratrustTestCase
         );
     }
 
-    public function testAbilityShouldReturnBoth()
+    protected function abilityShouldReturnBothAssertions()
     {
         /*
         |------------------------------------------------------------
@@ -206,7 +205,7 @@ class LaratrustUserDefaultCheckerAbilityTest extends LaratrustTestCase
         );
     }
 
-    public function testAbilityShouldAcceptStrings()
+    protected function abilityShouldAcceptStringsAssertions()
     {
         /*
         |------------------------------------------------------------
@@ -240,7 +239,7 @@ class LaratrustUserDefaultCheckerAbilityTest extends LaratrustTestCase
         );
     }
 
-    public function testAbilityDefaultOptions()
+    protected function abilityDefaultOptionsAssertions()
     {
         /*
         |------------------------------------------------------------
@@ -288,7 +287,7 @@ class LaratrustUserDefaultCheckerAbilityTest extends LaratrustTestCase
         );
     }
 
-    public function testAbilityShouldThrowInvalidArgumentException()
+    protected function abilityShouldThrowInvalidArgumentExceptionAssertions()
     {
         /*
         |------------------------------------------------------------
