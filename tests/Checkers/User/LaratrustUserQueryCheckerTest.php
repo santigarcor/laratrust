@@ -4,7 +4,7 @@ namespace Laratrust\Tests\Checkers\User;
 
 use Illuminate\Support\Facades\Config;
 
-class LaratrustUserDefaultCheckerTest extends LaratrustUserCheckerTestCase
+class LaratrustUserQueryCheckerTest extends LaratrustUserCheckerTestCase
 {
     public function setUp()
     {
