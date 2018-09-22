@@ -177,4 +177,27 @@ class Helper
 
         return $model;
     }
+
+    /**
+     * Return two arrays with the filtered permissions between the permissions
+     * with wildcard and the permissions without it.
+     *
+     * @param array $permissions
+     * @return array [$wildcard, $noWildcard]
+     */
+    public static function getPermissionWithAndWithoutWildcards($permissions)
+    {
+        $wildcard = [];
+        $noWildcard = [];
+
+        foreach ($permissions as $permission) {
+            if (strpos($permission, '*') === false) {
+                $noWildcard[] = $permission;
+            } else {
+                $wildcard[] = str_replace('*', '%', $permission);
+            }
+        }
+
+        return [$wildcard, $noWildcard];
+    }
 }

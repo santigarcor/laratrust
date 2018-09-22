@@ -59,8 +59,8 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
         $useTeams = Config::get('laratrust.use_teams');
         $teamStrictCheck = Config::get('laratrust.teams_strict_check');
 
-        list($permissionsWildcard, $permissionsNoWildcard) = $this
-            ->getPermissionWithAndWithoutWildcards($permissionsNames);
+        list($permissionsWildcard, $permissionsNoWildcard) =
+            Helper::getPermissionWithAndWithoutWildcards($permissionsNames);
 
         $rolesPermissionsCount = $this->user->roles()
             ->withCount(['permissions' =>
@@ -102,28 +102,5 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
 
     public function currentUserFlushCache()
     {
-    }
-
-    /**
-     * Return two arrays with the filtered permissions between the permissions
-     * with wildcard and the permissions without it.
-     *
-     * @param array $permissions
-     * @return array
-     */
-    protected function getPermissionWithAndWithoutWildcards($permissions)
-    {
-        $wildcard = [];
-        $noWildcard = [];
-
-        foreach ($permissions as $permission) {
-            if (strpos($permission, '*') === false) {
-                $noWildcard[] = $permission;
-            } else {
-                $wildcard[] = str_replace('*', '%', $permission);
-            }
-        }
-
-        return [$wildcard, $noWildcard];
     }
 }
