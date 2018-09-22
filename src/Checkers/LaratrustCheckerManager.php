@@ -3,6 +3,8 @@
 namespace Laratrust\Checkers;
 
 use Illuminate\Support\Facades\Config;
+use Laratrust\Checkers\Role\LaratrustRoleQueryChecker;
+use Laratrust\Checkers\User\LaratrustUserQueryChecker;
 use Laratrust\Checkers\Role\LaratrustRoleDefaultChecker;
 use Laratrust\Checkers\User\LaratrustUserDefaultChecker;
 
@@ -31,7 +33,7 @@ class LaratrustCheckerManager
             case 'default':
                 return new LaratrustUserDefaultChecker($this->model);
             case 'query':
-                return;
+                return new LaratrustUserQueryChecker($this->model);
         }
     }
 
@@ -46,7 +48,7 @@ class LaratrustCheckerManager
             case 'default':
                 return new LaratrustRoleDefaultChecker($this->model);
             case 'query':
-                return;
+                return new LaratrustRoleQueryChecker($this->model);
         }
     }
 }

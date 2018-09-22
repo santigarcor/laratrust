@@ -6,7 +6,7 @@ use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
-class LaratrustRoleDefaultCheckerTest extends LaratrustTestCase
+class LaratrustRoleQueryCheckerTest extends LaratrustTestCase
 {
     protected $role;
 
@@ -15,7 +15,7 @@ class LaratrustRoleDefaultCheckerTest extends LaratrustTestCase
         parent::setUp();
 
         $this->migrate();
-        $this->app['config']->set('laratrust.checker', 'default');
+        $this->app['config']->set('laratrust.checker', 'query');
 
         $this->role = Role::create(['name' => 'role']);
     }
