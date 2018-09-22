@@ -3,7 +3,6 @@
 namespace Laratrust\Checkers\User;
 
 use Laratrust\Helper;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 
 class LaratrustUserQueryChecker extends LaratrustUserChecker
@@ -60,10 +59,18 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
         $useTeams = Config::get('laratrust.use_teams');
         $teamStrictCheck = Config::get('laratrust.teams_strict_check');
 
+        list($permissionsWildcard, $permissionsNoWildcard) = $this
+            ->getPermissionWithAndWithoutWildcards($permissionsNames);
+
         $rolesPermissionsCount = $this->user->roles()
-            ->withCount(['permissions' => function ($query) use ($permissionsNames) {
-                $query->whereIn('name', $permissionsNames);
-            }])
+            ->withCount(['permissions' =>
+                function ($query) use ($permissionsNoWildcard, $permissionsWildcard) {
+                    $query->whereIn('name', $permissionsNoWildcard);
+                    foreach ($permissionsWildcard as $permission) {
+                        $query->orWhere('name', 'like', $permission);
+                    }
+                }
+            ])
             ->when($useTeams && ($teamStrictCheck || !is_null($team)), function ($query) use ($team) {
                 $teamId = Helper::fetchTeam($team);
 
@@ -73,14 +80,20 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
             ->sum();
 
         $directPermissionsCount = $this->user->permissions()
-            ->whereIn('name', $permissionsNames)
+            ->whereIn('name', $permissionsNoWildcard)
+            ->when($permissionsWildcard, function ($query) use ($permissionsWildcard) {
+                foreach ($permissionsWildcard as $permission) {
+                    $query->orWhere('name', 'like', $permission);
+                }
+
+                return $query;
+            })
             ->when($useTeams && ($teamStrictCheck || !is_null($team)), function ($query) use ($team) {
                 $teamId = Helper::fetchTeam($team);
 
                 return $query->where(Config::get('laratrust.foreign_keys.team'), $teamId);
             })
             ->count();
-
 
         return $requireAll
             ? $rolesPermissionsCount + $directPermissionsCount >= count($permissionsNames)
@@ -89,7 +102,28 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
 
     public function currentUserFlushCache()
     {
-        Cache::forget('laratrust_roles_for_user_' . $this->user->getKey());
-        Cache::forget('laratrust_permissions_for_user_' . $this->user->getKey());
+    }
+
+    /**
+     * Return two arrays with the filtered permissions between the permissions
+     * with wildcard and the permissions without it.
+     *
+     * @param array $permissions
+     * @return array
+     */
+    protected function getPermissionWithAndWithoutWildcards($permissions)
+    {
+        $wildcard = [];
+        $noWildcard = [];
+
+        foreach ($permissions as $permission) {
+            if (strpos($permission, '*') === false) {
+                $noWildcard[] = $permission;
+            } else {
+                $wildcard[] = str_replace('*', '%', $permission);
+            }
+        }
+
+        return [$wildcard, $noWildcard];
     }
 }

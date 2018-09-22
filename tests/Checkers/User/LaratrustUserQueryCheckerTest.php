@@ -23,10 +23,10 @@ class LaratrustUserQueryCheckerTest extends LaratrustUserCheckerTestCase
         $this->hasPermissionAssertions();
     }
 
-    // public function testHasPermissionWithPlaceholderSupport()
-    // {
-    //     $this->hasPermissionWithPlaceholderSupportAssertions();
-    // }
+    public function testHasPermissionWithPlaceholderSupport()
+    {
+        $this->hasPermissionWithPlaceholderSupportAssertions();
+    }
 
     // public function testUserCanDisableTheRolesAndPermissionsCaching()
     // {
