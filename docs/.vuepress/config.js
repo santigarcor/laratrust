@@ -6,7 +6,7 @@ module.exports = {
   description: 'Laravel 5 role-based access control package',
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
-    ['meta', { name: 'robots', content: 'noindex, nofollow' }],
+    ['meta', { name: 'robots', content: 'index, follow' }],
   ],
   themeConfig: {
     logo: '/logo.svg',
