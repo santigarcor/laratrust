@@ -15,7 +15,7 @@ Laratrust is an easy and flexible way to add roles, permissions and teams author
 For Laravel < 5.2.32 please use the [4.0 branch](https://github.com/santigarcor/laratrust/tree/4.0).
 
 ## Installation, Configuration and Usage
-To install, configure and learn how to use Laratrust please go to the [Documentation](http://laratrust.readthedocs.io/).
+To install, configure and learn how to use Laratrust please go to the [Documentation](https://laratrust.santigarcor.me/).
 
 ## What does Laratrust support?
 

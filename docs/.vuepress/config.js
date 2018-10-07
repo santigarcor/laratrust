@@ -37,13 +37,13 @@ module.exports = {
     editLinkText: 'Help us improve this page!',
     sidebar: {
       '/docs/5.0/': getDocsNavBar(),
-      '/docs/5.1/': getDocsNavBar(),
-      '/api/5.1/': [''],
+      // '/docs/5.1/': getDocsNavBar(),
+      // '/api/5.1/': [''],
     },
     nav: [
       { text: 'Docs', link: getActiveVersion().link },
       { text: 'Version', items: getVersionsLinks() },
-      { text: 'Api', items: getVersionsLinks('api').filter(item => item.text != '5.0') },
+      // { text: 'Api', items: getVersionsLinks('api').filter(item => item.text != '5.0') },
     ]
   }
 }
