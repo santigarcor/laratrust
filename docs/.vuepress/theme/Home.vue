@@ -1,13 +1,10 @@
 <template>
   <div class="home">
     <div class="hero">
-      <img
-        v-if="data.heroImage"
-        :src="$withBase(data.heroImage)"
-        alt="hero"
-      >
-
-      <h1>{{ data.heroText || $title || 'Hello' }}</h1>
+      <div class="title-container">
+        <img src="/logo.svg">
+        <h1>{{ data.heroText || $siteTitle || 'Hello' }}</h1>
+      </div>
 
       <p class="description">
         {{ data.tagline || $description || 'Welcome to your VuePress site' }}
@@ -79,15 +76,18 @@ export default {
   max-width 960px
   margin 0px auto
   .hero
+    .title-container
+      display flex
+      align-items center
+      justify-content center
+      h1
+        margin 1.8rem 0 1.8rem 1.5rem
+        font-size 3rem
+      img
+        height 4.5rem
+        // margin 1rem auto 1.5rem
     text-align center
-    img
-      max-height 280px
-      height 90px
-      display block
-      margin 1rem auto 1.5rem
-    h1
-      font-size 3rem
-    h1, .description, .action
+    .description, .action
       margin 1.8rem auto
     .description
       max-width 35rem
@@ -151,12 +151,13 @@ export default {
     padding-left 1.5rem
     padding-right 1.5rem
     .hero
-      img
-        max-height 210px
-        margin 2rem auto 1.2rem
-      h1
-        font-size 2rem
-      h1, .description, .action
+      .title-container
+        img
+          height 2.5rem
+        h1
+          font-size 2rem
+          margin 1.8rem 0 1.8rem 0.7rem
+      .description, .action
         margin 1.2rem auto
       .description
         font-size 1.2rem
