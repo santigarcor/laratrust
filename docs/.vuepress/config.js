@@ -7,6 +7,7 @@ module.exports = {
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
     ['meta', { name: 'robots', content: 'index, follow' }],
+    ['meta', { property: 'og:image', content: '/logo.png'}]
   ],
   themeConfig: {
     logo: '/logo.svg',
