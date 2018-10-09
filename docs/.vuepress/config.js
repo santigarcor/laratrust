@@ -3,11 +3,13 @@ const activeVersion = '5.0';
 module.exports = {
   title: 'Laratrust',
   ga: 'UA-84408499-3',
-  description: 'Laravel 5 role-based access control package',
+  description: 'Laratrust is an easy and flexible way to add roles, permissions and teams authorization to your Laravel application',
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
     ['meta', { name: 'robots', content: 'index, follow' }],
-    ['meta', { property: 'og:image', content: '/logo.png'}]
+    ['meta', { property: 'og:image', content: 'https://laratrust.santigarcor.me/logo.png'}],
+    ['meta', { property: 'og:description', content: 'Laratrust is an easy and flexible way to add roles, permissions and teams authorization to your Laravel application'}],
+    ['meta', { property: 'og:title', content: 'Laratrust'}]
   ],
   themeConfig: {
     logo: '/logo.svg',

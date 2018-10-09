@@ -3,9 +3,9 @@ layout: 'Home'
 actionText: Get Started →
 actionLink: /docs/
 footer: MIT Licensed | Copyright © 2018-present Santiago Garcia
+title: Laravel 5 role-based access control package
+tagline: Laravel 5 role-based access control package
 ---
-
-# Laratrust
 
 [![Build Status](https://travis-ci.org/santigarcor/laratrust.svg?branch=master)](https://travis-ci.org/santigarcor/laratrust)
 [![Latest Stable Version](https://poser.pugx.org/santigarcor/laratrust/v/stable)](https://packagist.org/packages/santigarcor/laratrust)
