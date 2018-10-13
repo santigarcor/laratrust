@@ -3,6 +3,7 @@
 namespace Laratrust\Test;
 
 use Laratrust\Tests\Models\Role;
+use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
@@ -31,8 +32,11 @@ class LaratrustUserScopesTest extends LaratrustTestCase
          */
         $roleA = Role::create(['name' => 'role_a']);
         $roleC = Role::create(['name' => 'role_c']);
+        $roleD = Role::create(['name' => 'role_d']);
+        $team = Team::create(['name' => 'team_a']);
 
         $this->user->attachRole($roleA);
+        $this->user->attachRole($roleD, $team->id);
 
         /*
         |------------------------------------------------------------
@@ -41,6 +45,13 @@ class LaratrustUserScopesTest extends LaratrustTestCase
          */
         $this->assertCount(1, User::whereRoleIs('role_a')->get());
         $this->assertCount(0, User::whereRoleIs('role_c')->get());
+
+        $this->assertCount(1, User::whereRoleIs('role_d', 'team_a')->get());
+
+        $this->app['config']->set('laratrust.teams_strict_check', true);
+        $this->assertCount(0, User::whereRoleIs('role_d')->get());
+        $this->app['config']->set('laratrust.teams_strict_check', false);
+        $this->assertCount(1, User::whereRoleIs('role_d')->get());
     }
 
     public function testScopeOrWhereRoleIs()

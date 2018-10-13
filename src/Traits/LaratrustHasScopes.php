@@ -2,6 +2,9 @@
 
 namespace Laratrust\Traits;
 
+use Laratrust\Helper;
+use Illuminate\Support\Facades\Config;
+
 trait LaratrustHasScopes
 {
     /**
@@ -12,12 +15,17 @@ trait LaratrustHasScopes
      * @param  string  $boolean
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeWhereRoleIs($query, $role = '', $boolean = 'and')
+    public function scopeWhereRoleIs($query, $role = '', $team = null, $boolean = 'and')
     {
         $method = $boolean == 'and' ? 'whereHas' : 'orWhereHas';
 
-        return $query->$method('roles', function ($roleQuery) use ($role) {
-            $roleQuery->where('name', $role);
+        return $query->$method('roles', function ($roleQuery) use ($role, $team) {
+            $teamsStrictCheck = Config::get('laratrust.teams_strict_check');
+            $roleQuery->where('name', $role)
+                ->when($team || $teamsStrictCheck, function ($query) use ($team) {
+                    $team = Helper::getIdFor($team, 'team');
+                    return $query->where(Helper::teamForeignKey(), $team);
+                });
         });
     }
 
@@ -28,9 +36,9 @@ trait LaratrustHasScopes
      * @param  string  $role
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeOrWhereRoleIs($query, $role = '')
+    public function scopeOrWhereRoleIs($query, $role = '', $team = null)
     {
-        return $this->scopeWhereRoleIs($query, $role, 'or');
+        return $this->scopeWhereRoleIs($query, $role, $team, 'or');
     }
 
     /**
