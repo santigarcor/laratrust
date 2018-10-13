@@ -9,7 +9,7 @@ module.exports = {
     ['meta', { name: 'robots', content: 'index, follow' }],
     ['meta', { property: 'og:image', content: 'https://laratrust.santigarcor.me/logo.png'}],
     ['meta', { property: 'og:description', content: 'Laratrust is an easy and flexible way to add roles, permissions and teams authorization to your Laravel application'}],
-    ['meta', { property: 'og:title', content: 'Laratrust'}]
+    ['meta', { property: 'twitter:description', content: 'Laratrust is an easy and flexible way to add roles, permissions and teams authorization to your Laravel application'}]
   ],
   themeConfig: {
     logo: '/logo.svg',

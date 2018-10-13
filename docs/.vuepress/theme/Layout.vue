@@ -126,6 +126,21 @@ export default {
     }
   },
 
+  created() {
+    if (typeof this.$ssrContext !== 'undefined') {
+      this.$ssrContext.userHeadTags += `
+        <link rel='canonical' href='https://laratrust.santigarcor.me${this.$page.path}'/>
+
+        <meta property="og:title" content='${this.$title}'>
+        <meta property="og:type" content="website">
+        <meta property="og:url" content='https://laratrust.santigarcor.me${this.$page.path}'>
+
+        <meta name="twitter:card" content="summary">
+        <meta name="twitter:title" content='${this.$title}'>
+      `;
+    }
+  },
+
   mounted () {
     window.addEventListener('scroll', this.onScroll)
 
