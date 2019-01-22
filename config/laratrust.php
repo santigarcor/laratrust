@@ -51,6 +51,7 @@ return [
         |--------------------------------------------------------------------------
         |
         | Defines if Laratrust will use Laravel's Cache to cache the roles and permissions.
+        | NOTE: Currently the database check does not use cache.
         |
         */
         'enabled' => true,

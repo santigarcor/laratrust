@@ -1,4 +1,4 @@
-const activeVersion = '5.0';
+const activeVersion = '5.1';
 
 module.exports = {
   title: 'Laratrust',
@@ -40,20 +40,20 @@ module.exports = {
     editLinkText: 'Help us improve this page!',
     sidebar: {
       '/docs/5.0/': getDocsNavBar(),
-      // '/docs/5.1/': getDocsNavBar(),
-      // '/api/5.1/': [''],
+      '/docs/5.1/': getDocsNavBar(),
+      '/api/5.1/': [''],
     },
     nav: [
       { text: 'Docs', link: getActiveVersion().link },
       { text: 'Version', items: getVersionsLinks() },
-      // { text: 'Api', items: getVersionsLinks('api').filter(item => item.text != '5.0') },
+      { text: 'Api', items: getVersionsLinks('api').filter(item => item.text != '5.0') },
     ]
   }
 }
 
 function getVersionsLinks(preLink = 'docs') {
   let links = [
-      // { text: '5.1', link: `/${preLink}/5.1/` },
+      { text: '5.1', link: `/${preLink}/5.1/` },
       { text: '5.0', link: `/${preLink}/5.0/` },
     ].sort((a, b) => a.text < b.text);
 
