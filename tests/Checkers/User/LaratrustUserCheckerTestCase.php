@@ -6,7 +6,6 @@ use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
@@ -67,7 +66,7 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $this->assertTrue($this->user->hasRole(['role_a', 'role_c'], 'team_a'));
         $this->assertFalse($this->user->hasRole(['role_c', 'role_d'], true));
 
-        $this->app['config']->set('laratrust.use_cache', false);
+        $this->app['config']->set('laratrust.cache.enabled', false);
         $this->assertTrue($this->user->hasRole('role_a'));
         $this->assertTrue($this->user->hasRole(['role_a', 'role_c'], 'team_a'));
         $this->assertTrue($this->user->hasRole('role_c', 'team_a'));
@@ -128,7 +127,7 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], 'team_a', true));
         $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], $team, true));
 
-        $this->app['config']->set('laratrust.use_cache', false);
+        $this->app['config']->set('laratrust.cache.enabled', false);
         $this->assertTrue($this->user->hasPermission('permission_b', 'team_a'));
         $this->assertTrue($this->user->hasPermission('permission_c', 'team_a'));
     }
@@ -196,7 +195,7 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         ]);
 
         // With cache
-        $this->app['config']->set('laratrust.use_cache', true);
+        $this->app['config']->set('laratrust.cache.enabled', true);
         $this->user->hasRole('some_role');
         $this->user->hasPermission('some_permission');
         $this->assertTrue(Cache::has("laratrust_roles_for_user_{$this->user->id}"));
@@ -204,7 +203,7 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $this->user->flushCache();
 
         // Without cache
-        $this->app['config']->set('laratrust.use_cache', false);
+        $this->app['config']->set('laratrust.cache.enabled', false);
         $this->user->hasRole('some_role');
         $this->user->hasPermission('some_permission');
         $this->assertFalse(Cache::has("laratrust_roles_for_user_{$this->user->id}"));

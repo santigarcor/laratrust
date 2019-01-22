@@ -37,13 +37,34 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Use cache in the package
+    | Cache
     |--------------------------------------------------------------------------
     |
-    | Defines if Laratrust will use Laravel's Cache to cache the roles and permissions.
+    | Manage Laratrust's cache configurations. It uses the driver defined in the
+    | config/cache.php file.
     |
     */
-    'use_cache' => true,
+    'cache' => [
+        /*
+        |--------------------------------------------------------------------------
+        | Use cache in the package
+        |--------------------------------------------------------------------------
+        |
+        | Defines if Laratrust will use Laravel's Cache to cache the roles and permissions.
+        |
+        */
+        'enabled' => true,
+
+        /*
+        |--------------------------------------------------------------------------
+        | Time to store in cache Laratrust's roles and permissions.
+        |--------------------------------------------------------------------------
+        |
+        | Determines the time in MINUTES to store Laratrust's roles and permissions in the cache.
+        |
+        */
+        'expiration_time' => 60,
+    ],
 
     /*
     |--------------------------------------------------------------------------

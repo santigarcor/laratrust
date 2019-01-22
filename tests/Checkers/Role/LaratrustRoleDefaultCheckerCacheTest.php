@@ -4,7 +4,6 @@ namespace Laratrust\Test\Checkers\Role;
 
 use Laratrust\Tests\Models\Role;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
@@ -32,13 +31,13 @@ class LaratrustRoleDefaultCheckerCacheTest extends LaratrustTestCase
             ]);
 
         // With cache
-        $this->app['config']->set('laratrust.use_cache', true);
+        $this->app['config']->set('laratrust.cache.enabled', true);
         $role->hasPermission('some_permission');
         $this->assertTrue(Cache::has("laratrust_permissions_for_role_{$role->id}"));
         $role->flushCache();
 
         // Without cache
-        $this->app['config']->set('laratrust.use_cache', false);
+        $this->app['config']->set('laratrust.cache.enabled', false);
         $role->hasPermission('some_permission');
         $this->assertFalse(Cache::has("laratrust_permissions_for_role_{$role->id}"));
     }

@@ -124,11 +124,11 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
     {
         $cacheKey = 'laratrust_roles_for_user_' . $this->user->getKey();
 
-        if (!Config::get('laratrust.use_cache')) {
+        if (!Config::get('laratrust.cache.enabled')) {
             return $this->user->roles()->get();
         }
 
-        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
+        return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
             return $this->user->roles()->get()->toArray();
         });
     }
@@ -144,11 +144,11 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
     {
         $cacheKey = 'laratrust_permissions_for_user_' . $this->user->getKey();
 
-        if (!Config::get('laratrust.use_cache')) {
+        if (!Config::get('laratrust.cache.enabled')) {
             return $this->user->permissions()->get();
         }
 
-        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
+        return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
             return $this->user->permissions()->get()->toArray();
         });
     }

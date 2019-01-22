@@ -67,11 +67,11 @@ class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
     {
         $cacheKey = 'laratrust_permissions_for_role_' . $this->role->getKey();
 
-        if (!Config::get('laratrust.use_cache')) {
+        if (!Config::get('laratrust.cache.enabled')) {
             return $this->role->permissions()->get();
         }
 
-        return Cache::remember($cacheKey, Config::get('cache.ttl', 60), function () {
+        return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
             return $this->role->permissions()->get()->toArray();
         });
     }
