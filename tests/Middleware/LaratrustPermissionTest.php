@@ -2,11 +2,11 @@
 
 namespace Laratrust\Tests\Middleware;
 
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Session;
 use Mockery as m;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Session;
 use Laratrust\Middleware\LaratrustPermission;
 
 class LaratrustPermissionTest extends MiddlewareTest
@@ -205,7 +205,7 @@ class LaratrustPermissionTest extends MiddlewareTest
         Session::start();
         $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
         $middleware = new LaratrustPermission($this->guard);
-        Config::set('laratrust.middleware.handling','redirect');
+        Config::set('laratrust.middleware.handling', 'redirect');
 
         /*
         |------------------------------------------------------------

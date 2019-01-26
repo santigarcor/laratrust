@@ -240,13 +240,14 @@ return [
             ],
             /**
              * Redirects the user to the given url.
-             * If a message is needed to show, set the type and the message content.
+             * If you want to flash a key to the session,
+             * you can do it by setting the key and the content of the message
              * If the message content is empty it won't be added to the redirection.
              */
             'redirect' => [
                 'url' => '/home',
                 'message' => [
-                    'type' => 'error',
+                    'key' => 'error',
                     'content' => ''
                 ]
             ]

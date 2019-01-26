@@ -95,9 +95,9 @@ To make a redirection in case the middleware check fails, you will need to chang
     ],
     'redirect' => [
         'url' => '/home',       // Change this to the route you need
-        'message' => [
-            'type' => 'error',
-            'content' => ''
+        'message' => [          // Key value message to be flashed into the session.
+            'key' => 'error',
+            'content' => ''     // If the content is empty nothing will be flashed to the session.
         ]
     ]
 ]

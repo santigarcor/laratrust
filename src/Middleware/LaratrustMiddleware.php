@@ -51,7 +51,7 @@ class LaratrustMiddleware
 
         $redirect = Redirect::to($handler['url']);
         if (!empty($handler['message']['content'])) {
-            $redirect->with($handler['message']['type'], $handler['message']['content']);
+            $redirect->with($handler['message']['key'], $handler['message']['content']);
         }
 
         return $redirect;
