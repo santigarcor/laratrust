@@ -1,6 +1,10 @@
 Installation
 ============
 
+.. IMPORTANT::
+    For newer versions please redirect to the new docs https://laratrust.santigarcor.me.
+
+
 1. In order to install Laratrust in your Laravel project, just run the `composer require` command from your terminal::
 
         composer require "santigarcor/laratrust:4.0.*"
