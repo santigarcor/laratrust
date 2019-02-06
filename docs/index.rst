@@ -13,6 +13,9 @@ Laratrust Docs
 
 Table of Contents:
 ==================
+.. IMPORTANT::
+    For newer versions please redirect to the new docs https://laratrust.santigarcor.me.
+   
 .. NOTE::
     Please read all the sections in order.
 
