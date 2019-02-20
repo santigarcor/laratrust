@@ -28,7 +28,7 @@ To install, configure and learn how to use Laratrust please go to the [Documenta
 - Multiple roles and permissions can be attached to users within teams.
 - Objects ownership verification.
 - Multiple guards for the middleware.
-- [Laravel gates and policies](http://laratrust.readthedocs.io/en/5.0/troubleshooting.html).
+- [Laravel gates and policies](http://laratrust.santigarcor.me/docs/5.0/troubleshooting.html).
 
 ## License
 
