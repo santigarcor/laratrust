@@ -10,7 +10,7 @@ abstract class MiddlewareTest extends LaratrustTestCase
     protected $request;
     protected $guard;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->request = m::mock('Illuminate\Http\Request');

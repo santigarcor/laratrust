@@ -9,7 +9,7 @@ class LaratrustPermissionTest extends LaratrustTestCase
 {
     protected $permission;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

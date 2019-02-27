@@ -10,7 +10,7 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
 {
     protected $user;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

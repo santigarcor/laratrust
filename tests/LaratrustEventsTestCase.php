@@ -8,7 +8,7 @@ class LaratrustEventsTestCase extends LaratrustTestCase
 {
     protected $dispatcher;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

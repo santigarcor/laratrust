@@ -15,7 +15,7 @@ class LaratrustUserTest extends LaratrustTestCase
 {
     protected $user;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

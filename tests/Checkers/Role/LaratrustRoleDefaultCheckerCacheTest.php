@@ -9,7 +9,7 @@ use Laratrust\Tests\Models\Permission;
 
 class LaratrustRoleDefaultCheckerCacheTest extends LaratrustTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

@@ -9,7 +9,7 @@ class LaratrustTest extends LaratrustTestCase
     protected $laratrust;
     protected $user;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->laratrust = m::mock('Laratrust\Laratrust[user]', [$this->app]);
