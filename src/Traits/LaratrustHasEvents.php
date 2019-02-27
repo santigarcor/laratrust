@@ -43,7 +43,7 @@ trait LaratrustHasEvents
             return true;
         }
 
-        return static::$dispatcher->fire(
+        return static::$dispatcher->dispatch(
             "laratrust.{$event}: ".static::class,
             $payload
         );
