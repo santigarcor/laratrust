@@ -1,4 +1,4 @@
-const activeVersion = '5.1';
+const activeVersion = '5.2';
 
 module.exports = {
   title: 'Laratrust',
@@ -41,6 +41,7 @@ module.exports = {
     sidebar: {
       '/docs/5.0/': getDocsNavBar(),
       '/docs/5.1/': getDocsNavBar(),
+      '/docs/5.2/': getDocsNavBar(),
       '/api/5.1/': [''],
     },
     nav: [
@@ -53,6 +54,7 @@ module.exports = {
 
 function getVersionsLinks(preLink = 'docs') {
   let links = [
+      { text: '5.2', link: `/${preLink}/5.2/` },
       { text: '5.1', link: `/${preLink}/5.1/` },
       { text: '5.0', link: `/${preLink}/5.0/` },
     ].sort((a, b) => a.text < b.text);
