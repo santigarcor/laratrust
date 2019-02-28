@@ -9,7 +9,7 @@ class LaratrustRoleEventsTest extends LaratrustEventsTestCase
 {
     protected $role;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->role = Role::create(['name' => 'role']);

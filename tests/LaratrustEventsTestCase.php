@@ -8,7 +8,7 @@ class LaratrustEventsTestCase extends LaratrustTestCase
 {
     protected $dispatcher;
 
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -45,7 +45,7 @@ class LaratrustEventsTestCase extends LaratrustTestCase
 
         $this->assertTrue($dispatcher->hasListeners($eventName));
         $this->assertCount(1, $dispatcher->getListeners($eventName));
-        $this->assertEquals('test', $dispatcher->fire($eventName, ['user', 'an_id', null])[0]);
+        $this->assertEquals('test', $dispatcher->dispatch($eventName, ['user', 'an_id', null])[0]);
     }
 
     /**
@@ -58,7 +58,7 @@ class LaratrustEventsTestCase extends LaratrustTestCase
      */
     protected function dispatcherShouldFire($event, array $payload, $modelClass)
     {
-        $this->dispatcher->shouldReceive('fire')
+        $this->dispatcher->shouldReceive('dispatch')
             ->with(
                 "laratrust.{$event}: {$modelClass}",
                 $payload

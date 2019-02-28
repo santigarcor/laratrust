@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Config;
 
 class LaratrustUserQueryCheckerTest extends LaratrustUserCheckerTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

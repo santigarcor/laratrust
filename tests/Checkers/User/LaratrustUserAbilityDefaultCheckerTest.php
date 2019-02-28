@@ -4,7 +4,7 @@ namespace Laratrust\Tests\Checkers\User;
 
 class LaratrustUserAbilityDefaultCheckerTest extends LaratrustUserAbilityCheckerTestCase
 {
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
