@@ -10,7 +10,9 @@
 [![Gitter](https://badges.gitter.im/santigarcor/laratrust.svg)](https://gitter.im/santigarcor/laratrust?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 [![Donate](https://img.shields.io/badge/donate-Ko--fi-blue.svg)](https://ko-fi.com/V7V48I5Y)
 
-Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel 5 (>=5.2.32)**.
+Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel 5 (>=5.6)**.
+
+For Laravel 5.2.32 - 5.6 please use the [5.1 branch](https://laratrust.santigarcor.me/docs/5.1/).
 
 For Laravel < 5.2.32 please use the [4.0 branch](https://github.com/santigarcor/laratrust/tree/4.0).
 

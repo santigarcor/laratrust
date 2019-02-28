@@ -17,7 +17,7 @@ tagline: Laravel 5 role-based access control package
 
 Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel 5 (>=5.6)**.
 
-For Laravel 5.2.32-5.6 please use the [5.1 branch](/docs/5.1/).
+For Laravel 5.2.32 - 5.6 please use the [5.1 branch](/docs/5.1/).
 
 For Laravel < 5.2.32 please use the [4.0 branch](https://github.com/santigarcor/laratrust/tree/4.0).
 
