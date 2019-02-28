@@ -61,10 +61,10 @@ return [
         | Time to store in cache Laratrust's roles and permissions.
         |--------------------------------------------------------------------------
         |
-        | Determines the time in MINUTES to store Laratrust's roles and permissions in the cache.
+        | Determines the time in SECONDS to store Laratrust's roles and permissions in the cache.
         |
         */
-        'expiration_time' => 60,
+        'expiration_time' => 3600,
     ],
 
     /*
