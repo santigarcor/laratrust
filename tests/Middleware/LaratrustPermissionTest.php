@@ -173,26 +173,26 @@ class LaratrustPermissionTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertAttributeContains('/home', 'content', $middleware->handle($this->request, function () {
-        }, 'users-create|users-update'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
+        }, 'users-create|users-update')->getContent());
 
-        $this->assertAttributeContains('/home', 'content', $middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'guard:api'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'guard:api')->getContent());
 
-        $this->assertAttributeContains('/home', 'content', $middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'require_all')->getContent());
 
-        $this->assertAttributeContains('/home', 'content', $middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'guard:api|require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'guard:api|require_all')->getContent());
 
-        $this->assertAttributeContains('/home', 'content', $middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'TeamA', 'require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'TeamA', 'require_all')->getContent());
 
-        $this->assertAttributeContains('/home', 'content', $middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'TeamA', 'guard:api|require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'TeamA', 'guard:api|require_all')->getContent());
 
         $this->assertArrayHasKey('error', session()->all());
-        $this->assertContains('message', session()->get('error'));
+        $this->assertStringContainsString('message', session()->get('error'));
     }
 
     public function testHandle_IsLoggedInWithNoPermission_ShouldWithoutError()
@@ -228,23 +228,23 @@ class LaratrustPermissionTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertAttributeContains('/home', 'content', $middleware->handle($this->request, function () {
-        }, 'users-create|users-update'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
+        }, 'users-create|users-update')->getContent());
 
-        $this->assertAttributeContains('/home', 'content', $middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'guard:api'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'guard:api')->getContent());
 
-        $this->assertAttributeContains('/home', 'content', $middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'require_all')->getContent());
 
-        $this->assertAttributeContains('/home', 'content', $middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'guard:api|require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'guard:api|require_all')->getContent());
 
-        $this->assertAttributeContains('/home', 'content', $middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'TeamA', 'require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'TeamA', 'require_all')->getContent());
 
-        $this->assertAttributeContains('/home', 'content', $middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'TeamA', 'guard:api|require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'TeamA', 'guard:api|require_all')->getContent());
 
         $this->assertArrayNotHasKey('error', session()->all());
     }
