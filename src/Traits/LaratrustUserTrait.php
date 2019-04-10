@@ -590,7 +590,7 @@ trait LaratrustUserTrait
             return $role->permissions;
         });
 
-        return $this->permissions->merge($roles)->unique('name');
+        return $this->permissions()->get()->merge($roles)->unique('name');
     }
 
     /**
