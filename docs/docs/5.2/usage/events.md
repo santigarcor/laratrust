@@ -58,7 +58,11 @@ class UserObserver
 }
 ```
 
-To register an observer, use the laratrustObserve method on the model you wish to observe. You may register observers in the boot method of one of your service providers. In this example, we'll register the observer in the AppServiceProvider:
+::: tip IMPORTANT
+To register an observer, use the `laratrustObserve` method on the model you wish to observe.
+:::
+
+You may register observers in the boot method of one of your service providers. In this example, we'll register the observer in the AppServiceProvider:
 
 ```php
 <?php
@@ -82,8 +86,18 @@ class AppServiceProvider extends ServiceProvider
 ```
 
 ::: tip NOTE
-Inside your observable classes you can have your normal model events methods alongside Laratrust's events methods.
+- Inside your observable classes you can have your normal model events methods alongside Laratrust's events methods.
+- If you wan to register Laratrust events and also eloquent events yo should call both `observe` and `laratrustObserve` methods.
 :::
+
+### Flushing events and observables
+
+If you want to flush the observables and events from laratrust you should add the following in your code:
+
+```php
+User::laratrustFlushObservables();
+User::flushEventListeners();
+```
 
 ## Available Events
 

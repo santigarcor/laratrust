@@ -156,4 +156,23 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
             $this->assertTrue(User::getEventDispatcher()->hasListeners("laratrust.{$event}: " . User::class));
         }
     }
+
+    public function testObserversShouldBeRemovedAfterFlushEvents()
+    {
+        $events = [
+            'role.attached',
+            'role.detached',
+            'permission.attached',
+            'permission.detached',
+            'role.synced',
+            'permission.synced',
+        ];
+
+        User::laratrustObserve(\Laratrust\Tests\Models\UserObserver::class);
+        User::laratrustFlushObservables();
+
+        foreach ($events as $event) {
+            $this->assertFalse(User::getEventDispatcher()->hasListeners("laratrust.{$event}: " . User::class));
+        }
+    }
 }
