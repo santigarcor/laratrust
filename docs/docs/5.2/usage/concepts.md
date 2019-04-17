@@ -237,8 +237,8 @@ The third parameter is an options array:
 
 ```php
 $options = [
-    'validate_all' => true | false (Default: false),
-    'return_type'  => boolean | array | both (Default: boolean)
+    'validate_all' => true, //Default: false
+    'return_type'  => 'array' //Default: 'boolean'. You can also set it as 'both'
 ];
 ```
 
@@ -376,8 +376,8 @@ The third parameter is an options array:
 
 ```php
 $options = [
-    'requireAll' => true | false (Default: false),
-    'foreignKeyName'  => 'canBeAnyString' (Default: null)
+    'requireAll' => true, //Default: false,
+    'foreignKeyName'  => 'canBeAnyString' //Default: null
 ];
 ```
 
@@ -554,8 +554,8 @@ The user ability is the same, but this time you can pass the team parameter.
 
 ```php
 $options = [
-    'requireAll' => true | false (Default: false),
-    'foreignKeyName'  => 'canBeAnyString' (Default: null)
+    'requireAll' => true, //Default: false,
+    'foreignKeyName'  => 'canBeAnyString' //Default: null
 ];
 
 $user->ability(['admin'], ['edit-user'], 'my-awesome-team');
