@@ -43,8 +43,8 @@ abstract class LaratrustUserChecker
         $options = Helper::checkOrSet('return_type', $options, ['boolean', 'array', 'both']);
 
         if ($options['return_type'] == 'boolean') {
-            $hasRoles = $this->currentUserHasRole($roles, $options['validate_all']);
-            $hasPermissions = $this->currentUserHasPermission($permissions, $options['validate_all']);
+            $hasRoles = $this->currentUserHasRole($roles, $team, $options['validate_all']);
+            $hasPermissions = $this->currentUserHasPermission($permissions, $team, $options['validate_all']);
 
             return $options['validate_all']
                 ? $hasRoles && $hasPermissions
