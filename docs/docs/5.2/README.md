@@ -18,7 +18,7 @@ $user->attachPermission($editUserPermission);
 $user->attachPermission('edit-user');
 ```
 
-You can also check if an user has some permissions or roles:
+You can also check if a user has some permissions or roles:
 
 ```php
 $user->can('edit-user');
