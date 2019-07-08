@@ -12,7 +12,6 @@ namespace Laratrust\Traits;
 use Laratrust\Helper;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Checkers\LaratrustCheckerManager;
@@ -581,7 +580,7 @@ trait LaratrustUserTrait
     /**
      * Return all the user permissions.
      *
-     * @return Collection
+     * @return \Illuminate\Support\Collection|static
      */
     public function allPermissions()
     {
