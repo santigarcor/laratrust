@@ -580,7 +580,7 @@ trait LaratrustUserTrait
     /**
      * Return all the user permissions.
      *
-     * @return boolean
+     * @return \Illuminate\Support\Collection|static
      */
     public function allPermissions()
     {
