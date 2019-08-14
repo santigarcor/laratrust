@@ -119,10 +119,10 @@ $user->syncPermissionsWithoutDetaching([$editUser, $createPost]); // parameter c
 
 ```php
 $user->detachPermission($createPost); // parameter can be a Permission object, array, id or the permission string name
-// equivalent to $user->roles()->detach([$createPost->id]);
+// equivalent to $user->permissions()->detach([$createPost->id]);
 
 $user->detachPermissions([$createPost, $editUser]); // parameter can be a Permission object, array, id or the permission string name
-// equivalent to $user->roles()->detach([$createPost->id, $editUser->id]);
+// equivalent to $user->permissions()->detach([$createPost->id, $editUser->id]);
 ```
 
 ## Checking for Roles & Permissions
