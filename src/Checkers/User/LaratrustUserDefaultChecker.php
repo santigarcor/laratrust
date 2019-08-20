@@ -122,7 +122,6 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
      */
     protected function userCachedRoles()
     {
-        
         $cacheKey = 'laratrust_roles_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey();
 
         if (!Config::get('laratrust.cache.enabled')) {
