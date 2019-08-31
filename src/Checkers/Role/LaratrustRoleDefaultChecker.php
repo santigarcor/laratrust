@@ -2,6 +2,7 @@
 
 namespace Laratrust\Checkers\Role;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 
@@ -38,7 +39,7 @@ class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
         }
 
         foreach ($this->currentRoleCachedPermissions() as $perm) {
-            if (str_is($permission, $perm['name'])) {
+            if (Str::is($permission, $perm['name'])) {
                 return true;
             }
         }
