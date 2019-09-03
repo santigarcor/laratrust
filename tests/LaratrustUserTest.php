@@ -2,6 +2,7 @@
 
 namespace Laratrust\Test;
 
+use Illuminate\Support\Str;
 use Mockery as m;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
@@ -567,7 +568,7 @@ class LaratrustUserTest extends LaratrustTestCase
         |------------------------------------------------------------
         */
         $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
-        $className = snake_case(get_class($user)) . '_id';
+        $className = Str::snake(get_class($user)) . '_id';
 
         $post = new \stdClass();
         $post->$className = $user->getKey();
