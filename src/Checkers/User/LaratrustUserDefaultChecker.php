@@ -2,6 +2,7 @@
 
 namespace Laratrust\Checkers\User;
 
+use Illuminate\Support\Str;
 use Laratrust\Helper;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
@@ -90,7 +91,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
         $team = Helper::fetchTeam($team);
 
         foreach ($this->userCachedPermissions() as $perm) {
-            if (Helper::isInSameTeam($perm, $team) && str_is($permission, $perm['name'])) {
+            if (Helper::isInSameTeam($perm, $team) && Str::is($permission, $perm['name'])) {
                 return true;
             }
         }
