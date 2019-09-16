@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class LaratrustSeeder extends Seeder
 {
@@ -76,7 +77,7 @@ class LaratrustSeeder extends Seeder
                         'name' => ucwords(str_replace('_', ' ', $key)),
                         'email' => $key.'@app.com',
                         'password' => bcrypt('password'),
-                        'remember_token' => str_random(10),
+                        'remember_token' => Str::random(10),
                     ]);
                     $permissions = [];
 
