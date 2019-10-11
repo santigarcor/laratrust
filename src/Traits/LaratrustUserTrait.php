@@ -175,7 +175,7 @@ trait LaratrustUserTrait
      *
      * @param  string|array  $permission Permission string or array of permissions.
      * @param  string|bool  $team      Team name or requiredAll roles.
-     * @param  bool  $requireAll All roles in the array are required.
+     * @param  bool  $requireAll All permissions in the array are required.
      * @return bool
      */
     public function hasPermission($permission, $team = null, $requireAll = false)
