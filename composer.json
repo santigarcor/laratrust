@@ -1,7 +1,7 @@
 {
     "name": "santigarcor/laratrust",
     "description": "This package provides a flexible way to add Role-based Permissions to Laravel",
-    "keywords": ["acl", "authorization", "laravel","laratrust","permissions","php", "rbac","roles"],
+    "keywords": ["acl", "authorization", "laravel","laratrust","permissions","php", "rbac","roles", "multiusers", "teams"],
     "license": "MIT",
     "authors": [
         {
@@ -10,30 +10,24 @@
         }
     ],
     "require": {
-        "php": ">=5.5.9",
-        "illuminate/cache": "~5.2",
-        "illuminate/console": "~5.2",
-        "illuminate/database": "~5.2",
-        "illuminate/support": "~5.2",
-        "kkszymanowski/traitor": "^0.2.0"
+        "php": "^7.1",
+        "kkszymanowski/traitor": "^0.2.0",
+        "laravel/framework": "~5.6.0|~5.7.0|~5.8.0|~6.0"
     },
     "require-dev": {
-        "mockery/mockery": "~0.9.2",
-        "phpunit/phpunit": "~4.1"
+        "mockery/mockery": ">=0.9.9",
+        "orchestra/testbench": "~3.6.0|~3.7.0|~3.8.0|~3.9.0",
+        "phpunit/phpunit": ">=4.1"
     },
     "autoload": {
-        "classmap": [
-            "src/commands"
-        ],
         "psr-4": {
-            "Laratrust\\": "src/Laratrust/"
+            "Laratrust\\": "src/"
         }
     },
     "autoload-dev": {
-        "classmap": [
-            "tests/Middleware/MiddlewareTest.php",
-            "tests/UserTest.php"
-        ]
+        "psr-4": {
+            "Laratrust\\Tests\\": "tests/"
+        }
     },
     "config": {
         "sort-packages": true
@@ -46,7 +40,7 @@
                 "Laratrust\\LaratrustServiceProvider"
             ],
             "aliases": {
-                "Laratrust": "Laratrust\\Laratrust"
+                "Laratrust": "Laratrust\\LaratrustFacade"
             }
         }
     }

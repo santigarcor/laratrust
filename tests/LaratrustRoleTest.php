@@ -1,152 +1,36 @@
 <?php
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
-use Laratrust\LaratrustRole;
-use Mockery as m;
+namespace Laratrust\Test;
 
-class LaratrustRoleTest extends UserTest
+use Laratrust\Tests\Models\Role;
+use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\Permission;
+
+class LaratrustRoleTest extends LaratrustTestCase
 {
-    public function testUsers()
+    protected $role;
+
+    protected function setUp(): void
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $morphedByMany = new stdClass();
-        $role = m::mock('RoleTestClass')->makePartial();
+        parent::setUp();
 
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $role->shouldReceive('morphedByMany')
-            ->with('user_model', 'user', 'assigned_users_table_name', 'role_id', 'user_id')
-            ->andReturn($morphedByMany)
-            ->once();
-
-        Config::shouldReceive('get')->once()->with('laratrust.user_models')
-            ->andReturn(['users' => 'user_model']);
-        Config::shouldReceive('get')->once()->with('laratrust.tables.role_user')
-            ->andReturn('assigned_users_table_name');
-        Config::shouldReceive('get')->once()->with('laratrust.foreign_keys.role')
-            ->andReturn('role_id');
-        Config::shouldReceive('get')->once()->with('laratrust.foreign_keys.user')
-            ->andReturn('user_id');
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertSame($morphedByMany, $role->users());
+        $this->migrate();
+        $this->role = Role::create(['name' => 'role']);
     }
 
-    public function testUsersAsAttribute()
+    public function testUsersRelationship()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $role = m::mock('RoleTestClass')->shouldAllowMockingProtectedMethods()->makePartial();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        Config::shouldReceive('get')->twice()->with('laratrust.user_models')
-            ->andReturn(['users' => 'user_model']);
-        $role->shouldReceive('getRelationshipFromMethod')->with('users')->andReturn([])->once();
-        $role->shouldReceive('relationLoaded')->with('users')->andReturn(false)->once();
-        $role->shouldReceive('relationLoaded')->with('users')->andReturn(true)->once();
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertSame([], $role->users);
-        $role->relations['users'] = [];
-        $this->assertSame([], $role->users);
+        $this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\MorphToMany', $this->role->users());
     }
 
-    public function testPermissions()
+    public function testAccessUsersRelationshipAsAttribute()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $belongsToMany = new stdClass();
-        $role = m::mock('RoleTestClass')->makePartial();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $role->shouldReceive('belongsToMany')
-            ->with('permission_table_name', 'assigned_permissions_table_name', 'role_id', 'permission_id')
-            ->andReturn($belongsToMany)
-            ->once();
-
-        Config::shouldReceive('get')->once()->with('laratrust.models.permission')
-            ->andReturn('permission_table_name');
-        Config::shouldReceive('get')->once()->with('laratrust.tables.permission_role')
-            ->andReturn('assigned_permissions_table_name');
-        Config::shouldReceive('get')->once()->with('laratrust.foreign_keys.role')
-            ->andReturn('role_id');
-        Config::shouldReceive('get')->once()->with('laratrust.foreign_keys.permission')
-            ->andReturn('permission_id');
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertSame($belongsToMany, $role->permissions());
+        $this->assertEmpty($this->role->users);
     }
 
-    public function testHasPermission()
+    public function testPermissionsRelationship()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $permA = $this->mockPermission('PermissionA');
-        $permB = $this->mockPermission('PermissionB');
-
-        $role = m::mock('RoleTestClass')->makePartial();
-        $role->permissions = [$permA, $permB];
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        Config::shouldReceive('get')->with('laratrust.user_models')->times(9)->andReturn([]);
-        Config::shouldReceive('get')->with('cache.ttl', 60)->times(9)->andReturn('1440');
-        Cache::shouldReceive('remember')->times(9)->andReturn($role->permissions);
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($role->hasPermission('PermissionA'));
-        $this->assertTrue($role->hasPermission('PermissionB'));
-        $this->assertFalse($role->hasPermission('PermissionC'));
-
-        $this->assertTrue($role->hasPermission(['PermissionA', 'PermissionB']));
-        $this->assertTrue($role->hasPermission(['PermissionA', 'PermissionC']));
-        $this->assertFalse($role->hasPermission(['PermissionA', 'PermissionC'], true));
-        $this->assertFalse($role->hasPermission(['PermissionC', 'PermissionD']));
+        $this->assertInstanceOf('\Illuminate\Database\Eloquent\Relations\BelongsToMany', $this->role->permissions());
     }
 
     public function testAttachPermission()
@@ -156,37 +40,30 @@ class LaratrustRoleTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $permissionObject = m::mock('Permission');
-        $permissionArray = ['id' => 2];
-
-        $role = m::mock('RoleTestClass')->makePartial();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        Config::shouldReceive('get')->with('laratrust.user_models')->times(3)->andReturn([]);
-        $permissionObject->shouldReceive('getKey')->andReturn(1);
-        $role->shouldReceive('permissions')->andReturn($role);
-        $role->shouldReceive('attach')->with(1)->once()->ordered();
-        $role->shouldReceive('attach')->with(2)->once()->ordered();
-        $role->shouldReceive('attach')->with(3)->once()->ordered();
-        Cache::shouldReceive('forget')->times(3);
+        $permA = Permission::create(['name' => 'permission_a']);
+        $permB = Permission::create(['name' => 'permission_b']);
+        $permC = Permission::create(['name' => 'permission_c']);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $result = $role->attachPermission($permissionObject);
-        $this->assertInstanceOf('RoleTestClass', $result);
-        $result = $role->attachPermission($permissionArray);
-        $this->assertInstanceOf('RoleTestClass', $result);
-        $result = $role->attachPermission(3);
-        $this->assertInstanceOf('RoleTestClass', $result);
-        $this->setExpectedException(InvalidArgumentException::class);
-        $role->attachPermission(true);
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->attachPermission($permA));
+        $this->assertCount(1, $this->role->permissions()->get()->toArray());
+
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->attachPermission($permB->toArray()));
+        $this->assertCount(2, $this->role->permissions()->get()->toArray());
+
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->attachPermission($permC->id));
+        $this->assertCount(3, $this->role->permissions()->get()->toArray());
+
+        if (method_exists($this, 'setExpectedException')) {
+            $this->setExpectedException('InvalidArgumentException');
+        } else {
+            $this->expectException('InvalidArgumentException');
+        }
+        $this->role->attachPermission(true);
     }
 
     public function testDetachPermission()
@@ -196,35 +73,24 @@ class LaratrustRoleTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $permissionObject = m::mock('Permission');
-        $permissionArray = ['id' => 2];
-
-        $role = m::mock('RoleTestClass')->makePartial();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        Config::shouldReceive('get')->with('laratrust.user_models')->times(3)->andReturn([]);
-        $permissionObject->shouldReceive('getKey')->andReturn(1);
-        $role->shouldReceive('permissions')->andReturn($role);
-        $role->shouldReceive('detach')->with(1)->once()->ordered();
-        $role->shouldReceive('detach')->with(2)->once()->ordered();
-        $role->shouldReceive('detach')->with(3)->once()->ordered();
-        Cache::shouldReceive('forget')->times(3);
+        $permA = Permission::create(['name' => 'permission_a']);
+        $permB = Permission::create(['name' => 'permission_b']);
+        $permC = Permission::create(['name' => 'permission_c']);
+        $this->role->permissions()->attach([$permA->id, $permB->id, $permC->id]);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $result = $role->detachPermission($permissionObject);
-        $this->assertInstanceOf('RoleTestClass', $result);
-        $result = $role->detachPermission($permissionArray);
-        $this->assertInstanceOf('RoleTestClass', $result);
-        $result = $role->detachPermission(3);
-        $this->assertInstanceOf('RoleTestClass', $result);
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->detachPermission($permA));
+        $this->assertCount(2, $this->role->permissions()->get()->toArray());
+
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->detachPermission($permB->toArray()));
+        $this->assertCount(1, $this->role->permissions()->get()->toArray());
+
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->detachPermission($permB->id));
+        $this->assertCount(1, $this->role->permissions()->get()->toArray());
     }
 
     public function testAttachPermissions()
@@ -234,24 +100,19 @@ class LaratrustRoleTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $role = m::mock('RoleTestClass')->makePartial();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $role->shouldReceive('attachPermission')->with(1)->once()->ordered();
-        $role->shouldReceive('attachPermission')->with(2)->once()->ordered();
-        $role->shouldReceive('attachPermission')->with(3)->once()->ordered();
+        $perms = [
+            Permission::create(['name' => 'permission_a']),
+            Permission::create(['name' => 'permission_b']),
+            Permission::create(['name' => 'permission_c']),
+        ];
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $result = $role->attachPermissions([1, 2, 3]);
-        $this->assertInstanceOf('RoleTestClass', $result);
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->attachPermissions($perms));
+        $this->assertCount(3, $this->role->permissions()->get()->toArray());
     }
 
     public function testDetachPermissions()
@@ -261,26 +122,21 @@ class LaratrustRoleTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $role = m::mock('RoleTestClass')->makePartial();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $role->shouldReceive('detachPermission')->with(1)->once()->ordered();
-        $role->shouldReceive('detachPermission')->with(2)->once()->ordered();
-        $role->shouldReceive('detachPermission')->with(3)->once()->ordered();
+        $perms = [
+            Permission::create(['name' => 'permission_a']),
+            Permission::create(['name' => 'permission_b']),
+            Permission::create(['name' => 'permission_c']),
+        ];
+        $this->role->attachPermissions($perms);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $result = $role->detachPermissions([1, 2, 3]);
-        $this->assertInstanceOf('RoleTestClass', $result);
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->detachPermissions($perms));
+        $this->assertCount(0, $this->role->permissions()->get()->toArray());
     }
-
 
     public function testDetachAllPermissions()
     {
@@ -289,34 +145,20 @@ class LaratrustRoleTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $permissionA = $this->mockRole('PermissionA');
-        $permissionB = $this->mockRole('PermissionB');
-
-        $role = m::mock('RoleTestClass')->makePartial();
-        $role->permissions = [$permissionA, $permissionB];
-
-        $relationship = m::mock('BelongsToMany');
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        Config::shouldReceive('get')->with('laratrust.models.permission')->once()->andReturn('App\Permission');
-        Config::shouldReceive('get')->with('laratrust.tables.permission_role')->once()->andReturn('permission_role');
-        Config::shouldReceive('get')->with('laratrust.foreign_keys.role')->once()->andReturn('role_id');
-        Config::shouldReceive('get')->with('laratrust.foreign_keys.permission')->once()->andReturn('permission_id');
-
-        $relationship->shouldReceive('get')->andReturn($role->permissions)->once();
-        $role->shouldReceive('belongsToMany')->andReturn($relationship)->once();
-        $role->shouldReceive('detachPermission')->twice();
+        $perms = [
+            Permission::create(['name' => 'permission_a']),
+            Permission::create(['name' => 'permission_b']),
+            Permission::create(['name' => 'permission_c']),
+        ];
+        $this->role->attachPermissions($perms);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $role->detachPermissions();
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->detachPermissions());
+        $this->assertCount(0, $this->role->permissions()->get()->toArray());
     }
 
     public function testSyncPermissions()
@@ -326,73 +168,22 @@ class LaratrustRoleTest extends UserTest
         | Set
         |------------------------------------------------------------
         */
-        $permissionsIds = [1, 2, 3];
-        $role = m::mock('RoleTestClass')->makePartial();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        Config::shouldReceive('get')->with('laratrust.user_models')->once()->andReturn([]);
-        $role->shouldReceive('permissions')->andReturn($role);
-        $role->shouldReceive('sync')->with($permissionsIds)->once()->ordered();
-        Cache::shouldReceive('forget')->once();
+        $perms = [
+            Permission::create(['name' => 'permission_a'])->id,
+            Permission::create(['name' => 'permission_b'])->id,
+        ];
+        $this->role->attachPermission(Permission::create(['name' => 'permission_c']));
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertInstanceOf('RoleTestClass', $role->syncPermissions($permissionsIds));
-    }
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->syncPermissions($perms));
+        $this->assertCount(2, $this->role->permissions()->get()->toArray());
 
-    public function testBootLaratrustRoleTrait()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $role = m::mock('RoleTestClass');
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $role->shouldReceive('bootLaratrustRoleTrait');
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        RoleTestClass::bootLaratrustRoleTrait();
-    }
-}
-
-class RoleTestClass extends LaratrustRole
-{
-    use SoftDeletes;
-
-    public $permissions;
-    public $relations = [];
-    public $primaryKey;
-
-    public function __construct()
-    {
-        $this->primaryKey = 'id';
-        $this->setAttribute('id', 4);
-    }
-
-    public function getKey()
-    {
-        return $this->id;
-    }
-
-    public function users()
-    {
-        return $this->getMorphByUserRelation('users');
+        $this->role->syncPermissions([]);
+        $this->role->syncPermissions(['permission_a', 'permission_b']);
+        $this->assertCount(2, $this->role->permissions()->get()->toArray());
     }
 }

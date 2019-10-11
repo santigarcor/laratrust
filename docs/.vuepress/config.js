@@ -1,0 +1,105 @@
+const activeVersion = '5.2';
+
+module.exports = {
+  title: 'Laratrust',
+  ga: 'UA-84408499-3',
+  description: 'Laratrust is an easy and flexible way to add roles, permissions and teams authorization to your Laravel application',
+  head: [
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['meta', { name: 'robots', content: 'index, follow' }],
+    ['meta', { property: 'og:image', content: 'https://laratrust.santigarcor.me/logo.png'}],
+    ['meta', { property: 'og:description', content: 'Laratrust is an easy and flexible way to add roles, permissions and teams authorization to your Laravel application'}],
+    ['meta', { property: 'twitter:description', content: 'Laratrust is an easy and flexible way to add roles, permissions and teams authorization to your Laravel application'}]
+  ],
+  themeConfig: {
+    logo: '/logo.svg',
+    activeVersion: getActiveVersion(),
+    algolia: {
+      apiKey: 'feb79d4f7397b8f410909711f924d524',
+      indexName: 'laratrust',
+      algoliaOptions: { facetFilters: [ "version:$VERSION$"] },
+    },
+    lastUpdated: 'Last Updated',
+    // Assumes GitHub. Can also be a full GitLab url.
+    repo: 'santigarcor/laratrust',
+    // Customising the header label
+    // Defaults to "GitHub"/"GitLab"/"Bitbucket" depending on `themeConfig.repo`
+    repoLabel: 'Contribute!',
+
+    // Optional options for generating "Edit this page" link
+
+    // if your docs are in a different repo from your main project:
+    docsRepo: 'santigarcor/laratrust',
+    // if your docs are not at the root of the repo:
+    docsDir: 'docs',
+    // if your docs are in a specific branch (defaults to 'master'):
+    docsBranch: 'master',
+    // defaults to false, set to true to enable
+    editLinks: true,
+    // custom text for edit link. Defaults to "Edit this page"
+    editLinkText: 'Help us improve this page!',
+    sidebar: {
+      '/docs/5.0/': getDocsNavBar(),
+      '/docs/5.1/': getDocsNavBar(),
+      '/docs/5.2/': getDocsNavBar(),
+      '/api/5.1/': [''],
+    },
+    nav: [
+      { text: 'Docs', link: getActiveVersion().link },
+      { text: 'Version', items: getVersionsLinks() },
+      { text: 'Api', items: getVersionsLinks('api').filter(item => item.text != '5.0') },
+    ]
+  }
+}
+
+function getVersionsLinks(preLink = 'docs') {
+  let links = [
+      { text: '5.2', link: `/${preLink}/5.2/` },
+      { text: '5.1', link: `/${preLink}/5.1/` },
+      { text: '5.0', link: `/${preLink}/5.0/` },
+    ].sort((a, b) => a.text < b.text);
+
+  if (preLink == 'docs') {
+    links.push({ text: '<5.0', link: 'https://laratrust.readthedocs.io/' });
+  }
+
+  return links;
+}
+
+function getActiveVersion() {
+  return getVersionsLinks().find(item => item.text == activeVersion);
+}
+
+function getDocsNavBar() {
+  return [
+    'upgrade',
+    '',
+    'installation',
+    {
+      title: 'Configuration',
+      children: [
+        'configuration/after-installation',
+        'configuration/migrations',
+        'configuration/teams',
+        ['configuration/models/role', 'Model - Role'],
+        ['configuration/models/permission', 'Model - Permission'],
+        ['configuration/models/team', 'Model - Team'],
+        ['configuration/models/user', 'Model - User'],
+        'configuration/seeder',
+      ]
+    },
+    {
+      title: 'Usage',
+      children: [
+        'usage/concepts',
+        'usage/events',
+        'usage/middleware',
+        'usage/soft-deleting',
+        'usage/blade-templates',
+      ]
+    },
+    'troubleshooting',
+    'license',
+    'contributing',
+  ];
+}

@@ -1,8 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Config;
-use Laratrust\Middleware\LaratrustAbility;
+namespace Laratrust\Tests\Middleware;
+
 use Mockery as m;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
+use Laratrust\Middleware\LaratrustAbility;
 
 class MiddlewareLaratrustAbilityTest extends MiddlewareTest
 {
@@ -13,31 +16,24 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         | Set
         |------------------------------------------------------------
         */
-        $guard = m::mock('Illuminate\Contracts\Auth\Guard[guest]');
-        $request = $this->mockRequest();
-
-        $middleware = new LaratrustAbility($guard);
+        $middleware = new LaratrustAbility($this->guard);
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $guard->shouldReceive('guest')->andReturn(true);
-        Config::shouldReceive('get')
-            ->with('laratrust.middleware.handling', 'abort')
-            ->andReturn('abort');
-        Config::shouldReceive('get')
-            ->with('laratrust.middleware.params', '403')
-            ->andReturn('403');
+        Auth::shouldReceive('guard')->with('web')->andReturn($this->guard);
+        $this->guard->shouldReceive('guest')->andReturn(true);
+        App::shouldReceive('abort')->with(403)->andReturn(403);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users');
-        $this->assertAbortCode(403);
+        $this->assertEquals(403, $middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users'));
     }
 
     public function testHandle_IsLoggedInWithNoAbility_ShouldAbort403()
@@ -48,8 +44,7 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         |------------------------------------------------------------
         */
         $guard = m::mock('Illuminate\Contracts\Auth\Guard');
-        $request = $this->mockRequest();
-
+        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
         $middleware = new LaratrustAbility($guard);
 
         /*
@@ -57,8 +52,10 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         | Expectation
         |------------------------------------------------------------
         */
-        $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('ability')
+        Auth::shouldReceive('guard')->with(m::anyOf('web', 'api'))->andReturn($this->guard);
+        $this->guard->shouldReceive('guest')->andReturn(false);
+        $this->guard->shouldReceive('user')->andReturn($user);
+        $user->shouldReceive('ability')
             ->with(
                 ['admin', 'user'],
                 ['edit-users', 'update-users'],
@@ -66,24 +63,31 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
                 m::anyOf(['validate_all' => true], ['validate_all' => false])
             )
             ->andReturn(false);
-        Config::shouldReceive('get')->with('laratrust.middleware.handling', 'abort')
-            ->andReturn('abort');
-        Config::shouldReceive('get')->with('laratrust.middleware.params', '403')
-            ->andReturn('403');
+        App::shouldReceive('abort')->with(403)->andReturn(403);
+
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users');
-        $this->assertAbortCode(403);
+        $this->assertEquals(403, $middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users'));
 
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'require_all');
-        $this->assertAbortCode(403);
+        $this->assertEquals(403, $middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'guard:api'));
 
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all');
-        $this->assertAbortCode(403);
+        $this->assertEquals(403, $middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'require_all'));
+
+        $this->assertEquals(403, $middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'require_all|guard:api'));
+
+        $this->assertEquals(403, $middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all'));
+
+        $this->assertEquals(403, $middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'TeamA', 'guard:api|require_all'));
     }
 
     public function testHandle_IsLoggedInWithAbility_ShouldNotAbort()
@@ -93,18 +97,18 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         | Set
         |------------------------------------------------------------
         */
-        $guard = m::mock('Illuminate\Contracts\Auth\Guard');
-        $request = $this->mockRequest();
-
-        $middleware = new LaratrustAbility($guard);
+        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
+        $middleware = new LaratrustAbility($this->guard);
 
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $guard->shouldReceive('guest')->andReturn(false);
-        $request->user()->shouldReceive('ability')
+        Auth::shouldReceive('guard')->with(m::anyOf('web', 'api'))->andReturn($this->guard);
+        $this->guard->shouldReceive('guest')->andReturn(false);
+        $this->guard->shouldReceive('user')->andReturn($user);
+        $user->shouldReceive('ability')
             ->with(
                 ['admin', 'user'],
                 ['edit-users', 'update-users'],
@@ -118,26 +122,22 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertDidNotAbort();
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users');
-        $this->assertDidNotAbort();
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users'));
 
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'require_all');
-        $this->assertDidNotAbort();
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'guard:api'));
 
-        $middleware->handle($request, function () {}, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all');
-        $this->assertDidNotAbort();
-    }
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'require_all'));
 
-    protected function mockRequest()
-    {
-        $user = m::mock('_mockedUser')->makePartial();
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'guard:api|require_all'));
 
-        $request = m::mock('Illuminate\Http\Request')
-            ->shouldReceive('user')
-            ->andReturn($user)
-            ->getMock();
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all'));
 
-        return $request;
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all|guard:api'));
     }
 }

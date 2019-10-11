@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<url>
+  <loc>https://laratrust.santigarcor.me/</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>1.00</priority>
+</url>
+
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/api/5.2/</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/troubleshooting.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/upgrade.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/installation.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/license.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/contributing.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/usage/blade-templates.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/usage/middleware.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/configuration/after-installation.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/usage/concepts.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/usage/events.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/usage/soft-deleting.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/configuration/migrations.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/configuration/teams.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/configuration/models/role.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/configuration/models/permission.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/configuration/models/team.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/configuration/models/user.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.2/configuration/seeder.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/api/5.1/</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/troubleshooting.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/upgrade.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/installation.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/license.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/contributing.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/usage/blade-templates.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/usage/middleware.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/configuration/after-installation.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/usage/concepts.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/usage/events.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/usage/soft-deleting.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/configuration/migrations.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/configuration/teams.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/configuration/models/role.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/configuration/models/permission.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/configuration/models/team.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/configuration/models/user.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.1/configuration/seeder.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/upgrade.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/installation.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/troubleshooting.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/license.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/contributing.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/usage/concepts.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/usage/middleware.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/configuration/after-installation.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.90</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/usage/blade-templates.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/usage/events.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/usage/soft-deleting.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/configuration/teams.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/configuration/seeder.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/configuration/migrations.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/configuration/models/role.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/configuration/models/permission.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/configuration/models/team.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/5.0/configuration/models/user.html</loc>
+  <lastmod>2019-01-31T01:04:08+00:00</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.41</priority>
+</url>
+
+</urlset>

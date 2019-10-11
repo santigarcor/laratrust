@@ -1,9 +1,9 @@
 language: php
 
 php:
-  - 5.5.9
-  - 5.6
-  - 7.0
+  - 7.1
+  - 7.2
+  - 7.3
 
 env:
   global:
@@ -11,11 +11,6 @@ env:
 
 matrix:
   fast_finish: true
-  include:
-    - php: 5.5.9
-      env: setup=lowest
-    - php: 5.6
-      env: setup=stable
 
 sudo: false
 
