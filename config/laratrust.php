@@ -233,10 +233,11 @@ return [
          */
         'handlers' => [
             /**
-             * Aborts the execution with a 403 code.
+             * Aborts the execution with a 403 code and allows you to provide the response text
              */
             'abort' => [
-                'code' => 403
+                'code' => 403,
+                'message' => 'User does not have any of the necessary access rights.'
             ],
             /**
              * Redirects the user to the given url.
