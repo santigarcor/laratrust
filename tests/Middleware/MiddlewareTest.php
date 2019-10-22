@@ -9,6 +9,7 @@ abstract class MiddlewareTest extends LaratrustTestCase
 {
     protected $request;
     protected $guard;
+    const ABORT_MESSAGE = 'User does not have any of the necessary access rights.';
 
     protected function setUp(): void
     {

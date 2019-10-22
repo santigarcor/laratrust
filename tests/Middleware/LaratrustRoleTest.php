@@ -27,7 +27,9 @@ class LaratrustRoleTest extends MiddlewareTest
         */
         Auth::shouldReceive('guard')->with('web')->andReturn($this->guard);
         $this->guard->shouldReceive('guest')->andReturn(true);
-        App::shouldReceive('abort')->with(403)->andReturn(403);
+        App::shouldReceive('abort')
+            ->with(403, self::ABORT_MESSAGE)
+            ->andReturn(403);
 
         /*
         |------------------------------------------------------------
@@ -63,7 +65,9 @@ class LaratrustRoleTest extends MiddlewareTest
                 m::anyOf(true, false)
             )
             ->andReturn(false);
-        App::shouldReceive('abort')->with(403)->andReturn(403);
+        App::shouldReceive('abort')
+            ->with(403, self::ABORT_MESSAGE)
+            ->andReturn(403);
 
         /*
         |------------------------------------------------------------
