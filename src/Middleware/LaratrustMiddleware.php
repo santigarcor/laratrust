@@ -46,7 +46,8 @@ class LaratrustMiddleware
         $handler = Config::get("laratrust.middleware.handlers.{$handling}");
 
         if ($handling == 'abort') {
-            return App::abort($handler['code']);
+            $defaultMessage = 'User does not have any of the necessary access rights.';
+            return App::abort($handler['code'], $handler['message'] ?? $defaultMessage);
         }
 
         $redirect = Redirect::to($handler['url']);

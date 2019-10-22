@@ -25,7 +25,9 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         */
         Auth::shouldReceive('guard')->with('web')->andReturn($this->guard);
         $this->guard->shouldReceive('guest')->andReturn(true);
-        App::shouldReceive('abort')->with(403)->andReturn(403);
+        App::shouldReceive('abort')
+            ->with(403, self::ABORT_MESSAGE)
+            ->andReturn(403);
 
         /*
         |------------------------------------------------------------
@@ -63,8 +65,9 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
                 m::anyOf(['validate_all' => true], ['validate_all' => false])
             )
             ->andReturn(false);
-        App::shouldReceive('abort')->with(403)->andReturn(403);
-
+        App::shouldReceive('abort')
+            ->with(403, self::ABORT_MESSAGE)
+            ->andReturn(403);
 
         /*
         |------------------------------------------------------------
