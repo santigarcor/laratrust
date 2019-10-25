@@ -23,6 +23,42 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $this->app['config']->set('laratrust.use_teams', true);
     }
 
+    protected function getRolesAssertions()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $team = Team::create(['name' => 'team_a']);
+        $roles = [
+            Role::create(['name' => 'role_a'])->id => ['team_id' => null],
+            Role::create(['name' => 'role_b'])->id => ['team_id' => null],
+            Role::create(['name' => 'role_c'])->id => ['team_id' => $team->id ]
+        ];
+        $this->app['config']->set('laratrust.use_teams', true);
+        $this->user->roles()->attach($roles);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->app['config']->set('laratrust.teams_strict_check', true);
+        $this->assertEquals(['role_a', 'role_b'], $this->user->getRoles());
+        $this->app['config']->set('laratrust.teams_strict_check', false);
+        $this->assertEquals(['role_a', 'role_b', 'role_c'], $this->user->getRoles());
+
+        $this->app['config']->set('laratrust.teams_strict_check', true);
+        $this->assertEquals(['role_c'], $this->user->getRoles('team_a'));
+        $this->app['config']->set('laratrust.teams_strict_check', false);
+        $this->assertEquals(['role_c'], $this->user->getRoles('team_a'));
+
+        $this->app['config']->set('laratrust.cache.enabled', false);
+        $this->assertEquals(['role_a', 'role_b', 'role_c'], $this->user->getRoles());
+        $this->assertEquals(['role_c'], $this->user->getRoles('team_a'));
+    }
+
     protected function hasRoleAssertions()
     {
         /*
