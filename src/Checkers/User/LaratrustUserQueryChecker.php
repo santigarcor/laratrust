@@ -10,6 +10,35 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
     /**
      * Checks if the user has a role by its name.
      *
+     * @param  string|bool   $team      Team name.
+     * @return array
+     */
+    public function getCurrentUserRoles($team = null)
+    {
+        if (config('laratrust.use_teams') === false || config('laratrust.teams_strict_check') === false) {
+            return $this->user->roles->pluck('name')->toArray();
+        }
+
+        if ($team !== null) {
+            $team = Helper::fetchTeam($team);
+
+            return $this->user
+                ->roles()
+                ->where(config('laratrust.foreign_keys.team'), $team->id)
+                ->pluck('name')
+                ->toArray();
+        }
+
+        return $this->user
+            ->roles()
+            ->where(config('laratrust.foreign_keys.team'), null)
+            ->pluck('name')
+            ->toArray();
+    }
+
+    /**
+     * Checks if the user has a role by its name.
+     *
      * @param  string|array  $name       Role name or array of role names.
      * @param  string|bool   $team      Team name or requiredAll roles.
      * @param  bool          $requireAll All roles in the array are required.
