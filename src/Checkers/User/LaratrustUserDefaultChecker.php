@@ -19,21 +19,25 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
     {
         $roles = collect($this->userCachedRoles());
 
-        if (config('laratrust.use_teams') === false || config('laratrust.teams_strict_check') === false) {
+        if (config('laratrust.use_teams') === false) {
             return $roles->pluck('name')->toArray();
         }
 
-        if ($team !== null) {
-            $team = Helper::fetchTeam($team);
-
-            return $roles->filter(function ($role) use ($team) {
-                return $role[config('laratrust.foreign_keys.team')] === $team->id;
-            });
+        if ($team === null && config('laratrust.teams_strict_check') === false) {
+            return $roles->pluck('name')->toArray();
         }
 
-        return $roles->filter(function ($role) use ($team) {
-            return $role[config('laratrust.foreign_keys.team')] === null;
-        });
+        if ($team === null) {
+            return $roles->filter(function ($role) {
+                return $role['pivot'][config('laratrust.foreign_keys.team')] === null;
+            })->pluck('name')->toArray();
+        }
+
+        $teamId = Helper::fetchTeam($team);
+
+        return $roles->filter(function ($role) use ($teamId) {
+            return $role['pivot'][config('laratrust.foreign_keys.team')] == $teamId;
+        })->pluck('name')->toArray();
     }
 
     /**

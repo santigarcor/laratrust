@@ -15,23 +15,27 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
      */
     public function getCurrentUserRoles($team = null)
     {
-        if (config('laratrust.use_teams') === false || config('laratrust.teams_strict_check') === false) {
+        if (config('laratrust.use_teams') === false) {
             return $this->user->roles->pluck('name')->toArray();
         }
 
-        if ($team !== null) {
-            $team = Helper::fetchTeam($team);
+        if ($team === null && config('laratrust.teams_strict_check') === false) {
+            return $this->user->roles->pluck('name')->toArray();
+        }
 
+        if ($team === null) {
             return $this->user
                 ->roles()
-                ->where(config('laratrust.foreign_keys.team'), $team->id)
+                ->wherePivot(config('laratrust.foreign_keys.team'), null)
                 ->pluck('name')
                 ->toArray();
         }
 
+        $teamId = Helper::fetchTeam($team);
+
         return $this->user
             ->roles()
-            ->where(config('laratrust.foreign_keys.team'), null)
+            ->wherePivot(config('laratrust.foreign_keys.team'), $teamId)
             ->pluck('name')
             ->toArray();
     }
