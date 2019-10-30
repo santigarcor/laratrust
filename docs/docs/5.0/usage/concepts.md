@@ -324,6 +324,18 @@ dump($user->allPermissions());
 */
 ```
 
+If you want to retrieve all the user roles, you can use the `getRoles` method. It returns an array with the names of the roles. If you enabled the Laratrust cache, then those roles will be retrieved from the cache instead of running database queries.
+
+```php
+dump($user->getRoles());
+/*
+    array:3 [
+        0 => "User Administrator"
+        1 => "Project Owner"
+    ]
+*/
+```
+
 If you want to retrieve the users that have some role you can use the query scope `whereRoleIs`:
 
 ```php
@@ -576,4 +588,21 @@ $options = [
 $post = Post::find(1);
 $user->canAndOwns(['edit-post', 'delete-post'], $post, $options);
 $user->hasRoleAndOwns(['admin', 'writer'], $post, $options);
+```
+
+### Retrieving Relationships
+
+To get the roles is the same, but this time you can pass the team parameter. The returned roles are determined by changing `teams_strict_check` value inside the `config/laratrust.php` file.
+
+- If `teams_strict_check` is set to `false`:
+    When `getRoles` method is call without a team, it will return both the user roles where team id is null and not null.
+
+- If `teams_strict_check` is set to `true`:
+    When `getRoles` method is call without a team, it will return if the user roles where the team id is null.
+
+Get roles:
+
+```php
+    $user->getRoles();
+    $user->getRoles('my-awesome-team');
 ```
