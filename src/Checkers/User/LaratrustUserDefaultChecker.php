@@ -140,8 +140,8 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
 
     public function currentUserFlushCache()
     {
-        Cache::forget('laratrust_roles_for_user_' . $this->user->getKey());
-        Cache::forget('laratrust_permissions_for_user_' . $this->user->getKey());
+        Cache::forget('laratrust_roles_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey());
+        Cache::forget('laratrust_permissions_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey());
     }
 
     /**
@@ -154,7 +154,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
      */
     protected function userCachedRoles()
     {
-        $cacheKey = 'laratrust_roles_for_user_' . $this->user->getKey();
+        $cacheKey = 'laratrust_roles_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey();
 
         if (!Config::get('laratrust.cache.enabled')) {
             return $this->user->roles()->get();
@@ -174,7 +174,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
      */
     public function userCachedPermissions()
     {
-        $cacheKey = 'laratrust_permissions_for_user_' . $this->user->getKey();
+        $cacheKey = 'laratrust_permissions_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey();
 
         if (!Config::get('laratrust.cache.enabled')) {
             return $this->user->permissions()->get();
@@ -183,5 +183,23 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
         return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
             return $this->user->permissions()->get()->toArray();
         });
+    }
+
+    /**
+     * Tries return key name for user_models
+     *
+     * @return string default key user
+     */
+    public function userModelCacheKey()
+    {
+        if (!Config::get('laratrust.use_morph_map')) {
+            return 'user';
+        }
+
+        foreach (Config::get('laratrust.user_models') as $key => $model) {
+            if ($this->user instanceof $model) {
+                return $key;
+            }
+        }
     }
 }
