@@ -128,6 +128,17 @@ trait LaratrustUserTrait
     }
 
     /**
+     * Get the the names of the user's roles.
+     *
+     * @param  string|bool   $team      Team name.
+     * @return bool
+     */
+    public function getRoles($team = null)
+    {
+        return $this->laratrustUserChecker()->getCurrentUserRoles($team);
+    }
+
+    /**
      * Checks if the user has a role by its name.
      *
      * @param  string|array  $name       Role name or array of role names.
