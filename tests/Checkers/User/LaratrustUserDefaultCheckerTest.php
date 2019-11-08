@@ -13,6 +13,11 @@ class LaratrustUserDefaultCheckerTest extends LaratrustUserCheckerTestCase
         $this->app['config']->set('laratrust.checker', 'default');
     }
 
+    public function testGetRoles()
+    {
+        $this->getRolesAssertions();
+    }
+
     public function testHasRole()
     {
         $this->hasRoleAssertions();

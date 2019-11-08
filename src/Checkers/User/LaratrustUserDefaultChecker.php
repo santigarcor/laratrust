@@ -12,6 +12,37 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
     /**
      * Checks if the user has a role by its name.
      *
+     * @param  string|bool   $team      Team name.
+     * @return array
+     */
+    public function getCurrentUserRoles($team = null)
+    {
+        $roles = collect($this->userCachedRoles());
+
+        if (config('laratrust.use_teams') === false) {
+            return $roles->pluck('name')->toArray();
+        }
+
+        if ($team === null && config('laratrust.teams_strict_check') === false) {
+            return $roles->pluck('name')->toArray();
+        }
+
+        if ($team === null) {
+            return $roles->filter(function ($role) {
+                return $role['pivot'][config('laratrust.foreign_keys.team')] === null;
+            })->pluck('name')->toArray();
+        }
+
+        $teamId = Helper::fetchTeam($team);
+
+        return $roles->filter(function ($role) use ($teamId) {
+            return $role['pivot'][config('laratrust.foreign_keys.team')] == $teamId;
+        })->pluck('name')->toArray();
+    }
+
+    /**
+     * Checks if the user has a role by its name.
+     *
      * @param  string|array  $name       Role name or array of role names.
      * @param  string|bool   $team      Team name or requiredAll roles.
      * @param  bool          $requireAll All roles in the array are required.
@@ -109,8 +140,8 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
 
     public function currentUserFlushCache()
     {
-        Cache::forget('laratrust_roles_for_user_' . $this->user->getKey());
-        Cache::forget('laratrust_permissions_for_user_' . $this->user->getKey());
+        Cache::forget('laratrust_roles_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey());
+        Cache::forget('laratrust_permissions_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey());
     }
 
     /**
@@ -123,7 +154,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
      */
     protected function userCachedRoles()
     {
-        $cacheKey = 'laratrust_roles_for_user_' . $this->user->getKey();
+        $cacheKey = 'laratrust_roles_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey();
 
         if (!Config::get('laratrust.cache.enabled')) {
             return $this->user->roles()->get();
@@ -143,7 +174,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
      */
     public function userCachedPermissions()
     {
-        $cacheKey = 'laratrust_permissions_for_user_' . $this->user->getKey();
+        $cacheKey = 'laratrust_permissions_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey();
 
         if (!Config::get('laratrust.cache.enabled')) {
             return $this->user->permissions()->get();
@@ -152,5 +183,23 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
         return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
             return $this->user->permissions()->get()->toArray();
         });
+    }
+
+    /**
+     * Tries return key name for user_models
+     *
+     * @return string default key user
+     */
+    public function userModelCacheKey()
+    {
+        if (!Config::get('laratrust.use_morph_map')) {
+            return 'user';
+        }
+
+        foreach (Config::get('laratrust.user_models') as $key => $model) {
+            if ($this->user instanceof $model) {
+                return $key;
+            }
+        }
     }
 }
