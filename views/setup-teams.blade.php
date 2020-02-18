@@ -64,5 +64,14 @@ class LaratrustSetupTeams extends Migration
      */
     public function down()
     {
+        Schema::table('{{ $laratrust['tables']['role_user'] }}', function (Blueprint $table) {
+            $table->dropForeign(['{{ $laratrust['foreign_keys']['team'] }}']);
+        });
+
+        Schema::table('{{ $laratrust['tables']['permission_user'] }}', function (Blueprint $table) {
+            $table->dropForeign(['{{ $laratrust['foreign_keys']['team'] }}']);
+        });
+
+        Schema::dropIfExists('{{ $laratrust['tables']['teams'] }}');
     }
 }
