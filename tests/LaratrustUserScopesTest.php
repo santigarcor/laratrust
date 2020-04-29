@@ -31,11 +31,12 @@ class LaratrustUserScopesTest extends LaratrustTestCase
         |------------------------------------------------------------
          */
         $roleA = Role::create(['name' => 'role_a']);
+        $roleB = Role::create(['name' => 'role_b']);
         $roleC = Role::create(['name' => 'role_c']);
         $roleD = Role::create(['name' => 'role_d']);
         $team = Team::create(['name' => 'team_a']);
 
-        $this->user->attachRole($roleA);
+        $this->user->attachRoles([$roleA, $roleB]);
         $this->user->attachRole($roleD, $team->id);
 
         /*
@@ -44,14 +45,18 @@ class LaratrustUserScopesTest extends LaratrustTestCase
         |------------------------------------------------------------
          */
         $this->assertCount(1, User::whereRoleIs('role_a')->get());
+        $this->assertCount(1, User::whereRoleIs(['role_a', 'role_c'])->get());
         $this->assertCount(0, User::whereRoleIs('role_c')->get());
+        $this->assertCount(0, User::whereRoleIs(['role_c', 'role_x'])->get());
 
         $this->assertCount(1, User::whereRoleIs('role_d', 'team_a')->get());
 
         $this->app['config']->set('laratrust.teams_strict_check', true);
         $this->assertCount(0, User::whereRoleIs('role_d')->get());
+        $this->assertCount(0, User::whereRoleIs(['role_d', 'role_c'])->get());
         $this->app['config']->set('laratrust.teams_strict_check', false);
         $this->assertCount(1, User::whereRoleIs('role_d')->get());
+        $this->assertCount(1, User::whereRoleIs(['role_d', 'role_c'])->get());
     }
 
     public function testScopeOrWhereRoleIs()

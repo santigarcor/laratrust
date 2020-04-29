@@ -318,6 +318,8 @@ class LaratrustUserTest extends LaratrustTestCase
         $this->assertEquals(2, $this->user->roles()->count());
         $this->assertInstanceOf('Laratrust\Tests\Models\User', $this->user->syncRoles($roles, 'team_a'));
         $this->assertEquals(4, $this->user->roles()->count());
+        $this->assertInstanceOf('Laratrust\Tests\Models\User', $this->user->syncRoles(['role_a']));
+        $this->assertEquals(3, $this->user->roles()->count());
 
         $this->app['config']->set('laratrust.use_teams', false);
         $this->user->syncRoles([]);

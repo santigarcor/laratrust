@@ -350,7 +350,7 @@ trait LaratrustUserTrait
 
         $relationshipToSync = $this->$relationship();
 
-        if ($useTeams && $team) {
+        if ($useTeams) {
             $relationshipToSync->wherePivot(Helper::teamForeignKey(), $team);
         }
 
