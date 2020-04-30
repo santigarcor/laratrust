@@ -75,4 +75,29 @@ trait LaratrustHasScopes
     {
         return $this->scopeWherePermissionIs($query, $permission, 'or');
     }
+
+    /**
+     * Filter by the users that don't have roles assigned.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWhereDoesntHaveRole($query)
+    {
+        return $query->doesntHave('roles');
+    }
+
+    /**
+     * Filter by the users that don't have permissions assigned.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWhereDoesntHavePermission($query)
+    {
+        return $query->where(function ($query) {
+            $query->doesntHave('permissions')
+                ->orDoesntHave('roles.permissions');
+        });
+    }
 }

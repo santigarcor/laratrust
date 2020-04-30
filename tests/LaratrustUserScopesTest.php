@@ -168,4 +168,51 @@ class LaratrustUserScopesTest extends LaratrustTestCase
                 ->get()
         );
     }
+
+    public function testScopeToRetrieveTheUsersThatDontHaveRoles()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $roleA = Role::create(['name' => 'role_a']);
+        $this->user->attachRoles([$roleA]);
+        $userWithoutRole = User::create(['name' => 'test2', 'email' => 'test2@test.com']);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+         */
+        $this->assertEquals($userWithoutRole->id, User::whereDoesntHaveRole()->first()->id);
+        $this->assertCount(1, User::whereDoesntHaveRole()->get());
+    }
+
+    public function testScopeToRetrieveTheUsersThatDontHavePermissions()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $roleA = Role::create(['name' => 'role_a']);
+        $roleB = Role::create(['name' => 'role_b']);
+        $permissionA = Permission::create(['name' => 'permission_a']);
+        $permissionB = Permission::create(['name' => 'permission_b']);
+
+        $roleA->attachPermissions([$permissionA]);
+        $this->user->attachPermissions([$permissionB]);
+        $this->user->attachRoles([$roleA]);
+        $userWithoutPerms = User::create(['name' => 'test2', 'email' => 'test2@test.com']);
+        $userWithoutPerms->attachRole($roleB);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+         */
+        $this->assertEquals($userWithoutPerms->id, User::whereDoesntHavePermission()->first()->id);
+        $this->assertCount(1, User::whereDoesntHavePermission()->get());
+    }
 }
