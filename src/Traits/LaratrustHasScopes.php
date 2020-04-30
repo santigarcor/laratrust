@@ -54,10 +54,12 @@ trait LaratrustHasScopes
         $method = $boolean == 'and' ? 'where' : 'orWhere';
 
         return $query->$method(function ($query) use ($permission) {
-            $query->whereHas('roles.permissions', function ($permissionQuery) use ($permission) {
-                $permissionQuery->where('name', $permission);
-            })->orWhereHas('permissions', function ($permissionQuery) use ($permission) {
-                $permissionQuery->where('name', $permission);
+            $method = is_array($permission) ? 'whereIn' : 'where';
+
+            $query->whereHas('roles.permissions', function ($permissionQuery) use ($method, $permission) {
+                $permissionQuery->$method('name', $permission);
+            })->orWhereHas('permissions', function ($permissionQuery) use ($method, $permission) {
+                $permissionQuery->$method('name', $permission);
             });
         });
     }

@@ -118,6 +118,7 @@ class LaratrustUserScopesTest extends LaratrustTestCase
          */
         $this->assertCount(1, User::wherePermissionIs('permission_a')->get());
         $this->assertCount(1, User::wherePermissionIs('permission_c')->get());
+        $this->assertCount(1, User::wherePermissionIs(['permission_c', 'permission_d'])->get());
         $this->assertCount(0, User::wherePermissionIs('permission_d')->get());
     }
 
