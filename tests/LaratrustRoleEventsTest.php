@@ -15,21 +15,21 @@ class LaratrustRoleEventsTest extends LaratrustEventsTestCase
         $this->role = Role::create(['name' => 'role']);
     }
 
-    public function testCanListenToThePermissionAttachedEvent()
+    public function testListenToThePermissionAttachedEvent()
     {
         $this->listenTo('permission.attached', Role::class);
 
         $this->assertHasListenersFor('permission.attached', Role::class);
     }
 
-    public function testCanListenToThePermissionDetachedEvent()
+    public function testListenToThePermissionDetachedEvent()
     {
         $this->listenTo('permission.detached', Role::class);
 
         $this->assertHasListenersFor('permission.detached', Role::class);
     }
 
-    public function testCanListenToThePermissionSyncedEvent()
+    public function testListenToThePermissionSyncedEvent()
     {
         $this->listenTo('permission.synced', Role::class);
 

@@ -16,7 +16,7 @@ class LaratrustRoleDefaultCheckerCacheTest extends LaratrustTestCase
         $this->migrate();
     }
 
-    public function testUserCanDisableTheRolesAndPermissionsCaching()
+    public function testUserDisableTheRolesAndPermissionsCaching()
     {
         /*
         |------------------------------------------------------------

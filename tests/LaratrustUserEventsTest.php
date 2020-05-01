@@ -17,42 +17,42 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
     }
 
-    public function testCanListenToTheRoleAttachedEvent()
+    public function testListenToTheRoleAttachedEvent()
     {
         $this->listenTo('role.attached', User::class);
 
         $this->assertHasListenersFor('role.attached', User::class);
     }
 
-    public function testCanListenToTheRoleDetachedEvent()
+    public function testListenToTheRoleDetachedEvent()
     {
         $this->listenTo('role.detached', User::class);
 
         $this->assertHasListenersFor('role.detached', User::class);
     }
 
-    public function testCanListenToThePermissionAttachedEvent()
+    public function testListenToThePermissionAttachedEvent()
     {
         $this->listenTo('permission.attached', User::class);
 
         $this->assertHasListenersFor('permission.attached', User::class);
     }
 
-    public function testCanListenToThePermissionDetachedEvent()
+    public function testListenToThePermissionDetachedEvent()
     {
         $this->listenTo('permission.detached', User::class);
 
         $this->assertHasListenersFor('permission.detached', User::class);
     }
 
-    public function testCanListenToTheRoleSyncedEvent()
+    public function testListenToTheRoleSyncedEvent()
     {
         $this->listenTo('role.synced', User::class);
 
         $this->assertHasListenersFor('role.synced', User::class);
     }
 
-    public function testCanListenToThePermissionSyncedEvent()
+    public function testListenToThePermissionSyncedEvent()
     {
         $this->listenTo('permission.synced', User::class);
 
@@ -139,7 +139,7 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
         $this->user->syncPermissions([]);
     }
 
-    public function testCanAddObservableClasses()
+    public function testAddObservableClasses()
     {
         $events = [
             'role.attached',

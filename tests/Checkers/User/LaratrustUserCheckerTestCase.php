@@ -208,7 +208,7 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $this->assertFalse($this->user->hasPermission(['site.*']));
     }
 
-    public function userCanDisableTheRolesAndPermissionsCachingAssertions()
+    public function userDisableTheRolesAndPermissionsCachingAssertions()
     {
         /*
         |------------------------------------------------------------

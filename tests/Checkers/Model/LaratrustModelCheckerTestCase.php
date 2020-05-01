@@ -20,8 +20,8 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         parent::setUp();
 
         $this->migrate();
-        $this->user  = User::create(['name' => 'test', 'email' => 'test@test.com']);
-        $this->other =  Other::create(['name' => 'test', 'email' => 'test@test.com']);
+        $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
+        $this->other = Other::create(['name' => 'test', 'email' => 'test@test.com']);
 
         $this->app['config']->set('laratrust.use_morph_map', true);
         $this->app['config']->set('laratrust.user_models', [
@@ -30,7 +30,7 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         ]);
     }
 
-    public function modelCanDisableTheRolesAndPermissionsCachingAssertions()
+    public function modelDisableTheRolesAndPermissionsCachingAssertions()
     {
         /*
         |------------------------------------------------------------
@@ -60,16 +60,16 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         $this->app['config']->set('laratrust.cache.enabled', true);
         $this->user->hasRole('some_role');
         $this->user->hasPermission('some_permission');
-        
+
         $this->other->hasRole('some_role');
         $this->other->hasPermission('some_permission');
-        
+
         $this->assertTrue(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
         $this->assertTrue(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
 
         $this->assertTrue(Cache::has("laratrust_roles_for_others_{$this->other->id}"));
         $this->assertTrue(Cache::has("laratrust_permissions_for_others_{$this->other->id}"));
-        
+
         $this->user->flushCache();
         $this->other->flushCache();
 
@@ -77,10 +77,10 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         $this->app['config']->set('laratrust.cache.enabled', false);
         $this->user->hasRole('some_role');
         $this->user->hasPermission('some_permission');
-        
+
         $this->other->hasRole('some_role');
         $this->other->hasPermission('some_permission');
-        
+
         $this->assertFalse(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
         $this->assertFalse(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
 

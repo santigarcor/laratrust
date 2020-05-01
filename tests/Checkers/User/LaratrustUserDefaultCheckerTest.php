@@ -2,8 +2,6 @@
 
 namespace Laratrust\Tests\Checkers\User;
 
-use Illuminate\Support\Facades\Config;
-
 class LaratrustUserDefaultCheckerTest extends LaratrustUserCheckerTestCase
 {
     protected function setUp(): void
@@ -33,8 +31,8 @@ class LaratrustUserDefaultCheckerTest extends LaratrustUserCheckerTestCase
         $this->hasPermissionWithPlaceholderSupportAssertions();
     }
 
-    public function testUserCanDisableTheRolesAndPermissionsCaching()
+    public function testUserDisableTheRolesAndPermissionsCaching()
     {
-        $this->userCanDisableTheRolesAndPermissionsCachingAssertions();
+        $this->userDisableTheRolesAndPermissionsCachingAssertions();
     }
 }
