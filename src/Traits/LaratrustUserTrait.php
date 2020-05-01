@@ -86,12 +86,12 @@ trait LaratrustUserTrait
         }
 
         return $this->morphToMany(
-                Config::get('laratrust.models.team'),
-                'user',
-                Config::get('laratrust.tables.role_user'),
-                Config::get('laratrust.foreign_keys.user'),
-                Config::get('laratrust.foreign_keys.team')
-            )
+            Config::get('laratrust.models.team'),
+            'user',
+            Config::get('laratrust.tables.role_user'),
+            Config::get('laratrust.foreign_keys.user'),
+            Config::get('laratrust.foreign_keys.team')
+        )
             ->withPivot(Config::get('laratrust.foreign_keys.role'));
     }
 
@@ -201,19 +201,6 @@ trait LaratrustUserTrait
     /**
      * Check if user has a permission by its name.
      *
-     * @param  string|array  $permission Permission string or array of permissions.
-     * @param  string|bool  $team      Team name or requiredAll roles.
-     * @param  bool  $requireAll All permissions in the array are required.
-     * @return bool
-     */
-    public function can($permission, $team = null, $requireAll = false)
-    {
-        return $this->hasPermission($permission, $team, $requireAll);
-    }
-
-    /**
-     * Check if user has a permission by its name.
-     *
      * @param  string|array  $permission  Permission string or array of permissions.
      * @param  string|bool  $team  Team name or requiredAll roles.
      * @param  bool  $requireAll  All permissions in the array are required.
@@ -306,9 +293,9 @@ trait LaratrustUserTrait
 
         if (Config::get('laratrust.use_teams')) {
             $relationshipQuery->wherePivot(
-                    Helper::teamForeignKey(),
-                    Helper::getIdFor($team, 'team')
-                );
+                Helper::teamForeignKey(),
+                Helper::getIdFor($team, 'team')
+            );
         }
 
         $object = Helper::getIdFor($object, $objectType);
@@ -578,7 +565,7 @@ trait LaratrustUserTrait
      * @param  array  $options
      * @return boolean
      */
-    public function canAndOwns($permission, $thing, $options = [])
+    public function isAbleToAndOwns($permission, $thing, $options = [])
     {
         $options = Helper::checkOrSet('requireAll', $options, [false, true]);
         $options = Helper::checkOrSet('foreignKeyName', $options, [null]);
@@ -616,15 +603,15 @@ trait LaratrustUserTrait
 
     /**
      * Handles the call to the magic methods with can,
-     * like $user->canEditSomething().
+     * like $user->isAbleToEditSomething().
      * @param  string  $method
      * @param  array  $parameters
      * @return boolean
      */
-    private function handleMagicCan($method, $parameters)
+    private function handleMagicIsAbleTo($method, $parameters)
     {
-        $case = str_replace('_case', '', Config::get('laratrust.magic_can_method_case'));
-        $method = preg_replace('/^can/', '', $method);
+        $case = str_replace('_case', '', Config::get('laratrust.magic_is_able_to_method_case'));
+        $method = preg_replace('/^isAbleTo/', '', $method);
 
         if ($case == 'kebab') {
             $permission = Str::snake($method, '-');
@@ -644,10 +631,10 @@ trait LaratrustUserTrait
      */
     public function __call($method, $parameters)
     {
-        if (!preg_match('/^can[A-Z].*/', $method)) {
+        if (!preg_match('/^isAbleTo[A-Z].*/', $method)) {
             return parent::__call($method, $parameters);
         }
 
-        return $this->handleMagicCan($method, $parameters);
+        return $this->handleMagicIsAbleTo($method, $parameters);
     }
 }

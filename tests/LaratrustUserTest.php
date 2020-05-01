@@ -2,12 +2,11 @@
 
 namespace Laratrust\Test;
 
-use Illuminate\Support\Str;
 use Mockery as m;
+use Illuminate\Support\Str;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
-use Illuminate\Support\Facades\Config;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\OwnableObject;
@@ -83,30 +82,6 @@ class LaratrustUserTest extends LaratrustTestCase
         );
     }
 
-    public function testCan()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $user->shouldReceive('hasPermission')->with('manage_user', null, false)->andReturn(true)->once();
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($user->can('manage_user'));
-    }
-
     public function testIsAbleTo()
     {
         /*
@@ -131,7 +106,7 @@ class LaratrustUserTest extends LaratrustTestCase
         $this->assertTrue($user->isAbleTo('manage_user'));
     }
 
-    public function testMagicCanPermissionMethod()
+    public function testMagicIsAbleToPermissionMethod()
     {
         /*
         |------------------------------------------------------------
@@ -150,13 +125,13 @@ class LaratrustUserTest extends LaratrustTestCase
         |------------------------------------------------------------
         */
         $this->app['config']->set('laratrust.magic_can_method_case', 'kebab_case');
-        $this->assertTrue($this->user->canManageUser());
+        $this->assertTrue($this->user->isAbleToManageUser());
 
         $this->app['config']->set('laratrust.magic_can_method_case', 'snake_case');
-        $this->assertTrue($this->user->canManageUser());
+        $this->assertTrue($this->user->isAbleToManageUser());
 
         $this->app['config']->set('laratrust.magic_can_method_case', 'camel_case');
-        $this->assertTrue($this->user->canManageUser());
+        $this->assertTrue($this->user->isAbleToManageUser());
     }
 
     public function testAttachRole()
@@ -653,7 +628,7 @@ class LaratrustUserTest extends LaratrustTestCase
         ]));
     }
 
-    public function testUserCanAndOwnsaPostModel()
+    public function testUserIsAbleToAndOwnsaPostModel()
     {
         /*
         |------------------------------------------------------------
@@ -681,12 +656,12 @@ class LaratrustUserTest extends LaratrustTestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertTrue($user->canAndOwns('edit-post', $post));
-        $this->assertFalse($user->canAndOwns('update-post', $post));
-        $this->assertFalse($user->canAndOwns('enhance-post', $post, [
+        $this->assertTrue($user->isAbleToAndOwns('edit-post', $post));
+        $this->assertFalse($user->isAbleToAndOwns('update-post', $post));
+        $this->assertFalse($user->isAbleToAndOwns('enhance-post', $post, [
             'requireAll' => true, 'foreignKeyName' => 'UserID'
         ]));
-        $this->assertFalse($user->canAndOwns('edit-team', $post, [
+        $this->assertFalse($user->isAbleToAndOwns('edit-team', $post, [
             'requireAll' => true,
             'foreignKeyName' => 'UserID',
             'team' => $team

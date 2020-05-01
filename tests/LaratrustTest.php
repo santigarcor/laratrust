@@ -38,7 +38,7 @@ class LaratrustTest extends LaratrustTestCase
         $this->assertFalse($this->laratrust->hasRole('AnyRole'));
     }
 
-    public function testCan()
+    public function testIsAbleTo()
     {
         /*
         |------------------------------------------------------------
@@ -55,9 +55,9 @@ class LaratrustTest extends LaratrustTestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertTrue($this->laratrust->can('user_can'));
-        $this->assertFalse($this->laratrust->can('user_cannot'));
-        $this->assertFalse($this->laratrust->can('any_permission'));
+        $this->assertTrue($this->laratrust->isAbleTo('user_can'));
+        $this->assertFalse($this->laratrust->isAbleTo('user_cannot'));
+        $this->assertFalse($this->laratrust->isAbleTo('any_permission'));
     }
 
     public function testAbility()
@@ -138,7 +138,7 @@ class LaratrustTest extends LaratrustTestCase
         $this->assertFalse($this->laratrust->hasRoleAndOwns('admin', $postModel));
     }
 
-    public function testUserCanAndOwnsaPostModel()
+    public function testUserIsAbleToAndOwnsaPostModel()
     {
         /*
         |------------------------------------------------------------
@@ -154,15 +154,15 @@ class LaratrustTest extends LaratrustTestCase
         */
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->once()->ordered();
         $this->laratrust->shouldReceive('user')->andReturn(false)->once()->ordered();
-        $this->user->shouldReceive('canAndOwns')->with('update-post', $postModel, [])->andReturn(true)->once();
+        $this->user->shouldReceive('isAbleToAndOwns')->with('update-post', $postModel, [])->andReturn(true)->once();
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertTrue($this->laratrust->canAndOwns('update-post', $postModel));
-        $this->assertFalse($this->laratrust->canAndOwns('update-post', $postModel));
+        $this->assertTrue($this->laratrust->isAbleToAndOwns('update-post', $postModel));
+        $this->assertFalse($this->laratrust->isAbleToAndOwns('update-post', $postModel));
     }
 
     public function testUser()

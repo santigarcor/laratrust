@@ -48,16 +48,6 @@ interface LaratrustUserInterface
     /**
      * Check if user has a permission by its name.
      *
-     * @param  string|array  $permission Permission string or array of permissions.
-     * @param  string|bool  $team      Team name or requiredAll roles.
-     * @param  bool  $requireAll All permissions in the array are required.
-     * @return bool
-     */
-    public function can($permission, $team = null, $requireAll = false);
-
-    /**
-     * Check if user has a permission by its name.
-     *
      * @param  string|array  $permission  Permission string or array of permissions.
      * @param  string|bool  $team  Team name or requiredAll roles.
      * @param  bool  $requireAll  All permissions in the array are required.
@@ -193,7 +183,7 @@ interface LaratrustUserInterface
      * @param  array  $options
      * @return boolean
      */
-    public function canAndOwns($permission, $thing, $options = []);
+    public function isAbleToAndOwns($permission, $thing, $options = []);
 
     /**
      * Return all the user permissions.

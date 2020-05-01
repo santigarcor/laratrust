@@ -257,12 +257,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Laratrust Magic 'can' Method
+    | Laratrust Magic 'isAbleTo' Method
     |--------------------------------------------------------------------------
     |
-    | Supported cases for the magic can method (Refer to the docs).
+    | Supported cases for the magic is able to method (Refer to the docs).
     | Available: camel_case|snake_case|kebab_case
     |
     */
-    'magic_can_method_case' => 'kebab_case',
+    'magic_is_able_to_method_case' => 'kebab_case',
 ];

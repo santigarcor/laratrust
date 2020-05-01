@@ -50,7 +50,7 @@ class Laratrust
      * @param  string  $permission Permission string.
      * @return bool
      */
-    public function can($permission, $team = null, $requireAll = false)
+    public function isAbleTo($permission, $team = null, $requireAll = false)
     {
         if ($user = $this->user()) {
             return $user->hasPermission($permission, $team, $requireAll);
@@ -117,10 +117,10 @@ class Laratrust
      * @param  array  $options
      * @return boolean
      */
-    public function canAndOwns($permission, $thing, $options = [])
+    public function isAbleToAndOwns($permission, $thing, $options = [])
     {
         if ($user = $this->user()) {
-            return $user->canAndOwns($permission, $thing, $options);
+            return $user->isAbleToAndOwns($permission, $thing, $options);
         }
 
         return false;
