@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratrust\Commands;
+namespace Laratrust\Console;
 
 /**
  * This file is part of Laratrust,
@@ -12,28 +12,28 @@ namespace Laratrust\Commands;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Console\GeneratorCommand;
 
-class MakePermissionCommand extends GeneratorCommand
+class MakeRoleCommand extends GeneratorCommand
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'laratrust:permission';
+    protected $name = 'laratrust:role';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Create Permission model if it does not exist';
+    protected $description = 'Create Role model if it does not exist';
 
     /**
      * The type of class being generated.
      *
      * @var string
      */
-    protected $type = 'Permission model';
+    protected $type = 'Role model';
 
     /**
      * Get the stub file for the generator.
@@ -42,7 +42,7 @@ class MakePermissionCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__.'/../../stubs/permission.stub';
+        return __DIR__. '/../../stubs/role.stub';
     }
 
     /**
@@ -52,7 +52,7 @@ class MakePermissionCommand extends GeneratorCommand
      */
     protected function getNameInput()
     {
-        return Config::get('laratrust.models.permission', 'Permission');
+        return Config::get('laratrust.models.role', 'Role');
     }
 
     /**

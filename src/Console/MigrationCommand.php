@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratrust\Commands;
+namespace Laratrust\Console;
 
 /**
  * This file is part of Laratrust,
@@ -10,30 +10,31 @@ namespace Laratrust\Commands;
  * @package Laratrust
  */
 use Illuminate\Console\Command;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 
-class SetupTeamsCommand extends Command
+class MigrationCommand extends Command
 {
     /**
      * The console command name.
      *
      * @var string
      */
-    protected $name = 'laratrust:setup-teams';
+    protected $name = 'laratrust:migration';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Setup the teams feature in case it is not used';
+    protected $description = 'Creates a migration following the Laratrust specifications.';
 
     /**
      * Suffix of the migration name.
      *
      * @var string
      */
-    protected $migrationSuffix = 'laratrust_setup_teams';
+    protected $migrationSuffix = 'laratrust_setup_tables';
 
     /**
      * Execute the console command.
@@ -42,28 +43,29 @@ class SetupTeamsCommand extends Command
      */
     public function handle()
     {
-        if (!Config::get('laratrust.use_teams')) {
-            $this->error('Not using teams in your Laratrust configuration file.');
-            $this->warn('Please enable the teams usage in your configuration.');
-            return;
-        }
-
-        $this->laravel->view->addNamespace('laratrust', __DIR__ . '/../../views');
-
+        $this->laravel->view->addNamespace('laratrust', __DIR__.'/../../views');
         $this->line('');
-        $this->info("The Laratrust teams feature setup is going to add a migration and a model");
+        $this->info("Laratrust Migration Creation.");
+        if (Config::get('laratrust.use_teams')) {
+            $this->comment('You are using the teams feature.');
+        }
+        $this->line('');
+        $this->comment($this->generateMigrationMessage());
 
         $existingMigrations = $this->alreadyExistingMigrations();
+        $defaultAnswer = true;
 
         if ($existingMigrations) {
             $this->line('');
 
             $this->warn($this->getExistingMigrationsWarning($existingMigrations));
+
+            $defaultAnswer = false;
         }
 
         $this->line('');
 
-        if (! $this->confirm("Proceed with the migration creation?", "yes")) {
+        if (! $this->confirm("Proceed with the migration creation?", $defaultAnswer)) {
             return;
         }
 
@@ -80,9 +82,6 @@ class SetupTeamsCommand extends Command
             );
         }
 
-        $this->line('Creating Team model');
-        $this->call('laratrust:team');
-
         $this->line('');
     }
 
@@ -95,9 +94,8 @@ class SetupTeamsCommand extends Command
     {
         $migrationPath = $this->getMigrationPath();
 
-        $this->call('view:clear');
         $output = $this->laravel->view
-            ->make('laratrust::setup-teams')
+            ->make('laratrust::migration')
             ->with(['laratrust' => Config::get('laratrust')])
             ->render();
 
@@ -111,18 +109,37 @@ class SetupTeamsCommand extends Command
     }
 
     /**
+     * Generate the message to display when running the
+     * console command showing what tables are going
+     * to be created.
+     *
+     * @return string
+     */
+    protected function generateMigrationMessage()
+    {
+        $tables = Collection::make(Config::get('laratrust.tables'))
+            ->reject(function ($value, $key) {
+                return $key == 'teams' && !Config::get('laratrust.use_teams');
+            })
+            ->sort();
+
+        return "A migration that creates {$tables->implode(', ')} "
+            . "tables will be created in database/migrations directory";
+    }
+
+    /**
      * Build a warning regarding possible duplication
      * due to already existing migrations.
      *
-     * @param  array $existingMigrations
+     * @param  array  $existingMigrations
      * @return string
      */
     protected function getExistingMigrationsWarning(array $existingMigrations)
     {
         if (count($existingMigrations) > 1) {
-            $base = "Laratrust setup teams migrations already exist.\nFollowing files were found: ";
+            $base = "Laratrust migrations already exist.\nFollowing files were found: ";
         } else {
-            $base = "Laratrust setup teams migration already exists.\nFollowing file was found: ";
+            $base = "Laratrust migration already exists.\nFollowing file was found: ";
         }
 
         return $base . array_reduce($existingMigrations, function ($carry, $fileName) {
@@ -151,7 +168,7 @@ class SetupTeamsCommand extends Command
      * The date parameter is optional for ability
      * to provide a custom value or a wildcard.
      *
-     * @param  string|null $date
+     * @param  string|null  $date
      * @return string
      */
     protected function getMigrationPath($date = null)
