@@ -43,7 +43,6 @@ class MigrationCommand extends Command
      */
     public function handle()
     {
-        $this->laravel->view->addNamespace('laratrust', __DIR__.'/../../views');
         $this->line('');
         $this->info("Laratrust Migration Creation.");
         if (Config::get('laratrust.use_teams')) {

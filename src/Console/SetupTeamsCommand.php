@@ -48,8 +48,6 @@ class SetupTeamsCommand extends Command
             return;
         }
 
-        $this->laravel->view->addNamespace('laratrust', __DIR__ . '/../../views');
-
         $this->line('');
         $this->info("The Laratrust teams feature setup is going to add a migration and a model");
 

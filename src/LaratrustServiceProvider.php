@@ -24,6 +24,7 @@ class LaratrustServiceProvider extends ServiceProvider
         $this->useMorphMapForRelationships();
         $this->registerMiddlewares();
         $this->registerBladeDirectives();
+        $this->registerResources();
     }
 
     /**
@@ -82,6 +83,19 @@ class LaratrustServiceProvider extends ServiceProvider
         }
 
         (new LaratrustRegistersBladeDirectives)->handle($this->app->version());
+    }
+
+    /**
+     * @return void
+     */
+    /**
+     * Register all the possible views used by Laratrust.
+     *
+     * @return void
+     */
+    protected function registerResources()
+    {
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'laratrust');
     }
 
     /**

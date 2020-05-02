@@ -36,8 +36,6 @@ class MakeSeederCommand extends Command
      */
     public function handle()
     {
-        $this->laravel->view->addNamespace('laratrust', __DIR__.'/../../views');
-
         if (file_exists($this->seederPath())) {
             $this->line('');
 

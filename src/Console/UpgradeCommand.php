@@ -44,7 +44,6 @@ class UpgradeCommand extends Command
     {
         $this->info("There is nothing to upgrade through the command.");
         return;
-        $this->laravel->view->addNamespace('laratrust', __DIR__ . '/../../views');
 
         $this->line('');
         $this->info("The Laratrust upgrade migration will be created in the database/migration directory");
