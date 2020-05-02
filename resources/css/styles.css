@@ -41,4 +41,16 @@
     @apply bg-red-700;
 }
 
+.alert-warning {
+    @apply bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4;
+}
+
+.alert-success {
+    @apply bg-green-100 border-l-4 border-green-500 text-green-700 p-4;
+}
+
+.alert-error {
+    @apply bg-red-100 border-l-4 border-red-500 text-red-700 p-4;
+}
+
 @tailwind utilities;

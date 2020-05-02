@@ -3,8 +3,10 @@
 namespace Laratrust\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Session;
 
 class RolesController
 {
@@ -45,6 +47,7 @@ class RolesController
         $role = $this->rolesModel::create($data);
         $role->syncPermissions($request->get('permissions') ?? []);
 
+        Session::flash('laratrust-success', 'Role created successfully');
         return redirect(route('laratrust.roles.index'));
     }
 
@@ -80,6 +83,23 @@ class RolesController
 
         $role->update($data);
         $role->syncPermissions($request->get('permissions') ?? []);
+
+        Session::flash('laratrust-success', 'Role updated successfully');
+        return redirect(route('laratrust.roles.index'));
+    }
+
+    public function destroy($id)
+    {
+        $usersAssignedToRole = DB::table(Config::get('laratrust.tables.role_user'))
+            ->where(Config::get('laratrust.foreign_keys.role'), $id)
+            ->count();
+
+        if ($usersAssignedToRole > 0) {
+            Session::flash('laratrust-warning', 'Role is attached to one or more users. It can not be deleted');
+        } else {
+            Session::flash('laratrust-success', 'Role deleted successfully');
+            $this->rolesModel::destroy($id);
+        }
 
         return redirect(route('laratrust.roles.index'));
     }

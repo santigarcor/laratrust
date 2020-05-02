@@ -37,8 +37,17 @@
               <td class="td text-sm leading-5 text-gray-900">
                 {{$role->permissions_count}}
               </td>
-              <td class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
+              <td class="flex justify-end px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
                 <a href="{{route('laratrust.roles.edit', $role->id)}}" class="text-blue-600 hover:text-blue-900">Edit</a>
+                <form
+                  action="{{route('laratrust.roles.destroy', $role->id)}}"
+                  method="POST"
+                  onsubmit="return confirm('Are you sure you want to delete the record?');"
+                >
+                  @method('DELETE')
+                  @csrf
+                  <button type="submit" class="text-red-600 hover:text-red-900 ml-4">Delete</button>
+                </form>
               </td>
             </tr>
             @endforeach

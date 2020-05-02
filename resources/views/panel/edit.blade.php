@@ -26,7 +26,6 @@
             placeholder="this-will-be-the-code-name"
             :value="name"
             readonly
-            required
             autocomplete="off"
           >
           @error('name')

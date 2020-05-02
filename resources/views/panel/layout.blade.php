@@ -79,6 +79,13 @@
   </header>
   <main>
     <div class="max-w-6xl mx-auto py-6 sm:px-6 lg:px-8">
+      @foreach (['error', 'warning', 'success'] as $msg)
+        @if(Session::has('laratrust-' . $msg))
+        <div class="alert-{{ $msg }}" role="alert">
+          <p>{{ Session::get('laratrust-' . $msg) }}</p>
+        </div>
+        @endif
+      @endforeach
       <div class="px-4 py-6 sm:px-0">
         @yield('content')
       </div>
