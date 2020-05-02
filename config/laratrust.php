@@ -265,4 +265,37 @@ return [
     |
     */
     'magic_is_able_to_method_case' => 'kebab_case',
+
+    'panel' => [
+        /*
+        |--------------------------------------------------------------------------
+        | Laratrust Panel Register
+        |--------------------------------------------------------------------------
+        |
+        | This manages if we should register all the routes in the laratrust admin panel.
+        | Turn this value to false if you don't want to use Laratrust admin panel
+        |
+        */
+        'register' => true,
+        /*
+        |--------------------------------------------------------------------------
+        | Laratrust Panel Path
+        |--------------------------------------------------------------------------
+        |
+        | This is the URI path where Laratrust panel for roles and permissions
+        | will be accesible from.
+        |
+        */
+        'path' => 'laratrust',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Laratrust Panel Route Middleware
+        |--------------------------------------------------------------------------
+        |
+        | These middleware will get attached onto each Laratrust panel route.
+        |
+        */
+        'middleware' => ['web'],
+    ]
 ];

@@ -2,6 +2,7 @@
 
 namespace Laratrust;
 
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -24,7 +25,9 @@ class LaratrustServiceProvider extends ServiceProvider
         $this->useMorphMapForRelationships();
         $this->registerMiddlewares();
         $this->registerBladeDirectives();
+        $this->registerRoutes();
         $this->registerResources();
+        $this->defineAssetPublishing();
     }
 
     /**
@@ -86,8 +89,25 @@ class LaratrustServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register the routes used by the Laratrust admin panel.
+     *
      * @return void
      */
+    protected function registerRoutes()
+    {
+        if (!$this->app['config']->get('laratrust.panel.register')) {
+            return;
+        }
+
+        Route::group([
+            'prefix' => config('laratrust.panel.path'),
+            'namespace' => 'Laratrust\Http\Controllers',
+            'middleware' => config('laratrust.panel.middleware', 'web'),
+        ], function () {
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
+    }
+
     /**
      * Register all the possible views used by Laratrust.
      *
@@ -96,6 +116,22 @@ class LaratrustServiceProvider extends ServiceProvider
     protected function registerResources()
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'laratrust');
+    }
+
+    /**
+     * Register the assets that are publishable for the admin panel to work.
+     *
+     * @return void
+     */
+    protected function defineAssetPublishing()
+    {
+        if (!$this->app['config']->get('laratrust.panel.register')) {
+            return;
+        }
+
+        $this->publishes([
+            __DIR__.'/../public' => public_path('vendor/laratrust'),
+        ], 'laratrust-assets');
     }
 
     /**
