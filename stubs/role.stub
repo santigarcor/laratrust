@@ -6,5 +6,5 @@ use Laratrust\Models\LaratrustRole;
 
 class DummyClass extends LaratrustRole
 {
-    //
+    public $guarded = [];
 }
