@@ -19,7 +19,12 @@
           <div class="hidden md:block">
             <div class="flex items-baseline">
               <a href="#" class="nav-button">← Go Back</a>
-              <a href="#" class="ml-4 {{ request()->is('*roles-assigment*') ? 'nav-button-active' : 'nav-button' }}">Roles & Permissions Assigment</a>
+              <a
+                href="{{ route('laratrust.roles-assignment.index') }}"
+                class="ml-4 {{ request()->is('*roles-assigment*') ? 'nav-button-active' : 'nav-button' }}"
+              >
+                Roles & Permissions Assignment
+              </a>
               <a
                 href="{{route('laratrust.roles.index')}}"
                 class="ml-4 {{ request()->is('*roles') ? 'nav-button-active' : 'nav-button' }}"

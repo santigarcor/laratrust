@@ -6,7 +6,7 @@
   <div>
   </div>
   <div class="flex flex-col">
-    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-48">
+    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-32">
       <form
         x-data="laratrustForm()"
         x-init="{!! $model ? '' : '$watch(\'displayName\', value => onChangeDisplayName(value))'!!}"
@@ -54,9 +54,10 @@
           >{{ $model->description ?? old('description') }}</textarea>
         </label>
         @if($type == 'role')
-          <div class="flex flex-wrap justify-start">
+          <span class="block text-gray-700">Permissions</span>
+          <div class="flex flex-wrap justify-start mb-4">
             @foreach ($permissions as $permission)
-              <label class="inline-flex items-center mr-8 my-2" style="flex: 1 0 21%;">
+              <label class="inline-flex items-center mr-6 my-2 text-sm" style="flex: 1 0 20%;">
                 <input
                   type="checkbox"
                   class="form-checkbox h-4 w-4"

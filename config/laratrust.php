@@ -266,6 +266,14 @@ return [
     */
     'magic_is_able_to_method_case' => 'kebab_case',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Laratrust Panel
+    |--------------------------------------------------------------------------
+    |
+    | Section to manage everything related with the admin panel for the roles and permissions.
+    |
+    */
     'panel' => [
         /*
         |--------------------------------------------------------------------------
@@ -297,5 +305,15 @@ return [
         |
         */
         'middleware' => ['web'],
+
+        /*
+        |--------------------------------------------------------------------------
+        | Enable permissions assignment
+        |--------------------------------------------------------------------------
+        |
+        | Enable/Disable the permissions assignment to the users.
+        |
+        */
+        'assign_permisions_to_user' => true,
     ]
 ];
