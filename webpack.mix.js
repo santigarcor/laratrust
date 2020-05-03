@@ -15,4 +15,5 @@ mix.setPublicPath('public')
   .postCss('resources/css/styles.css', 'public/laratrust.css', [
     require('tailwindcss'),
   ])
+  .version()
   .copy('docs/.vuepress/public/logo.png', 'public/img/logo.png');
