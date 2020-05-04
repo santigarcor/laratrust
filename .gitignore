@@ -17,6 +17,7 @@ Thumbs.db
 /.settings
 .env.*.php
 .env.php
+bump-version.sh
 
 # sublime phpintel plugin
 /.phpintel
