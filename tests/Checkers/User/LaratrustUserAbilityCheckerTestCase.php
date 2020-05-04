@@ -17,7 +17,7 @@ class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
         parent::setUp();
 
         $this->migrate();
-        $this->app['config']->set('laratrust.use_teams', true);
+        $this->app['config']->set('laratrust.teams.enabled', true);
 
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);

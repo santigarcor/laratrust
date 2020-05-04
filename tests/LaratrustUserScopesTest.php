@@ -19,7 +19,7 @@ class LaratrustUserScopesTest extends LaratrustTestCase
         $this->migrate();
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
 
-        $this->app['config']->set('laratrust.use_teams', true);
+        $this->app['config']->set('laratrust.teams.enabled', true);
     }
 
 
@@ -51,10 +51,10 @@ class LaratrustUserScopesTest extends LaratrustTestCase
 
         $this->assertCount(1, User::whereRoleIs('role_d', 'team_a')->get());
 
-        $this->app['config']->set('laratrust.teams_strict_check', true);
+        $this->app['config']->set('laratrust.teams.strict_check', true);
         $this->assertCount(0, User::whereRoleIs('role_d')->get());
         $this->assertCount(0, User::whereRoleIs(['role_d', 'role_c'])->get());
-        $this->app['config']->set('laratrust.teams_strict_check', false);
+        $this->app['config']->set('laratrust.teams.strict_check', false);
         $this->assertCount(1, User::whereRoleIs('role_d')->get());
         $this->assertCount(1, User::whereRoleIs(['role_d', 'role_c'])->get());
     }

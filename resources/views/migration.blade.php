@@ -30,7 +30,7 @@ class LaratrustSetupTables extends Migration
             $table->timestamps();
         });
 
-@if ($laratrust['use_teams'])
+@if ($laratrust['teams']['enabled'])
         // Create table for storing teams
         Schema::create('{{ $laratrust['tables']['teams'] }}', function (Blueprint $table) {
             $table->increments('id');
@@ -46,13 +46,13 @@ class LaratrustSetupTables extends Migration
             $table->unsignedInteger('{{ $laratrust['foreign_keys']['role'] }}');
             $table->unsignedInteger('{{ $laratrust['foreign_keys']['user'] }}');
             $table->string('user_type');
-@if ($laratrust['use_teams'])
+@if ($laratrust['teams']['enabled'])
             $table->unsignedInteger('{{ $laratrust['foreign_keys']['team'] }}')->nullable();
 @endif
 
             $table->foreign('{{ $laratrust['foreign_keys']['role'] }}')->references('id')->on('{{ $laratrust['tables']['roles'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
-@if ($laratrust['use_teams'])
+@if ($laratrust['teams']['enabled'])
             $table->foreign('{{ $laratrust['foreign_keys']['team'] }}')->references('id')->on('{{ $laratrust['tables']['teams'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
 
@@ -68,13 +68,13 @@ class LaratrustSetupTables extends Migration
             $table->unsignedInteger('{{ $laratrust['foreign_keys']['permission'] }}');
             $table->unsignedInteger('{{ $laratrust['foreign_keys']['user'] }}');
             $table->string('user_type');
-@if ($laratrust['use_teams'])
+@if ($laratrust['teams']['enabled'])
             $table->unsignedInteger('{{ $laratrust['foreign_keys']['team'] }}')->nullable();
 @endif
 
             $table->foreign('{{ $laratrust['foreign_keys']['permission'] }}')->references('id')->on('{{ $laratrust['tables']['permissions'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
-@if ($laratrust['use_teams'])
+@if ($laratrust['teams']['enabled'])
             $table->foreign('{{ $laratrust['foreign_keys']['team'] }}')->references('id')->on('{{ $laratrust['tables']['teams'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
 
@@ -111,7 +111,7 @@ class LaratrustSetupTables extends Migration
         Schema::dropIfExists('{{ $laratrust['tables']['permissions'] }}');
         Schema::dropIfExists('{{ $laratrust['tables']['role_user'] }}');
         Schema::dropIfExists('{{ $laratrust['tables']['roles'] }}');
-@if ($laratrust['use_teams'])
+@if ($laratrust['teams']['enabled'])
         Schema::dropIfExists('{{ $laratrust['tables']['teams'] }}');
 @endif
     }

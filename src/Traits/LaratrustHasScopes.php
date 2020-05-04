@@ -20,7 +20,7 @@ trait LaratrustHasScopes
         $method = $boolean == 'and' ? 'whereHas' : 'orWhereHas';
 
         return $query->$method('roles', function ($roleQuery) use ($role, $team) {
-            $teamsStrictCheck = Config::get('laratrust.teams_strict_check');
+            $teamsStrictCheck = Config::get('laratrust.teams.strict_check');
             $method = is_array($role) ? 'whereIn' : 'where';
 
             $roleQuery->$method('name', $role)

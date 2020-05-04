@@ -19,11 +19,11 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
     {
         $roles = collect($this->userCachedRoles());
 
-        if (config('laratrust.use_teams') === false) {
+        if (config('laratrust.teams.enabled') === false) {
             return $roles->pluck('name')->toArray();
         }
 
-        if ($team === null && config('laratrust.teams_strict_check') === false) {
+        if ($team === null && config('laratrust.teams.strict_check') === false) {
             return $roles->pluck('name')->toArray();
         }
 

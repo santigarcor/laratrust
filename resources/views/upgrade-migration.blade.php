@@ -12,7 +12,7 @@ class LaratrustUpgradeTables extends Migration
      */
     public function up()
     {
-@if ($laratrust['use_teams'])
+@if ($laratrust['teams']['enabled'])
         // Create table for storing teams
         Schema::create('{{ $laratrust['tables']['teams'] }}', function (Blueprint $table) {
             $table->increments('id');
@@ -49,7 +49,7 @@ class LaratrustUpgradeTables extends Migration
             $table->foreign('{{ $laratrust['foreign_keys']['permission'] }}')->references('id')->on('{{ $laratrust['tables']['permissions'] }}')
                 ->onUpdate('cascade')->onDelete('cascade');
 
-@if ($laratrust['use_teams'])
+@if ($laratrust['teams']['enabled'])
             // Add {{ $laratrust['foreign_keys']['team'] }} column
             $table->unsignedInteger('{{ $laratrust['foreign_keys']['team'] }}')->nullable();
 

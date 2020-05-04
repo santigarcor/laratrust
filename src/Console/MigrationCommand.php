@@ -45,7 +45,7 @@ class MigrationCommand extends Command
     {
         $this->line('');
         $this->info("Laratrust Migration Creation.");
-        if (Config::get('laratrust.use_teams')) {
+        if (Config::get('laratrust.teams.enabled')) {
             $this->comment('You are using the teams feature.');
         }
         $this->line('');
@@ -118,7 +118,7 @@ class MigrationCommand extends Command
     {
         $tables = Collection::make(Config::get('laratrust.tables'))
             ->reject(function ($value, $key) {
-                return $key == 'teams' && !Config::get('laratrust.use_teams');
+                return $key == 'teams' && !Config::get('laratrust.teams.enabled');
             })
             ->sort();
 

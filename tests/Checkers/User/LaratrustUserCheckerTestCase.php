@@ -20,7 +20,7 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $this->migrate();
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
 
-        $this->app['config']->set('laratrust.use_teams', true);
+        $this->app['config']->set('laratrust.teams.enabled', true);
     }
 
     protected function getRolesAssertions()
@@ -36,7 +36,7 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
             Role::create(['name' => 'role_b'])->id => ['team_id' => null],
             Role::create(['name' => 'role_c'])->id => ['team_id' => $team->id ]
         ];
-        $this->app['config']->set('laratrust.use_teams', true);
+        $this->app['config']->set('laratrust.teams.enabled', true);
         $this->user->roles()->attach($roles);
 
         /*
@@ -44,14 +44,14 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $this->app['config']->set('laratrust.teams_strict_check', true);
+        $this->app['config']->set('laratrust.teams.strict_check', true);
         $this->assertEquals(['role_a', 'role_b'], $this->user->getRoles());
-        $this->app['config']->set('laratrust.teams_strict_check', false);
+        $this->app['config']->set('laratrust.teams.strict_check', false);
         $this->assertEquals(['role_a', 'role_b', 'role_c'], $this->user->getRoles());
 
-        $this->app['config']->set('laratrust.teams_strict_check', true);
+        $this->app['config']->set('laratrust.teams.strict_check', true);
         $this->assertEquals(['role_c'], $this->user->getRoles('team_a'));
-        $this->app['config']->set('laratrust.teams_strict_check', false);
+        $this->app['config']->set('laratrust.teams.strict_check', false);
         $this->assertEquals(['role_c'], $this->user->getRoles('team_a'));
 
         $this->app['config']->set('laratrust.cache.enabled', false);
@@ -72,7 +72,7 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
             Role::create(['name' => 'role_b'])->id => ['team_id' => null],
             Role::create(['name' => 'role_c'])->id => ['team_id' => $team->id ]
         ];
-        $this->app['config']->set('laratrust.use_teams', true);
+        $this->app['config']->set('laratrust.teams.enabled', true);
         $this->user->roles()->attach($roles);
 
         /*
@@ -84,9 +84,9 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $this->assertTrue($this->user->hasRole('role_a'));
         $this->assertTrue($this->user->hasRole('role_b'));
         $this->assertTrue($this->user->hasRole('role_c'));
-        $this->app['config']->set('laratrust.teams_strict_check', true);
+        $this->app['config']->set('laratrust.teams.strict_check', true);
         $this->assertFalse($this->user->hasRole('role_c'));
-        $this->app['config']->set('laratrust.teams_strict_check', false);
+        $this->app['config']->set('laratrust.teams.strict_check', false);
         $this->assertTrue($this->user->hasRole('role_c', 'team_a'));
         $this->assertFalse($this->user->hasRole('role_a', 'team_a'));
 
@@ -98,7 +98,7 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $this->assertTrue($this->user->hasRole(['role_a', 'role_c'], true));
         $this->assertFalse($this->user->hasRole(['role_c', 'role_d'], true));
 
-        $this->app['config']->set('laratrust.use_teams', false);
+        $this->app['config']->set('laratrust.teams.enabled', false);
         $this->assertTrue($this->user->hasRole(['role_a', 'role_c'], 'team_a'));
         $this->assertFalse($this->user->hasRole(['role_c', 'role_d'], true));
 
@@ -141,9 +141,9 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $this->assertTrue($this->user->hasPermission('permission_a'));
         $this->assertTrue($this->user->hasPermission('permission_b', 'team_a'));
         $this->assertTrue($this->user->hasPermission('permission_b', $team));
-        $this->app['config']->set('laratrust.teams_strict_check', true);
+        $this->app['config']->set('laratrust.teams.strict_check', true);
         $this->assertFalse($this->user->hasPermission('permission_c'));
-        $this->app['config']->set('laratrust.teams_strict_check', false);
+        $this->app['config']->set('laratrust.teams.strict_check', false);
         $this->assertTrue($this->user->hasPermission('permission_c'));
         $this->assertTrue($this->user->hasPermission('permission_c', 'team_a'));
         $this->assertTrue($this->user->hasPermission('permission_c', $team));
@@ -159,7 +159,7 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b', 'permission_e'], true));
         $this->assertFalse($this->user->hasPermission(['permission_e', 'permission_f']));
 
-        $this->app['config']->set('laratrust.use_teams', false);
+        $this->app['config']->set('laratrust.teams.enabled', false);
         $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], 'team_a', true));
         $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], $team, true));
 

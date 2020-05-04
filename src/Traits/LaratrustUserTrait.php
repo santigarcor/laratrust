@@ -67,7 +67,7 @@ trait LaratrustUserTrait
             Config::get('laratrust.foreign_keys.role')
         );
 
-        if (Config::get('laratrust.use_teams')) {
+        if (Config::get('laratrust.teams.enabled')) {
             $roles->withPivot(Config::get('laratrust.foreign_keys.team'));
         }
 
@@ -81,7 +81,7 @@ trait LaratrustUserTrait
      */
     public function rolesTeams()
     {
-        if (!Config::get('laratrust.use_teams')) {
+        if (!Config::get('laratrust.teams.enabled')) {
             return null;
         }
 
@@ -110,7 +110,7 @@ trait LaratrustUserTrait
             Config::get('laratrust.foreign_keys.permission')
         );
 
-        if (Config::get('laratrust.use_teams')) {
+        if (Config::get('laratrust.teams.enabled')) {
             $permissions->withPivot(Config::get('laratrust.foreign_keys.team'));
         }
 
@@ -249,7 +249,7 @@ trait LaratrustUserTrait
         $objectType = Str::singular($relationship);
         $object = Helper::getIdFor($object, $objectType);
 
-        if (Config::get('laratrust.use_teams')) {
+        if (Config::get('laratrust.teams.enabled')) {
             $team = Helper::getIdFor($team, 'team');
 
             if (
@@ -291,7 +291,7 @@ trait LaratrustUserTrait
         $objectType = Str::singular($relationship);
         $relationshipQuery = $this->$relationship();
 
-        if (Config::get('laratrust.use_teams')) {
+        if (Config::get('laratrust.teams.enabled')) {
             $relationshipQuery->wherePivot(
                 Helper::teamForeignKey(),
                 Helper::getIdFor($team, 'team')
@@ -324,7 +324,7 @@ trait LaratrustUserTrait
 
         $objectType = Str::singular($relationship);
         $mappedObjects = [];
-        $useTeams = Config::get('laratrust.use_teams');
+        $useTeams = Config::get('laratrust.teams.enabled');
         $team = $useTeams ? Helper::getIdFor($team, 'team') : null;
 
         foreach ($objects as $object) {

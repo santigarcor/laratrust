@@ -15,11 +15,11 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
      */
     public function getCurrentUserRoles($team = null)
     {
-        if (config('laratrust.use_teams') === false) {
+        if (config('laratrust.teams.enabled') === false) {
             return $this->user->roles->pluck('name')->toArray();
         }
 
-        if ($team === null && config('laratrust.teams_strict_check') === false) {
+        if ($team === null && config('laratrust.teams.strict_check') === false) {
             return $this->user->roles->pluck('name')->toArray();
         }
 
@@ -57,8 +57,8 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
         $name = Helper::standardize($name);
         $rolesNames = is_array($name) ? $name : [$name];
         list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
-        $useTeams = Config::get('laratrust.use_teams');
-        $teamStrictCheck = Config::get('laratrust.teams_strict_check');
+        $useTeams = Config::get('laratrust.teams.enabled');
+        $teamStrictCheck = Config::get('laratrust.teams.strict_check');
 
         $rolesCount = $this->user->roles()
             ->whereIn('name', $rolesNames)
@@ -89,8 +89,8 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
         $permission = Helper::standardize($permission);
         $permissionsNames = is_array($permission) ? $permission : [$permission];
         list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
-        $useTeams = Config::get('laratrust.use_teams');
-        $teamStrictCheck = Config::get('laratrust.teams_strict_check');
+        $useTeams = Config::get('laratrust.teams.enabled');
+        $teamStrictCheck = Config::get('laratrust.teams.strict_check');
 
         list($permissionsWildcard, $permissionsNoWildcard) =
             Helper::getPermissionWithAndWithoutWildcards($permissionsNames);

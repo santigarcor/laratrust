@@ -14,7 +14,7 @@ class LaratrustEventsTestCase extends LaratrustTestCase
 
         $this->migrate();
         $this->dispatcher = m::mock('\Illuminate\Events\Dispatcher')->makePartial();
-        $this->app['config']->set('laratrust.use_teams', true);
+        $this->app['config']->set('laratrust.teams.enabled', true);
     }
 
     /**

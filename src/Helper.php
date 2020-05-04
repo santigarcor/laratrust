@@ -66,7 +66,7 @@ class Helper
      */
     public static function fetchTeam($team = null)
     {
-        if (is_null($team) || !Config::get('laratrust.use_teams')) {
+        if (is_null($team) || !Config::get('laratrust.teams.enabled')) {
             return null;
         }
 
@@ -112,8 +112,8 @@ class Helper
     public static function isInSameTeam($rolePermission, $team)
     {
         if (
-            !Config::get('laratrust.use_teams')
-            || (!Config::get('laratrust.teams_strict_check') && is_null($team))
+            !Config::get('laratrust.teams.enabled')
+            || (!Config::get('laratrust.teams.strict_check') && is_null($team))
         ) {
             return true;
         }
