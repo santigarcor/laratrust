@@ -12,14 +12,17 @@ tagline: Laravel role-based access control package
 [![Total Downloads](https://poser.pugx.org/santigarcor/laratrust/downloads)](https://packagist.org/packages/santigarcor/laratrust)
 [![StyleCI](https://styleci.io/repos/59691202/shield)](https://styleci.io/repos/59691202)
 [![License](https://poser.pugx.org/santigarcor/laratrust/license)](https://packagist.org/packages/santigarcor/laratrust)
-[![Gitter](https://badges.gitter.im/santigarcor/laratrust.svg)](https://gitter.im/santigarcor/laratrust?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![Donate](https://img.shields.io/badge/donate-Ko--fi-blue.svg)](https://ko-fi.com/V7V48I5Y)
 
-Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel (>=5.6)**.
+Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel**.
 
-For Laravel 5.2.32 - 5.6 please use the [5.1 branch](/docs/5.1/).
+## Version Compatibility
 
-For Laravel < 5.2.32 please use the [4.0 branch](https://github.com/santigarcor/laratrust/tree/4.0).
+ Laravel  | Laratrust
+:---------|:----------
+ 6.x - 7.x    | [6.x](/docs/6.x/)
+ 5.6.x - 5.8.x    | [5.2](/docs/5.2/)
+ 5.3.x - 5.5.x    | [5.1](/docs/5.1/)
+ 5.0.x - 5.2.x    | [4.0](https://github.com/santigarcor/laratrust/tree/4.0).
 
 ## What does Laratrust support?
 - Multiple user models.
@@ -31,4 +34,5 @@ For Laravel < 5.2.32 please use the [4.0 branch](https://github.com/santigarcor/
 - Multiple roles and permissions can be attached to users within teams.
 - Objects ownership verification.
 - Multiple guards for the middleware.
-- <docs-link to="/troubleshooting.html">Laravel gates and policies</docs-link>.
+- A simple administration panel for roles and permissions.
+- Laravel gates and policies.

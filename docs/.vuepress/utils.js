@@ -45,12 +45,12 @@ function getDocsNavBar(version) {
         {
           title: 'The basics',
           children: [
-            'configuration/migrations',
-            'configuration/teams',
-            ['configuration/models/role', 'Model - Role'],
-            ['configuration/models/permission', 'Model - Permission'],
-            ['configuration/models/team', 'Model - Team'],
-            ['configuration/models/user', 'Model - User'],
+            'the-basics/migrations',
+            'the-basics/teams',
+            ['the-basics/models/role', 'Model - Role'],
+            ['the-basics/models/permission', 'Model - Permission'],
+            ['the-basics/models/team', 'Model - Team'],
+            ['the-basics/models/user', 'Model - User'],
           ]
         },
         {

@@ -7,14 +7,15 @@
 [![Total Downloads](https://poser.pugx.org/santigarcor/laratrust/downloads)](https://packagist.org/packages/santigarcor/laratrust)
 [![StyleCI](https://styleci.io/repos/59691202/shield)](https://styleci.io/repos/59691202)
 [![License](https://poser.pugx.org/santigarcor/laratrust/license)](https://packagist.org/packages/santigarcor/laratrust)
-[![Gitter](https://badges.gitter.im/santigarcor/laratrust.svg)](https://gitter.im/santigarcor/laratrust?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![Donate](https://img.shields.io/badge/donate-Ko--fi-blue.svg)](https://ko-fi.com/V7V48I5Y)
 
-Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel (>=5.6)**.
+## Version Compatibility
 
-For Laravel 5.2.32 - 5.6 please use the [5.1 branch](https://laratrust.santigarcor.me/docs/5.1/).
-
-For Laravel < 5.2.32 please use the [4.0 branch](https://github.com/santigarcor/laratrust/tree/4.0).
+ Laravel  | Laratrust
+:---------|:----------
+ 6.x - 7.x    | [6.x](https://laratrust.santigarcor.me/docs/6.x/)
+ 5.6.x - 5.8.x    | [5.2](https://laratrust.santigarcor.me/docs/5.2/)
+ 5.3.x - 5.5.x    | [5.1](https://laratrust.santigarcor.me/docs/5.1/)
+ 5.0.x - 5.2.x    | [4.0](https://github.com/santigarcor/laratrust/tree/4.0).
 
 ## Installation, Configuration and Usage
 To install, configure and learn how to use Laratrust please go to the [Documentation](https://laratrust.santigarcor.me/).
@@ -30,7 +31,8 @@ To install, configure and learn how to use Laratrust please go to the [Documenta
 - Multiple roles and permissions can be attached to users within teams.
 - Objects ownership verification.
 - Multiple guards for the middleware.
-- [Laravel gates and policies](http://laratrust.santigarcor.me/docs/5.0/troubleshooting.html).
+- A simple administration panel for roles and permissions.
+- Laravel gates and policies.
 
 ## License
 
