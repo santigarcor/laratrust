@@ -1,6 +1,7 @@
 # Contributing
 
-Support follows ``PSR-1`` and ``PSR-4`` PHP coding standards, and semantic versioning. Additionally the source code follows the ``PSR-2`` code style and the builds check it.
+We use StyleCI so there is no problem with the styling in your pull requests.
 
-Please report any issue you find in the issues page.
+Please report any issue you find in the package or in the docs.
+
 Pull requests are welcome.
