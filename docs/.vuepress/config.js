@@ -1,4 +1,4 @@
-const activeVersion = '5.2';
+const { getDocsNavBar, getVersionsLinks, getActiveVersion } = require('./utils');
 
 module.exports = {
   title: 'Laratrust',
@@ -39,65 +39,14 @@ module.exports = {
     // custom text for edit link. Defaults to "Edit this page"
     editLinkText: 'Help us improve this page!',
     sidebar: {
-      '/docs/5.0/': getDocsNavBar(),
-      '/docs/5.1/': getDocsNavBar(),
-      '/docs/5.2/': getDocsNavBar(),
+      '/docs/5.0/': getDocsNavBar('5.0'),
+      '/docs/5.1/': getDocsNavBar('5.1'),
+      '/docs/5.2/': getDocsNavBar('5.2'),
+      '/docs/6.x/': getDocsNavBar('6.x'),
     },
     nav: [
       { text: 'Docs', link: getActiveVersion().link },
       { text: 'Version', items: getVersionsLinks() },
     ]
   }
-}
-
-function getVersionsLinks(preLink = 'docs') {
-  let links = [
-      { text: '5.2', link: `/${preLink}/5.2/` },
-      { text: '5.1', link: `/${preLink}/5.1/` },
-      { text: '5.0', link: `/${preLink}/5.0/` },
-    ].sort((a, b) => a.text < b.text);
-
-  if (preLink == 'docs') {
-    links.push({ text: '<5.0', link: 'https://laratrust.readthedocs.io/' });
-  }
-
-  return links;
-}
-
-function getActiveVersion() {
-  return getVersionsLinks().find(item => item.text == activeVersion);
-}
-
-function getDocsNavBar() {
-  return [
-    'upgrade',
-    '',
-    'installation',
-    {
-      title: 'Configuration',
-      children: [
-        'configuration/after-installation',
-        'configuration/migrations',
-        'configuration/teams',
-        ['configuration/models/role', 'Model - Role'],
-        ['configuration/models/permission', 'Model - Permission'],
-        ['configuration/models/team', 'Model - Team'],
-        ['configuration/models/user', 'Model - User'],
-        'configuration/seeder',
-      ]
-    },
-    {
-      title: 'Usage',
-      children: [
-        'usage/concepts',
-        'usage/events',
-        'usage/middleware',
-        'usage/soft-deleting',
-        'usage/blade-templates',
-      ]
-    },
-    'troubleshooting',
-    'license',
-    'contributing',
-  ];
 }

@@ -4,7 +4,7 @@ export const endingSlashRE = /\/$/
 export const outboundRE = /^(https?:|mailto:|tel:)/
 
 export function getCurrentPageVersion(pageUrl, activeVersion) {
-  const matches = pageUrl.match(/([0-9]*[.])?[0-9]+/);
+  const matches = pageUrl.match(/([0-9]*[.])?[0-9xX]+/);
 
   return matches == null || matches.length == 0
     ? activeVersion
