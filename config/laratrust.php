@@ -73,8 +73,9 @@ return [
     |--------------------------------------------------------------------------
     |
     | This is the array that contains the information of the user models.
-    | This information is used in the add-trait command, and for the roles and
-    | permissions relationships with the possible user models.
+    | This information is used in the add-trait command, for the roles and
+    | permissions relationships with the possible user models, and the
+    | administration panel to attach roles and permissions to the users.
     |
     | The key in the array is the name of the relationship inside the roles and permissions.
     |
@@ -256,6 +257,7 @@ return [
         */
         'strict_check' => false,
     ],
+
     /*
     |--------------------------------------------------------------------------
     | Laratrust Magic 'isAbleTo' Method

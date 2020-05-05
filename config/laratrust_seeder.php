@@ -2,12 +2,12 @@
 
 return [
     /**
-     * Flag to control if the seeder should create a user per role while seeding the data.
+     * Control if the seeder should create a user per role while seeding the data.
      */
-    'create_users' => true,
+    'create_users' => false,
 
     /**
-     * Controls all the laratrust tables should be truncated before running the seeder.
+     * Control if all the laratrust tables should be truncated before running the seeder.
      */
     'truncate_tables' => true,
 
