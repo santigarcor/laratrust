@@ -81,9 +81,11 @@ class LaratrustSeeder extends Seeder
         DB::table('{{ config('laratrust.tables.role_user') }}')->truncate();
         $rolesTable = (new \{{ $role }})->getTable();
         $permissionsTable = (new \{{ $permission }})->getTable();
-        DB::statement("TRUNCATE TABLE {$rolesTable} CASCADE");
-        DB::statement("TRUNCATE TABLE {$permissionsTable} CASCADE");
         if(Config::get('laratrust_seeder.truncate_tables')) {
+            DB::statement("TRUNCATE TABLE {$permissionsTable} CASCADE");
+            DB::statement("TRUNCATE TABLE {$rolesTable} CASCADE");
+        }
+        if(Config::get('laratrust_seeder.truncate_tables') && Config::get('laratrust_seeder.create_users')) {
             $usersTable = (new \{{ $user }})->getTable();
             DB::statement("TRUNCATE TABLE {$usersTable} CASCADE");
         }
@@ -91,9 +93,11 @@ class LaratrustSeeder extends Seeder
         DB::table('{{ config('laratrust.tables.permission_role') }}')->truncate();
         DB::table('{{ config('laratrust.tables.permission_user') }}')->truncate();
         DB::table('{{ config('laratrust.tables.role_user') }}')->truncate();
-        \{{ $role }}::truncate();
-        \{{ $permission }}::truncate();
         if(Config::get('laratrust_seeder.truncate_tables')) {
+            \{{ $role }}::truncate();
+            \{{ $permission }}::truncate();
+        }
+        if(Config::get('laratrust_seeder.truncate_tables') && Config::get('laratrust_seeder.create_users')) {
             \{{ $user }}::truncate();
         }
 @endif

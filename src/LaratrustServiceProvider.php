@@ -104,6 +104,7 @@ class LaratrustServiceProvider extends ServiceProvider
             'namespace' => 'Laratrust\Http\Controllers',
             'middleware' => config('laratrust.panel.middleware', 'web'),
         ], function () {
+            Route::redirect('/', '/'. config('laratrust.panel.path'). '/roles-assignment');
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
     }
