@@ -1,7 +1,7 @@
 # Upgrade from 5.2 to 6.X
 
 ::: tip IMPORTANT
-Laratrust 6.x requires Laravel >= 6.x and php >= 7.1.
+Laratrust 6.x requires Laravel >= 6.x and php >= 7.2.
 :::
 
 In order to upgrade from Laratrust 5.2 to 6.x you have to follow these steps:

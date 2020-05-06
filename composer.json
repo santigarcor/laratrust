@@ -10,13 +10,13 @@
         }
     ],
     "require": {
-        "php": "^7.1",
+        "php": "^7.2",
         "kkszymanowski/traitor": "^0.2.0",
-        "laravel/framework": "~5.6.0|~5.7.0|~5.8.0|~6.0|~7.0"
+        "laravel/framework": "~6.0|~7.0"
     },
     "require-dev": {
         "mockery/mockery": ">=0.9.9",
-        "orchestra/testbench": "~3.6.0|~3.7.0|~3.8.0|~3.9.0|4.*|5.*",
+        "orchestra/testbench": "4.*|5.*",
         "phpunit/phpunit": ">=4.1"
     },
     "autoload": {
