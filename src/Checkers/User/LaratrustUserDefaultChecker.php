@@ -2,8 +2,8 @@
 
 namespace Laratrust\Checkers\User;
 
-use Illuminate\Support\Str;
 use Laratrust\Helper;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 
