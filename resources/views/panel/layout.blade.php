@@ -18,7 +18,7 @@
         <div class="flex items-center">
           <div class="hidden md:block">
             <div class="flex items-baseline">
-              <a href="#" class="nav-button">← Go Back</a>
+              <a href="{{config('laratrust.panel.go_back_route')}}" class="nav-button">← Go Back</a>
               <a
                 href="{{ route('laratrust.roles-assignment.index') }}"
                 class="ml-4 {{ request()->is('*roles-assigment*') ? 'nav-button-active' : 'nav-button' }}"
