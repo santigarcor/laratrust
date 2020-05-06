@@ -1,13 +1,5 @@
 <?php
 
-/**
- * This file is part of Laratrust,
- * a role & permission management solution for Laravel.
- *
- * @license MIT
- * @package Laratrust
- */
-
 return [
     /*
     |--------------------------------------------------------------------------
@@ -95,18 +87,13 @@ return [
     |
     */
     'models' => [
-        /**
-         * Role model
-         */
+
         'role' => 'App\Role',
 
-        /**
-         * Permission model
-         */
         'permission' => 'App\Permission',
 
         /**
-         * Team model
+         * Will be used only if the teams functionality is enabled.
          */
         'team' => 'App\Team',
 
@@ -121,34 +108,20 @@ return [
     |
     */
     'tables' => [
-        /**
-         * Roles table.
-         */
+
         'roles' => 'roles',
 
-        /**
-         * Permissions table.
-         */
         'permissions' => 'permissions',
 
         /**
-         * Teams table.
+         * Will be used only if the teams functionality is enabled.
          */
         'teams' => 'teams',
 
-        /**
-         * Role - User intermediate table.
-         */
         'role_user' => 'role_user',
 
-        /**
-         * Permission - User intermediate table.
-         */
         'permission_user' => 'permission_user',
 
-        /**
-         * Permission - Role intermediate table.
-         */
         'permission_role' => 'permission_role',
 
     ],
@@ -283,11 +256,12 @@ return [
         | Laratrust Panel Register
         |--------------------------------------------------------------------------
         |
-        | This manages if we should register all the routes in the laratrust admin panel.
+        | This manages if routes used for the admin panel should be registered.
         | Turn this value to false if you don't want to use Laratrust admin panel
         |
         */
         'register' => true,
+
         /*
         |--------------------------------------------------------------------------
         | Laratrust Panel Path
