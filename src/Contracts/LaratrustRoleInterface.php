@@ -2,13 +2,6 @@
 
 namespace Laratrust\Contracts;
 
-/**
- * This file is part of Laratrust,
- * a role & permission management solution for Laravel.
- *
- * @license MIT
- * @package Laratrust
- */
 interface LaratrustRoleInterface
 {
     /**

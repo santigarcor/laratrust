@@ -2,13 +2,6 @@
 
 namespace Laratrust\Middleware;
 
-/**
- * This file is part of Laratrust,
- * a role & permission management solution for Laravel.
- *
- * @license MIT
- * @package Laratrust
- */
 use Closure;
 
 class LaratrustRole extends LaratrustMiddleware

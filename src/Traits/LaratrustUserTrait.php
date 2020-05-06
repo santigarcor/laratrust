@@ -2,13 +2,6 @@
 
 namespace Laratrust\Traits;
 
-/**
- * This file is part of Laratrust,
- * a role & permission management solution for Laravel.
- *
- * @license MIT
- * @package Laratrust
- */
 use Laratrust\Helper;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
