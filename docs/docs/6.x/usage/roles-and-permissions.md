@@ -184,8 +184,8 @@ $user->isAbleTo('admin.*'); // true
 $user->isAbleTo('*-users'); // true
 ```
 
-### Magic can method
-You can check if a user has some permissions by using the magic can method:
+### Magic `is able to` method
+You can check if a user has some permissions by using the magic `isAbleTo` method:
 
 ```php
 $user->isAbleToCreateUsers();
