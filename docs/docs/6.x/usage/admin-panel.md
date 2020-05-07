@@ -17,3 +17,16 @@ This will publish the assets used by the panel.
 By default the URL to access the panel is `/laratrust`.
 
 To customize the the URL and other available settings in the panel please go to the `panel` section in the `config/laratrust.php` file.
+
+## Screenshots
+
+Here are some screenshots of the admin panel.
+<div class="admin-panel-screenshots">
+<img src="/multiple-users.png" alt="Edit role view">
+
+<img src="/role-assign.png" alt="Edit role view">
+
+<img src="/role-assign-user.png" alt="Edit role view">
+
+<img src="/edit-role.png" alt="Edit role view">
+</div>
