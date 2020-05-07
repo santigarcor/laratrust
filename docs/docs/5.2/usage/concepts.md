@@ -141,7 +141,7 @@ $user->can('create-post'); // true
 :::
 
 ::: tip NOTE
-If you want to use the Authorizable trait alongside Laratrust please check the <docs-link to="/usage/troubleshooting.html">troubleshooting</docs-link> page.
+If you want to use the Authorizable trait alongside Laratrust please check the <docs-link to="/troubleshooting.html">troubleshooting</docs-link> page.
 :::
 
 Both `can()` and `hasRole()` can receive an array or pipe separated string of roles & permissions to check:
