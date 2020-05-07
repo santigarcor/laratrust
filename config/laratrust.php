@@ -260,7 +260,7 @@ return [
         | Turn this value to false if you don't want to use Laratrust admin panel
         |
         */
-        'register' => true,
+        'register' => false,
 
         /*
         |--------------------------------------------------------------------------
