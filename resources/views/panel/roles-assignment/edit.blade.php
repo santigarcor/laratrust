@@ -35,6 +35,7 @@
                 name="roles[]"
                 value="{{$role->id}}"
                 {!! $role->assigned ? 'checked' : '' !!}
+                {!! $role->assigned && !\Laratrust\Helper::roleIsRemovable($role) ? 'onclick="return false;"' : '' !!}
               >
               <span class="ml-2">{{$role->name}}</span>
             </label>

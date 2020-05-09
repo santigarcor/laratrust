@@ -232,4 +232,20 @@ class Helper
             Config::get('laratrust.panel.roles_restrictions.not_deletable')
         );
     }
+
+    /**
+     * Check if a role is removable in the admin panel.
+     *
+     * @param string|\Laratrust\Models\LaratrustRole $role
+     * @return bool
+     */
+    public static function roleIsRemovable($role)
+    {
+        $roleName = is_string($role) ? $role : $role->name;
+
+        return ! in_array(
+            $roleName,
+            Config::get('laratrust.panel.roles_restrictions.not_removable')
+        );
+    }
 }

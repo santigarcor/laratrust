@@ -60,4 +60,24 @@ class LaratrustHelperTest extends LaratrustTestCase
         $this->assertTrue(Helper::roleIsDeletable($this->admin));
         $this->assertTrue(Helper::roleIsDeletable($this->admin->name));
     }
+
+    public function testRoleIsRemovable()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        Config::set('laratrust.panel.roles_restrictions.not_removable', ['superadmin']);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertFalse(Helper::roleIsRemovable($this->superadmin));
+        $this->assertFalse(Helper::roleIsRemovable($this->superadmin->name));
+        $this->assertTrue(Helper::roleIsRemovable($this->admin));
+        $this->assertTrue(Helper::roleIsRemovable($this->admin->name));
+    }
 }
