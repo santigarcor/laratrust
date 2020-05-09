@@ -2,6 +2,10 @@
 sidebarDepth: 2
 ---
 
+::: warning WARNING
+You are using an old version of Laratrust. Consider updating to the <docs-link to="/installation.html" current-version>latest</docs-link> version
+:::
+
 # Concepts
 
 ## Set things up

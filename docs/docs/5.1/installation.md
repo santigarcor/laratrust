@@ -1,3 +1,7 @@
+::: warning WARNING
+You are using an old version of Laratrust. Consider updating to the <docs-link to="/installation.html" current-version>latest</docs-link> version
+:::
+
 # Installation
 
 1. In order to install Laratrust in your Laravel project, just run the `composer require` command from your terminal:

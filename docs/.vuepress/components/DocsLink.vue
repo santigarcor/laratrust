@@ -8,7 +8,7 @@
 import { getCurrentPageVersion } from '../theme/util';
 
 export default {
-  props: ['to'],
+  props: { to: String, currentVersion: Boolean },
   data() {
     return {
       activeVersion: '',
@@ -25,7 +25,7 @@ export default {
         ? this.to.slice(1)
         : this.to;
 
-      const versionLink = this.activeVersion.text == this.currentPageVersion
+      const versionLink = this.activeVersion.text == this.currentPageVersion || this.currentVersion
         ? this.activeVersion.link
         : `/docs/${this.currentPageVersion}/`;
 
