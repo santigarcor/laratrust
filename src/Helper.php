@@ -200,4 +200,36 @@ class Helper
 
         return [$wildcard, $noWildcard];
     }
+
+    /**
+     * Check if a role is editable in the admin panel.
+     *
+     * @param string|\Laratrust\Models\LaratrustRole $role
+     * @return bool
+     */
+    public static function roleIsEditable($role)
+    {
+        $roleName = is_string($role) ? $role : $role->name;
+
+        return ! in_array(
+            $roleName,
+            Config::get('laratrust.panel.roles_restrictions.not_editable')
+        );
+    }
+
+    /**
+     * Check if a role is deletable in the admin panel.
+     *
+     * @param string|\Laratrust\Models\LaratrustRole $role
+     * @return bool
+     */
+    public static function roleIsDeletable($role)
+    {
+        $roleName = is_string($role) ? $role : $role->name;
+
+        return ! in_array(
+            $roleName,
+            Config::get('laratrust.panel.roles_restrictions.not_deletable')
+        );
+    }
 }

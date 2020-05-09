@@ -2,6 +2,7 @@
 
 namespace Laratrust\Http\Controllers;
 
+use Laratrust\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
@@ -76,6 +77,11 @@ class RolesController
     {
         $role = $this->rolesModel::findOrFail($id);
 
+        if (!Helper::roleIsEditable($role)) {
+            Session::flash('laratrust-error', 'The role is not editable');
+            return redirect()->back();
+        }
+
         $data = $request->validate([
             'display_name' => 'nullable|string',
             'description' => 'nullable|string',
@@ -93,6 +99,12 @@ class RolesController
         $usersAssignedToRole = DB::table(Config::get('laratrust.tables.role_user'))
             ->where(Config::get('laratrust.foreign_keys.role'), $id)
             ->count();
+        $role = $this->rolesModel::findOrFail($id);
+
+        if (!Helper::roleIsDeletable($role)) {
+            Session::flash('laratrust-error', 'The role is not deletable');
+            return redirect()->back();
+        }
 
         if ($usersAssignedToRole > 0) {
             Session::flash('laratrust-warning', 'Role is attached to one or more users. It can not be deleted');

@@ -46,7 +46,11 @@
                 >
                   @method('DELETE')
                   @csrf
-                  <button type="submit" class="text-red-600 hover:text-red-900 ml-4">Delete</button>
+                  <button
+                    type="submit"
+                    class="{{\Laratrust\Helper::roleIsDeletable($role) ? 'text-red-600 hover:text-red-900' : 'text-gray-600 hover:text-gray-700'}} ml-4"
+                    @if(!\Laratrust\Helper::roleIsDeletable($role)) disabled @endif
+                  >Delete</button>
                 </form>
               </td>
             </tr>
