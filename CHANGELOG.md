@@ -1,3 +1,13 @@
+## 6.0.2 (mayo 11, 2020)
+  - Merge pull request #411 from siarheipashkevich/fix-config-typos
+  - Fixed config typos
+  - Update docs
+  - Merge branch '6.x'
+  - Fix broken links and update sitemap
+  - Merge branch '6.x'
+  - Add some screenshots to the docs
+  - Merge branch '6.x'
+
 ## 6.0.1 (mayo 07, 2020)
   - Don't register the panel by default
 
