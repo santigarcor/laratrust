@@ -26,7 +26,7 @@
                 <th class="th">Id</th>
                 <th class="th">Name</th>
                 <th class="th"># Roles</th>
-                @if(config('laratrust.panel.assign_permisions_to_user'))<th class="th"># Permissions</th>@endif
+                @if(config('laratrust.panel.assign_permissions_to_user'))<th class="th"># Permissions</th>@endif
                 <th class="th"></th>
               </tr>
             </thead>
@@ -42,7 +42,7 @@
                 <td class="td text-sm leading-5 text-gray-900">
                   {{$user->roles_count}}
                 </td>
-                @if(config('laratrust.panel.assign_permisions_to_user'))
+                @if(config('laratrust.panel.assign_permissions_to_user'))
                 <td class="td text-sm leading-5 text-gray-900">
                   {{$user->permissions_count}}
                 </td>
