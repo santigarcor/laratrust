@@ -96,7 +96,6 @@ return [
          * Will be used only if the teams functionality is enabled.
          */
         'team' => 'App\Team',
-
     ],
 
     /*
@@ -123,7 +122,6 @@ return [
         'permission_user' => 'permission_user',
 
         'permission_role' => 'permission_role',
-
     ],
 
     /*
@@ -154,7 +152,6 @@ return [
          * Role foreign key on Laratrust's role_user and permission_user tables.
          */
         'team' => 'team_id',
-
     ],
 
     /*
@@ -189,6 +186,7 @@ return [
                 'code' => 403,
                 'message' => 'User does not have any of the necessary access rights.'
             ],
+
             /**
              * Redirects the user to the given url.
              * If you want to flash a key to the session,
@@ -268,7 +266,7 @@ return [
         |--------------------------------------------------------------------------
         |
         | This is the URI path where Laratrust panel for roles and permissions
-        | will be accesible from.
+        | will be accessible from.
         |
         */
         'path' => 'laratrust',
@@ -301,6 +299,6 @@ return [
         | Enable/Disable the permissions assignment to the users.
         |
         */
-        'assign_permisions_to_user' => true,
+        'assign_permissions_to_user' => true,
     ]
 ];
