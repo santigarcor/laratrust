@@ -8,11 +8,13 @@ Currently it supports:
 2. Roles CRUD and permissions assignment.
 3. Assignment of roles and permission to the multiple users defined in `user_models` in the `config/laratrust.php` file.
 
-In order to use it, you have to run:
+## How to use it
+
+1. Go to your `config/laratrust.php` file and change the `panel.register` value to `true`.
+2. Publish the assets used by the panel by running:
 ```bash
 php artisan vendor:publish --tag=laratrust-assets --force
 ```
-This will publish the assets used by the panel.
 
 By default the URL to access the panel is `/laratrust`.
 
