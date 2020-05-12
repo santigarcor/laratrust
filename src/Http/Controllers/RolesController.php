@@ -37,6 +37,15 @@ class RolesController
         ]);
     }
 
+    public function show(Request $request, $id)
+    {
+        $role = $this->rolesModel::query()
+            ->with('permissions:id,name')
+            ->findOrFail($id);
+
+        return View::make('laratrust::panel.roles.show', ['role' => $role]);
+    }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -57,6 +66,12 @@ class RolesController
         $role = $this->rolesModel::query()
             ->with('permissions:id')
             ->findOrFail($id);
+
+        if (!Helper::roleIsEditable($role)) {
+            Session::flash('laratrust-error', 'The role is not editable');
+            return redirect()->back();
+        }
+
         $permissions = $this->permissionModel::all(['id', 'name'])
             ->map(function ($permission) use ($role) {
                 $permission->assigned = $role->permissions

@@ -36,27 +36,21 @@
         <label class="block my-4">
           <span class="text-gray-700">Display Name</span>
           <input
-            class="form-input mt-1 block w-full {{ $type === 'role' && $model && !\Laratrust\Helper::roleIsEditable($model) ? 'text-gray-600 bg-gray-200' : '' }}"
+            class="form-input mt-1 block w-full"
             name="display_name"
             placeholder="Edit user profile"
             x-model="displayName"
             autocomplete="off"
-            @if ($type === 'role' && $model && !\Laratrust\Helper::roleIsEditable($model))
-            readonly
-            @endif
           >
         </label>
 
         <label class="block my-4">
           <span class="text-gray-700">Description</span>
           <textarea
-            class="form-textarea mt-1 block w-full {{ $type === 'role' && $model && !\Laratrust\Helper::roleIsEditable($model) ? 'text-gray-600 bg-gray-200' : '' }}"
+            class="form-textarea mt-1 block w-full"
             rows="3"
             name="description"
             placeholder="Some description for the {{$type}}"
-            @if ($type === 'role' && $model && !\Laratrust\Helper::roleIsEditable($model))
-            readonly
-            @endif
           >{{ $model->description ?? old('description') }}</textarea>
         </label>
         @if($type == 'role')
@@ -70,9 +64,6 @@
                   name="permissions[]"
                   value="{{$permission->id}}"
                   {!! $permission->assigned ? 'checked' : '' !!}
-                  @if ($type === 'role' && $model && !\Laratrust\Helper::roleIsEditable($model))
-                  disabled
-                  @endif
                 >
                 <span class="ml-2">{{$permission->name}}</span>
               </label>
@@ -86,13 +77,7 @@
           >
             Cancel
           </a>
-          <button
-            class="btn {{ $type === 'role' && $model && !\Laratrust\Helper::roleIsEditable($model) ? 'text-gray-600 bg-gray-200 ' : 'btn-blue' }}"
-            type="submit"
-            @if ($type === 'role' && $model && !\Laratrust\Helper::roleIsEditable($model))
-            disabled
-            @endif
-          >Save</button>
+          <button class="btn btn-blue" type="submit">Save</button>
         </div>
       </form>
     </div>
