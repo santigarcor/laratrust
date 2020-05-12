@@ -2,6 +2,7 @@
 
 namespace Laratrust\Http\Controllers;
 
+use Laratrust\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
@@ -56,6 +57,7 @@ class RolesAssignmentController
                 $role->assigned = $user->roles
                     ->pluck('id')
                     ->contains($role->id);
+                $role->isRemovable = Helper::roleIsRemovable($role);
 
                 return $role;
             });

@@ -31,13 +31,17 @@
             <label class="inline-flex items-center mr-6 my-2 text-sm" style="flex: 1 0 20%;">
               <input
                 type="checkbox"
+                @if ($role->assigned && !$role->isRemovable)
+                class="form-checkbox focus:shadow-none focus:border-transparent text-gray-500 h-4 w-4"
+                @else
                 class="form-checkbox h-4 w-4"
+                @endif
                 name="roles[]"
                 value="{{$role->id}}"
                 {!! $role->assigned ? 'checked' : '' !!}
-                {!! $role->assigned && !\Laratrust\Helper::roleIsRemovable($role) ? 'onclick="return false;"' : '' !!}
+                {!! $role->assigned && !$role->isRemovable ? 'onclick="return false;"' : '' !!}
               >
-              <span class="ml-2">{{$role->name}}</span>
+              <span class="ml-2 {!! $role->assigned && !$role->isRemovable ? 'text-gray-600' : '' !!}">{{$role->name}}</span>
             </label>
           @endforeach
         </div>

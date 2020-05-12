@@ -213,7 +213,7 @@ class Helper
 
         return ! in_array(
             $roleName,
-            Config::get('laratrust.panel.roles_restrictions.not_editable')
+            Config::get('laratrust.panel.roles_restrictions.not_editable') ?? []
         );
     }
 
@@ -229,7 +229,7 @@ class Helper
 
         return ! in_array(
             $roleName,
-            Config::get('laratrust.panel.roles_restrictions.not_deletable')
+            Config::get('laratrust.panel.roles_restrictions.not_deletable') ?? []
         );
     }
 
@@ -245,7 +245,7 @@ class Helper
 
         return ! in_array(
             $roleName,
-            Config::get('laratrust.panel.roles_restrictions.not_removable')
+            Config::get('laratrust.panel.roles_restrictions.not_removable') ?? []
         );
     }
 }
