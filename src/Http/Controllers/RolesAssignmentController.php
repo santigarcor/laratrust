@@ -23,18 +23,20 @@ class RolesAssignmentController
 
     public function index(Request $request)
     {
-        $modelKey = $request->get('model');
+        $modelsKeys = array_keys(Config::get('laratrust.user_models'));
+        $modelKey = $request->get('model') ?? $modelsKeys[0] ?? null;
         $userModel = Config::get('laratrust.user_models')[$modelKey] ?? null;
-        $users = $userModel
-            ? $userModel::query()
-                ->withCount(['roles', 'permissions'])
-                ->simplePaginate(10)
-            : [];
+
+        if (!$userModel) {
+            abort(404);
+        }
 
         return View::make('laratrust::panel.roles-assignment.index', [
-            'models' => array_keys(Config::get('laratrust.user_models')),
+            'models' => $modelsKeys,
             'modelKey' => $modelKey,
-            'users' => $users,
+            'users' => $userModel::query()
+                ->withCount(['roles', 'permissions'])
+                ->simplePaginate(10),
         ]);
     }
 
