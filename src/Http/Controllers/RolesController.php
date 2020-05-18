@@ -40,7 +40,7 @@ class RolesController
     public function show(Request $request, $id)
     {
         $role = $this->rolesModel::query()
-            ->with('permissions:id,name')
+            ->with('permissions:id,name,display_name')
             ->findOrFail($id);
 
         return View::make('laratrust::panel.roles.show', ['role' => $role]);
@@ -72,7 +72,7 @@ class RolesController
             return redirect()->back();
         }
 
-        $permissions = $this->permissionModel::all(['id', 'name'])
+        $permissions = $this->permissionModel::all(['id', 'name', 'display_name'])
             ->map(function ($permission) use ($role) {
                 $permission->assigned = $role->permissions
                     ->pluck('id')

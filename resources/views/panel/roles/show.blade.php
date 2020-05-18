@@ -27,7 +27,7 @@
         <span class="text-gray-900 font-bold">Permissions:</span>
         <ul class="grid grid-cols-1 md:grid-cols-4 list-inside">
           @foreach ($role->permissions as $permission)
-            <li class="text-gray-800 list-disc" >{{$permission->name}}</li>
+            <li class="text-gray-800 list-disc" >{{$permission->display_name ?? $permission->name}}</li>
           @endforeach
         </ul>
         <div class="flex justify-end">

@@ -41,7 +41,9 @@
                 {!! $role->assigned ? 'checked' : '' !!}
                 {!! $role->assigned && !$role->isRemovable ? 'onclick="return false;"' : '' !!}
               >
-              <span class="ml-2 {!! $role->assigned && !$role->isRemovable ? 'text-gray-600' : '' !!}">{{$role->name}}</span>
+              <span class="ml-2 {!! $role->assigned && !$role->isRemovable ? 'text-gray-600' : '' !!}">
+                {{$role->display_name ?? $role->name}}
+              </span>
             </label>
           @endforeach
         </div>
@@ -57,7 +59,7 @@
                   value="{{$permission->id}}"
                   {!! $permission->assigned ? 'checked' : '' !!}
                 >
-                <span class="ml-2">{{$permission->name}}</span>
+                <span class="ml-2">{{$permission->display_name ?? $permission->name}}</span>
               </label>
             @endforeach
           </div>

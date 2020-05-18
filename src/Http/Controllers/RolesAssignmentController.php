@@ -52,7 +52,7 @@ class RolesAssignmentController
             ->with(['roles:id,name', 'permissions:id,name'])
             ->findOrFail($modelId);
 
-        $roles = $this->rolesModel::all(['id', 'name'])
+        $roles = $this->rolesModel::all(['id', 'name', 'display_name'])
             ->map(function ($role) use ($user) {
                 $role->assigned = $user->roles
                     ->pluck('id')
@@ -62,7 +62,7 @@ class RolesAssignmentController
                 return $role;
             });
         if ($this->assignPermissions) {
-            $permissions = $this->permissionModel::all(['id', 'name'])
+            $permissions = $this->permissionModel::all(['id', 'name', 'display_name'])
                 ->map(function ($permission) use ($user) {
                     $permission->assigned = $user->permissions
                         ->pluck('id')
