@@ -8,10 +8,10 @@ tagline: Laravel role-based access control package
 ---
 
 [![Build Status](https://travis-ci.org/santigarcor/laratrust.svg?branch=master)](https://travis-ci.org/santigarcor/laratrust)
-[![Latest Stable Version](https://poser.pugx.org/santigarcor/laratrust/v/stable)](https://packagist.org/packages/santigarcor/laratrust)
-[![Total Downloads](https://poser.pugx.org/santigarcor/laratrust/downloads)](https://packagist.org/packages/santigarcor/laratrust)
+[![Latest Stable Version](https://poser.pugx.org/santigarcor/laratrust/v)](//packagist.org/packages/santigarcor/laratrust)
+[![Total Downloads](https://poser.pugx.org/santigarcor/laratrust/downloads)](//packagist.org/packages/santigarcor/laratrust)
 [![StyleCI](https://styleci.io/repos/59691202/shield)](https://styleci.io/repos/59691202)
-[![License](https://poser.pugx.org/santigarcor/laratrust/license)](https://packagist.org/packages/santigarcor/laratrust)
+[![License](https://poser.pugx.org/santigarcor/laratrust/license)](//packagist.org/packages/santigarcor/laratrust)
 
 Laratrust is an easy and flexible way to add roles, permissions and teams authorization to **Laravel**.
 
