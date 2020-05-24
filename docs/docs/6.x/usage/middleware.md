@@ -1,3 +1,7 @@
+---
+sidebarDepth: 2
+---
+
 # Middleware
 
 ## Configuration
@@ -48,6 +52,7 @@ For more complex situations use `ability` middleware which accepts 3 parameters;
 // $user->ability(['admin', 'owner'], ['create-post', 'edit-user'], true)
 ```
 
+### Using Different Guards
 If you want yo use a different guard for the user check you can specify it as an option:
 
 ```php
