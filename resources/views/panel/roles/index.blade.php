@@ -38,7 +38,11 @@
                 {{$role->permissions_count}}
               </td>
               <td class="flex justify-end px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
+                @if (\Laratrust\Helper::roleIsEditable($role))
                 <a href="{{route('laratrust.roles.edit', $role->id)}}" class="text-blue-600 hover:text-blue-900">Edit</a>
+                @else
+                <a href="{{route('laratrust.roles.show', $role->id)}}" class="text-blue-600 hover:text-blue-900">Details</a>
+                @endif
                 <form
                   action="{{route('laratrust.roles.destroy', $role->id)}}"
                   method="POST"
@@ -46,7 +50,11 @@
                 >
                   @method('DELETE')
                   @csrf
-                  <button type="submit" class="text-red-600 hover:text-red-900 ml-4">Delete</button>
+                  <button
+                    type="submit"
+                    class="{{\Laratrust\Helper::roleIsDeletable($role) ? 'text-red-600 hover:text-red-900' : 'text-gray-600 hover:text-gray-700 cursor-not-allowed'}} ml-4"
+                    @if(!\Laratrust\Helper::roleIsDeletable($role)) disabled @endif
+                  >Delete</button>
                 </form>
               </td>
             </tr>

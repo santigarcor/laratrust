@@ -31,12 +31,19 @@
             <label class="inline-flex items-center mr-6 my-2 text-sm" style="flex: 1 0 20%;">
               <input
                 type="checkbox"
+                @if ($role->assigned && !$role->isRemovable)
+                class="form-checkbox focus:shadow-none focus:border-transparent text-gray-500 h-4 w-4"
+                @else
                 class="form-checkbox h-4 w-4"
+                @endif
                 name="roles[]"
                 value="{{$role->id}}"
                 {!! $role->assigned ? 'checked' : '' !!}
+                {!! $role->assigned && !$role->isRemovable ? 'onclick="return false;"' : '' !!}
               >
-              <span class="ml-2">{{$role->name}}</span>
+              <span class="ml-2 {!! $role->assigned && !$role->isRemovable ? 'text-gray-600' : '' !!}">
+                {{$role->display_name ?? $role->name}}
+              </span>
             </label>
           @endforeach
         </div>
@@ -52,7 +59,7 @@
                   value="{{$permission->id}}"
                   {!! $permission->assigned ? 'checked' : '' !!}
                 >
-                <span class="ml-2">{{$permission->name}}</span>
+                <span class="ml-2">{{$permission->display_name ?? $permission->name}}</span>
               </label>
             @endforeach
           </div>
