@@ -309,6 +309,7 @@ return [
         |--------------------------------------------------------------------------
         |
         | Configure which roles can not be editable, deletable and removable.
+        | To add a role to the restriction, use name of the role here.
         |
         */
         'roles_restrictions' => [
