@@ -60,6 +60,7 @@ function getDocsNavBar(version) {
             'usage/querying-relationships',
             'usage/teams',
             'usage/objects-ownership',
+            ['usage/multiple-users', 'Multiple User Models'],
             'usage/events',
             'usage/middleware',
             'usage/soft-deleting',
