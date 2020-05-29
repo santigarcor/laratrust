@@ -7,7 +7,7 @@ If you had your `teams.enabled` value set to `true` during the installation and 
 :::
 
 
-1. Set the `teams.enabled` value value to `true` in your `config/laratrust.php` file.
+1. Set the `teams.enabled` value to `true` in your `config/laratrust.php` file.
 
 2. Run:
 ```bash
