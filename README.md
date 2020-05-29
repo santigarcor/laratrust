@@ -2,7 +2,7 @@
 
 # Laratrust (Laravel Package)
 
-[![Build Status](https://travis-ci.org/santigarcor/laratrust.svg?branch=master)](https://travis-ci.org/santigarcor/laratrust)
+[![tests](https://github.com/santigarcor/laratrust/workflows/tests/badge.svg)](https://github.com/santigarcor/laratrust/actions?query=workflow%3Atests)
 [![Latest Stable Version](https://poser.pugx.org/santigarcor/laratrust/v)](//packagist.org/packages/santigarcor/laratrust)
 [![Total Downloads](https://poser.pugx.org/santigarcor/laratrust/downloads)](//packagist.org/packages/santigarcor/laratrust)
 [![StyleCI](https://styleci.io/repos/59691202/shield)](https://styleci.io/repos/59691202)
