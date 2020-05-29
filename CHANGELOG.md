@@ -1,3 +1,17 @@
+## 6.1.0 (mayo 29, 2020)
+  - Merge branch 'limit-roles-in-panel' into 6.x
+  - Update docs
+  - Update docs
+  - Use a default model when entering the roles assignment view
+  - Use display name when available in the panel
+  - Build for production
+  - Little improvements on the not removable roles and defaults for previously installed versions
+  - Add show view for the not editable roles
+  - Update docs
+  - Add config file structure
+  - Add possibility to avoid having roles removed from an user
+  - Add the possibility to block  roles for edit and delete
+
 ## 6.0.2 (mayo 11, 2020)
   - Merge pull request #411 from siarheipashkevich/fix-config-typos
   - Fixed config typos
