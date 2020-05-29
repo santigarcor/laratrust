@@ -2,6 +2,7 @@
 
 namespace Laratrust\Http\Controllers;
 
+use Laratrust\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
@@ -22,18 +23,20 @@ class RolesAssignmentController
 
     public function index(Request $request)
     {
-        $modelKey = $request->get('model');
+        $modelsKeys = array_keys(Config::get('laratrust.user_models'));
+        $modelKey = $request->get('model') ?? $modelsKeys[0] ?? null;
         $userModel = Config::get('laratrust.user_models')[$modelKey] ?? null;
-        $users = $userModel
-            ? $userModel::query()
-                ->withCount(['roles', 'permissions'])
-                ->simplePaginate(10)
-            : [];
+
+        if (!$userModel) {
+            abort(404);
+        }
 
         return View::make('laratrust::panel.roles-assignment.index', [
-            'models' => array_keys(Config::get('laratrust.user_models')),
+            'models' => $modelsKeys,
             'modelKey' => $modelKey,
-            'users' => $users,
+            'users' => $userModel::query()
+                ->withCount(['roles', 'permissions'])
+                ->simplePaginate(10),
         ]);
     }
 
@@ -51,16 +54,17 @@ class RolesAssignmentController
             ->with(['roles:id,name', 'permissions:id,name'])
             ->findOrFail($modelId);
 
-        $roles = $this->rolesModel::all(['id', 'name'])
+        $roles = $this->rolesModel::all(['id', 'name', 'display_name'])
             ->map(function ($role) use ($user) {
                 $role->assigned = $user->roles
                     ->pluck('id')
                     ->contains($role->id);
+                $role->isRemovable = Helper::roleIsRemovable($role);
 
                 return $role;
             });
         if ($this->assignPermissions) {
-            $permissions = $this->permissionModel::all(['id', 'name'])
+            $permissions = $this->permissionModel::all(['id', 'name', 'display_name'])
                 ->map(function ($permission) use ($user) {
                     $permission->assigned = $user->permissions
                         ->pluck('id')

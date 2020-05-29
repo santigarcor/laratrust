@@ -65,7 +65,7 @@
                   value="{{$permission->id}}"
                   {!! $permission->assigned ? 'checked' : '' !!}
                 >
-                <span class="ml-2">{{$permission->name}}</span>
+                <span class="ml-2">{{$permission->display_name ?? $permission->name}}</span>
               </label>
             @endforeach
           </div>

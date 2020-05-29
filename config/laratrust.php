@@ -300,5 +300,25 @@ return [
         |
         */
         'assign_permissions_to_user' => true,
+
+        /*
+        |--------------------------------------------------------------------------
+        | Add restriction to roles in the panel
+        |--------------------------------------------------------------------------
+        |
+        | Configure which roles can not be editable, deletable and removable.
+        | To add a role to the restriction, use name of the role here.
+        |
+        */
+        'roles_restrictions' => [
+            // The user won't be able to remove roles already assigend to users.
+            'not_removable' => [],
+
+            // The user won't be able to edit the role and the permissions assigned.
+            'not_editable' => [],
+
+            // The user won't be able to delete the role.
+            'not_deletable' => [],
+        ],
     ]
 ];

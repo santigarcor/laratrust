@@ -7,6 +7,7 @@ Currently it supports:
 1. Permissions CRUD.
 2. Roles CRUD and permissions assignment.
 3. Assignment of roles and permission to the multiple users defined in `user_models` in the `config/laratrust.php` file.
+4. Restricting roles from being edited, deleted or removed.
 
 ## How to use it
 
