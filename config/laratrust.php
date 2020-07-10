@@ -46,7 +46,7 @@ return [
         | NOTE: Currently the database check does not use cache.
         |
         */
-        'enabled' => true,
+        'enabled' => env('LARATRUST_ENABLE_CACHE', true),
 
         /*
         |--------------------------------------------------------------------------
