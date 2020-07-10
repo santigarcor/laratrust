@@ -15,7 +15,6 @@ class LaratrustSeeder extends Seeder
      */
     public function run()
     {
-        $this->command->info('Truncating User, Role and Permission tables');
         $this->truncateLaratrustTables();
 
         $config = config('laratrust_seeder.roles_structure');
@@ -41,7 +40,7 @@ class LaratrustSeeder extends Seeder
                     $permissionValue = $mapPermission->get($perm);
 
                     $permissions[] = \{{ $permission }}::firstOrCreate([
-                        'name' => $permissionValue . '-' . $module,
+                        'name' => $module . '-' . $permissionValue,
                         'display_name' => ucfirst($permissionValue) . ' ' . ucfirst($module),
                         'description' => ucfirst($permissionValue) . ' ' . ucfirst($module),
                     ])->id;
@@ -74,6 +73,7 @@ class LaratrustSeeder extends Seeder
      */
     public function truncateLaratrustTables()
     {
+        $this->command->info('Truncating User, Role and Permission tables');
         Schema::disableForeignKeyConstraints();
 @if (Config::get('database.default') == 'pgsql')
         DB::table('{{ config('laratrust.tables.permission_role') }}')->truncate();
