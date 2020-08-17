@@ -311,7 +311,7 @@ return [
         |
         */
         'roles_restrictions' => [
-            // The user won't be able to remove roles already assigend to users.
+            // The user won't be able to remove roles already assigned to users.
             'not_removable' => [],
 
             // The user won't be able to edit the role and the permissions assigned.
