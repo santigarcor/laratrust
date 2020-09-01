@@ -54,17 +54,18 @@ class RolesAssignmentController
             ->with(['roles:id,name', 'permissions:id,name'])
             ->findOrFail($modelId);
 
-        $roles = $this->rolesModel::all(['id', 'name', 'display_name'])
+        $roles = $this->rolesModel::orderBy('name')->get(['id', 'name', 'display_name'])
             ->map(function ($role) use ($user) {
                 $role->assigned = $user->roles
-                    ->pluck('id')
+                ->pluck('id')
                     ->contains($role->id);
                 $role->isRemovable = Helper::roleIsRemovable($role);
 
                 return $role;
             });
         if ($this->assignPermissions) {
-            $permissions = $this->permissionModel::all(['id', 'name', 'display_name'])
+            $permissions = $this->permissionModel::orderBy('name')
+                ->get(['id', 'name', 'display_name'])
                 ->map(function ($permission) use ($user) {
                     $permission->assigned = $user->permissions
                         ->pluck('id')
