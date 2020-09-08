@@ -695,6 +695,11 @@ class LaratrustUserTest extends LaratrustTestCase
             ['permission_a', 'permission_b', 'permission_c'],
             $this->user->allPermissions()->sortBy('name')->pluck('name')->all()
         );
+
+        $onlySomeColumns = $this->user->allPermissions(['name'])->first()->toArray();
+        $this->assertArrayHasKey('id', $onlySomeColumns);
+        $this->assertArrayHasKey('name', $onlySomeColumns);
+        $this->assertArrayNotHasKey('displayName', $onlySomeColumns);
     }
 
     protected function assertWasAttached($objectName, $result)

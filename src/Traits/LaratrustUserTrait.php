@@ -573,15 +573,22 @@ trait LaratrustUserTrait
      *
      * @return \Illuminate\Support\Collection|static
      */
-    public function allPermissions()
+    public function allPermissions($columns = null)
     {
-        $roles = $this->roles()->with('permissions')->get();
+        $columns = is_array($columns) ? $columns : null;
+        if ($columns) {
+            $columns[] = 'id';
+            $columns = array_unique($columns);
+        }
+        $withColumns = $columns ? ":" . implode(',', $columns) : '';
+
+        $roles = $this->roles()->with("permissions{$withColumns}")->get();
 
         $roles = $roles->flatMap(function ($role) {
             return $role->permissions;
         });
 
-        return $this->permissions()->get()->merge($roles)->unique('name');
+        return $this->permissions()->get($columns ?? ['*'])->merge($roles)->unique('id');
     }
 
     /**
