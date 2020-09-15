@@ -5,10 +5,19 @@
 composer require santigarcor/laratrust
 ```
 
-2. Publish all the configuration files:
-```bash
-php artisan vendor:publish --tag="laratrust"
-```
+2. Publish the configuration files you need:
+
+* Configuration file
+    ```bash
+        php artisan vendor:publish --provider="Laratrust\LaratrustServiceProvider" --tag="config"   
+    ```
+  
+* Seeder configuration file
+    ```bash
+        php artisan vendor:publish --provider="Laratrust\LaratrustServiceProvider" --tag="seeder"
+    ```
+  <br>
+
 ::: warning
 If this command did not publish any files, chances are, the Laratrust service provider hasn't been registered. Try clearing your configuration cache
 ```bash
