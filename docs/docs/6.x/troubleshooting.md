@@ -32,3 +32,44 @@ If you don't, then try `php artisan vendor:publish` and, if it does not appear, 
 
 ---
 
+erreur apres un php artisan db:seed sur laravel 8 
+
+mttheophane@mttheophane-Latitude-E6540:~/programmations/personnel/apprendre/laratrust/auth$ composer dump-autoload
+Cannot create cache directory /home/mttheophane/.composer/cache/repo/https---repo.packagist.org/, or directory is not writable. Proceeding without cache
+Cannot create cache directory /home/mttheophane/.composer/cache/files/, or directory is not writable. Proceeding without cache
+Cannot create cache directory /home/mttheophane/.composer/cache/repo/https---repo.packagist.org/, or directory is not writable. Proceeding without cache
+Generating optimized autoload files
+> Illuminate\Foundation\ComposerScripts::postAutoloadDump
+> @php artisan package:discover --ansi
+Discovered Package: facade/ignition
+Discovered Package: fideloper/proxy
+Discovered Package: fruitcake/laravel-cors
+Discovered Package: laravel/tinker
+Discovered Package: nesbot/carbon
+Discovered Package: nunomaduro/collision
+Discovered Package: santigarcor/laratrust
+Package manifest generated successfully.
+Generated optimized autoload files containing 4545 classes
+mttheophane@mttheophane-Latitude-E6540:~/programmations/personnel/apprendre/laratrust/auth$ php artisan db:seed --class=LaratrustSeeder
+
+   Illuminate\Contracts\Container\BindingResolutionException 
+
+  Target class [Database\Seeders\LaratrustSeeder] does not exist.
+
+  at vendor/laravel/framework/src/Illuminate/Container/Container.php:811
+    807▕ 
+    808▕         try {
+    809▕             $reflector = new ReflectionClass($concrete);
+    810▕         } catch (ReflectionException $e) {
+  ➜ 811▕             throw new BindingResolutionException("Target class [$concrete] does not exist.", 0, $e);
+    812▕         }
+    813▕ 
+    814▕         // If the type is not instantiable, the developer is attempting to resolve
+    815▕         // an abstract type such as an Interface or Abstract Class and there is
+
+      +24 vendor frames 
+  25  artisan:37
+      Illuminate\Foundation\Console\Kernel::handle(Object(Symfony\Component\Console\Input\ArgvInput), Object(Symfony\Component\Console\Output\ConsoleOutput))
+mttheophane@mttheophane-Latitude-E6540:~/programmations/personnel/apprendre/laratrust/auth$ php artisan db:seed --class=LaratrustSeeder
+
+   Illuminate\Contracts\Container\BindingResolutionException 
