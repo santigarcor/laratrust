@@ -89,6 +89,6 @@ class MakeSeederCommand extends Command
      */
     protected function seederPath()
     {
-        return database_path("seeds/LaratrustSeeder.php");
+        return database_path("seeders/LaratrustSeeder.php");
     }
 }
