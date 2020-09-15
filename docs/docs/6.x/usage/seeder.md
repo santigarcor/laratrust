@@ -27,7 +27,11 @@ $this->call(LaratrustSeeder::class);
 ```
 
 ::: tip NOTE
-If you **have not** run `php artisan vendor:publish --tag="laratrust"` you should run it in order to customize the roles, modules and permissions in each case.
+In order to customize the roles, modules and permissions in each case, you **can run** 
+```bash 
+php artisan vendor:publish --provider="Laratrust\LaratrustServiceProvider" --tag="seeder"
+```
+to publish `config/laratrust_seeder.php`, .
 :::
 
 Your `config/laratrust_seeder.php` file looks like this by default:
