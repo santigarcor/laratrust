@@ -172,7 +172,7 @@ class LaratrustServiceProvider extends ServiceProvider
 
             $this->publishes([
                 __DIR__. '/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
-            ], 'laratrust-seeder');
+            ], 'seeder');
         }
     }
 
