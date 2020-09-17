@@ -8,7 +8,7 @@ composer require santigarcor/laratrust
 2. Publish the configuration file:
 
 ```bash
-    php artisan vendor:publish --provider="Laratrust\LaratrustServiceProvider" --tag="config"   
+    php artisan vendor:publish --tag="laratrust"   
 ```
   
 
