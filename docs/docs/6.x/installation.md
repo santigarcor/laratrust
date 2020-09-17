@@ -8,10 +8,8 @@ composer require santigarcor/laratrust
 2. Publish the configuration file:
 
 ```bash
-    php artisan vendor:publish --provider="Laratrust\LaratrustServiceProvider" --tag="config"   
+php artisan vendor:publish --tag="laratrust"
 ```
-  
-
 ::: warning
 If this command did not publish any files, chances are, the Laratrust service provider hasn't been registered. Try clearing your configuration cache
 ```bash
