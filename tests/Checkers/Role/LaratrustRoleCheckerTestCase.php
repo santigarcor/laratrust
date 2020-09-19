@@ -2,7 +2,6 @@
 
 namespace Laratrust\Tests\Checkers\Role;
 
-use Illuminate\Support\Facades\Config;
 use Laratrust\Models\LaratrustRole;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
@@ -23,6 +22,7 @@ abstract class LaratrustRoleCheckerTestCase extends LaratrustTestCase
         $this->migrate();
         $this->role = Role::create(['name' => 'role']);
 
+        $this->app['config']->set('laratrust.teams.enabled', false);
     }
 
     public function hasPermission()
@@ -63,7 +63,7 @@ abstract class LaratrustRoleCheckerTestCase extends LaratrustTestCase
         $permA = Permission::create(['name' => 'permission_a']);
         $permB = Permission::create(['name' => 'permission_b']);
 
-        $this->role->attachPermission($permA->id,$team);
+        $this->role->attachPermission($permA->id, $team);
         $this->role->permissions()->attach([$permB->id]);
 
         /*
@@ -71,18 +71,32 @@ abstract class LaratrustRoleCheckerTestCase extends LaratrustTestCase
         | Expectation
         |------------------------------------------------------------
          */
-        $isTeamEnabled=config('laratrust.teams.enabled');
-        $this->assertTrue($this->role->hasPermission('permission_a',$team));
-        $this->assertSame(!$isTeamEnabled,$this->role->hasPermission('permission_a'));
-        $this->assertSame(!$isTeamEnabled,$this->role->hasPermission('permission_b'));
-        $this->assertSame(!$isTeamEnabled,$this->role->hasPermission('permission_b',$team));
+        $isTeamEnabled = config('laratrust.teams.enabled');
+
+
+        $this->assertTrue($this->role->hasPermission('permission_a', $team));
+
+        $this->app['config']->set('laratrust.teams.strict_check', false);
+        $this->assertTrue($this->role->hasPermission('permission_a'));
+        $this->app['config']->set('laratrust.teams.strict_check', true);
+        $this->assertSame(!$isTeamEnabled, $this->role->hasPermission('permission_a'));
+
+
+        $this->assertTrue($this->role->hasPermission('permission_b'));
+        $this->assertSame(!$isTeamEnabled, $this->role->hasPermission('permission_b', $team));
         $this->assertFalse($this->role->hasPermission('permission_c'));
-        $this->assertFalse($this->role->hasPermission('permission_c',$team));
+        $this->assertFalse($this->role->hasPermission('permission_c', $team));
 
         $this->assertTrue($this->role->hasPermission(['permission_a', 'permission_b']));
-        $this->assertTrue($this->role->hasPermission(['permission_a', 'permission_b'],$team));
+        $this->assertTrue($this->role->hasPermission(['permission_a', 'permission_b'], $team));
+
+        $this->app['config']->set('laratrust.teams.strict_check', false);
         $this->assertTrue($this->role->hasPermission(['permission_a', 'permission_c']));
-        $this->assertTrue($this->role->hasPermission(['permission_a', 'permission_c'],$team));
+
+        $this->app['config']->set('laratrust.teams.strict_check', true);
+        $this->assertSame(!$isTeamEnabled, $this->role->hasPermission(['permission_a', 'permission_c']));
+
+        $this->assertTrue($this->role->hasPermission(['permission_a', 'permission_c'], $team));
         $this->assertFalse($this->role->hasPermission(['permission_a', 'permission_c'], null, true));
         $this->assertFalse($this->role->hasPermission(['permission_a', 'permission_c'], $team, true));
         $this->assertFalse($this->role->hasPermission(['permission_c', 'permission_d']));

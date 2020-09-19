@@ -3,8 +3,6 @@
 namespace Laratrust\Test\Checkers\Role;
 
 use Laratrust\Tests\Checkers\Role\LaratrustRoleCheckerTestCase;
-use Laratrust\Tests\Models\Role;
-use Laratrust\Tests\Models\Permission;
 
 class LaratrustRoleDefaultCheckerTest extends LaratrustRoleCheckerTestCase
 {
@@ -19,11 +17,11 @@ class LaratrustRoleDefaultCheckerTest extends LaratrustRoleCheckerTestCase
 
     public function testHasPermission()
     {
-         parent::hasPermission();
+        parent::hasPermission();
     }
 
     public function testHasPermissionInTeam()
     {
-         parent::hasPermissionInTeam();
+        parent::hasPermissionInTeam();
     }
 }

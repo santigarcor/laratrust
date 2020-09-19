@@ -104,35 +104,4 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
     }
 
 
-    /**
-     * @param  string  $relation
-     * @param  array  $permissionsNoWildcard
-     * @param  array  $permissionsWildcard
-     * @param $useTeams
-     * @param $teamStrictCheck
-     * @param $team
-     * @return int
-     */
-    protected function getPermissionsCountThroughRelation(string $relation, array $permissionsNoWildcard, array $permissionsWildcard, $useTeams, $teamStrictCheck, $team)
-    {
-        return $this->model->{$relation}()
-            ->withCount([
-                'permissions' =>
-                    function ($query) use ($permissionsNoWildcard, $permissionsWildcard) {
-                        $query->whereIn('name', $permissionsNoWildcard);
-                        foreach ($permissionsWildcard as $permission) {
-                            $query->orWhere('name', 'like', $permission);
-                        }
-                    }
-            ])
-            ->when($useTeams && ($teamStrictCheck || !is_null($team)), function ($query) use ($team) {
-                $teamId = Helper::fetchTeam($team);
-                return $query->where(Config::get('laratrust.foreign_keys.team'), $teamId);
-            })
-            ->pluck('permissions_count')
-            ->sum();
-
-    }
-
-
 }

@@ -282,7 +282,7 @@ trait LaratrustUserTrait
      * @param  string|null  $foreignKeyName
      * @return boolean
      */
-    public function owns($thing,string $foreignKeyName = null)
+    public function owns($thing, string $foreignKeyName = null)
     {
         if ($thing instanceof Ownable) {
             $ownerKey = $thing->ownerKey($this);
@@ -335,25 +335,28 @@ trait LaratrustUserTrait
      * Return all the user permissions.
      *
      * @param  null|array  $columns
+     * @param  null  $team
      * @return \Illuminate\Support\Collection|static
      */
-    public function allPermissions($columns = null)
+    public function allPermissions($columns = null, $team = null)
     {
         $columns = is_array($columns) ? $columns : null;
         if ($columns) {
             $columns[] = 'id';
             $columns = array_unique($columns);
         }
+
+
         $withColumns = $columns ? ":".implode(',', $columns) : '';
 
-        $roles = $this->roles()->with("permissions{$withColumns}")->get();
+        $roles = $this->roles()->whereRelationTeamIs($team)->with("permissions{$withColumns}")->get();
 
         $roles = $roles->flatMap(function ($role) {
             return $role->permissions;
         });
         if (Config::get('laratrust.teams.enabled')) {
 
-            $teams = $this->rolesTeams()->with("permissions{$withColumns}")->get();
+            $teams = $this->rolesTeams()->whereRelationTeamIs($team)->with("permissions{$withColumns}")->get();
 
             $teams = $teams->flatMap(function ($team) {
                 return $team->permissions;

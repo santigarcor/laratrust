@@ -2,6 +2,7 @@
 
 namespace Laratrust\Traits;
 
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\Config;
 
 trait LaratrustPermissionTrait
@@ -39,15 +40,17 @@ trait LaratrustPermissionTrait
     /**
      * Many-to-Many relations with role model.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return MorphToMany
      */
     public function roles()
     {
-        return $this->belongsToMany(
-            Config::get('laratrust.models.role'),
-            Config::get('laratrust.tables.permission_role'),
-            Config::get('laratrust.foreign_keys.permission'),
-            Config::get('laratrust.foreign_keys.role')
+
+        return $this->morphedByMany(
+            config('laratrust.models.role'),
+            'model',
+            config('laratrust.tables.permission_owner'),
+            'model_id',
+            config('laratrust.foreign_keys.permission')
         );
     }
 
@@ -55,16 +58,16 @@ trait LaratrustPermissionTrait
      * Morph by Many relationship between the permission and the one of the possible user models.
      *
      * @param  string  $relationship
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     * @return MorphToMany
      */
     public function getMorphByUserRelation($relationship)
     {
         return $this->morphedByMany(
             Config::get('laratrust.user_models')[$relationship],
-            'user',
+            'model',
             Config::get('laratrust.tables.permission_user'),
-            Config::get('laratrust.foreign_keys.permission'),
-            Config::get('laratrust.foreign_keys.user')
+            'model_id',
+            Config::get('laratrust.foreign_keys.permission')
         );
     }
 }

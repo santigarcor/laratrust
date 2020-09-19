@@ -12,7 +12,7 @@ use Laratrust\Tests\Models\UserObserver;
  * @property UserObserver $observer
  * @method  User getModelClass()
  */
-class AbstractLaratrustUserEventsTest extends AbstractLaratrustPermissionEventsTest
+class LaratrustUserEventsTest extends AbstractLaratrustPermissionEventsTest
 {
 
 
