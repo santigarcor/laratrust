@@ -2,11 +2,9 @@
 
 namespace Laratrust\Test\Checkers\Role;
 
-use Laratrust\Tests\Models\Role;
-use Laratrust\Tests\LaratrustTestCase;
-use Laratrust\Tests\Models\Permission;
+use Laratrust\Tests\Checkers\Role\LaratrustRoleCheckerTestCase;
 
-class LaratrustRoleQueryCheckerTest extends LaratrustTestCase
+class LaratrustRoleQueryCheckerTest extends LaratrustRoleCheckerTestCase
 {
     protected $role;
 
@@ -14,36 +12,17 @@ class LaratrustRoleQueryCheckerTest extends LaratrustTestCase
     {
         parent::setUp();
 
-        $this->migrate();
         $this->app['config']->set('laratrust.checker', 'query');
 
-        $this->role = Role::create(['name' => 'role']);
     }
 
     public function testHasPermission()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-         */
-        $permA = Permission::create(['name' => 'permission_a']);
-        $permB = Permission::create(['name' => 'permission_b']);
+        parent::hasPermission();
+    }
 
-        $this->role->permissions()->attach([$permA->id, $permB->id]);
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-         */
-        $this->assertTrue($this->role->hasPermission('permission_a'));
-        $this->assertTrue($this->role->hasPermission('permission_b'));
-        $this->assertFalse($this->role->hasPermission('permission_c'));
-
-        $this->assertTrue($this->role->hasPermission(['permission_a', 'permission_b']));
-        $this->assertTrue($this->role->hasPermission(['permission_a', 'permission_c']));
-        $this->assertFalse($this->role->hasPermission(['permission_a', 'permission_c'], true));
-        $this->assertFalse($this->role->hasPermission(['permission_c', 'permission_d']));
+    public function testHasPermissionInTeam()
+    {
+        parent::hasPermissionInTeam();
     }
 }

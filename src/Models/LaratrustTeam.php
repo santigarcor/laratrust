@@ -29,4 +29,9 @@ class LaratrustTeam extends Model implements LaratrustTeamInterface
         parent::__construct($attributes);
         $this->table = Config::get('laratrust.tables.teams');
     }
+
+    public function hasPermission($permission, $team = null, $requireAll = false)
+    {
+        // TODO: Implement hasPermission() method.
+    }
 }

@@ -112,6 +112,8 @@ return [
 
         'permissions' => 'permissions',
 
+        'permission_owner' => 'permission_owner',
+
         /**
          * Will be used only if the teams functionality is enabled.
          */
@@ -119,9 +121,6 @@ return [
 
         'role_user' => 'role_user',
 
-        'permission_user' => 'permission_user',
-
-        'permission_role' => 'permission_role',
     ],
 
     /*
@@ -134,7 +133,7 @@ return [
     */
     'foreign_keys' => [
         /**
-         * User foreign key on Laratrust's role_user and permission_user tables.
+         * User foreign key on Laratrust's role_user table.
          */
         'user' => 'user_id',
 
@@ -149,7 +148,7 @@ return [
         'permission' => 'permission_id',
 
         /**
-         * Role foreign key on Laratrust's role_user and permission_user tables.
+         * Role foreign key on Laratrust's role_user and permission_owner tables.
          */
         'team' => 'team_id',
     ],

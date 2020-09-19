@@ -2,8 +2,8 @@
 
 namespace Laratrust\Tests;
 
-use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Permission;
+use Laratrust\Tests\Models\Role;
 
 class LaratrustRoleEventsTest extends LaratrustEventsTestCase
 {
@@ -42,7 +42,7 @@ class LaratrustRoleEventsTest extends LaratrustEventsTestCase
 
         Role::setEventDispatcher($this->dispatcher);
 
-        $this->dispatcherShouldFire('permission.attached', [$this->role, $permission->id], Role::class);
+        $this->dispatcherShouldFire('permission.attached', [$this->role, $permission->id, null], Role::class);
 
         $this->role->attachPermission($permission);
     }
@@ -54,7 +54,7 @@ class LaratrustRoleEventsTest extends LaratrustEventsTestCase
 
         Role::setEventDispatcher($this->dispatcher);
 
-        $this->dispatcherShouldFire('permission.detached', [$this->role, $permission->id], Role::class);
+        $this->dispatcherShouldFire('permission.detached', [$this->role, $permission->id, null], Role::class);
 
         $this->role->detachPermission($permission);
     }
@@ -70,7 +70,8 @@ class LaratrustRoleEventsTest extends LaratrustEventsTestCase
             $this->role,
             [
                 'attached' => [], 'detached' => [$permission->id], 'updated' => [],
-            ]
+            ],
+            null
         ], Role::class);
 
         $this->role->syncPermissions([]);

@@ -2,14 +2,18 @@
 
 namespace Laratrust\Tests\Checkers\User;
 
+use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
-use Laratrust\Tests\LaratrustTestCase;
-use Laratrust\Tests\Models\Permission;
+use Laratrust\Traits\LaratrustUserTrait;
 
 class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
 {
+    /**
+     * @var LaratrustUserTrait|null
+     */
     protected $user;
 
     protected function setUp(): void
@@ -28,7 +32,7 @@ class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
         $roleB = Role::create(['name' => 'role_b']);
 
         $roleA->attachPermission($permissionA);
-        $roleB->attachPermissions([$permissionB, $permissionC]);
+        $roleB->attachPermissions([$permissionB, $permissionC], $team);
 
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
         $this->user->attachRole($roleA)->attachRole($roleB, $team);

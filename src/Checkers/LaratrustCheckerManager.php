@@ -3,10 +3,14 @@
 namespace Laratrust\Checkers;
 
 use Illuminate\Support\Facades\Config;
-use Laratrust\Checkers\Role\LaratrustRoleQueryChecker;
-use Laratrust\Checkers\User\LaratrustUserQueryChecker;
+use Laratrust\Checkers\PermissionAble\LaratrustPermissionAbleChecker;
+use Laratrust\Checkers\PermissionAble\LaratrustPermissionAbleDefaultChecker;
+use Laratrust\Checkers\PermissionAble\LaratrustPermissionAbleQueryChecker;
 use Laratrust\Checkers\Role\LaratrustRoleDefaultChecker;
+use Laratrust\Checkers\Role\LaratrustRoleQueryChecker;
+use Laratrust\Checkers\User\LaratrustUserChecker;
 use Laratrust\Checkers\User\LaratrustUserDefaultChecker;
+use Laratrust\Checkers\User\LaratrustUserQueryChecker;
 
 class LaratrustCheckerManager
 {
@@ -25,7 +29,7 @@ class LaratrustCheckerManager
     /**
      * Return the right checker according to the configuration.
      *
-     * @return \Laratrust\Checkers\LaratrustChecker
+     * @return LaratrustUserChecker
      */
     public function getUserChecker()
     {
@@ -40,7 +44,7 @@ class LaratrustCheckerManager
     /**
      * Return the right checker according to the configuration.
      *
-     * @return \Laratrust\Checkers\LaratrustChecker
+     * @return LaratrustPermissionAbleChecker
      */
     public function getRoleChecker()
     {
@@ -49,6 +53,21 @@ class LaratrustCheckerManager
                 return new LaratrustRoleDefaultChecker($this->model);
             case 'query':
                 return new LaratrustRoleQueryChecker($this->model);
+        }
+    }
+
+    /**
+     * Return the right checker according to the configuration.
+     *
+     * @return LaratrustPermissionAbleChecker
+     */
+    public function getPermissionsChecker()
+    {
+        switch (Config::get('laratrust.checker', 'default')) {
+            case 'default':
+                return new LaratrustPermissionAbleDefaultChecker($this->model);
+            case 'query':
+                return new LaratrustPermissionAbleQueryChecker($this->model);
         }
     }
 }

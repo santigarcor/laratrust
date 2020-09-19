@@ -2,34 +2,47 @@
 
 namespace Laratrust\Checkers\User;
 
-use Laratrust\Helper;
 use Illuminate\Database\Eloquent\Model;
+use Laratrust\Checkers\PermissionAble\LaratrustPermissionAbleChecker;
+use Laratrust\Helper;
+use Laratrust\Traits\LaratrustUserTrait;
 
-abstract class LaratrustUserChecker
+/**
+ * Class LaratrustUserChecker
+ * @property Model|LaratrustUserTrait $model
+ */
+abstract class LaratrustUserChecker extends LaratrustPermissionAbleChecker
 {
+
     /**
-     * @var \Illuminate\Database\Eloquent\Model
+     * Get Users Roles.
+     *
+     * @param  string|bool  $team  Team name.
+     * @return array
      */
-    protected $user;
+    abstract public function getCurrentUserRoles($team = null);
 
-    public function __construct(Model $user)
-    {
-        $this->user = $user;
-    }
-
+    /**
+     * Checks if the user has a role by its name.
+     *
+     * @param  string|array  $name  Role name or array of role names.
+     * @param  string|bool  $team  Team name or requiredAll roles.
+     * @param  bool  $requireAll  All roles in the array are required.
+     * @return bool
+     */
     abstract public function currentUserHasRole($name, $team = null, $requireAll = false);
 
-    abstract public function currentUserHasPermission($permission, $team = null, $requireAll = false);
+    abstract public function currentModelHasPermission($permission, $team = null, $requireAll = false, callable $callback = null);
 
     /**
      * Checks role(s) and permission(s).
      *
-     * @param  string|array  $roles       Array of roles or comma separated string
-     * @param  string|array  $permissions Array of permissions or comma separated string.
-     * @param  string|bool  $team      Team name or requiredAll roles.
-     * @param  array  $options     validate_all (true|false) or return_type (boolean|array|both)
-     * @throws \InvalidArgumentException
+     * @param  string|array  $roles  Array of roles or comma separated string
+     * @param  string|array  $permissions  Array of permissions or comma separated string.
+     * @param  string|bool  $team  Team name or requiredAll roles.
+     * @param  array  $options  validate_all (true|false) or return_type (boolean|array|both)
      * @return array|bool
+     * @throws \InvalidArgumentException
      */
     public function currentUserHasAbility($roles, $permissions, $team = null, $options = [])
     {
@@ -44,7 +57,7 @@ abstract class LaratrustUserChecker
 
         if ($options['return_type'] == 'boolean') {
             $hasRoles = $this->currentUserHasRole($roles, $team, $options['validate_all']);
-            $hasPermissions = $this->currentUserHasPermission($permissions, $team, $options['validate_all']);
+            $hasPermissions = $this->currentModelHasPermission($permissions, $team, $options['validate_all']);
 
             return $options['validate_all']
                 ? $hasRoles && $hasPermissions
@@ -58,13 +71,14 @@ abstract class LaratrustUserChecker
             $checkedRoles[$role] = $this->currentUserHasRole($role, $team);
         }
         foreach ($permissions as $permission) {
-            $checkedPermissions[$permission] = $this->currentUserHasPermission($permission, $team);
+            $checkedPermissions[$permission] = $this->currentModelHasPermission($permission, $team);
         }
 
         // If validate all and there is a false in either.
         // Check that if validate all, then there should not be any false.
         // Check that if not validate all, there must be at least one true.
-        if (($options['validate_all'] && !(in_array(false, $checkedRoles) || in_array(false, $checkedPermissions))) || (!$options['validate_all'] && (in_array(true, $checkedRoles) || in_array(true, $checkedPermissions)))) {
+        if (($options['validate_all'] && !(in_array(false, $checkedRoles) || in_array(false, $checkedPermissions))) || (!$options['validate_all'] && (in_array(true,
+                        $checkedRoles) || in_array(true, $checkedPermissions)))) {
             $validateAll = true;
         } else {
             $validateAll = false;
@@ -78,5 +92,4 @@ abstract class LaratrustUserChecker
         return [$validateAll, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
     }
 
-    abstract public function currentUserFlushCache();
 }
