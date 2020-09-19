@@ -3,6 +3,8 @@
 namespace Laratrust\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Laratrust\Helper;
 
 /**
  * Trait LaratrustHasPermissionsScopes
@@ -10,6 +12,8 @@ use Illuminate\Database\Eloquent\Builder;
  * @method static Builder wherePermissionIs($permission = '', $boolean = 'and')
  * @method static Builder orWherePermissionIs($permission = '')
  * @method static Builder whereDoesntHavePermission()
+ * @method static Builder whereRelatedTeamIs($team = null)
+ * @method static Builder whereTeamIs($team = null)
  */
 trait LaratrustHasPermissionsScopes
 {
@@ -33,6 +37,42 @@ trait LaratrustHasPermissionsScopes
                 $permissionQuery->$method('name', $permission);
             });
         });
+    }
+
+
+    /**
+     * /**
+     * This scope allows to retrieve relation with on a specific team.
+     * $team param can be used with the value of false to ignore teams
+     *
+     * @param  Builder  $query
+     * @param  null|string|false  $team
+     * @return Builder
+     */
+    public function scopeWhereRelatedTeamIs(Builder $query, $team = null)
+    {
+        return $query->when(config('laratrust.teams.enabled') && $team !== false, function ($query) use ($team) {
+
+            return $query->where(config('laratrust.foreign_keys.team'), Helper::getIdFor($team, 'team'));
+        });
+
+    }
+
+    /**
+     * /**
+     * This scope allows to retrieve restrict query on a specific team.
+     * $team param can be used with the value of false to ignore teams
+     *
+     * @param  MorphToMany  $query
+     * @param  null|string|false  $team
+     * @return MorphToMany
+     */
+    public function scopeWhereTeamIs(MorphToMany $query, $team = null)
+    {
+        if (config('laratrust.teams.enabled') && $team !== false) {
+            return $query->wherePivot(config('laratrust.foreign_keys.team'), Helper::getIdFor($team, 'team'));
+        }
+        return $query;
     }
 
     /**

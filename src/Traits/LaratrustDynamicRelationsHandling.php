@@ -27,7 +27,7 @@ trait LaratrustDynamicRelationsHandling
 
         $attributes = [];
         $objectType = Str::singular($relationship);
-       ;
+
         $object = Helper::getIdFor($object, $objectType);
 
         if (Config::get('laratrust.teams.enabled')) {

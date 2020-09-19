@@ -13,6 +13,9 @@ use Laratrust\Tests\Models\OwnableObject;
 
 class LaratrustUserTest extends LaratrustTestCase
 {
+    /**
+     * @var User|null
+     */
     protected $user;
 
     protected function setUp(): void
