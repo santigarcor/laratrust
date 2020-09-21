@@ -25,7 +25,7 @@ class LaratrustCheckerManager
     /**
      * Return the right checker according to the configuration.
      *
-     * @return \Laratrust\Checkers\LaratrustChecker
+     * @return \Laratrust\Checkers\User\LaratrustUserChecker
      */
     public function getUserChecker()
     {
@@ -40,7 +40,7 @@ class LaratrustCheckerManager
     /**
      * Return the right checker according to the configuration.
      *
-     * @return \Laratrust\Checkers\LaratrustChecker
+     * @return \Laratrust\Checkers\Role\LaratrustRoleChecker
      */
     public function getRoleChecker()
     {

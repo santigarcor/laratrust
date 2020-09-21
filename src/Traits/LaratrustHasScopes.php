@@ -2,9 +2,20 @@
 
 namespace Laratrust\Traits;
 
+use Illuminate\Database\Eloquent\Builder;
 use Laratrust\Helper;
 use Illuminate\Support\Facades\Config;
 
+/**
+ * Trait LaratrustHasScopes
+ *
+ * @method static Builder whereRoleIs($role = '', $team = null, $boolean = 'and')
+ * @method static Builder orWhereRoleIs($role = '', $team = null)
+ * @method static Builder whereDoesntHaveRole()
+ * @method static Builder wherePermissionIs($permission = '', $boolean = 'and')
+ * @method static Builder orWherePermissionIs($permission = '')
+ * @method static Builder whereDoesntHavePermission()
+ */
 trait LaratrustHasScopes
 {
     /**

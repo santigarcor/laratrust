@@ -2,12 +2,11 @@
 
 namespace Laratrust\Traits;
 
-use Laratrust\Helper;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Config;
 use Laratrust\Checkers\LaratrustCheckerManager;
+use Laratrust\Helper;
 
 trait LaratrustUserTrait
 {
@@ -123,8 +122,8 @@ trait LaratrustUserTrait
     /**
      * Get the the names of the user's roles.
      *
-     * @param  string|bool   $team      Team name.
-     * @return bool
+     * @param  string|bool  $team  Team name.
+     * @return array
      */
     public function getRoles($team = null)
     {
@@ -516,15 +515,15 @@ trait LaratrustUserTrait
      * Checks if the user owns the thing.
      *
      * @param  Object  $thing
-     * @param  string  $foreignKeyName
+     * @param  string|null  $foreignKeyName
      * @return boolean
      */
-    public function owns($thing, $foreignKeyName = null)
+    public function owns($thing, string $foreignKeyName = null)
     {
         if ($thing instanceof \Laratrust\Contracts\Ownable) {
             $ownerKey = $thing->ownerKey($this);
         } else {
-            $className = (new \ReflectionClass($this))->getShortName();
+            $className = class_basename($this);
             $foreignKeyName = $foreignKeyName ?: Str::snake($className . 'Id');
             $ownerKey = $thing->$foreignKeyName;
         }
@@ -570,10 +569,13 @@ trait LaratrustUserTrait
 
     /**
      * Return all the user permissions.
+     * if $team param is false
      *
+     * @param  null|array  $columns
+     * @param  null  $team
      * @return \Illuminate\Support\Collection|static
      */
-    public function allPermissions($columns = null)
+    public function allPermissions($columns = null, $team = null)
     {
         $columns = is_array($columns) ? $columns : null;
         if ($columns) {
@@ -582,13 +584,24 @@ trait LaratrustUserTrait
         }
         $withColumns = $columns ? ":" . implode(',', $columns) : '';
 
-        $roles = $this->roles()->with("permissions{$withColumns}")->get();
+        $roles = $this->roles()
+            ->when(config('laratrust.teams.enabled') && $team !== false, function ($query) use ($team) {
+                return $query->whereHas('permissions', function ($permissionQuery) use ($team) {
+                    $permissionQuery->where(config('laratrust.foreign_keys.team'), Helper::getIdFor($team, 'team'));
+                });
+            })
+            ->with("permissions{$withColumns}")->get();
 
-        $roles = $roles->flatMap(function ($role) {
+        $rolesPermissions = $roles->flatMap(function ($role) {
             return $role->permissions;
         });
 
-        return $this->permissions()->get($columns ?? ['*'])->merge($roles)->unique('id');
+        $directPermissions = $this->permissions()
+            ->when(config('laratrust.teams.enabled') && $team !== false, function ($query) use ($team) {
+                $query->where(config('laratrust.foreign_keys.team'), Helper::getIdFor($team, 'team'));
+            });
+
+        return $directPermissions->get($columns ?? ['*'])->merge($rolesPermissions)->unique('id');
     }
 
     /**

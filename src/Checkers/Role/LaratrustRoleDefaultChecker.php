@@ -54,7 +54,7 @@ class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
      */
     public function currentRoleFlushCache()
     {
-        Cache::forget('laratrust_permissions_for_role_' . $this->role->getKey());
+        Cache::forget($this->getPermissionsCacheKey());
     }
 
     /**
@@ -66,7 +66,7 @@ class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
      */
     public function currentRoleCachedPermissions()
     {
-        $cacheKey = 'laratrust_permissions_for_role_' . $this->role->getKey();
+        $cacheKey = $this->getPermissionsCacheKey();
 
         if (!Config::get('laratrust.cache.enabled')) {
             return $this->role->permissions()->get();
@@ -76,4 +76,6 @@ class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
             return $this->role->permissions()->get()->toArray();
         });
     }
+
+
 }
