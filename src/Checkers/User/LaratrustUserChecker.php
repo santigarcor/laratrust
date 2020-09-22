@@ -17,9 +17,33 @@ abstract class LaratrustUserChecker
         $this->user = $user;
     }
 
+    /**
+     * Checks if the user has a role by its name.
+     *
+     * @param  string|array  $name  Role name or array of role names.
+     * @param  string|bool  $team  Team name or requiredAll roles.
+     * @param  bool  $requireAll  All roles in the array are required.
+     * @return bool
+     */
     abstract public function currentUserHasRole($name, $team = null, $requireAll = false);
 
+    /**
+     * Check if user has a permission by its name.
+     *
+     * @param  string|array  $permission  Permission string or array of permissions.
+     * @param  string|bool  $team  Team name or requiredAll roles.
+     * @param  bool  $requireAll  All roles in the array are required.
+     * @return bool
+     */
     abstract public function currentUserHasPermission($permission, $team = null, $requireAll = false);
+
+    /**
+     * Checks if the user has a role by its name.
+     *
+     * @param  string|bool  $team  Team name.
+     * @return array
+     */
+    abstract public function getCurrentUserRoles($team = null);
 
     /**
      * Checks role(s) and permission(s).
@@ -78,5 +102,8 @@ abstract class LaratrustUserChecker
         return [$validateAll, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
     }
 
+    /**
+     * @return  void
+     */
     abstract public function currentUserFlushCache();
 }

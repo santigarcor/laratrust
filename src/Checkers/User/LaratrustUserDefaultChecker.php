@@ -2,18 +2,15 @@
 
 namespace Laratrust\Checkers\User;
 
-use Laratrust\Helper;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
+use Laratrust\Helper;
 
 class LaratrustUserDefaultChecker extends LaratrustUserChecker
 {
     /**
-     * Checks if the user has a role by its name.
-     *
-     * @param  string|bool   $team      Team name.
-     * @return array
+     * @inheritDoc
      */
     public function getCurrentUserRoles($team = null)
     {
@@ -41,12 +38,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
     }
 
     /**
-     * Checks if the user has a role by its name.
-     *
-     * @param  string|array  $name       Role name or array of role names.
-     * @param  string|bool   $team      Team name or requiredAll roles.
-     * @param  bool          $requireAll All roles in the array are required.
-     * @return bool
+     * @inheritDoc
      */
     public function currentUserHasRole($name, $team = null, $requireAll = false)
     {
@@ -86,12 +78,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
     }
 
     /**
-     * Check if user has a permission by its name.
-     *
-     * @param  string|array  $permission Permission string or array of permissions.
-     * @param  string|bool  $team      Team name or requiredAll roles.
-     * @param  bool  $requireAll All roles in the array are required.
-     * @return bool
+     * @inheritDoc
      */
     public function currentUserHasPermission($permission, $team = null, $requireAll = false)
     {
@@ -138,6 +125,9 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
         return false;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function currentUserFlushCache()
     {
         Cache::forget('laratrust_roles_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey());

@@ -9,11 +9,7 @@ use Illuminate\Support\Facades\Config;
 class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
 {
     /**
-     * Checks if the role has a permission by its name.
-     *
-     * @param  string|array  $permission       Permission name or array of permission names.
-     * @param  bool  $requireAll       All permissions in the array are required.
-     * @return bool
+     * @inheritDoc
      */
     public function currentRoleHasPermission($permission, $requireAll = false)
     {
@@ -48,9 +44,7 @@ class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
     }
 
     /**
-     * Flush the role's cache.
-     *
-     * @return void
+     * @inheritDoc
      */
     public function currentRoleFlushCache()
     {
@@ -76,6 +70,4 @@ class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
             return $this->role->permissions()->get()->toArray();
         });
     }
-
-
 }

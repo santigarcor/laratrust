@@ -2,11 +2,12 @@
 
 namespace Laratrust\Traits;
 
-use Illuminate\Support\Facades\Config;
+use Laratrust\Helper;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use Laratrust\Checkers\LaratrustCheckerManager;
-use Laratrust\Helper;
 
 trait LaratrustUserTrait
 {
@@ -122,7 +123,7 @@ trait LaratrustUserTrait
     /**
      * Get the the names of the user's roles.
      *
-     * @param  string|bool  $team  Team name.
+     * @param  string|bool   $team      Team name.
      * @return array
      */
     public function getRoles($team = null)
@@ -569,7 +570,7 @@ trait LaratrustUserTrait
 
     /**
      * Return all the user permissions.
-     * if $team param is false
+     * if $team param is false it ignores teams
      *
      * @param  null|array  $columns
      * @param  null  $team
