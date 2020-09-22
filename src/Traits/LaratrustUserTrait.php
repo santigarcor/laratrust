@@ -89,6 +89,52 @@ trait LaratrustUserTrait
     }
 
     /**
+     * Many-to-Many relations with Team associated through the permissions user is given.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function permissionsTeams()
+    {
+        if (!Config::get('laratrust.teams.enabled')) {
+            return null;
+        }
+
+        return $this->morphToMany(
+            Config::get('laratrust.models.team'),
+            'user',
+            Config::get('laratrust.tables.permission_user'),
+            Config::get('laratrust.foreign_keys.user'),
+            Config::get('laratrust.foreign_keys.team')
+        )
+            ->withPivot(Config::get('laratrust.foreign_keys.permission'));
+    }
+
+
+    /**
+     * Get a collection of all user teams
+     *
+     * @param  array|null  $columns
+     * @return \Illuminate\Support\Collection
+     */
+    public function allTeams($columns = null)
+    {
+        $columns = is_array($columns) ? $columns : ['*'];
+        if ($columns) {
+            $columns[] = 'id';
+            $columns = array_unique($columns);
+        }
+
+        if (!Config::get('laratrust.teams.enabled')) {
+            return collect([]);
+        }
+        $permissionTeams = $this->permissionsTeams()->get($columns);
+        $roleTeams = $this->rolesTeams()->get($columns);
+
+        return $roleTeams->merge($permissionTeams)->unique('id');
+    }
+
+
+    /**
      * Many-to-Many relations with Permission.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
