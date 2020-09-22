@@ -5,7 +5,8 @@
 composer require santigarcor/laratrust
 ```
 
-2. Publish all the configuration files:
+2. Publish the configuration file:
+
 ```bash
 php artisan vendor:publish --tag="laratrust"
 ```
