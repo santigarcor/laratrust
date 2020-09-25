@@ -16,7 +16,14 @@ class LaratrustSeeder extends Seeder
     {
         $this->truncateLaratrustTables();
 
-        $config = config('laratrust_seeder.roles_structure');
+        $config = Config::get('laratrust_seeder.roles_structure');
+
+        if ($config === null) {
+            $this->command->error("The configuration has not been published. Did you run `php artisan vendor:publish --tag=\"laratrust-seeder\"`");
+            $this->command->line('');
+            return false;
+        }
+
         $mapPermission = collect(config('laratrust_seeder.permissions_map'));
 
         foreach ($config as $key => $modules) {
@@ -51,7 +58,7 @@ class LaratrustSeeder extends Seeder
             // Attach all permissions to the role
             $role->permissions()->sync($permissions);
 
-            if(Config::get('laratrust_seeder.create_users')) {
+            if (Config::get('laratrust_seeder.create_users')) {
                 $this->command->info("Creating '{$key}' user");
                 // Create default user for each role
                 $user = {{userConfiguredModelClass}}::create([
