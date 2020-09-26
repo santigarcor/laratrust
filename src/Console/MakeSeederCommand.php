@@ -48,8 +48,6 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
             $folder = $this->files->dirname($this->seederPath());
             $where = substr($folder, strpos($folder, 'database'));
 
-            $this->composer->dumpAutoloads();
-
             $this->error(
                 "Couldn't create seeder.\n".
                 "Check the write permissions within the $where directory."
@@ -68,10 +66,26 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
     {
         $stub = $this->files->get($this->getStub());
 
+        $this->replaceSeederNamespace($stub);
         $this->replaceModelClassNames($stub);
         $this->replaceTableNames($stub);
 
         return $stub;
+    }
+
+    /**
+     * Replace the namespace of the seeder.
+     * @param  string  $stub
+     */
+    protected function replaceSeederNamespace(string & $stub)
+    {
+        $namespace = '';
+
+        if (version_compare($this->getLaravel()->version(), '8.0') >= 0) {
+            $namespace = "\nnamespace Database\Seeders;\n";
+        }
+
+        $this->replaceStubParameter($stub, 'namespace', $namespace);
     }
 
     /**
