@@ -3,9 +3,9 @@
 namespace Laratrust\Console;
 
 use Exception;
-use Illuminate\Database\Console\Seeds\SeederMakeCommand as LaravelMakeSeederCommand;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Console\Seeds\SeederMakeCommand as LaravelMakeSeederCommand;
 
 class MakeSeederCommand extends LaravelMakeSeederCommand
 {
@@ -42,9 +42,7 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
             $seederClass = $this->createSeederClass();
             $this->files->put($this->seederPath(), $seederClass);
             $this->info("Seeder successfully created!");
-
         } catch (Exception $exception) {
-
             $folder = $this->files->dirname($this->seederPath());
             $where = substr($folder, strpos($folder, 'database'));
 
@@ -178,5 +176,4 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
     {
         return [];
     }
-
 }
