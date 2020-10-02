@@ -711,7 +711,7 @@ class LaratrustUserTest extends LaratrustTestCase
         */
         $roleA = Role::create(['name' => 'role_a']);
         $roleB = Role::create(['name' => 'role_b']);
-        $roleC = Role::create(['name' => 'role_b']);
+        $roleC = Role::create(['name' => 'role_c']);
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);
         $permissionC = Permission::create(['name' => 'permission_c']);
@@ -740,7 +740,7 @@ class LaratrustUserTest extends LaratrustTestCase
             $this->user->allPermissions(null, false)->sortBy('name')->pluck('name')->all()
         );
         $this->assertSame(
-            ['permission_a', 'permission_b'],
+            ['permission_a', 'permission_b', 'permission_c'],
             $this->user->allPermissions(null, null)->sortBy('name')->pluck('name')->all()
         );
         $this->assertSame(
