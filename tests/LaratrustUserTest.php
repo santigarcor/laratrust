@@ -2,14 +2,14 @@
 
 namespace Laratrust\Test;
 
-use Mockery as m;
 use Illuminate\Support\Str;
+use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\OwnableObject;
+use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
-use Laratrust\Tests\LaratrustTestCase;
-use Laratrust\Tests\Models\Permission;
-use Laratrust\Tests\Models\OwnableObject;
+use Mockery as m;
 
 class LaratrustUserTest extends LaratrustTestCase
 {
@@ -700,6 +700,59 @@ class LaratrustUserTest extends LaratrustTestCase
         $this->assertArrayHasKey('id', $onlySomeColumns);
         $this->assertArrayHasKey('name', $onlySomeColumns);
         $this->assertArrayNotHasKey('displayName', $onlySomeColumns);
+    }
+
+    public function testAllPermissionsScopedOnTeams()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $roleA = Role::create(['name' => 'role_a']);
+        $roleB = Role::create(['name' => 'role_b']);
+        $roleC = Role::create(['name' => 'role_b']);
+        $permissionA = Permission::create(['name' => 'permission_a']);
+        $permissionB = Permission::create(['name' => 'permission_b']);
+        $permissionC = Permission::create(['name' => 'permission_c']);
+        $permissionD = Permission::create(['name' => 'permission_d']);
+
+        $teamA = Team::create(['name' => 'team_a']);
+        $teamB = Team::create(['name' => 'team_b']);
+
+        $roleA->attachPermissions([$permissionA, $permissionB]);
+        $roleB->attachPermissions([$permissionB, $permissionC]);
+        $roleC->attachPermissions([$permissionD]);
+
+        $this->user->attachPermissions([$permissionB, $permissionC]);
+        $this->user->attachPermissions([$permissionC], $teamA);
+        $this->user->attachRole($roleA);
+        $this->user->attachRole($roleB, $teamA);
+        $this->user->attachRole($roleC, $teamB);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertSame(
+            ['permission_a', 'permission_b', 'permission_c', 'permission_d'],
+            $this->user->allPermissions(null, false)->sortBy('name')->pluck('name')->all()
+        );
+        $this->assertSame(
+            ['permission_a', 'permission_b'],
+            $this->user->allPermissions(null, null)->sortBy('name')->pluck('name')->all()
+        );
+        $this->assertSame(
+            ['permission_b', 'permission_c'],
+            $this->user->allPermissions(null, 'team_a')->sortBy('name')->pluck('name')->all()
+        );
+
+        $this->assertSame(
+            ['permission_d',],
+            $this->user->allPermissions(null, 'team_b')->sortBy('name')->pluck('name')->all()
+        );
+
     }
 
     protected function assertWasAttached($objectName, $result)
