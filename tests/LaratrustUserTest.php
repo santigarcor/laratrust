@@ -2,14 +2,14 @@
 
 namespace Laratrust\Test;
 
+use Mockery as m;
 use Illuminate\Support\Str;
-use Laratrust\Tests\LaratrustTestCase;
-use Laratrust\Tests\Models\OwnableObject;
-use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
-use Mockery as m;
+use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\Permission;
+use Laratrust\Tests\Models\OwnableObject;
 
 class LaratrustUserTest extends LaratrustTestCase
 {
