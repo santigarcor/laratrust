@@ -524,7 +524,7 @@ trait LaratrustUserTrait
         if ($thing instanceof \Laratrust\Contracts\Ownable) {
             $ownerKey = $thing->ownerKey($this);
         } else {
-            $className = class_basename($this);
+            $className = (new \ReflectionClass($this))->getShortName();
             $foreignKeyName = $foreignKeyName ?: Str::snake($className . 'Id');
             $ownerKey = $thing->$foreignKeyName;
         }
