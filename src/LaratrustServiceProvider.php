@@ -168,8 +168,11 @@ class LaratrustServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/laratrust.php' => config_path('laratrust.php'),
-                __DIR__. '/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
             ], 'laratrust');
+
+            $this->publishes([
+                __DIR__. '/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
+            ], 'laratrust-seeder');
         }
     }
 
