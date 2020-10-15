@@ -43,11 +43,13 @@ class LaratrustUserCanCheckerTestCase extends LaratrustTestCase
         );
 
         // Case: User lacks a permission.
-        $this->assertTrue(
-            $this->user->canAny(
-                ['user_cannot_a', 'permission_b']
-            )
-        );
+        if (method_exists($this->user, 'canAny')) {
+            $this->assertTrue(
+                $this->user->canAny(
+                    ['user_cannot_a', 'permission_b']
+                )
+            );
+        }
         $this->assertFalse(
             $this->user->can(
                 ['user_cannot_a', 'permission_b']
@@ -60,10 +62,12 @@ class LaratrustUserCanCheckerTestCase extends LaratrustTestCase
                 ['user_cannot_a', 'user_cannot_b']
             )
         );
-        $this->assertFalse(
-            $this->user->canAny(
-                ['user_cannot_a', 'user_cannot_b']
-            )
-        );
+        if (method_exists($this->user, 'canAny')) {
+            $this->assertFalse(
+                $this->user->canAny(
+                    ['user_cannot_a', 'user_cannot_b']
+                )
+            );
+        }
     }
 }
