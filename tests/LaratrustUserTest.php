@@ -2,17 +2,22 @@
 
 namespace Laratrust\Test;
 
-use Mockery as m;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\OwnableObject;
+use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
-use Laratrust\Tests\LaratrustTestCase;
-use Laratrust\Tests\Models\Permission;
-use Laratrust\Tests\Models\OwnableObject;
+use Laratrust\Traits\LaratrustUserTrait;
+use Mockery as m;
 
 class LaratrustUserTest extends LaratrustTestCase
 {
+    /**
+     * @var LaratrustUserTrait|Model
+     */
     protected $user;
 
     protected function setUp(): void
@@ -80,6 +85,94 @@ class LaratrustUserTest extends LaratrustTestCase
             'Illuminate\Database\Eloquent\Relations\MorphToMany',
             $this->user->rolesTeams()
         );
+    }
+
+
+    public function testPermissionsTeams()
+    {
+        /*
+       |------------------------------------------------------------
+       | Set
+       |------------------------------------------------------------
+       */
+
+        $team = Team::create(['name' => 'team_a']);
+
+        $this->user->attachPermissions([
+            Permission::create(['name' => 'permission_a']),
+            Permission::create(['name' => 'permission_b']),
+        ], $team);
+
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->app['config']->set('laratrust.teams.enabled', false);
+        $this->assertNull($this->user->permissionsTeams());
+
+        $this->app['config']->set('laratrust.teams.enabled', true);
+        $this->assertInstanceOf(
+            '\Illuminate\Database\Eloquent\Relations\MorphToMany',
+            $this->user->permissionsTeams()
+        );
+        $this->assertInstanceOf(
+            Team::class,
+            $this->user->permissionsTeams()->first()
+        );
+    }
+
+
+    public function testAllTeams()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+
+        $teamA = Team::create(['name' => 'team_a']);
+        $teamB = Team::create(['name' => 'team_b']);
+        $this->user->attachPermissions([
+            Permission::create(['name' => 'permission_a']),
+            Permission::create(['name' => 'permission_b']),
+            Permission::create(['name' => 'permission_c'])
+        ], $teamA);
+
+        $this->user->attachRoles([
+            Role::create(['name' => 'role_a']),
+            Role::create(['name' => 'role_b']),
+            Role::create(['name' => 'role_c'])
+        ], $teamB);
+
+        $this->user->attachRoles([
+            Role::create(['name' => 'role_d']),
+        ], $teamA);
+
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertInstanceOf(  '\Illuminate\Database\Eloquent\Collection', $this->user->allTeams());
+
+
+        $this->app['config']->set('laratrust.teams.enabled', false);
+        $this->assertEmpty($this->user->allTeams());
+
+        $this->app['config']->set('laratrust.teams.enabled', true);
+
+        $this->assertSame(
+            ['team_a', 'team_b',],
+            $this->user->allTeams()->sortBy('name')->pluck('name')->all()
+        );
+        $onlySomeColumns = $this->user->allTeams(['name'])->first()->toArray();
+        $this->assertArrayHasKey('id', $onlySomeColumns);
+        $this->assertArrayHasKey('name', $onlySomeColumns);
+        $this->assertArrayNotHasKey('displayName', $onlySomeColumns);
+
     }
 
     public function testIsAbleTo()
