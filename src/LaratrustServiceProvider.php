@@ -4,6 +4,8 @@ namespace Laratrust;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class LaratrustServiceProvider extends ServiceProvider
@@ -27,6 +29,7 @@ class LaratrustServiceProvider extends ServiceProvider
         $this->registerBladeDirectives();
         $this->registerRoutes();
         $this->registerResources();
+        $this->registerPermissionsToGate();
         $this->defineAssetPublishing();
     }
 
@@ -117,6 +120,20 @@ class LaratrustServiceProvider extends ServiceProvider
     protected function registerResources()
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'laratrust');
+    }
+
+    /**
+     * Register permissions to Laravel Gate
+     *
+     * @return void
+     */
+    protected function registerPermissionsToGate()
+    {
+        app(Gate::class)->before(function (Authorizable $user, string $ability) {
+            if (method_exists($user, 'hasPermission')) {
+                return $user->hasPermission($ability) ?: null;
+            }
+        });
     }
 
     /**
