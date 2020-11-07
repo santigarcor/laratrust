@@ -56,7 +56,7 @@ return [
         | Determines the time in SECONDS to store Laratrust's roles and permissions in the cache.
         |
         */
-        'expiration_time' => 3600,
+        'expiration_time' =>  env('LARATRUST_EXPIRATION_TIME', 3600),
     ],
 
     /*
