@@ -21,7 +21,7 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^8.0",
         "kkszymanowski/traitor": "^0.2.0",
         "laravel/framework": "~6.0|~7.0|~8.0"
     },
