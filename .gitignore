@@ -19,5 +19,5 @@ Thumbs.db
 .env.php
 bump-version.sh
 
-# sublime phpintel plugin
-/.phpintel
+# vscode phpunit
+.phpunit.result.cache
