@@ -234,15 +234,15 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $this->app['config']->set('laratrust.cache.enabled', true);
         $this->user->hasRole('some_role');
         $this->user->hasPermission('some_permission');
-        $this->assertTrue(Cache::has("laratrust_roles_for_user_{$this->user->id}"));
-        $this->assertTrue(Cache::has("laratrust_permissions_for_user_{$this->user->id}"));
+        $this->assertTrue(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
+        $this->assertTrue(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
         $this->user->flushCache();
 
         // Without cache
         $this->app['config']->set('laratrust.cache.enabled', false);
         $this->user->hasRole('some_role');
         $this->user->hasPermission('some_permission');
-        $this->assertFalse(Cache::has("laratrust_roles_for_user_{$this->user->id}"));
-        $this->assertFalse(Cache::has("laratrust_permissions_for_user_{$this->user->id}"));
+        $this->assertFalse(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
+        $this->assertFalse(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
     }
 }

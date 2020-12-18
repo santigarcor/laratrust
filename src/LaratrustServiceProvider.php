@@ -4,6 +4,8 @@ namespace Laratrust;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class LaratrustServiceProvider extends ServiceProvider
@@ -27,6 +29,7 @@ class LaratrustServiceProvider extends ServiceProvider
         $this->registerBladeDirectives();
         $this->registerRoutes();
         $this->registerResources();
+        $this->registerPermissionsToGate();
         $this->defineAssetPublishing();
     }
 
@@ -120,6 +123,20 @@ class LaratrustServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register permissions to Laravel Gate
+     *
+     * @return void
+     */
+    protected function registerPermissionsToGate()
+    {
+        app(Gate::class)->before(function (Authorizable $user, string $ability) {
+            if (method_exists($user, 'hasPermission')) {
+                return $user->hasPermission($ability) ?: null;
+            }
+        });
+    }
+
+    /**
      * Register the assets that are publishable for the admin panel to work.
      *
      * @return void
@@ -168,8 +185,11 @@ class LaratrustServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/laratrust.php' => config_path('laratrust.php'),
-                __DIR__. '/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
             ], 'laratrust');
+
+            $this->publishes([
+                __DIR__. '/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
+            ], 'laratrust-seeder');
         }
     }
 

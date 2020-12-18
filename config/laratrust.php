@@ -73,7 +73,7 @@ return [
     |
     */
     'user_models' => [
-        'users' => \App\User::class,
+        'users' => \App\Models\User::class,
     ],
 
     /*
@@ -88,14 +88,14 @@ return [
     */
     'models' => [
 
-        'role' => \App\Role::class,
+        'role' => \App\Models\Role::class,
 
-        'permission' => \App\Permission::class,
+        'permission' => \App\Models\Permission::class,
 
         /**
          * Will be used only if the teams functionality is enabled.
          */
-        'team' => \App\Team::class,
+        'team' => \App\Models\Team::class,
     ],
 
     /*
@@ -311,7 +311,7 @@ return [
         |
         */
         'roles_restrictions' => [
-            // The user won't be able to remove roles already assigend to users.
+            // The user won't be able to remove roles already assigned to users.
             'not_removable' => [],
 
             // The user won't be able to edit the role and the permissions assigned.
