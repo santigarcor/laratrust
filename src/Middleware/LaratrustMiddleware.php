@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Redirect;
 class LaratrustMiddleware
 {
     const DELIMITER = '|';
+    protected $roleOrPermissionBeingChecked = [];
+    protected $isRoleOrPermission;
 
     /**
      * Check if the request has authorization to continue.
@@ -31,6 +33,9 @@ class LaratrustMiddleware
             $rolesPermissions = explode(self::DELIMITER, $rolesPermissions);
         }
 
+        $this->roleOrPermissionBeingChecked = $rolesPermissions;
+        $this->isRoleOrPermission = $type;
+
         return !Auth::guard($guard)->guest()
             && Auth::guard($guard)->user()->$method($rolesPermissions, $team, $requireAll);
     }
@@ -46,8 +51,15 @@ class LaratrustMiddleware
         $handler = Config::get("laratrust.middleware.handlers.{$handling}");
 
         if ($handling == 'abort') {
+            $shouldDisplayRolesPermissionsBeingChecked = Config::get("laratrust.display_roles_permissions_being_checked");
+
             $defaultMessage = 'User does not have any of the necessary access rights.';
-            return App::abort($handler['code'], $handler['message'] ?? $defaultMessage);
+            $message = $handler['message'] ?? $defaultMessage;
+
+            if($shouldDisplayRolesPermissionsBeingChecked)
+                $message .= " | " . ucwords($this->isRoleOrPermission) . ": " . implode(", ", $this->roleOrPermissionBeingChecked);
+
+            return App::abort($handler['code'], $message);
         }
 
         $redirect = Redirect::to($handler['url']);

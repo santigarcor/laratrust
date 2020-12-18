@@ -320,5 +320,16 @@ return [
             // The user won't be able to delete the role.
             'not_deletable' => [],
         ],
-    ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Display the Roles/Permissions being checked
+    |--------------------------------------------------------------------------
+    |
+    | If true, the roles or permissions being checked will be included
+    | in the abort message.
+    |
+    */
+    'display_roles_permissions_being_checked' => true,
 ];
