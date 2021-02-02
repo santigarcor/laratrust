@@ -143,4 +143,59 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         $this->assertNull($middleware->handle($this->request, function () {
         }, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all|guard:api'));
     }
+
+
+    public function testHandle_IsLoggedInWithAbilityAndMultipleGuards_ShouldNotAbort()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $guard2 = m::mock('Illuminate\Contracts\Auth\Guard');
+        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
+        $middleware = new LaratrustAbility($this->guard);
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Auth::shouldReceive('guard')->with('api')->andReturn($this->guard);
+        Auth::shouldReceive('guard')->with('web')->andReturn($guard2);
+        $this->guard->shouldReceive('guest')->andReturn(true);
+        $guard2->shouldReceive('guest')->andReturn(false);
+        $guard2->shouldReceive('user')->andReturn($user);
+        $user->shouldReceive('ability')
+            ->with(
+                ['admin', 'user'],
+                ['edit-users', 'update-users'],
+                m::anyOf(null, 'TeamA'),
+                m::anyOf(['validate_all' => true], ['validate_all' => false])
+            )
+            ->andReturn(true);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users'));
+
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'guard:api|guard:web'));
+
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'require_all'));
+
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'guard:api|guard:web|require_all'));
+
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all'));
+
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all|guard:api|guard:web'));
+    }
 }
