@@ -78,11 +78,7 @@ class LaratrustMiddleware
         return [
             (Str::contains($team, ['require_all', 'guard:']) ? null : $team),
             (Str::contains($team, 'require_all') ?: Str::contains($options, 'require_all')),
-            (Str::contains($team, 'guard:') ? $this->extractGuards($team) : (
-                Str::contains($options, 'guard:')
-                ? $this->extractGuards($options)
-                : [Config::get('auth.defaults.guard')]
-            )),
+            ($this->extractGuards($team) ?: $this->extractGuards($options) ?: [Config::get('auth.defaults.guard')]),
         ];
     }
 
@@ -90,16 +86,14 @@ class LaratrustMiddleware
      * Extract the guard type from the given string.
      *
      * @param  string $string
-     * @return string
+     * @return array
      */
     protected function extractGuards($string)
     {
-        $options = Collection::make(explode('|', $string));
-
-        return $options->reject(function ($option) {
-            return strpos($option, 'guard:') === false;
-        })->map(function ($option) {
-            return explode(':', $option)[1];
-        });
+        return preg_match("/\\bguard:((?:[^|,]+)(?:[|][^|,]+)*)\b/", $string, $matches)
+            ? Collection::make(explode("|", $matches[1]))->reject(function ($value, $key) {
+                return $value == "require_all";
+            })
+            : [];
     }
 }
