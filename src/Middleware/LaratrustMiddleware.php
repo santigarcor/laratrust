@@ -90,10 +90,12 @@ class LaratrustMiddleware
      */
     protected function extractGuards($string)
     {
-        return preg_match("/\\bguard:((?:[^|,]+)(?:[|][^|,]+)*)\b/", $string, $matches)
-            ? Collection::make(explode("|", $matches[1]))->reject(function ($value, $key) {
-                return $value == "require_all";
-            })
-            : [];
+        $options = Collection::make(explode('|', $string));
+
+        return $options->reject(function ($option) {
+            return strpos($option, 'guard:') === false;
+        })->map(function ($option) {
+            return explode(':', $option)[1];
+        })->toArray();
     }
 }

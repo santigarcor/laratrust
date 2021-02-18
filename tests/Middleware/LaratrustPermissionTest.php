@@ -181,19 +181,19 @@ class LaratrustPermissionTest extends MiddlewareTest
         }, 'users-create|users-update'));
 
         $this->assertNull($middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'guard:api|web'));
+        }, 'users-create|users-update', 'guard:api|guard:web'));
 
         $this->assertNull($middleware->handle($this->request, function () {
         }, 'users-create|users-update', 'require_all'));
 
         $this->assertNull($middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'guard:api|web,require_all'));
+        }, 'users-create|users-update', 'guard:api|guard:web|require_all'));
 
         $this->assertNull($middleware->handle($this->request, function () {
         }, 'users-create|users-update', 'TeamA', 'require_all'));
 
         $this->assertNull($middleware->handle($this->request, function () {
-        }, 'users-create|users-update', 'TeamA', 'guard:api|web,require_all'));
+        }, 'users-create|users-update', 'TeamA', 'guard:api|guard:web|require_all'));
     }
 
     public function testHandle_IsLoggedInWithNoPermission_ShouldRedirectWithError()

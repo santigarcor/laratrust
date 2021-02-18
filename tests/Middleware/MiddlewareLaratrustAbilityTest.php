@@ -184,18 +184,18 @@ class MiddlewareLaratrustAbilityTest extends MiddlewareTest
         }, 'admin|user', 'edit-users|update-users'));
 
         $this->assertNull($middleware->handle($this->request, function () {
-        }, 'admin|user', 'edit-users|update-users', 'guard:api|web'));
+        }, 'admin|user', 'edit-users|update-users', 'guard:api|guard:web'));
 
         $this->assertNull($middleware->handle($this->request, function () {
         }, 'admin|user', 'edit-users|update-users', 'require_all'));
 
         $this->assertNull($middleware->handle($this->request, function () {
-        }, 'admin|user', 'edit-users|update-users', 'require_all,guard:api|web'));
+        }, 'admin|user', 'edit-users|update-users', 'require_all|guard:api|guard:web'));
 
         $this->assertNull($middleware->handle($this->request, function () {
         }, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all'));
 
         $this->assertNull($middleware->handle($this->request, function () {
-        }, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all,guard:api|web'));
+        }, 'admin|user', 'edit-users|update-users', 'TeamA', 'require_all|guard:api|guard:web'));
     }
 }
