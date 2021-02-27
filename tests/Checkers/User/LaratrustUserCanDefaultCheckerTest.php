@@ -13,6 +13,7 @@ class LaratrustCanAbilityDefaultCheckerTest extends LaratrustUserCanCheckerTestC
     {
         parent::getEnvironmentSetUp($app);
 
+        $app['config']->set('laratrust.checker', 'default');
         $app['config']->set('laratrust.permissions_as_gates', true);
     }
 
