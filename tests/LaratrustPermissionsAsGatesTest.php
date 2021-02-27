@@ -7,9 +7,9 @@ use Laratrust\LaratrustServiceProvider;
 use Mockery as m;
 use Mockery;
 
-class LaratrustPermissionsAsGateTest extends LaratrustTestCase
+class LaratrustPermissionsAsGatesTest extends LaratrustTestCase
 {
-    public function testRegistersPermissionsAsGate()
+    public function testRegistersPermissionsAsGates()
     {
         /*
         |------------------------------------------------------------
@@ -23,7 +23,7 @@ class LaratrustPermissionsAsGateTest extends LaratrustTestCase
         | Expectation
         |------------------------------------------------------------
         */
-        $this->mock(Gate::class, fn ($mock) => $mock->shouldReceive('before')->once());
+        $this->mock(Gate::class)->shouldReceive('before')->once();
 
         /*
         |------------------------------------------------------------
@@ -34,7 +34,7 @@ class LaratrustPermissionsAsGateTest extends LaratrustTestCase
         $provider->boot();
     }
 
-    public function testDoesNotRegisterPermissionsAsGateIfDisabledInConfig()
+    public function testDoesNotRegisterPermissionsAsGatesIfDisabledInConfig()
     {
         /*
         |------------------------------------------------------------
@@ -48,7 +48,7 @@ class LaratrustPermissionsAsGateTest extends LaratrustTestCase
         | Expectation
         |------------------------------------------------------------
         */
-        $this->mock(Gate::class, fn ($mock) => $mock->shouldNotReceive('before'));
+        $this->mock(Gate::class)->shouldNotReceive('before');
 
         /*
         |------------------------------------------------------------
@@ -59,14 +59,14 @@ class LaratrustPermissionsAsGateTest extends LaratrustTestCase
         $provider->boot();
     }
 
-    public function testDoesNotRegisterPermissionsAsGateByDefault()
+    public function testDoesNotRegisterPermissionsAsGatesByDefault()
     {
         /*
         |------------------------------------------------------------
         | Expectation
         |------------------------------------------------------------
         */
-        $this->mock(Gate::class, fn ($mock) => $mock->shouldNotReceive('before'));
+        $this->mock(Gate::class)->shouldNotReceive('before');
 
         /*
         |------------------------------------------------------------
