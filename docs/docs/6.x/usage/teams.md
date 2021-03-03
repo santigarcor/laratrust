@@ -119,8 +119,8 @@ The user ability is the same, but this time you can pass the team parameter.
 
 ```php
 $options = [
-    'requireAll' => true, //Default: false,
-    'foreignKeyName'  => 'canBeAnyString' //Default: null
+    'validate_all' => true, //Default: false
+    'return_type'  => 'array' //Default: 'boolean'. You can also set it as 'both'
 ];
 
 $user->ability(['admin'], ['edit-user'], 'my-awesome-team');
@@ -129,6 +129,7 @@ $user->ability(['admin'], ['edit-user'], 'my-awesome-team', $options);
 
 ## Permissions, Roles & Ownership Checks
 The permissions, roles and ownership checks work the same, but this time you can pass the team in the options array.
+
 
 ```php
 $options = [
