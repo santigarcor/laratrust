@@ -129,6 +129,10 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     protected function registerPermissionsToGate()
     {
+        if (!$this->app['config']->get('laratrust.permissions_as_gates')) {
+            return;
+        }
+
         app(Gate::class)->before(function (Authorizable $user, string $ability) {
             if (method_exists($user, 'hasPermission')) {
                 return $user->hasPermission($ability) ?: null;
