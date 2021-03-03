@@ -7,7 +7,7 @@ use Laratrust\Tests\Models\User;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
-class LaratrustUserCanCheckerTestCase extends LaratrustTestCase
+abstract class LaratrustUserCanCheckerTestCase extends LaratrustTestCase
 {
     protected $user;
 

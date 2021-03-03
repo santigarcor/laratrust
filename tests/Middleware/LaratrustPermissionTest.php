@@ -143,6 +143,59 @@ class LaratrustPermissionTest extends MiddlewareTest
         }, 'users-create|users-update', 'TeamA', 'guard:api|require_all'));
     }
 
+    public function testHandle_IsLoggedInWithPermissionAndMultipleGuards_ShouldNotAbort()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $guard2 = m::mock('Illuminate\Contracts\Auth\Guard');
+        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
+        $middleware = new LaratrustPermission($this->guard);
+
+        /*
+        |------------------------------------------------------------
+        | Expectation
+        |------------------------------------------------------------
+        */
+        Auth::shouldReceive('guard')->with('api')->andReturn($this->guard);
+        Auth::shouldReceive('guard')->with('web')->andReturn($guard2);
+        $this->guard->shouldReceive('guest')->andReturn(true);
+        $guard2->shouldReceive('guest')->andReturn(false);
+        $guard2->shouldReceive('user')->andReturn($user);
+        $user->shouldReceive('hasPermission')
+            ->with(
+                ['users-create', 'users-update'],
+                m::anyOf(null, 'TeamA'),
+                m::anyOf(true, false)
+            )
+            ->andReturn(true);
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'users-create|users-update'));
+
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'guard:api|guard:web'));
+
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'require_all'));
+
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'guard:api|guard:web|require_all'));
+
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'TeamA', 'require_all'));
+
+        $this->assertNull($middleware->handle($this->request, function () {
+        }, 'users-create|users-update', 'TeamA', 'guard:api|guard:web|require_all'));
+    }
+
     public function testHandle_IsLoggedInWithNoPermission_ShouldRedirectWithError()
     {
         /*

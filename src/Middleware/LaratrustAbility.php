@@ -21,7 +21,7 @@ class LaratrustAbility extends LaratrustMiddleware
      */
     public function handle($request, Closure $next, $roles, $permissions, $team = null, $options = '')
     {
-        list($team, $validateAll, $guard) = $this->assignRealValuesTo($team, $options);
+        [$team, $validateAll, $guards] = $this->assignRealValuesTo($team, $options);
 
         if (!is_array($roles)) {
             $roles = explode(self::DELIMITER, $roles);
@@ -31,16 +31,14 @@ class LaratrustAbility extends LaratrustMiddleware
             $permissions = explode(self::DELIMITER, $permissions);
         }
 
-        if (
-            Auth::guard($guard)->guest()
-            || !Auth::guard($guard)->user()
-                    ->ability($roles, $permissions, $team, [
+        foreach ($guards as $guard) {
+            if (!Auth::guard($guard)->guest() && Auth::guard($guard)->user()->ability($roles, $permissions, $team, [
                         'validate_all' => $validateAll
-                    ])
-         ) {
-            return $this->unauthorized();
+                    ])) {
+                return $next($request);
+            }
         }
 
-        return $next($request);
+        return $this->unauthorized();
     }
 }

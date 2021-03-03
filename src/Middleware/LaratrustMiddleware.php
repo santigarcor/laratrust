@@ -24,15 +24,23 @@ class LaratrustMiddleware
      */
     protected function authorization($type, $rolesPermissions, $team, $options)
     {
-        list($team, $requireAll, $guard) = $this->assignRealValuesTo($team, $options);
+        [$team, $requireAll, $guards] = $this->assignRealValuesTo($team, $options);
         $method = $type == 'roles' ? 'hasRole' : 'hasPermission';
 
         if (!is_array($rolesPermissions)) {
             $rolesPermissions = explode(self::DELIMITER, $rolesPermissions);
         }
 
-        return !Auth::guard($guard)->guest()
-            && Auth::guard($guard)->user()->$method($rolesPermissions, $team, $requireAll);
+        foreach ($guards as $guard) {
+            if (!Auth::guard($guard)->guest() && Auth::guard($guard)->user()->$method(
+                $rolesPermissions,
+                $team,
+                $requireAll
+            )) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -70,11 +78,7 @@ class LaratrustMiddleware
         return [
             (Str::contains($team, ['require_all', 'guard:']) ? null : $team),
             (Str::contains($team, 'require_all') ?: Str::contains($options, 'require_all')),
-            (Str::contains($team, 'guard:') ? $this->extractGuard($team) : (
-                Str::contains($options, 'guard:')
-                ? $this->extractGuard($options)
-                : Config::get('auth.defaults.guard')
-            )),
+            ($this->extractGuards($team) ?: $this->extractGuards($options) ?: [Config::get('auth.defaults.guard')]),
         ];
     }
 
@@ -82,9 +86,9 @@ class LaratrustMiddleware
      * Extract the guard type from the given string.
      *
      * @param  string $string
-     * @return string
+     * @return array
      */
-    protected function extractGuard($string)
+    protected function extractGuards($string)
     {
         $options = Collection::make(explode('|', $string));
 
@@ -92,6 +96,6 @@ class LaratrustMiddleware
             return strpos($option, 'guard:') === false;
         })->map(function ($option) {
             return explode(':', $option)[1];
-        })->first();
+        })->toArray();
     }
 }
