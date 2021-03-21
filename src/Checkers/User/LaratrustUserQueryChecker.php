@@ -23,15 +23,8 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
             return $this->user->roles->pluck('name')->toArray();
         }
 
-        if ($team === null) {
-            return $this->user
-                ->roles()
-                ->wherePivot(config('laratrust.foreign_keys.team'), null)
-                ->pluck('name')
-                ->toArray();
-        }
 
-        $teamId = Helper::fetchTeam($team);
+        $teamId = $team ? Helper::fetchTeam($team) : null;
 
         return $this->user
             ->roles()
