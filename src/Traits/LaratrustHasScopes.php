@@ -45,21 +45,32 @@ trait LaratrustHasScopes
 
     /**
      * This scope allows to retrieve the users with a specific permission.
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $permission
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $permission
+     * @param null $team
+     * @param string $boolean
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeWherePermissionIs($query, $permission = '', $boolean = 'and')
+    public function scopeWherePermissionIs($query, $permission = '', $team = null, $boolean = 'and')
     {
         $method = $boolean == 'and' ? 'where' : 'orWhere';
 
-        return $query->$method(function ($query) use ($permission) {
+        return $query->$method(function ($query) use ($permission, $team) {
+            $teamsStrictCheck = Config::get('laratrust.teams.strict_check');
             $method = is_array($permission) ? 'whereIn' : 'where';
 
-            $query->whereHas('roles.permissions', function ($permissionQuery) use ($method, $permission) {
-                $permissionQuery->$method('name', $permission);
-            })->orWhereHas('permissions', function ($permissionQuery) use ($method, $permission) {
-                $permissionQuery->$method('name', $permission);
+            $query->whereHas('roles.permissions', function ($permissionQuery) use ($method, $permission, $team, $teamsStrictCheck) {
+                $permissionQuery->$method('name', $permission)
+                    ->when($team || $teamsStrictCheck, function ($query) use ($team) {
+                        $team = Helper::getIdFor($team, 'team');
+                        return $query->where(Helper::teamForeignKey(), $team);
+                    });;
+            })->orWhereHas('permissions', function ($permissionQuery) use ($method, $permission, $team, $teamsStrictCheck) {
+                $permissionQuery->$method('name', $permission)
+                    ->when($team || $teamsStrictCheck, function ($query) use ($team) {
+                        $team = Helper::getIdFor($team, 'team');
+                        return $query->where(Helper::teamForeignKey(), $team);
+                    });;
             });
         });
     }
@@ -67,13 +78,14 @@ trait LaratrustHasScopes
     /**
      * This scope allows to retrive the users with a specific permission.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string  $permission
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string $permission
+     * @param null $team
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function scopeOrWherePermissionIs($query, $permission = '')
+    public function scopeOrWherePermissionIs($query, $permission = '', $team = null)
     {
-        return $this->scopeWherePermissionIs($query, $permission, 'or');
+        return $this->scopeWherePermissionIs($query, $permission, $team, 'or');
     }
 
     /**
