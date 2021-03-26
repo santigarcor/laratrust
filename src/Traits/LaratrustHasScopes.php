@@ -64,13 +64,13 @@ trait LaratrustHasScopes
                     ->when($team || $teamsStrictCheck, function ($query) use ($team) {
                         $team = Helper::getIdFor($team, 'team');
                         return $query->where(Helper::teamForeignKey(), $team);
-                    });;
+                    });
             })->orWhereHas('permissions', function ($permissionQuery) use ($method, $permission, $team, $teamsStrictCheck) {
                 $permissionQuery->$method('name', $permission)
                     ->when($team || $teamsStrictCheck, function ($query) use ($team) {
                         $team = Helper::getIdFor($team, 'team');
                         return $query->where(Helper::teamForeignKey(), $team);
-                    });;
+                    });
             });
         });
     }
