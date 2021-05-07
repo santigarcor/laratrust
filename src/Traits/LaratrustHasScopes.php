@@ -11,7 +11,7 @@ trait LaratrustHasScopes
      * This scope allows to retrive the users with a specific role.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string|array  $role
+     * @param  string|array<string>  $role
      * @param  mixed  $team
      * @param  string  $boolean
      * @return \Illuminate\Database\Eloquent\Builder
@@ -36,7 +36,7 @@ trait LaratrustHasScopes
      * This scope allows to retrive the users with a specific role.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string|array  $role
+     * @param  string|array<string>  $role
      * @param  mixed  $team
      * @return \Illuminate\Database\Eloquent\Builder
      */
@@ -48,7 +48,7 @@ trait LaratrustHasScopes
     /**
      * This scope allows to retrieve the users with a specific permission.
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string|array  $permission
+     * @param  string|array<string>  $permission
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeWherePermissionIs($query, $permission = '', $boolean = 'and')
@@ -70,7 +70,7 @@ trait LaratrustHasScopes
      * This scope allows to retrive the users with a specific permission.
      *
      * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  string|array  $permission
+     * @param  string|array<string>  $permission
      * @return \Illuminate\Database\Eloquent\Builder
      */
     public function scopeOrWherePermissionIs($query, $permission = '')
