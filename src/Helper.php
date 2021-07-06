@@ -30,7 +30,7 @@ class Helper
             return call_user_func_array([
                 Config::get("laratrust.models.{$type}"), 'where'
             ], ['name', $object])->firstOrFail()->getKey();
-        } else if (is_string($object) && $type === 'team') {
+        } elseif (is_string($object) && $type === 'team') {
             return $object;
         }
 
