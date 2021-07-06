@@ -26,10 +26,12 @@ class Helper
             return $object['id'];
         } elseif (is_numeric($object)) {
             return $object;
-        } elseif (is_string($object)) {
+        } elseif (is_string($object) && $type !== 'team') {
             return call_user_func_array([
                 Config::get("laratrust.models.{$type}"), 'where'
             ], ['name', $object])->firstOrFail()->getKey();
+        } else if (is_string($object) && $type === 'team') {
+            return $object;
         }
 
         throw new InvalidArgumentException(
