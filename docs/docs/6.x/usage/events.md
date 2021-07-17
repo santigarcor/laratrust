@@ -87,7 +87,7 @@ class AppServiceProvider extends ServiceProvider
 
 ::: tip NOTE
 - Inside your observable classes you can have your normal model events methods alongside Laratrust's events methods.
-- If you wan to register Laratrust events and also eloquent events yo should call both `observe` and `laratrustObserve` methods.
+- If you want to register Laratrust events and also eloquent events you should call both `observe` and `laratrustObserve` methods.
 :::
 
 ### Flushing events and observables
