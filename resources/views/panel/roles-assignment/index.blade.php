@@ -49,7 +49,7 @@
                 @endif
                 <td class="flex justify-end px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
                   <a
-                    href="{{route('laratrust.roles-assignment.edit', ['roles_assignment' => $user->id, 'model' => $modelKey])}}"
+                    href="{{route('laratrust.roles-assignment.edit', ['roles_assignment' => $user->getKey(), 'model' => $modelKey])}}"
                     class="text-blue-600 hover:text-blue-900"
                   >Edit</a>
                 </td>
