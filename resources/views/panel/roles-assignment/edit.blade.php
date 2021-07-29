@@ -9,7 +9,7 @@
     <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-32">
       <form
         method="POST"
-        action="{{route('laratrust.roles-assignment.update', ['roles_assignment' => $user->id, 'model' => $modelKey])}}"
+        action="{{route('laratrust.roles-assignment.update', ['roles_assignment' => $user->getKey(), 'model' => $modelKey])}}"
         class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200 p-8"
       >
         @csrf
