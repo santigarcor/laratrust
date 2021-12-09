@@ -193,10 +193,6 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker implements Laratr
      */
     public function userModelCacheKey()
     {
-        if (!Config::get('laratrust.use_morph_map')) {
-            return 'user';
-        }
-
         foreach (Config::get('laratrust.user_models') as $key => $model) {
             if ($this->user instanceof $model) {
                 return $key;

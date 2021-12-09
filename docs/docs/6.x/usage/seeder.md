@@ -13,14 +13,14 @@ To generate the seeder you have to run:
 ```bash
 php artisan laratrust:seeder
 ```
-::: tip NOTE
-In order to customize the roles, modules and permissions in each case, you **can publish** `config/laratrust_seeder.php` by running:
-```bash 
+
+Then to customize the roles, modules and permissions you can publish the `laratrust_seeder.php` file:
+
+```bash
 php artisan vendor:publish --tag="laratrust-seeder"
 ```
-:::
 
-and
+Finally:
 
 ```bash
 composer dump-autoload
@@ -32,7 +32,7 @@ In the `database/seeds/DatabaseSeeder.php` file you have to add this to the `run
 $this->call(LaratrustSeeder::class);
 ```
 
-
+## Seeder configuration file
 Your `config/laratrust_seeder.php` file looks like this by default:
 
 ```php
