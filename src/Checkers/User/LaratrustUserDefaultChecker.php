@@ -2,12 +2,13 @@
 
 namespace Laratrust\Checkers\User;
 
+use Laratrust\Contracts\LaratrustUserCheckerInterface;
 use Laratrust\Helper;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 
-class LaratrustUserDefaultChecker extends LaratrustUserChecker
+class LaratrustUserDefaultChecker extends LaratrustUserChecker implements LaratrustUserCheckerInterface
 {
     /**
      * Checks if the user has a role by its name.

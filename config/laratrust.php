@@ -14,7 +14,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Which permissions and role checker to use.
+    | Which permissions checker to use.
     |--------------------------------------------------------------------------
     |
     | Defines if you want to use the roles and permissions checker.
@@ -23,10 +23,24 @@ return [
                  has always used.
     | - query: Check for the roles and permissions using direct queries to the database.
     |           This method doesn't support cache yet.
-    |
+    | - class that implements LaratrustUserCheckerInterface
      */
-    'checker' => 'default',
+    'user_checker' => 'default',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Which role checker to use.
+    |--------------------------------------------------------------------------
+    |
+    | Defines if you want to use the roles and permissions checker.
+    | Available:
+    | - default: Check for the roles and permissions using the method that Laratrust
+                 has always used.
+    | - query: Check for the roles and permissions using direct queries to the database.
+    |           This method doesn't support cache yet.
+    | - class that implements LaratrustRoleCheckerInterface
+     */
+    'role_checker' => 'default',
     /*
     |--------------------------------------------------------------------------
     | Cache

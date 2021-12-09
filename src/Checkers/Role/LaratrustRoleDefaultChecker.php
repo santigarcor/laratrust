@@ -5,8 +5,9 @@ namespace Laratrust\Checkers\Role;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Laratrust\Contracts\LaratrustRoleCheckerInterface;
 
-class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
+class LaratrustRoleDefaultChecker extends LaratrustRoleChecker implements LaratrustRoleCheckerInterface
 {
     /**
      * Checks if the role has a permission by its name.
