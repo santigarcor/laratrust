@@ -5,10 +5,10 @@ namespace Laratrust\Checkers;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Checkers\Role\LaratrustRoleQueryChecker;
 use Laratrust\Checkers\User\LaratrustUserQueryChecker;
-use Laratrust\Checkers\Role\LaratrustRoleDefaultChecker;
-use Laratrust\Checkers\User\LaratrustUserDefaultChecker;
 use Laratrust\Contracts\LaratrustRoleCheckerInterface;
 use Laratrust\Contracts\LaratrustUserCheckerInterface;
+use Laratrust\Checkers\Role\LaratrustRoleDefaultChecker;
+use Laratrust\Checkers\User\LaratrustUserDefaultChecker;
 
 class LaratrustCheckerManager
 {

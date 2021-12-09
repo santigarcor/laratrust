@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 interface LaratrustRoleCheckerInterface
 {
-
     public function __construct(Model $role);
 
     /**
@@ -24,5 +23,4 @@ interface LaratrustRoleCheckerInterface
      * @return void
      */
     public function currentRoleFlushCache();
-
 }

@@ -2,9 +2,9 @@
 
 namespace Laratrust\Checkers\Role;
 
-use Laratrust\Contracts\LaratrustRoleCheckerInterface;
 use Laratrust\Helper;
 use Illuminate\Support\Facades\Cache;
+use Laratrust\Contracts\LaratrustRoleCheckerInterface;
 
 class LaratrustRoleQueryChecker extends LaratrustRoleChecker implements LaratrustRoleCheckerInterface
 {

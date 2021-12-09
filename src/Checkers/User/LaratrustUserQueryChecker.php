@@ -2,9 +2,9 @@
 
 namespace Laratrust\Checkers\User;
 
-use Laratrust\Contracts\LaratrustUserCheckerInterface;
 use Laratrust\Helper;
 use Illuminate\Support\Facades\Config;
+use Laratrust\Contracts\LaratrustUserCheckerInterface;
 
 class LaratrustUserQueryChecker extends LaratrustUserChecker implements LaratrustUserCheckerInterface
 {
