@@ -9,7 +9,7 @@
     <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-32">
       <form
         method="POST"
-        action="{{route('laratrust.roles-assignment.update', ['roles_assignment' => $user->id, 'model' => $modelKey])}}"
+        action="{{route('laratrust.roles-assignment.update', ['roles_assignment' => $user->getKey(), 'model' => $modelKey])}}"
         class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200 p-8"
       >
         @csrf
@@ -37,7 +37,7 @@
                 class="form-checkbox h-4 w-4"
                 @endif
                 name="roles[]"
-                value="{{$role->id}}"
+                value="{{$role->getKey()}}"
                 {!! $role->assigned ? 'checked' : '' !!}
                 {!! $role->assigned && !$role->isRemovable ? 'onclick="return false;"' : '' !!}
               >
@@ -56,7 +56,7 @@
                   type="checkbox"
                   class="form-checkbox h-4 w-4"
                   name="permissions[]"
-                  value="{{$permission->id}}"
+                  value="{{$permission->getKey()}}"
                   {!! $permission->assigned ? 'checked' : '' !!}
                 >
                 <span class="ml-2">{{$permission->display_name ?? $permission->name}}</span>

@@ -28,7 +28,7 @@
             @foreach ($permissions as $permission)
             <tr>
               <td class="td text-sm leading-5 text-gray-900">
-                {{$permission->id}}
+                {{$permission->getKey()}}
               </td>
               <td class="td text-sm leading-5 text-gray-900">
                 {{$permission->name}}
@@ -40,7 +40,7 @@
                 {{$permission->description}}
               </td>
               <td class="px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
-                <a href="{{route('laratrust.permissions.edit', $permission->id)}}" class="text-blue-600 hover:text-blue-900">Edit</a>
+                <a href="{{route('laratrust.permissions.edit', $permission->getKey())}}" class="text-blue-600 hover:text-blue-900">Edit</a>
               </td>
             </tr>
             @endforeach

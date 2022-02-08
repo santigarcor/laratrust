@@ -11,7 +11,7 @@
         x-data="laratrustForm()"
         x-init="{!! $model ? '' : '$watch(\'displayName\', value => onChangeDisplayName(value))'!!}"
         method="POST"
-        action="{{$model ? route("laratrust.{$type}s.update", $model->id) : route("laratrust.{$type}s.store")}}"
+        action="{{$model ? route("laratrust.{$type}s.update", $model->getKey()) : route("laratrust.{$type}s.store")}}"
         class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200 p-8"
       >
         @csrf
@@ -62,7 +62,7 @@
                   type="checkbox"
                   class="form-checkbox h-4 w-4"
                   name="permissions[]"
-                  value="{{$permission->id}}"
+                  value="{{$permission->getKey()}}"
                   {!! $permission->assigned ? 'checked' : '' !!}
                 >
                 <span class="ml-2">{{$permission->display_name ?? $permission->name}}</span>
