@@ -70,7 +70,7 @@ If you are using the teams feature and want to use the middleware checking for y
 // $user->hasRole(['admin', 'root'], 'my-awesome-team', true);
 
 'middleware' => ['permission:edit-post|edit-user,my-awesome-team,require_all']
-// $user->hasRole(['edit-post', 'edit-user'], 'my-awesome-team', true);
+// $user->isAbleTo(['edit-post', 'edit-user'], 'my-awesome-team', true);
 
 'middleware' => ['ability:admin|owner,create-post|edit-user,my-awesome-team,require_all']
 // $user->ability(['admin', 'owner'], ['create-post', 'edit-user'], 'my-awesome-team', true);
