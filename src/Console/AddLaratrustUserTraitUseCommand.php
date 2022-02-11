@@ -66,7 +66,7 @@ class AddLaratrustUserTraitUseCommand extends Command
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return "Add LaratrustUserTrait to {$this->getUserModels()->implode(', ')} class";
     }
