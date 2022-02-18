@@ -36,7 +36,7 @@ class Helper
 
         if (is_string($object)) {
             return call_user_func_array([
-                Config::get("laratrust.models.$type"), 'where'
+                Config::get("laratrust.models.{$type}"), 'where'
             ], ['name', $object])->firstOrFail()->getKey();
         }
 
