@@ -196,7 +196,7 @@ class LaratrustServiceProvider extends ServiceProvider
             ], 'laratrust-seeder');
             
             $this->publishes([
-                __DIR__. '/../resources/views/panel' => resource_path('views/vendor/laratrust'),
+                __DIR__. '/../resources/views/panel' => resource_path('views/vendor/laratrust/panel'),
             ], 'laratrust-views');
         }
     }
