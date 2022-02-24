@@ -21,6 +21,14 @@ By default the URL to access the panel is `/laratrust`.
 
 To customize the the URL and other available settings in the panel please go to the `panel` section in the `config/laratrust.php` file.
 
+## How to customize the views
+
+1. Publish the blade views used by the panel by running:
+```bash
+php artisan vendor:publish --tag=laratrust-views --force
+```
+2. Now you can change how the panel looks. The published files are located in `resources/views/vendor/laratrust/panel`.
+
 ## Screenshots
 
 Here are some screenshots of the admin panel.
