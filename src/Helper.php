@@ -35,9 +35,13 @@ class Helper
         }
 
         if (is_string($object)) {
+            $model = Config::get("laratrust.models.{$type}");
+            $model = app()->make($model);
+            $field = Config::get('laratrust.uuid') ? $model->getKeyName() : 'name'; // add config app/config/laratrust.php
+
             return call_user_func_array([
                 Config::get("laratrust.models.{$type}"), 'where'
-            ], ['name', $object])->firstOrFail()->getKey();
+            ], [$field, $object])->firstOrFail()->getKey();
         }
 
         throw new InvalidArgumentException(
