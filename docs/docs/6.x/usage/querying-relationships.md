@@ -47,6 +47,13 @@ dump($user->allPermissions());
 }
 */
 ```
+## All Permissions By Team
+
+If you want to retrieve all the user permissions BY TEAM, you can use the `allPermissions(null, 'team-name')` method. It returns a unified collection with all the permissions related to the user inside the team (via the roles and permissions relationships).
+
+```php
+dump($user->allPermissions());
+/*
 
 ## By Role
 To retrieve the users that have some role you can use the query scope `whereRoleIs` or `orWhereRoleIs`:
