@@ -10,23 +10,31 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
 class Helper
 {
     /**
-     * Gets the it from an array, object or integer.
+     * Gets the id from an array, object or integer.
      *
      * @param  mixed  $object
      * @param  string  $type
      * @return int
      */
-    public static function getIdFor($object, $type)
+    public static function getIdFor($object, string $type)
     {
         if (is_null($object)) {
             return null;
-        } elseif (is_object($object)) {
+        }
+
+        if (is_object($object)) {
             return $object->getKey();
-        } elseif (is_array($object)) {
+        }
+
+        if (is_array($object)) {
             return $object['id'];
-        } elseif (is_numeric($object)) {
+        }
+
+        if (is_numeric($object)) {
             return $object;
-        } elseif (is_string($object)) {
+        }
+
+        if (is_string($object)) {
             return call_user_func_array([
                 Config::get("laratrust.models.{$type}"), 'where'
             ], ['name', $object])->firstOrFail()->getKey();

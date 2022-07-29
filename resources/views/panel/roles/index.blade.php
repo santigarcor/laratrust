@@ -26,7 +26,7 @@
             @foreach ($roles as $role)
             <tr>
               <td class="td text-sm leading-5 text-gray-900">
-                {{$role->id}}
+                {{$role->getKey()}}
               </td>
               <td class="td text-sm leading-5 text-gray-900">
                 {{$role->display_name}}
@@ -39,12 +39,12 @@
               </td>
               <td class="flex justify-end px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
                 @if (\Laratrust\Helper::roleIsEditable($role))
-                <a href="{{route('laratrust.roles.edit', $role->id)}}" class="text-blue-600 hover:text-blue-900">Edit</a>
+                <a href="{{route('laratrust.roles.edit', $role->getKey())}}" class="text-blue-600 hover:text-blue-900">Edit</a>
                 @else
-                <a href="{{route('laratrust.roles.show', $role->id)}}" class="text-blue-600 hover:text-blue-900">Details</a>
+                <a href="{{route('laratrust.roles.show', $role->getKey())}}" class="text-blue-600 hover:text-blue-900">Details</a>
                 @endif
                 <form
-                  action="{{route('laratrust.roles.destroy', $role->id)}}"
+                  action="{{route('laratrust.roles.destroy', $role->getKey())}}"
                   method="POST"
                   onsubmit="return confirm('Are you sure you want to delete the record?');"
                 >

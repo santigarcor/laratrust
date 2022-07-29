@@ -1,4 +1,4 @@
-const ACTIVE_VERSION = '6.x';
+const ACTIVE_VERSION = '7.x';
 
 function getDocsNavBar(version) {
   switch (version) {
@@ -36,7 +36,7 @@ function getDocsNavBar(version) {
         'license',
         'contributing',
       ];
-      break;
+    case '7.x':
     case '6.x':
       return [
         'upgrade',
@@ -73,12 +73,12 @@ function getDocsNavBar(version) {
         'license',
         'contributing',
       ];
-      break;
   }
 }
 
 function getVersionsLinks(preLink = 'docs') {
   let links = [
+      { text: '7.x', link: `/${preLink}/7.x/` },
       { text: '6.x', link: `/${preLink}/6.x/` },
       { text: '5.2', link: `/${preLink}/5.2/` },
       { text: '5.1', link: `/${preLink}/5.1/` },

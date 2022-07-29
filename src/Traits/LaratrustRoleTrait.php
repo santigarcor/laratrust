@@ -105,7 +105,7 @@ trait LaratrustRoleTrait
      * Save the inputted permissions.
      *
      * @param  mixed  $permissions
-     * @return array
+     * @return $this
      */
     public function syncPermissions($permissions)
     {
@@ -126,7 +126,7 @@ trait LaratrustRoleTrait
      * Attach permission to current role.
      *
      * @param  object|array  $permission
-     * @return void
+     * @return $this
      */
     public function attachPermission($permission)
     {
@@ -143,7 +143,7 @@ trait LaratrustRoleTrait
      * Detach permission from current role.
      *
      * @param  object|array  $permission
-     * @return void
+     * @return $this
      */
     public function detachPermission($permission)
     {
@@ -160,7 +160,7 @@ trait LaratrustRoleTrait
      * Attach multiple permissions to current role.
      *
      * @param  mixed  $permissions
-     * @return void
+     * @return $this
      */
     public function attachPermissions($permissions)
     {
@@ -175,7 +175,7 @@ trait LaratrustRoleTrait
      * Detach multiple permissions from current role
      *
      * @param  mixed  $permissions
-     * @return void
+     * @return $this
      */
     public function detachPermissions($permissions = null)
     {

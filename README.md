@@ -12,6 +12,7 @@
 
  Laravel  | Laratrust
 :---------|:----------
+ 9.x    | [7.x](https://laratrust.santigarcor.me/docs/7.x/)
  8.x    | [6.x](https://laratrust.santigarcor.me/docs/6.x/)
  7.x    | [6.x](https://laratrust.santigarcor.me/docs/6.x/)
  6.x    | [6.x](https://laratrust.santigarcor.me/docs/6.x/)
