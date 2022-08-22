@@ -170,7 +170,7 @@ trait LaratrustUserTrait
      * Get the the names of the user's roles.
      *
      * @param  string|bool   $team      Team name.
-     * @return bool
+     * @return array
      */
     public function getRoles($team = null)
     {
