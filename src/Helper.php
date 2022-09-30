@@ -3,10 +3,10 @@
 namespace Laratrust;
 
 use InvalidArgumentException;
+use Ramsey\Uuid\UuidInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
-use Ramsey\Uuid\UuidInterface;
 
 class Helper
 {
