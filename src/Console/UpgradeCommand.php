@@ -143,6 +143,6 @@ class UpgradeCommand extends Command
     {
         $date = $date ?: date('Y_m_d_His');
 
-        return database_path("migrations/${date}_{$this->migrationSuffix}.php");
+        return database_path("migrations/{$date}_{$this->migrationSuffix}.php");
     }
 }
