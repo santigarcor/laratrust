@@ -10,8 +10,12 @@ jobs:
       matrix:
         php: [8.0, 8.1]
         stability: [prefer-lowest, prefer-stable]
+        laravel: ['^9.0', '^10.0']
+        exclude:
+          - php: 8.0
+            laravel: '^10.0'
 
-    name: PHP ${{ matrix.php }} - ${{ matrix.stability }}
+    name: PHP ${{ matrix.php }} - ${{ matrix.stability }} - ${{ matrix.laravel }}
 
     steps:
       - name: Checkout code
@@ -31,7 +35,7 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress
+        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress --with laravel/framework:${{ matrix.laravel }}
 
       - name: Execute tests
         run: vendor/bin/phpunit --verbose
