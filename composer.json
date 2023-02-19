@@ -23,11 +23,11 @@
     "require": {
         "php": ">=7.2",
         "kkszymanowski/traitor": "^1.0",
-        "laravel/framework": "~6.0|~7.0|~8.0|^9.0"
+        "laravel/framework": "~6.0|~7.0|~8.0|^9.0|^10.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.3.2",
-        "orchestra/testbench": "4.*|5.*|6.*|7.*",
+        "orchestra/testbench": "4.*|5.*|6.*|7.*|^8.0",
         "phpunit/phpunit": "^7.5.15|^8.4|^9.0"
     },
     "autoload": {
