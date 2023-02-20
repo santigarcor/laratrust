@@ -21,7 +21,7 @@
               <a href="{{config('laratrust.panel.go_back_route')}}" class="nav-button">← Go Back</a>
               <a
                 href="{{ route('laratrust.roles-assignment.index') }}"
-                class="ml-4 {{ request()->is('*roles-assigment*') ? 'nav-button-active' : 'nav-button' }}"
+                class="ml-4 {{ request()->is('*roles-assignment*') ? 'nav-button-active' : 'nav-button' }}"
               >
                 Roles & Permissions Assignment
               </a>
