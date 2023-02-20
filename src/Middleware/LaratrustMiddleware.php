@@ -67,6 +67,8 @@ class LaratrustMiddleware
      */
     protected function assignRealValuesTo($team, $options)
     {
+        $team = (string)$team;
+        
         return [
             (Str::contains($team, ['require_all', 'guard:']) ? null : $team),
             (Str::contains($team, 'require_all') ?: Str::contains($options, 'require_all')),
