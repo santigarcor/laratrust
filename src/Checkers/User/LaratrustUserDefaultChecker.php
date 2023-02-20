@@ -188,7 +188,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
     /**
      * Tries return key name for user_models
      *
-     * @return string default key user
+     * @return string|void default key user
      */
     public function userModelCacheKey()
     {
