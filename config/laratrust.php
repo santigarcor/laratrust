@@ -272,6 +272,17 @@ return [
 
         /*
         |--------------------------------------------------------------------------
+        | Laratrust Panel Domain
+        |--------------------------------------------------------------------------
+        |
+        | This is the Domain Laratrust panel for roles and permissions
+        | will be accessible from.
+        |
+        */
+        'domain' => env('LARATRUST_PANEL_DOMAIN', env('LARATRUST_PANEL_DOMAIN', (app()->runningInConsole() === false) ? request()->getHost() : 'localhost')),        
+        
+        /*
+        |--------------------------------------------------------------------------
         | Laratrust Panel Path
         |--------------------------------------------------------------------------
         |
