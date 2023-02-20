@@ -80,7 +80,7 @@ class Laratrust
      * Checks if the user owns the thing.
      *
      * @param  Object  $thing
-     * @param  string  $foreignKeyName
+     * @param  string|null  $foreignKeyName
      * @return boolean
      */
     public function owns($thing, $foreignKeyName = null)

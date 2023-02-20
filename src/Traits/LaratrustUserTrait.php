@@ -5,7 +5,6 @@ namespace Laratrust\Traits;
 use Laratrust\Helper;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Checkers\LaratrustCheckerManager;
 
@@ -562,7 +561,7 @@ trait LaratrustUserTrait
      * Checks if the user owns the thing.
      *
      * @param  Object  $thing
-     * @param  string  $foreignKeyName
+     * @param  string|null  $foreignKeyName
      * @return boolean
      */
     public function owns($thing, $foreignKeyName = null)
