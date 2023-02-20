@@ -32,7 +32,7 @@ class RolesController
     {
         return View::make('laratrust::panel.edit', [
             'model' => null,
-            'permissions' => $this->permissionModel::all(['id', 'name']),
+            'permissions' => $this->permissionModel::all(['id', 'display_name']),
             'type' => 'role',
         ]);
     }
