@@ -51,7 +51,7 @@ class UpgradeCommand extends Command
 
         $this->line('');
 
-        if (! $this->confirm("Proceed with the migration creation?", "yes")) {
+        if (!$this->confirm("Proceed with the migration creation?", "yes")) {
             return;
         }
 
@@ -63,8 +63,8 @@ class UpgradeCommand extends Command
             $this->info("Migration successfully created!");
         } else {
             $this->error(
-                "Couldn't create migration.\n".
-                "Check the write permissions within the database/migrations directory."
+                "Couldn't create migration.\n" .
+                    "Check the write permissions within the database/migrations directory."
             );
         }
 
@@ -143,6 +143,6 @@ class UpgradeCommand extends Command
     {
         $date = $date ?: date('Y_m_d_His');
 
-        return database_path("migrations/${date}_{$this->migrationSuffix}.php");
+        return database_path("migrations/{$date}_{$this->migrationSuffix}.php");
     }
 }
