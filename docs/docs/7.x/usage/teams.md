@@ -113,6 +113,12 @@ Check permissions:
     $user->isAbleTo(['edit-user', 'manage-users'], 'my-awesome-team', true);
 ```
 
+Check teams:
+```php
+    $user->rolesTeams; // See all user teams with roles
+    $user->rolesTeams()->where('name','my-awesome-team')->first(); // Check if user has any role relating to a team
+```
+
 ## User Ability
 
 The user ability is the same, but this time you can pass the team parameter.
