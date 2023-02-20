@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Ramsey\Uuid\UuidInterface;
 
 class Helper
 {
@@ -22,6 +23,10 @@ class Helper
             return null;
         }
 
+        if ($object instanceof UuidInterface) {
+            return (string)$object;
+        }
+        
         if (is_object($object)) {
             return $object->getKey();
         }
