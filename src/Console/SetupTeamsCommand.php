@@ -54,7 +54,7 @@ class SetupTeamsCommand extends Command
 
         $this->line('');
 
-        if (!$this->confirm("Proceed with the migration creation?", "yes")) {
+        if (! $this->confirm("Proceed with the migration creation?", "yes")) {
             return;
         }
 
@@ -66,8 +66,8 @@ class SetupTeamsCommand extends Command
             $this->info("Migration created successfully.");
         } else {
             $this->error(
-                "Couldn't create migration.\n" .
-                    "Check the write permissions within the database/migrations directory."
+                "Couldn't create migration.\n".
+                "Check the write permissions within the database/migrations directory."
             );
         }
 
