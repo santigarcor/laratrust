@@ -67,13 +67,11 @@ class LaratrustMiddleware
      */
     protected function assignRealValuesTo($team, $options)
     {
-        $team = (string)$team;
-        
         return [
-            (Str::contains($team, ['require_all', 'guard:']) ? null : $team),
-            (Str::contains($team, 'require_all') ?: Str::contains($options, 'require_all')),
-            (Str::contains($team, 'guard:') ? $this->extractGuard($team) : (
-                Str::contains($options, 'guard:')
+            (Str::contains((string)$team, ['require_all', 'guard:']) ? null : $team),
+            (Str::contains((string)$team, 'require_all') ?: Str::contains((string)$options, 'require_all')),
+            (Str::contains((string)$team, 'guard:') ? $this->extractGuard($team) : (
+                Str::contains((string)$options, 'guard:')
                 ? $this->extractGuard($options)
                 : Config::get('auth.defaults.guard')
             )),
