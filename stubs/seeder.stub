@@ -41,7 +41,7 @@ class LaratrustSeeder extends Seeder
             // Reading role permission modules
             foreach ($modules as $module => $value) {
 
-                foreach (explode(',', $value) as $p => $perm) {
+                foreach (explode(',', $value) as $perm) {
 
                     $permissionValue = $mapPermission->get($perm);
 
