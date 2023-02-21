@@ -103,6 +103,7 @@ class LaratrustServiceProvider extends ServiceProvider
         }
 
         Route::group([
+            'domain' => config('laratrust.panel.domain', (app()->runningInConsole() === false) ? request()->getHost() : 'localhost'),
             'prefix' => config('laratrust.panel.path'),
             'namespace' => 'Laratrust\Http\Controllers',
             'middleware' => config('laratrust.panel.middleware', 'web'),

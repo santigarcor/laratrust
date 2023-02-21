@@ -5,7 +5,6 @@ namespace Laratrust\Traits;
 use Laratrust\Helper;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Checkers\LaratrustCheckerManager;
 
@@ -169,7 +168,7 @@ trait LaratrustUserTrait
     /**
      * Get the the names of the user's roles.
      *
-     * @param  string|bool   $team      Team name.
+     * @param  mixed   $team      Team name.
      * @return array
      */
     public function getRoles($team = null)
@@ -181,7 +180,7 @@ trait LaratrustUserTrait
      * Checks if the user has a role by its name.
      *
      * @param  string|array  $name       Role name or array of role names.
-     * @param  string|bool   $team      Team name or requiredAll roles.
+     * @param  mixed         $team       Team name or requiredAll roles.
      * @param  bool          $requireAll All roles in the array are required.
      * @return bool
      */
@@ -198,7 +197,7 @@ trait LaratrustUserTrait
      * Checks if the user has a role by its name.
      *
      * @param  string|array  $name       Role name or array of role names.
-     * @param  string|bool   $team      Team name or requiredAll roles.
+     * @param  mixed         $team       Team name or requiredAll roles.
      * @param  bool          $requireAll All roles in the array are required.
      * @return bool
      */
@@ -211,7 +210,7 @@ trait LaratrustUserTrait
      * Checks if the user has a role by its name.
      *
      * @param  string|array  $name       Role name or array of role names.
-     * @param  string|bool   $team      Team name or requiredAll roles.
+     * @param  mixed         $team       Team name or requiredAll roles.
      * @param  bool          $requireAll All roles in the array are required.
      * @return bool
      */
@@ -224,7 +223,7 @@ trait LaratrustUserTrait
      * Check if user has a permission by its name.
      *
      * @param  string|array  $permission Permission string or array of permissions.
-     * @param  string|bool  $team      Team name or requiredAll roles.
+     * @param  mixed  $team      Team name or requiredAll roles.
      * @param  bool  $requireAll All permissions in the array are required.
      * @return bool
      */
@@ -241,7 +240,7 @@ trait LaratrustUserTrait
      * Check if user has a permission by its name.
      *
      * @param  string|array  $permission  Permission string or array of permissions.
-     * @param  string|bool  $team  Team name or requiredAll roles.
+     * @param  mixed  $team  Team name or requiredAll roles.
      * @param  bool  $requireAll  All permissions in the array are required.
      * @return bool
      */
@@ -255,7 +254,7 @@ trait LaratrustUserTrait
      *
      * @param  string|array  $roles       Array of roles or comma separated string
      * @param  string|array  $permissions Array of permissions or comma separated string.
-     * @param  string|bool  $team      Team name or requiredAll roles.
+     * @param  mixed  $team      Team name or requiredAll roles.
      * @param  array  $options     validate_all (true|false) or return_type (boolean|array|both)
      * @throws \InvalidArgumentException
      * @return array|bool
@@ -562,7 +561,7 @@ trait LaratrustUserTrait
      * Checks if the user owns the thing.
      *
      * @param  Object  $thing
-     * @param  string  $foreignKeyName
+     * @param  string|null  $foreignKeyName
      * @return boolean
      */
     public function owns($thing, $foreignKeyName = null)

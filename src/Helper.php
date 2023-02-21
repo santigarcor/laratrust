@@ -3,6 +3,7 @@
 namespace Laratrust;
 
 use InvalidArgumentException;
+use Ramsey\Uuid\UuidInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
@@ -22,6 +23,10 @@ class Helper
             return null;
         }
 
+        if ($object instanceof UuidInterface) {
+            return (string)$object;
+        }
+        
         if (is_object($object)) {
             return $object->getKey();
         }

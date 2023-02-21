@@ -3,7 +3,6 @@
 namespace Laratrust\Traits;
 
 use Laratrust\Helper;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Checkers\LaratrustCheckerManager;
 
