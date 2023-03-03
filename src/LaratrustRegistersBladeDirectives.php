@@ -92,6 +92,5 @@ class LaratrustRegistersBladeDirectives
         Blade::directive('endability', function () {
             return "<?php endif; // app('laratrust')->ability ?>";
         });
-
     }
 }
