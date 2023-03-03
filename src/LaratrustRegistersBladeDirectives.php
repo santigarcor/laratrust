@@ -49,16 +49,6 @@ class LaratrustRegistersBladeDirectives
         Blade::directive('ability', function ($expression) {
             return "<?php if (app('laratrust')->ability({$expression})) : ?>";
         });
-
-        // Call to Laratrust::isAbleToAndOwns.
-        Blade::directive('isAbleToAndOwns', function ($expression) {
-            return "<?php if (app('laratrust')->isAbleToAndOwns({$expression})) : ?>";
-        });
-
-        // Call to Laratrust::hasRoleAndOwns.
-        Blade::directive('hasRoleAndOwns', function ($expression) {
-            return "<?php if (app('laratrust')->hasRoleAndOwns({$expression})) : ?>";
-        });
     }
 
     /**
@@ -82,16 +72,6 @@ class LaratrustRegistersBladeDirectives
         Blade::directive('ability', function ($expression) {
             return "<?php if (app('laratrust')->ability{$expression}) : ?>";
         });
-
-        // Call to Laratrust::isAbleToAndOwns.
-        Blade::directive('isAbleToAndOwns', function ($expression) {
-            return "<?php if (app('laratrust')->isAbleToAndOwns{$expression}) : ?>";
-        });
-
-        // Call to Laratrust::hasRoleAndOwns.
-        Blade::directive('hasRoleAndOwns', function ($expression) {
-            return "<?php if (app('laratrust')->hasRoleAndOwns{$expression}) : ?>";
-        });
     }
 
     /**
@@ -113,8 +93,5 @@ class LaratrustRegistersBladeDirectives
             return "<?php endif; // app('laratrust')->ability ?>";
         });
 
-        Blade::directive('endOwns', function () {
-            return "<?php endif; // app('laratrust')->hasRoleAndOwns or isAbleToAndOwns ?>";
-        });
     }
 }

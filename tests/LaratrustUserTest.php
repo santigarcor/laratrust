@@ -3,9 +3,7 @@
 namespace Laratrust\Test;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use Laratrust\Tests\LaratrustTestCase;
-use Laratrust\Tests\Models\OwnableObject;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
@@ -628,137 +626,6 @@ class LaratrustUserTest extends LaratrustTestCase
         $this->assertEquals(4, $this->user->permissions()->count());
         $this->assertInstanceOf('Laratrust\Tests\Models\User', $this->user->syncPermissionsWithoutDetaching($permissions, 'team_a', false));
         $this->assertEquals(4, $this->user->permissions()->count());
-    }
-
-    public function testUserOwnsaPostModel()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
-        $className = Str::snake(get_class($user)) . '_id';
-
-        $post = new \stdClass();
-        $post->$className = $user->getKey();
-
-        $post2 = new \stdClass();
-        $post2->$className = 9;
-
-        $ownableObject = new OwnableObject;
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($user->owns($post));
-        $this->assertFalse($user->owns($post2));
-        $this->assertFalse($user->owns($ownableObject));
-    }
-
-    public function testUserOwnsaPostModelCustomKey()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
-        $post = new \stdClass();
-        $post->UserId = $user->getKey();
-
-        $post2 = new \stdClass();
-        $post2->UserId = 9;
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($user->owns($post, 'UserId'));
-        $this->assertFalse($user->owns($post2, 'UserId'));
-    }
-
-    public function testUserHasRoleAndOwnsaPostModel()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $team = Team::create(['name' => 'team_a']);
-        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
-        $post = new \stdClass();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $user->shouldReceive('hasRole')->with('editor', null, false)->andReturn(true)->once();
-        $user->shouldReceive('owns')->with($post, null)->andReturn(true)->once();
-        $user->shouldReceive('hasRole')->with('regular-user', null, false)->andReturn(false)->once();
-        $user->shouldReceive('hasRole')->with('administrator', null, true)->andReturn(true)->once();
-        $user->shouldReceive('hasRole')->with('team-member', $team, true)->andReturn(false)->once();
-        $user->shouldReceive('owns')->with($post, 'UserID')->andReturn(false)->once();
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($user->hasRoleAndOwns('editor', $post));
-        $this->assertFalse($user->hasRoleAndOwns('regular-user', $post));
-        $this->assertFalse($user->hasRoleAndOwns('administrator', $post, [
-            'requireAll' => true, 'foreignKeyName' => 'UserID'
-        ]));
-        $this->assertFalse($user->hasRoleAndOwns('team-member', $post, [
-            'requireAll' => true,
-            'foreignKeyName' => 'UserID',
-            'team' => $team
-        ]));
-    }
-
-    public function testUserIsAbleToAndOwnsaPostModel()
-    {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $team = Team::create(['name' => 'team_a']);
-        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
-        $post = new \stdClass();
-
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
-        $user->shouldReceive('hasPermission')->with('edit-post', null, false)->andReturn(true)->once();
-        $user->shouldReceive('owns')->with($post, null)->andReturn(true)->once();
-        $user->shouldReceive('hasPermission')->with('update-post', null, false)->andReturn(false)->once();
-        $user->shouldReceive('hasPermission')->with('enhance-post', null, true)->andReturn(true)->once();
-        $user->shouldReceive('hasPermission')->with('edit-team', $team, true)->andReturn(false)->once();
-        $user->shouldReceive('owns')->with($post, 'UserID')->andReturn(false)->once();
-
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
-        $this->assertTrue($user->isAbleToAndOwns('edit-post', $post));
-        $this->assertFalse($user->isAbleToAndOwns('update-post', $post));
-        $this->assertFalse($user->isAbleToAndOwns('enhance-post', $post, [
-            'requireAll' => true, 'foreignKeyName' => 'UserID'
-        ]));
-        $this->assertFalse($user->isAbleToAndOwns('edit-team', $post, [
-            'requireAll' => true,
-            'foreignKeyName' => 'UserID',
-            'team' => $team
-        ]));
     }
 
     public function testAllPermissions()

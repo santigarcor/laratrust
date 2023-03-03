@@ -558,62 +558,6 @@ trait LaratrustUserTrait
     }
 
     /**
-     * Checks if the user owns the thing.
-     *
-     * @param  Object  $thing
-     * @param  string|null  $foreignKeyName
-     * @return boolean
-     */
-    public function owns($thing, $foreignKeyName = null)
-    {
-        if ($thing instanceof \Laratrust\Contracts\Ownable) {
-            $ownerKey = $thing->ownerKey($this);
-        } else {
-            $className = (new \ReflectionClass($this))->getShortName();
-            $foreignKeyName = $foreignKeyName ?: Str::snake($className . 'Id');
-            $ownerKey = $thing->$foreignKeyName;
-        }
-
-        return $ownerKey == $this->getKey();
-    }
-
-    /**
-     * Checks if the user has some role and if he owns the thing.
-     *
-     * @param  string|array  $role
-     * @param  Object  $thing
-     * @param  array  $options
-     * @return boolean
-     */
-    public function hasRoleAndOwns($role, $thing, $options = [])
-    {
-        $options = Helper::checkOrSet('requireAll', $options, [false, true]);
-        $options = Helper::checkOrSet('team', $options, [null]);
-        $options = Helper::checkOrSet('foreignKeyName', $options, [null]);
-
-        return $this->hasRole($role, $options['team'], $options['requireAll'])
-                && $this->owns($thing, $options['foreignKeyName']);
-    }
-
-    /**
-     * Checks if the user can do something and if he owns the thing.
-     *
-     * @param  string|array  $permission
-     * @param  Object  $thing
-     * @param  array  $options
-     * @return boolean
-     */
-    public function isAbleToAndOwns($permission, $thing, $options = [])
-    {
-        $options = Helper::checkOrSet('requireAll', $options, [false, true]);
-        $options = Helper::checkOrSet('foreignKeyName', $options, [null]);
-        $options = Helper::checkOrSet('team', $options, [null]);
-
-        return $this->hasPermission($permission, $options['team'], $options['requireAll'])
-                && $this->owns($thing, $options['foreignKeyName']);
-    }
-
-    /**
      * Return all the user permissions.
      * if $team param is false it ignores teams
      *
