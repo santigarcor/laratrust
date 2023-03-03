@@ -150,35 +150,6 @@ interface LaratrustUserInterface
     public function syncPermissions($permissions = [], $team = null);
 
     /**
-     * Checks if the user owns the thing.
-     *
-     * @param  Object  $thing
-     * @param  string  $foreignKeyName
-     * @return boolean
-     */
-    public function owns($thing);
-
-    /**
-     * Checks if the user has some role and if he owns the thing.
-     *
-     * @param  string|array  $role
-     * @param  Object  $thing
-     * @param  array  $options
-     * @return boolean
-     */
-    public function hasRoleAndOwns($role, $thing, $options = []);
-
-    /**
-     * Checks if the user can do something and if he owns the thing.
-     *
-     * @param  string|array  $permission
-     * @param  Object  $thing
-     * @param  array  $options
-     * @return boolean
-     */
-    public function isAbleToAndOwns($permission, $thing, $options = []);
-
-    /**
      * Return all the user permissions.
      *
      * @return boolean
