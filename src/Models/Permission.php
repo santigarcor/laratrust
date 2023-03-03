@@ -1,28 +1,38 @@
 <?php
 
-namespace Laratrust\Traits;
+declare(strict_types=1);
+
+namespace Laratrust\Models;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Laratrust\Traits\LaratrustDynamicUserRelationsCalls;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Laratrust\Contracts\Permission as PermissionContract;
 
-trait LaratrustPermissionTrait
+class Permission extends Model implements PermissionContract
 {
     use LaratrustDynamicUserRelationsCalls;
 
     /**
-     * Boots the permission model and attaches event listener to
-     * remove the many-to-many records when trying to delete.
-     * Will NOT delete any records if the permission model uses soft deletes.
+     * The database table used by the model.
      *
-     * @return void|bool
+     * @var string
      */
-    public static function bootLaratrustPermissionTrait()
-    {
-        static::deleting(function ($permission) {
-            if (!method_exists(Config::get('laratrust.models.permission'), 'bootSoftDeletes')) {
-                $permission->roles()->sync([]);
-            }
-        });
+    protected $table;
 
+    /**
+     * Creates a new instance of the model.
+     */
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        $this->table = Config::get('laratrust.tables.permissions');
+    }
+
+    protected static function booted(): void
+    {
         static::deleting(function ($permission) {
             if (method_exists($permission, 'bootSoftDeletes') && !$permission->forceDeleting) {
                 return;
@@ -38,10 +48,8 @@ trait LaratrustPermissionTrait
 
     /**
      * Many-to-Many relations with role model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function roles()
+    public function roles():BelongsToMany
     {
         return $this->belongsToMany(
             Config::get('laratrust.models.role'),
@@ -53,11 +61,8 @@ trait LaratrustPermissionTrait
 
     /**
      * Morph by Many relationship between the permission and the one of the possible user models.
-     *
-     * @param  string  $relationship
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
      */
-    public function getMorphByUserRelation($relationship)
+    public function getMorphByUserRelation(string $relationship): MorphToMany
     {
         return $this->morphedByMany(
             Config::get('laratrust.user_models')[$relationship],

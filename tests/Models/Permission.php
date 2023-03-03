@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests\Models;
 
-use Laratrust\Models\LaratrustPermission;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laratrust\Models\Permission as PermissionModel;
 
-class Permission extends LaratrustPermission
+class Permission extends PermissionModel
 {
     use SoftDeletes;
 
