@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Laratrust\Contracts;
 
 use Ramsey\Uuid\UuidInterface;
-use Laratrust\Contracts\Permission;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -53,5 +52,4 @@ interface Role
      * Detach multiple permissions from current role
      */
     public function detachPermissions(iterable $permissions):static;
-
 }
