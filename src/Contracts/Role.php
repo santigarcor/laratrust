@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Laratrust\Contracts;
 
 use Ramsey\Uuid\UuidInterface;
-use Laratrust\Contracts\Permission;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -37,12 +37,12 @@ interface Role
     /**
      * Attach permission to current role.
      */
-    public function attachPermission(array|string|int|Permission|UuidInterface $permission):static;
+    public function attachPermission(array|string|int|Model|UuidInterface $permission):static;
 
     /**
      * Detach permission from current role.
      */
-    public function detachPermission(array|string|int|Permission|UuidInterface $permission):static;
+    public function detachPermission(array|string|int|Model|UuidInterface $permission):static;
 
     /**
      * Attach multiple permissions to current role.

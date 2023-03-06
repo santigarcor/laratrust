@@ -100,7 +100,7 @@ class Role extends Model implements RoleContract
             ->currentRoleHasPermission($permission, $requireAll);
     }
 
-    public function syncPermissions(array|Collection $permissions):static
+    public function syncPermissions(iterable $permissions):static
     {
         $mappedPermissions = [];
 
