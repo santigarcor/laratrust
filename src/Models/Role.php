@@ -51,7 +51,7 @@ class Role extends Model implements RoleContract
         static::deleted($flushCache);
         static::saved($flushCache);
 
-        static::deleting(function (Role $role) {
+        static::deleting(function ($role) {
             if (method_exists($role, 'bootSoftDeletes') && !$role->forceDeleting) {
                 return;
             }
