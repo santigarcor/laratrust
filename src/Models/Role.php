@@ -6,7 +6,6 @@ namespace Laratrust\Models;
 
 use Laratrust\Helper;
 use Ramsey\Uuid\UuidInterface;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Laratrust\Traits\LaratrustHasEvents;

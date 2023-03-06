@@ -53,5 +53,4 @@ interface Role
      * Detach multiple permissions from current role
      */
     public function detachPermissions(iterable $permissions):static;
-
 }
