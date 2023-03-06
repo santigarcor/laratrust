@@ -7,7 +7,6 @@ use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Checkers\CheckersManager;
-use Laratrust\Checkers\LaratrustCheckerManager;
 
 trait LaratrustUserTrait
 {
