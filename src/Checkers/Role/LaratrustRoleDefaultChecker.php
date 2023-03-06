@@ -10,12 +10,8 @@ class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
 {
     /**
      * Checks if the role has a permission by its name.
-     *
-     * @param  string|array  $permission       Permission name or array of permission names.
-     * @param  bool  $requireAll       All permissions in the array are required.
-     * @return bool
      */
-    public function currentRoleHasPermission($permission, $requireAll = false)
+    public function currentRoleHasPermission(string|array $permission, bool $requireAll = false):bool
     {
         if (is_array($permission)) {
             if (empty($permission)) {
@@ -49,10 +45,8 @@ class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
 
     /**
      * Flush the role's cache.
-     *
-     * @return void
      */
-    public function currentRoleFlushCache()
+    public function currentRoleFlushCache():void
     {
         Cache::forget('laratrust_permissions_for_role_' . $this->role->getKey());
     }
@@ -61,15 +55,13 @@ class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
      * Tries to return all the cached permissions of the role.
      * If it can't bring the permissions from the cache,
      * it brings them back from the DB.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function currentRoleCachedPermissions()
+    public function currentRoleCachedPermissions(): array
     {
         $cacheKey = 'laratrust_permissions_for_role_' . $this->role->getKey();
 
         if (!Config::get('laratrust.cache.enabled')) {
-            return $this->role->permissions()->get();
+            return $this->role->permissions()->get()->toArray();
         }
 
         return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {

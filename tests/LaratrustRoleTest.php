@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Test;
 
 use Laratrust\Tests\Models\Role;
@@ -58,11 +60,7 @@ class LaratrustRoleTest extends LaratrustTestCase
         $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->attachPermission($permC->id));
         $this->assertCount(3, $this->role->permissions()->get()->toArray());
 
-        if (method_exists($this, 'setExpectedException')) {
-            $this->setExpectedException('InvalidArgumentException');
-        } else {
-            $this->expectException('InvalidArgumentException');
-        }
+        $this->expectException('TypeError');
         $this->role->attachPermission(true);
     }
 

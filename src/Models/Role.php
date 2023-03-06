@@ -1,26 +1,46 @@
 <?php
 
-namespace Laratrust\Traits;
+declare(strict_types=1);
+
+namespace Laratrust\Models;
 
 use Laratrust\Helper;
+use Ramsey\Uuid\UuidInterface;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
+use Laratrust\Traits\LaratrustHasEvents;
+use Laratrust\Contracts\Role as RoleContract;
 use Laratrust\Checkers\LaratrustCheckerManager;
+use Laratrust\Checkers\Role\LaratrustRoleChecker;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Laratrust\Traits\LaratrustDynamicUserRelationsCalls;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-trait LaratrustRoleTrait
+class Role extends Model implements RoleContract
 {
-    use LaratrustDynamicUserRelationsCalls;
     use LaratrustHasEvents;
+    use LaratrustDynamicUserRelationsCalls;
 
     /**
-     * Boots the role model and attaches event listener to
-     * remove the many-to-many records when trying to delete.
-     * Will NOT delete any records if the role model uses soft deletes.
+     * The database table used by the model.
      *
-     * @return void|bool
+     * @var string
      */
-    public static function bootLaratrustRoleTrait()
+    protected $table;
+
+    /**
+     * Creates a new instance of the model.
+     */
+    public function __construct(array $attributes = [])
     {
-        $flushCache = function ($role) {
+        parent::__construct($attributes);
+        $this->table = Config::get('laratrust.tables.roles');
+    }
+
+    protected static function booted(): void
+    {
+        $flushCache = function (Role $role) {
             $role->flushCache();
         };
 
@@ -32,7 +52,7 @@ trait LaratrustRoleTrait
         static::deleted($flushCache);
         static::saved($flushCache);
 
-        static::deleting(function ($role) {
+        static::deleting(function (Role $role) {
             if (method_exists($role, 'bootSoftDeletes') && !$role->forceDeleting) {
                 return;
             }
@@ -47,21 +67,13 @@ trait LaratrustRoleTrait
 
     /**
      * Return the right checker for the role model.
-     *
-     * @return \Laratrust\Checkers\Role\LaratrustRoleChecker
      */
-    protected function laratrustRoleChecker()
+    protected function laratrustRoleChecker() :LaratrustRoleChecker
     {
         return (new LaratrustCheckerManager($this))->getRoleChecker();
     }
 
-    /**
-     * Morph by Many relationship between the role and the one of the possible user models.
-     *
-     * @param  string  $relationship
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
-     */
-    public function getMorphByUserRelation($relationship)
+    public function getMorphByUserRelation(string $relationship): MorphToMany
     {
         return $this->morphedByMany(
             Config::get('laratrust.user_models')[$relationship],
@@ -72,12 +84,7 @@ trait LaratrustRoleTrait
         );
     }
 
-    /**
-     * Many-to-Many relations with the permission model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function permissions()
+    public function permissions():BelongsToMany
     {
         return $this->belongsToMany(
             Config::get('laratrust.models.permission'),
@@ -87,26 +94,13 @@ trait LaratrustRoleTrait
         );
     }
 
-    /**
-     * Checks if the role has a permission by its name.
-     *
-     * @param  string|array  $permission       Permission name or array of permission names.
-     * @param  bool  $requireAll       All permissions in the array are required.
-     * @return bool
-     */
-    public function hasPermission($permission, $requireAll = false)
+    public function hasPermission(string|array $permission, bool $requireAll = false): bool
     {
-        return $this->laratrustRoleChecker($this)
+        return $this->laratrustRoleChecker()
             ->currentRoleHasPermission($permission, $requireAll);
     }
 
-    /**
-     * Save the inputted permissions.
-     *
-     * @param  mixed  $permissions
-     * @return $this
-     */
-    public function syncPermissions($permissions)
+    public function syncPermissions(array|Collection $permissions):static
     {
         $mappedPermissions = [];
 
@@ -121,13 +115,7 @@ trait LaratrustRoleTrait
         return $this;
     }
 
-    /**
-     * Attach permission to current role.
-     *
-     * @param  object|array  $permission
-     * @return $this
-     */
-    public function attachPermission($permission)
+    public function attachPermission(array|string|int|Model|UuidInterface $permission):static
     {
         $permission = Helper::getIdFor($permission, 'permission');
 
@@ -138,13 +126,7 @@ trait LaratrustRoleTrait
         return $this;
     }
 
-    /**
-     * Detach permission from current role.
-     *
-     * @param  object|array  $permission
-     * @return $this
-     */
-    public function detachPermission($permission)
+    public function detachPermission(array|string|int|Model|UuidInterface $permission):static
     {
         $permission = Helper::getIdFor($permission, 'permission');
 
@@ -155,13 +137,7 @@ trait LaratrustRoleTrait
         return $this;
     }
 
-    /**
-     * Attach multiple permissions to current role.
-     *
-     * @param  mixed  $permissions
-     * @return $this
-     */
-    public function attachPermissions($permissions)
+    public function attachPermissions(iterable $permissions):static
     {
         foreach ($permissions as $permission) {
             $this->attachPermission($permission);
@@ -170,13 +146,7 @@ trait LaratrustRoleTrait
         return $this;
     }
 
-    /**
-     * Detach multiple permissions from current role
-     *
-     * @param  mixed  $permissions
-     * @return $this
-     */
-    public function detachPermissions($permissions = null)
+    public function detachPermissions(?iterable $permissions = null):static
     {
         if (!$permissions) {
             $permissions = $this->permissions()->get();
@@ -191,11 +161,9 @@ trait LaratrustRoleTrait
 
     /**
      * Flush the role's cache.
-     *
-     * @return void
      */
-    public function flushCache()
+    public function flushCache():void
     {
-        return $this->laratrustRoleChecker()->currentRoleFlushCache();
+        $this->laratrustRoleChecker()->currentRoleFlushCache();
     }
 }

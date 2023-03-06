@@ -9,12 +9,8 @@ class LaratrustRoleQueryChecker extends LaratrustRoleChecker
 {
     /**
      * Checks if the role has a permission by its name.
-     *
-     * @param  string|array  $permission       Permission name or array of permission names.
-     * @param  bool  $requireAll       All permissions in the array are required.
-     * @return bool
      */
-    public function currentRoleHasPermission($permission, $requireAll = false)
+    public function currentRoleHasPermission(string|array $permission, bool $requireAll = false):bool
     {
         if (empty($permission)) {
             return true;
@@ -44,10 +40,8 @@ class LaratrustRoleQueryChecker extends LaratrustRoleChecker
 
     /**
      * Flush the role's cache.
-     *
-     * @return void
      */
-    public function currentRoleFlushCache()
+    public function currentRoleFlushCache():void
     {
     }
 }
