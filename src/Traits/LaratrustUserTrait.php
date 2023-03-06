@@ -6,6 +6,7 @@ use Laratrust\Helper;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\Config;
+use Laratrust\Checkers\CheckersManager;
 use Laratrust\Checkers\LaratrustCheckerManager;
 
 trait LaratrustUserTrait
@@ -162,7 +163,7 @@ trait LaratrustUserTrait
      */
     protected function laratrustUserChecker()
     {
-        return (new LaratrustCheckerManager($this))->getUserChecker();
+        return (new CheckersManager($this))->getUserChecker();
     }
 
     /**

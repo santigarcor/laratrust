@@ -8,10 +8,10 @@ use Laratrust\Helper;
 use Ramsey\Uuid\UuidInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
+use Laratrust\Checkers\CheckersManager;
+use Laratrust\Checkers\Role\RoleChecker;
 use Laratrust\Traits\LaratrustHasEvents;
 use Laratrust\Contracts\Role as RoleContract;
-use Laratrust\Checkers\LaratrustCheckerManager;
-use Laratrust\Checkers\Role\LaratrustRoleChecker;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Laratrust\Traits\LaratrustDynamicUserRelationsCalls;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -67,9 +67,9 @@ class Role extends Model implements RoleContract
     /**
      * Return the right checker for the role model.
      */
-    protected function laratrustRoleChecker() :LaratrustRoleChecker
+    protected function laratrustRoleChecker() :RoleChecker
     {
-        return (new LaratrustCheckerManager($this))->getRoleChecker();
+        return (new CheckersManager($this))->getRoleChecker();
     }
 
     public function getMorphByUserRelation(string $relationship): MorphToMany

@@ -4,7 +4,7 @@ namespace Laratrust\Checkers\Role;
 
 use Illuminate\Database\Eloquent\Model;
 
-abstract class LaratrustRoleChecker
+abstract class RoleChecker
 {
     protected Model $role;
 

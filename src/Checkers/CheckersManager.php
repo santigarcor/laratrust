@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Laratrust\Checkers;
 
 use Illuminate\Support\Facades\Config;
-use Laratrust\Checkers\Role\LaratrustRoleChecker;
-use Laratrust\Checkers\Role\LaratrustRoleQueryChecker;
+use Laratrust\Checkers\Role\RoleChecker;
+use Laratrust\Checkers\Role\RoleQueryChecker;
+use Laratrust\Checkers\Role\RoleDefaultChecker;
 use Laratrust\Checkers\User\LaratrustUserQueryChecker;
-use Laratrust\Checkers\Role\LaratrustRoleDefaultChecker;
 use Laratrust\Checkers\User\LaratrustUserDefaultChecker;
 
-class LaratrustCheckerManager
+class CheckersManager
 {
     /**
      * The object in charge of checking the roles and permissions.
@@ -43,14 +43,14 @@ class LaratrustCheckerManager
     /**
      * Return the right checker according to the configuration.
      */
-    public function getRoleChecker():LaratrustRoleChecker
+    public function getRoleChecker():RoleChecker
     {
         switch (Config::get('laratrust.checker', 'default')) {
             case 'query':
-                return new LaratrustRoleQueryChecker($this->model);
+                return new RoleQueryChecker($this->model);
             default:
             case 'default':
-                return new LaratrustRoleDefaultChecker($this->model);
+                return new RoleDefaultChecker($this->model);
         }
     }
 }

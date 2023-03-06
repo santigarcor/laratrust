@@ -3,9 +3,8 @@
 namespace Laratrust\Checkers\Role;
 
 use Laratrust\Helper;
-use Illuminate\Support\Facades\Cache;
 
-class LaratrustRoleQueryChecker extends LaratrustRoleChecker
+class RoleQueryChecker extends RoleChecker
 {
     /**
      * Checks if the role has a permission by its name.

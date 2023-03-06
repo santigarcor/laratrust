@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 
-class LaratrustRoleDefaultChecker extends LaratrustRoleChecker
+class RoleDefaultChecker extends RoleChecker
 {
     /**
      * Checks if the role has a permission by its name.
