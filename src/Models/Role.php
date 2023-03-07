@@ -10,16 +10,16 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Laratrust\Checkers\CheckersManager;
 use Laratrust\Checkers\Role\RoleChecker;
-use Laratrust\Traits\LaratrustHasEvents;
+use Laratrust\Traits\HasLaratrustEvents;
 use Laratrust\Contracts\Role as RoleContract;
+use Laratrust\Traits\DynamicUserRelationshipCalls;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Laratrust\Traits\LaratrustDynamicUserRelationsCalls;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Role extends Model implements RoleContract
 {
-    use LaratrustHasEvents;
-    use LaratrustDynamicUserRelationsCalls;
+    use HasLaratrustEvents;
+    use DynamicUserRelationshipCalls;
 
     /**
      * The database table used by the model.
@@ -109,7 +109,7 @@ class Role extends Model implements RoleContract
 
         $changes = $this->permissions()->sync($mappedPermissions);
         $this->flushCache();
-        $this->fireLaratrustEvent("permission.synced", [$this, $changes]);
+        $this->fireLaratrustEvent('permission.synced', [$this, $changes]);
 
         return $this;
     }
@@ -120,7 +120,7 @@ class Role extends Model implements RoleContract
 
         $this->permissions()->attach($permission);
         $this->flushCache();
-        $this->fireLaratrustEvent("permission.attached", [$this, $permission]);
+        $this->fireLaratrustEvent('permission.added', [$this, $permission]);
 
         return $this;
     }
@@ -131,7 +131,7 @@ class Role extends Model implements RoleContract
 
         $this->permissions()->detach($permission);
         $this->flushCache();
-        $this->fireLaratrustEvent("permission.detached", [$this, $permission]);
+        $this->fireLaratrustEvent('permission.removed', [$this, $permission]);
 
         return $this;
     }

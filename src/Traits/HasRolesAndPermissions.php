@@ -13,12 +13,13 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Laratrust\Checkers\CheckersManager;
+use Laratrust\Traits\HasLaratrustEvents;
 use Laratrust\Checkers\User\UserChecker;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 trait HasRolesAndPermissions
 {
-    use LaratrustHasEvents;
+    use HasLaratrustEvents;
     use LaratrustHasScopes;
 
     /**
@@ -274,7 +275,7 @@ trait HasRolesAndPermissions
             $attributes
         );
         $this->flushCache();
-        $this->fireLaratrustEvent("{$objectType}.attached", [$this, $object, $team]);
+        $this->fireLaratrustEvent("{$objectType}.added", [$this, $object, $team]);
 
         return $this;
     }
@@ -305,7 +306,7 @@ trait HasRolesAndPermissions
         $relationshipQuery->detach($object);
 
         $this->flushCache();
-        $this->fireLaratrustEvent("{$objectType}.detached", [$this, $object, $team]);
+        $this->fireLaratrustEvent("{$objectType}.removed", [$this, $object, $team]);
 
         return $this;
     }

@@ -5,9 +5,9 @@ namespace Laratrust\Tests;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Permission;
 
-class LaratrustRoleEventsTest extends LaratrustEventsTestCase
+class RoleEventsTest extends EventsTestCase
 {
-    protected $role;
+    protected Role $role;
 
     protected function setUp(): void
     {
@@ -15,18 +15,18 @@ class LaratrustRoleEventsTest extends LaratrustEventsTestCase
         $this->role = Role::create(['name' => 'role']);
     }
 
-    public function testListenToThePermissionAttachedEvent()
+    public function testListenToThePermissionAddedEvent()
     {
-        $this->listenTo('permission.attached', Role::class);
+        $this->listenTo('permission.added', Role::class);
 
-        $this->assertHasListenersFor('permission.attached', Role::class);
+        $this->assertHasListenersFor('permission.added', Role::class);
     }
 
-    public function testListenToThePermissionDetachedEvent()
+    public function testListenToThePermissionRemovedEvent()
     {
-        $this->listenTo('permission.detached', Role::class);
+        $this->listenTo('permission.removed', Role::class);
 
-        $this->assertHasListenersFor('permission.detached', Role::class);
+        $this->assertHasListenersFor('permission.removed', Role::class);
     }
 
     public function testListenToThePermissionSyncedEvent()
@@ -36,25 +36,25 @@ class LaratrustRoleEventsTest extends LaratrustEventsTestCase
         $this->assertHasListenersFor('permission.synced', Role::class);
     }
 
-    public function testAnEventIsFiredWhenPermissionIsAttachedToRole()
+    public function testAnEventIsFiredWhenPermissionIsAddedToRole()
     {
         $permission = Permission::create(['name' => 'permission']);
 
         Role::setEventDispatcher($this->dispatcher);
 
-        $this->dispatcherShouldFire('permission.attached', [$this->role, $permission->id], Role::class);
+        $this->dispatcherShouldFire('permission.added', [$this->role, $permission->id], Role::class);
 
         $this->role->givePermission($permission);
     }
 
-    public function testAnEventIsFiredWhenPermissionIsDetachedFromRole()
+    public function testAnEventIsFiredWhenPermissionIsRemovedFromRole()
     {
         $permission = Permission::create(['name' => 'permission']);
         $this->role->givePermission($permission);
 
         Role::setEventDispatcher($this->dispatcher);
 
-        $this->dispatcherShouldFire('permission.detached', [$this->role, $permission->id], Role::class);
+        $this->dispatcherShouldFire('permission.removed', [$this->role, $permission->id], Role::class);
 
         $this->role->removePermission($permission);
     }
@@ -69,7 +69,9 @@ class LaratrustRoleEventsTest extends LaratrustEventsTestCase
         $this->dispatcherShouldFire('permission.synced', [
             $this->role,
             [
-                'attached' => [], 'detached' => [$permission->id], 'updated' => [],
+                'attached' => [],
+                'detached' => [$permission->id],
+                'updated' => [],
             ]
         ], Role::class);
 

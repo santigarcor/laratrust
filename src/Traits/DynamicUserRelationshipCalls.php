@@ -4,7 +4,7 @@ namespace Laratrust\Traits;
 
 use Illuminate\Support\Facades\Config;
 
-trait LaratrustDynamicUserRelationsCalls
+trait DynamicUserRelationshipCalls
 {
     /**
      * Get a relationship.

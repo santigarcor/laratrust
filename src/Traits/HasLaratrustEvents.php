@@ -2,26 +2,24 @@
 
 namespace Laratrust\Traits;
 
+use Closure;
 use Illuminate\Support\Str;
 
-trait LaratrustHasEvents
+trait HasLaratrustEvents
 {
-    protected static $laratrustObservables = [
-        'roleAttached',
-        'roleDetached',
-        'permissionAttached',
-        'permissionDetached',
+    protected static array $laratrustObservables = [
+        'roleAdded',
+        'roleRemoved',
+        'permissionAdded',
+        'permissionRemoved',
         'roleSynced',
         'permissionSynced',
     ];
 
     /**
      * Register an observer to the Laratrust events.
-     *
-     * @param  object|string  $class
-     * @return void
      */
-    public static function laratrustObserve($class)
+    public static function laratrustObserve(object|string $class): void
     {
         $className = is_string($class) ? $class : get_class($class);
 
@@ -42,12 +40,8 @@ trait LaratrustHasEvents
 
     /**
      * Fire the given event for the model.
-     *
-     * @param  string  $event
-     * @param  array  $payload
-     * @return mixed
      */
-    protected function fireLaratrustEvent($event, array $payload)
+    protected function fireLaratrustEvent(string $event, array $payload)
     {
         if (! isset(static::$dispatcher)) {
             return true;
@@ -61,12 +55,11 @@ trait LaratrustHasEvents
 
     /**
      * Register a laratrust event with the dispatcher.
-     *
-     * @param  string  $event
-     * @param  \Closure|string  $callback
-     * @return void
      */
-    public static function registerLaratrustEvent($event, $callback)
+    public static function registerLaratrustEvent(
+        string $event,
+        Closure|string|array $callback
+    ): void
     {
         if (isset(static::$dispatcher)) {
             $name = static::class;
@@ -77,66 +70,48 @@ trait LaratrustHasEvents
 
     /**
      * Register a role attached laratrust event with the dispatcher.
-     *
-     * @param  \Closure|string  $callback
-     * @return void
      */
-    public static function roleAttached($callback)
+    public static function roleAdded(Closure|string|array $callback): void
     {
-        static::registerLaratrustEvent('role.attached', $callback);
+        static::registerLaratrustEvent('role.added', $callback);
     }
 
     /**
      * Register a role detached laratrust event with the dispatcher.
-     *
-     * @param  \Closure|string  $callback
-     * @return void
      */
-    public static function roleDetached($callback)
+    public static function roleRemoved(Closure|string|array $callback): void
     {
-        static::registerLaratrustEvent('role.detached', $callback);
+        static::registerLaratrustEvent('role.removed', $callback);
     }
 
     /**
      * Register a permission attached laratrust event with the dispatcher.
-     *
-     * @param  \Closure|string  $callback
-     * @return void
      */
-    public static function permissionAttached($callback)
+    public static function permissionAdded(\Closure|string|array $callback): void
     {
-        static::registerLaratrustEvent('permission.attached', $callback);
+        static::registerLaratrustEvent('permission.added', $callback);
     }
 
     /**
      * Register a permission detached laratrust event with the dispatcher.
-     *
-     * @param  \Closure|string  $callback
-     * @return void
      */
-    public static function permissionDetached($callback)
+    public static function permissionRemoved(\Closure|string|array $callback): void
     {
-        static::registerLaratrustEvent('permission.detached', $callback);
+        static::registerLaratrustEvent('permission.removed', $callback);
     }
 
     /**
      * Register a role synced laratrust event with the dispatcher.
-     *
-     * @param  \Closure|string  $callback
-     * @return void
      */
-    public static function roleSynced($callback)
+    public static function roleSynced(\Closure|string|array $callback): void
     {
         static::registerLaratrustEvent('role.synced', $callback);
     }
 
     /**
      * Register a permission synced laratrust event with the dispatcher.
-     *
-     * @param  \Closure|string  $callback
-     * @return void
      */
-    public static function permissionSynced($callback)
+    public static function permissionSynced(\Closure|string|array $callback): void
     {
         static::registerLaratrustEvent('permission.synced', $callback);
     }

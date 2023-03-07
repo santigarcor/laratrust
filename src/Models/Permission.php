@@ -6,14 +6,14 @@ namespace Laratrust\Models;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
+use Laratrust\Traits\DynamicUserRelationshipCalls;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Laratrust\Traits\LaratrustDynamicUserRelationsCalls;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laratrust\Contracts\Permission as PermissionContract;
 
 class Permission extends Model implements PermissionContract
 {
-    use LaratrustDynamicUserRelationsCalls;
+    use DynamicUserRelationshipCalls;
 
     /**
      * The database table used by the model.

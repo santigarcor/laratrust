@@ -4,7 +4,7 @@ namespace Laratrust\Tests;
 
 use Mockery as m;
 
-class LaratrustEventsTestCase extends LaratrustTestCase
+class EventsTestCase extends LaratrustTestCase
 {
     protected $dispatcher;
 
@@ -13,17 +13,16 @@ class LaratrustEventsTestCase extends LaratrustTestCase
         parent::setUp();
 
         $this->migrate();
-        $this->dispatcher = m::mock('\Illuminate\Events\Dispatcher')->makePartial();
+        $this->dispatcher = m::mock(\Illuminate\Events\Dispatcher::class)->makePartial();
+
+
         $this->app['config']->set('laratrust.teams.enabled', true);
     }
 
     /**
      * Listen to a Laratrust event.
-     *
-     * @param  string $event
-     * @return void
      */
-    protected function listenTo($event, $modelClass)
+    protected function listenTo(string $event, string $modelClass): void
     {
         $method = \Illuminate\Support\Str::camel(str_replace('.', ' ', $event));
 
@@ -34,11 +33,8 @@ class LaratrustEventsTestCase extends LaratrustTestCase
 
     /**
      * Assert that the dispatcher has listeners for the given event.
-     *
-     * @param  string $event
-     * @return void
      */
-    protected function assertHasListenersFor($event, $modelClass)
+    protected function assertHasListenersFor(string $event, string $modelClass): void
     {
         $eventName = "laratrust.{$event}: {$modelClass}";
         $dispatcher = $modelClass::getEventDispatcher();
@@ -50,13 +46,8 @@ class LaratrustEventsTestCase extends LaratrustTestCase
 
     /**
      * Assert the dispatcher fires the fire event with the given data.
-     *
-     * @param  string $event
-     * @param  array  $payload
-     * @param  string $modelClass
-     * @return void
      */
-    protected function dispatcherShouldFire($event, array $payload, $modelClass)
+    protected function dispatcherShouldFire(string $event, array $payload, string $modelClass): void
     {
         $this->dispatcher->shouldReceive('dispatch')
             ->with(

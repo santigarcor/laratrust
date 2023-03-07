@@ -8,7 +8,7 @@ use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\User;
 use Laratrust\Tests\Models\Permission;
 
-class LaratrustUserEventsTest extends LaratrustEventsTestCase
+class UserEventsTest extends EventsTestCase
 {
     protected User $user;
 
@@ -19,32 +19,32 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
     }
 
-    public function testListenToTheRoleAttachedEvent()
+    public function testListenToTheRoleAddedEvent()
     {
-        $this->listenTo('role.attached', User::class);
+        $this->listenTo('role.added', User::class);
 
-        $this->assertHasListenersFor('role.attached', User::class);
+        $this->assertHasListenersFor('role.added', User::class);
     }
 
-    public function testListenToTheRoleDetachedEvent()
+    public function testListenToTheRoleRemovedEvent()
     {
-        $this->listenTo('role.detached', User::class);
+        $this->listenTo('role.removed', User::class);
 
-        $this->assertHasListenersFor('role.detached', User::class);
+        $this->assertHasListenersFor('role.removed', User::class);
     }
 
-    public function testListenToThePermissionAttachedEvent()
+    public function testListenToThePermissionAddedEvent()
     {
-        $this->listenTo('permission.attached', User::class);
+        $this->listenTo('permission.added', User::class);
 
-        $this->assertHasListenersFor('permission.attached', User::class);
+        $this->assertHasListenersFor('permission.added', User::class);
     }
 
-    public function testListenToThePermissionDetachedEvent()
+    public function testListenToThePermissionRemovedEvent()
     {
-        $this->listenTo('permission.detached', User::class);
+        $this->listenTo('permission.removed', User::class);
 
-        $this->assertHasListenersFor('permission.detached', User::class);
+        $this->assertHasListenersFor('permission.removed', User::class);
     }
 
     public function testListenToTheRoleSyncedEvent()
@@ -61,47 +61,47 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
         $this->assertHasListenersFor('permission.synced', User::class);
     }
 
-    public function testAnEventIsFiredWhenRoleIsAttachedToUser()
+    public function testAnEventIsFiredWhenRoleIsAddedToUser()
     {
         User::setEventDispatcher($this->dispatcher);
         $role = Role::create(['name' => 'role']);
 
-        $this->dispatcherShouldFire('role.attached', [$this->user, $role->id, null], User::class);
+        $this->dispatcherShouldFire('role.added', [$this->user, $role->id, null], User::class);
 
         $this->user->addRole($role);
     }
 
-    public function testAnEventIsFiredWhenRoleIsDetachedFromUser()
+    public function testAnEventIsFiredWhenRoleIsRemovedFromUser()
     {
         $role = Role::create(['name' => 'role']);
         $this->user->addRole($role);
 
         User::setEventDispatcher($this->dispatcher);
 
-        $this->dispatcherShouldFire('role.detached', [$this->user, $role->id, null], User::class);
+        $this->dispatcherShouldFire('role.removed', [$this->user, $role->id, null], User::class);
 
         $this->user->removeRole($role);
     }
 
-    public function testAnEventIsFiredWhenPermissionIsAttachedToUser()
+    public function testAnEventIsFiredWhenPermissionIsAddedToUser()
     {
         $permission = Permission::create(['name' => 'permission']);
 
         User::setEventDispatcher($this->dispatcher);
 
-        $this->dispatcherShouldFire('permission.attached', [$this->user, $permission->id, null], User::class);
+        $this->dispatcherShouldFire('permission.added', [$this->user, $permission->id, null], User::class);
 
         $this->user->addPermission($permission);
     }
 
-    public function testAnEventIsFiredWhenPermissionIsDetachedFromUser()
+    public function testAnEventIsFiredWhenPermissionIsRemovedFromUser()
     {
         $permission = Permission::create(['name' => 'permission']);
         $this->user->addPermission($permission);
 
         User::setEventDispatcher($this->dispatcher);
 
-        $this->dispatcherShouldFire('permission.detached', [$this->user, $permission->id, null], User::class);
+        $this->dispatcherShouldFire('permission.removed', [$this->user, $permission->id, null], User::class);
 
         $this->user->removePermission($permission);
     }
@@ -115,7 +115,9 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
         $this->dispatcherShouldFire('role.synced', [
             $this->user,
             [
-                'attached' => [$role->id], 'detached' => [], 'updated' => [],
+                'attached' => [$role->id],
+                'detached' => [],
+                'updated' => [],
             ],
             null
         ], User::class);
@@ -133,7 +135,9 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
         $this->dispatcherShouldFire('permission.synced', [
             $this->user,
             [
-                'attached' => [], 'detached' => [$permission->id], 'updated' => [],
+                'attached' => [],
+                'detached' => [$permission->id],
+                'updated' => [],
             ],
             null
         ], User::class);
@@ -144,10 +148,10 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
     public function testAddObservableClasses()
     {
         $events = [
-            'role.attached',
-            'role.detached',
-            'permission.attached',
-            'permission.detached',
+            'role.added',
+            'role.removed',
+            'permission.added',
+            'permission.removed',
             'role.synced',
             'permission.synced',
         ];
@@ -162,10 +166,10 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
     public function testObserversShouldBeRemovedAfterFlushEvents()
     {
         $events = [
-            'role.attached',
-            'role.detached',
-            'permission.attached',
-            'permission.detached',
+            'role.added',
+            'role.removed',
+            'permission.added',
+            'permission.removed',
             'role.synced',
             'permission.synced',
         ];
