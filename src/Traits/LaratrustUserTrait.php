@@ -3,6 +3,7 @@
 namespace Laratrust\Traits;
 
 use Laratrust\Helper;
+use Laratrust\Models\Team;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Illuminate\Support\Facades\Config;
@@ -270,6 +271,14 @@ trait LaratrustUserTrait
     }
 
     /**
+     * Check if the given relationship is a valid laratrust relationship.
+     */
+    private function isValidRelationship(string $relationship): bool
+    {
+        return in_array($relationship, ['roles', 'permissions']);
+    }
+
+    /**
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param  string  $relationship
@@ -279,7 +288,7 @@ trait LaratrustUserTrait
      */
     private function attachModel($relationship, $object, $team)
     {
-        if (!Helper::isValidRelationship($relationship)) {
+        if (!$this->isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
@@ -292,14 +301,14 @@ trait LaratrustUserTrait
 
             if (
                     $this->$relationship()
-                    ->wherePivot(Helper::teamForeignKey(), $team)
+                    ->wherePivot(Team::modelForeignKey(), $team)
                     ->wherePivot(Config::get("laratrust.foreign_keys.{$objectType}"), $object)
                     ->count()
                 ) {
                 return $this;
             }
 
-            $attributes[Helper::teamForeignKey()] = $team;
+            $attributes[Team::modelForeignKey()] = $team;
         }
 
         $this->$relationship()->attach(
@@ -322,7 +331,7 @@ trait LaratrustUserTrait
      */
     private function detachModel($relationship, $object, $team)
     {
-        if (!Helper::isValidRelationship($relationship)) {
+        if (!$this->isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
@@ -331,7 +340,7 @@ trait LaratrustUserTrait
 
         if (Config::get('laratrust.teams.enabled')) {
             $relationshipQuery->wherePivot(
-                Helper::teamForeignKey(),
+                Team::modelForeignKey(),
                 Helper::getIdFor($team, 'team')
             );
         }
@@ -356,7 +365,7 @@ trait LaratrustUserTrait
      */
     private function syncModels($relationship, $objects, $team, $detaching)
     {
-        if (!Helper::isValidRelationship($relationship)) {
+        if (!$this->isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
@@ -367,7 +376,7 @@ trait LaratrustUserTrait
 
         foreach ($objects as $object) {
             if ($useTeams && $team) {
-                $mappedObjects[Helper::getIdFor($object, $objectType)] = [Helper::teamForeignKey() => $team];
+                $mappedObjects[Helper::getIdFor($object, $objectType)] = [Team::modelForeignKey() => $team];
             } else {
                 $mappedObjects[] = Helper::getIdFor($object, $objectType);
             }
@@ -376,7 +385,7 @@ trait LaratrustUserTrait
         $relationshipToSync = $this->$relationship();
 
         if ($useTeams) {
-            $relationshipToSync->wherePivot(Helper::teamForeignKey(), $team);
+            $relationshipToSync->wherePivot(Team::modelForeignKey(), $team);
         }
 
         $result = $relationshipToSync->sync($mappedObjects, $detaching);

@@ -3,9 +3,13 @@
 namespace Laratrust\Checkers\User;
 
 use Laratrust\Helper;
+use Laratrust\Models\Team;
 use Illuminate\Support\Str;
+use Laratrust\Contracts\Role;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
 class LaratrustUserDefaultChecker extends LaratrustUserChecker
 {
@@ -33,7 +37,7 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
             })->pluck('name')->toArray();
         }
 
-        $teamId = Helper::fetchTeam($team);
+        $teamId = Team::getId($team);
 
         return $roles->filter(function ($role) use ($teamId) {
             return $role['pivot'][config('laratrust.foreign_keys.team')] == $teamId;
@@ -74,10 +78,10 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
             return $requireAll;
         }
 
-        $team = Helper::fetchTeam($team);
+        $team = Team::getId($team);
 
         foreach ($this->userCachedRoles() as $role) {
-            if ($role['name'] == $name && Helper::isInSameTeam($role, $team)) {
+            if ($role['name'] == $name && $this->isInSameTeam($role, $team)) {
                 return true;
             }
         }
@@ -119,18 +123,18 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
             return $requireAll;
         }
 
-        $team = Helper::fetchTeam($team);
+        $team = Team::getId($team);
 
         foreach ($this->userCachedPermissions() as $perm) {
-            if (Helper::isInSameTeam($perm, $team) && Str::is($permission, $perm['name'])) {
+            if ($this->isInSameTeam($perm, $team) && Str::is($permission, $perm['name'])) {
                 return true;
             }
         }
 
         foreach ($this->userCachedRoles() as $role) {
-            $role = Helper::hidrateModel(Config::get('laratrust.models.role'), $role);
+            $role = $this->hidrateRole(Config::get('laratrust.models.role'), $role);
 
-            if (Helper::isInSameTeam($role, $team) && $role->hasPermission($permission)) {
+            if ($this->isInSameTeam($role, $team) && $role->hasPermission($permission)) {
                 return true;
             }
         }
@@ -198,4 +202,44 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
             }
         }
     }
+
+    /**
+     * Creates a model from an array filled with the class data.
+     */
+    private function hidrateRole(string $class, Model|array $data):Role
+    {
+        if ($data instanceof Model) {
+            return $data;
+        }
+
+        if (!isset($data['pivot'])) {
+            throw new \Exception("The 'pivot' attribute in the {$class} is hidden");
+        }
+
+        $role = new $class;
+        $primaryKey = $role->getKeyName();
+
+        $role->setAttribute($primaryKey, $data[$primaryKey])->setAttribute('name', $data['name']);
+        $role->setRelation(
+            'pivot',
+            MorphPivot::fromRawAttributes($role, $data['pivot'], 'pivot_table')
+        );
+
+        return $role;
+    }
+
+    /**
+    * Check if a role or permission is attach to the user in a same team.
+    */
+   private function isInSameTeam($rolePermission, ?int $teamId = null): bool
+   {
+       if (
+           !Config::get('laratrust.teams.enabled')
+           || (!Config::get('laratrust.teams.strict_check') && !$teamId)
+       ) {
+           return true;
+       }
+
+       return $rolePermission['pivot'][Team::modelForeignKey()] == $teamId;
+   }
 }

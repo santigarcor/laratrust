@@ -5,8 +5,6 @@ namespace Laratrust;
 use InvalidArgumentException;
 use Ramsey\Uuid\UuidInterface;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
 class Helper
 {
@@ -26,7 +24,7 @@ class Helper
         if ($object instanceof UuidInterface) {
             return (string)$object;
         }
-        
+
         if (is_object($object)) {
             return $object->getKey();
         }
@@ -48,42 +46,6 @@ class Helper
         throw new InvalidArgumentException(
             'getIdFor function only accepts an integer, a Model object or an array with an "id" key'
         );
-    }
-
-    /**
-     * Check if a string is a valid relationship name.
-     *
-     * @param string $relationship
-     * @return boolean
-     */
-    public static function isValidRelationship($relationship)
-    {
-        return in_array($relationship, ['roles', 'permissions']);
-    }
-
-    /**
-     * Returns the team's foreign key.
-     *
-     * @return string
-     */
-    public static function teamForeignKey()
-    {
-        return Config::get('laratrust.foreign_keys.team');
-    }
-
-    /**
-     * Fetch the team model from the name.
-     *
-     * @param  mixed  $team
-     * @return mixed
-     */
-    public static function fetchTeam($team = null)
-    {
-        if (is_null($team) || !Config::get('laratrust.teams.enabled')) {
-            return null;
-        }
-
-        return static::getIdFor($team, 'team');
     }
 
     /**
@@ -116,27 +78,6 @@ class Helper
     }
 
     /**
-     * Check if a role or permission is attach to the user in a same team.
-     *
-     * @param  mixed  $rolePermission
-     * @param  \Illuminate\Database\Eloquent\Model  $team
-     * @return boolean
-     */
-    public static function isInSameTeam($rolePermission, $team)
-    {
-        if (
-            !Config::get('laratrust.teams.enabled')
-            || (!Config::get('laratrust.teams.strict_check') && is_null($team))
-        ) {
-            return true;
-        }
-
-        $teamForeignKey = static::teamForeignKey();
-
-        return $rolePermission['pivot'][$teamForeignKey] == $team;
-    }
-
-    /**
      * Checks if the option exists inside the array,
      * otherwise, it sets the first option inside the default values array.
      *
@@ -160,35 +101,6 @@ class Helper
         }
 
         return $array;
-    }
-
-    /**
-     * Creates a model from an array filled with the class data.
-     *
-     * @param string $class
-     * @param string|\Illuminate\Database\Eloquent\Model $data
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public static function hidrateModel($class, $data)
-    {
-        if ($data instanceof Model) {
-            return $data;
-        }
-
-        if (!isset($data['pivot'])) {
-            throw new \Exception("The 'pivot' attribute in the {$class} is hidden");
-        }
-
-        $model = new $class;
-        $primaryKey = $model->getKeyName();
-
-        $model->setAttribute($primaryKey, $data[$primaryKey])->setAttribute('name', $data['name']);
-        $model->setRelation(
-            'pivot',
-            MorphPivot::fromRawAttributes($model, $data['pivot'], 'pivot_table')
-        );
-
-        return $model;
     }
 
     /**

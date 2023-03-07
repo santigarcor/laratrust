@@ -4,6 +4,7 @@ namespace Laratrust\Traits;
 
 use Laratrust\Helper;
 use Illuminate\Support\Facades\Config;
+use Laratrust\Models\Team;
 
 trait LaratrustHasScopes
 {
@@ -27,7 +28,7 @@ trait LaratrustHasScopes
             $roleQuery->$method('name', $role)
                 ->when($team || $teamsStrictCheck, function ($query) use ($team) {
                     $team = Helper::getIdFor($team, 'team');
-                    return $query->where(Helper::teamForeignKey(), $team);
+                    return $query->where(Team::modelForeignKey(), $team);
                 });
         });
     }

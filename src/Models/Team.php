@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Laratrust\Contracts\Team as TeamContract;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Laratrust\Helper;
 use Laratrust\Traits\LaratrustDynamicUserRelationsCalls;
 
 class Team extends Model implements TeamContract
@@ -58,5 +59,25 @@ class Team extends Model implements TeamContract
             Config::get('laratrust.foreign_keys.team'),
             Config::get('laratrust.foreign_keys.user')
         );
+    }
+
+    /**
+     * Returns the team's foreign key.
+     */
+    public static function modelForeignKey():string
+    {
+        return Config::get('laratrust.foreign_keys.team');
+    }
+
+    /**
+     * Fetch the team model from the name.
+     */
+    public static function getId($team = null): ?int
+    {
+        if (is_null($team) || !Config::get('laratrust.teams.enabled')) {
+            return null;
+        }
+
+        return Helper::getIdFor($team, 'team');
     }
 }

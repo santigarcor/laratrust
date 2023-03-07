@@ -3,6 +3,7 @@
 namespace Laratrust\Checkers\User;
 
 use Laratrust\Helper;
+use Laratrust\Models\Team;
 use Illuminate\Support\Facades\Config;
 
 class LaratrustUserQueryChecker extends LaratrustUserChecker
@@ -23,7 +24,7 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
             return $this->user->roles->pluck('name')->toArray();
         }
 
-        $teamId = $team ? Helper::fetchTeam($team) : null;
+        $teamId = $team ? Team::getId($team) : null;
 
         return $this->user
             ->roles()
@@ -55,7 +56,7 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
         $rolesCount = $this->user->roles()
             ->whereIn('name', $rolesNames)
             ->when($useTeams && ($teamStrictCheck || !is_null($team)), function ($query) use ($team) {
-                $teamId = Helper::fetchTeam($team);
+                $teamId = Team::getId($team);
 
                 return $query->where(Config::get('laratrust.foreign_keys.team'), $teamId);
             })
@@ -97,7 +98,7 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
                 }
             ])
             ->when($useTeams && ($teamStrictCheck || !is_null($team)), function ($query) use ($team) {
-                $teamId = Helper::fetchTeam($team);
+                $teamId = Team::getId($team);
 
                 return $query->where(Config::get('laratrust.foreign_keys.team'), $teamId);
             })
@@ -114,7 +115,7 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
                 return $query;
             })
             ->when($useTeams && ($teamStrictCheck || !is_null($team)), function ($query) use ($team) {
-                $teamId = Helper::fetchTeam($team);
+                $teamId = Team::getId($team);
 
                 return $query->where(Config::get('laratrust.foreign_keys.team'), $teamId);
             })
