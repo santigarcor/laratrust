@@ -13,7 +13,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Laratrust\Checkers\CheckersManager;
-use Laratrust\Traits\HasLaratrustEvents;
 use Laratrust\Checkers\User\UserChecker;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
