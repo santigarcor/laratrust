@@ -38,7 +38,7 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         |------------------------------------------------------------
         */
         $role = Role::create(['name' => 'role_a'])
-            ->attachPermissions([
+            ->givePermissions([
                 Permission::create(['name' => 'permission_a']),
                 Permission::create(['name' => 'permission_b']),
                 Permission::create(['name' => 'permission_c']),

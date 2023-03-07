@@ -641,8 +641,8 @@ class LaratrustUserTest extends LaratrustTestCase
         $permissionB = Permission::create(['name' => 'permission_b']);
         $permissionC = Permission::create(['name' => 'permission_c']);
 
-        $roleA->attachPermissions([$permissionA, $permissionB]);
-        $roleB->attachPermissions([$permissionB, $permissionC]);
+        $roleA->givePermissions([$permissionA, $permissionB]);
+        $roleB->givePermissions([$permissionB, $permissionC]);
         $this->user->attachPermissions([$permissionB, $permissionC]);
         $this->user->attachRoles([$roleA, $roleB]);
 
@@ -680,9 +680,9 @@ class LaratrustUserTest extends LaratrustTestCase
         $teamA = Team::create(['name' => 'team_a']);
         $teamB = Team::create(['name' => 'team_b']);
 
-        $roleA->attachPermissions([$permissionA, $permissionB]);
-        $roleB->attachPermissions([$permissionB, $permissionC]);
-        $roleC->attachPermissions([$permissionD]);
+        $roleA->givePermissions([$permissionA, $permissionB]);
+        $roleB->givePermissions([$permissionB, $permissionC]);
+        $roleC->givePermissions([$permissionD]);
 
         $this->user->attachPermissions([$permissionB, $permissionC]);
         $this->user->attachPermissions([$permissionC], $teamA);

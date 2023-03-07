@@ -22,7 +22,7 @@ abstract class LaratrustUserCanCheckerTestCase extends LaratrustTestCase
 
         $role = Role::create(['name' => 'role']);
 
-        $role->attachPermissions([$permissionA, $permissionB]);
+        $role->givePermissions([$permissionA, $permissionB]);
 
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
         $this->user->attachRole($role);

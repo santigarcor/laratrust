@@ -114,7 +114,7 @@ class Role extends Model implements RoleContract
         return $this;
     }
 
-    public function attachPermission(array|string|int|Model|UuidInterface $permission):static
+    public function givePermission(array|string|int|Model|UuidInterface $permission): static
     {
         $permission = Helper::getIdFor($permission, 'permission');
 
@@ -125,7 +125,7 @@ class Role extends Model implements RoleContract
         return $this;
     }
 
-    public function detachPermission(array|string|int|Model|UuidInterface $permission):static
+    public function removePermission(array|string|int|Model|UuidInterface $permission): static
     {
         $permission = Helper::getIdFor($permission, 'permission');
 
@@ -136,23 +136,23 @@ class Role extends Model implements RoleContract
         return $this;
     }
 
-    public function attachPermissions(iterable $permissions):static
+    public function givePermissions(iterable $permissions): static
     {
         foreach ($permissions as $permission) {
-            $this->attachPermission($permission);
+            $this->givePermission($permission);
         }
 
         return $this;
     }
 
-    public function detachPermissions(?iterable $permissions = null):static
+    public function removePermissions(?iterable $permissions = null): static
     {
         if (!$permissions) {
             $permissions = $this->permissions()->get();
         }
 
         foreach ($permissions as $permission) {
-            $this->detachPermission($permission);
+            $this->removePermission($permission);
         }
 
         return $this;

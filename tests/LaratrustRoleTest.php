@@ -10,7 +10,7 @@ use Laratrust\Tests\Models\Permission;
 
 class LaratrustRoleTest extends LaratrustTestCase
 {
-    protected $role;
+    protected Role $role;
 
     protected function setUp(): void
     {
@@ -22,7 +22,7 @@ class LaratrustRoleTest extends LaratrustTestCase
 
     public function testUsersRelationship()
     {
-        $this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\MorphToMany', $this->role->users());
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\MorphToMany::class, $this->role->users());
     }
 
     public function testAccessUsersRelationshipAsAttribute()
@@ -32,10 +32,10 @@ class LaratrustRoleTest extends LaratrustTestCase
 
     public function testPermissionsRelationship()
     {
-        $this->assertInstanceOf('\Illuminate\Database\Eloquent\Relations\BelongsToMany', $this->role->permissions());
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class, $this->role->permissions());
     }
 
-    public function testAttachPermission()
+    public function testgivePermission()
     {
         /*
         |------------------------------------------------------------
@@ -51,20 +51,20 @@ class LaratrustRoleTest extends LaratrustTestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->attachPermission($permA));
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->givePermission($permA));
         $this->assertCount(1, $this->role->permissions()->get()->toArray());
 
-        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->attachPermission($permB->toArray()));
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->givePermission($permB->toArray()));
         $this->assertCount(2, $this->role->permissions()->get()->toArray());
 
-        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->attachPermission($permC->id));
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->givePermission($permC->id));
         $this->assertCount(3, $this->role->permissions()->get()->toArray());
 
         $this->expectException('TypeError');
-        $this->role->attachPermission(true);
+        $this->role->givePermission(true);
     }
 
-    public function testDetachPermission()
+    public function testremovePermission()
     {
         /*
         |------------------------------------------------------------
@@ -81,17 +81,17 @@ class LaratrustRoleTest extends LaratrustTestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->detachPermission($permA));
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->removePermission($permA));
         $this->assertCount(2, $this->role->permissions()->get()->toArray());
 
-        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->detachPermission($permB->toArray()));
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->removePermission($permB->toArray()));
         $this->assertCount(1, $this->role->permissions()->get()->toArray());
 
-        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->detachPermission($permB->id));
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->removePermission($permB->id));
         $this->assertCount(1, $this->role->permissions()->get()->toArray());
     }
 
-    public function testAttachPermissions()
+    public function testgivePermissions()
     {
         /*
         |------------------------------------------------------------
@@ -109,11 +109,11 @@ class LaratrustRoleTest extends LaratrustTestCase
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->attachPermissions($perms));
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->givePermissions($perms));
         $this->assertCount(3, $this->role->permissions()->get()->toArray());
     }
 
-    public function testDetachPermissions()
+    public function testremovePermissions()
     {
         /*
         |------------------------------------------------------------
@@ -125,14 +125,14 @@ class LaratrustRoleTest extends LaratrustTestCase
             Permission::create(['name' => 'permission_b']),
             Permission::create(['name' => 'permission_c']),
         ];
-        $this->role->attachPermissions($perms);
+        $this->role->givePermissions($perms);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->detachPermissions($perms));
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->removePermissions($perms));
         $this->assertCount(0, $this->role->permissions()->get()->toArray());
     }
 
@@ -148,14 +148,14 @@ class LaratrustRoleTest extends LaratrustTestCase
             Permission::create(['name' => 'permission_b']),
             Permission::create(['name' => 'permission_c']),
         ];
-        $this->role->attachPermissions($perms);
+        $this->role->givePermissions($perms);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->detachPermissions());
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->removePermissions());
         $this->assertCount(0, $this->role->permissions()->get()->toArray());
     }
 
@@ -170,7 +170,7 @@ class LaratrustRoleTest extends LaratrustTestCase
             Permission::create(['name' => 'permission_a'])->id,
             Permission::create(['name' => 'permission_b'])->id,
         ];
-        $this->role->attachPermission(Permission::create(['name' => 'permission_c']));
+        $this->role->givePermission(Permission::create(['name' => 'permission_c']));
 
         /*
         |------------------------------------------------------------

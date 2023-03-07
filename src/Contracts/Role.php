@@ -35,22 +35,22 @@ interface Role
     public function syncPermissions(iterable $permissions):static;
 
     /**
-     * Attach permission to current role.
+     * Give permission to the role.
      */
-    public function attachPermission(array|string|int|Model|UuidInterface $permission):static;
+    public function givePermission(array|string|int|Model|UuidInterface $permission):static;
 
     /**
-     * Detach permission from current role.
+     * Remove the permission from the role.
      */
-    public function detachPermission(array|string|int|Model|UuidInterface $permission):static;
+    public function removePermission(array|string|int|Model|UuidInterface $permission):static;
 
     /**
-     * Attach multiple permissions to current role.
+     * Give multiple permissions to the role.
      */
-    public function attachPermissions(iterable $permissions):static;
+    public function givePermissions(iterable $permissions):static;
 
     /**
      * Detach multiple permissions from current role
      */
-    public function detachPermissions(iterable $permissions):static;
+    public function removePermissions(?iterable $permissions = null):static;
 }

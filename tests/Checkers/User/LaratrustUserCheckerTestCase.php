@@ -118,9 +118,9 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $team = Team::create(['name' => 'team_a']);
 
         $roleA = Role::create(['name' => 'role_a'])
-            ->attachPermission(Permission::create(['name' => 'permission_a']));
+            ->givePermission(Permission::create(['name' => 'permission_a']));
         $roleB = Role::create(['name' => 'role_b'])
-            ->attachPermission(Permission::create(['name' => 'permission_b']));
+            ->givePermission(Permission::create(['name' => 'permission_b']));
 
         $this->user->roles()->attach([
             $roleA->id => ['team_id' => null],
@@ -178,7 +178,7 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $team = Team::create(['name' => 'team_a']);
 
         $role = Role::create(['name' => 'role_a'])
-            ->attachPermissions([
+            ->givePermissions([
                 Permission::create(['name' => 'admin.posts']),
                 Permission::create(['name' => 'admin.pages']),
                 Permission::create(['name' => 'admin.users']),
@@ -217,7 +217,7 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         */
         $team = Team::create(['name' => 'team_a']);
         $role = Role::create(['name' => 'role_a'])
-            ->attachPermissions([
+            ->givePermissions([
                 Permission::create(['name' => 'permission_a']),
                 Permission::create(['name' => 'permission_b']),
                 Permission::create(['name' => 'permission_c']),

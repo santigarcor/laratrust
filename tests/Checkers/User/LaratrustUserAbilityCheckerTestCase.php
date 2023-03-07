@@ -27,8 +27,8 @@ class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
         $roleA = Role::create(['name' => 'role_a']);
         $roleB = Role::create(['name' => 'role_b']);
 
-        $roleA->attachPermission($permissionA);
-        $roleB->attachPermissions([$permissionB, $permissionC]);
+        $roleA->givePermission($permissionA);
+        $roleB->givePermissions([$permissionB, $permissionC]);
 
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
         $this->user->attachRole($roleA)->attachRole($roleB, $team);

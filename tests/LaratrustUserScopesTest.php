@@ -106,8 +106,8 @@ class LaratrustUserScopesTest extends LaratrustTestCase
         $permissionC = Permission::create(['name' => 'permission_c']);
         $permissionD = Permission::create(['name' => 'permission_d']);
 
-        $roleA->attachPermissions([$permissionA, $permissionB]);
-        $roleB->attachPermissions([$permissionB, $permissionC]);
+        $roleA->givePermissions([$permissionA, $permissionB]);
+        $roleB->givePermissions([$permissionB, $permissionC]);
         $this->user->attachPermissions([$permissionB, $permissionC]);
         $this->user->attachRoles([$roleA, $roleB]);
 
@@ -136,8 +136,8 @@ class LaratrustUserScopesTest extends LaratrustTestCase
         $permissionC = Permission::create(['name' => 'permission_c']);
         $permissionD = Permission::create(['name' => 'permission_d']);
 
-        $roleA->attachPermissions([$permissionA, $permissionB]);
-        $roleB->attachPermissions([$permissionB, $permissionC]);
+        $roleA->givePermissions([$permissionA, $permissionB]);
+        $roleB->givePermissions([$permissionB, $permissionC]);
         $this->user->attachPermissions([$permissionB, $permissionC]);
         $this->user->attachRoles([$roleA, $roleB]);
 
@@ -201,7 +201,7 @@ class LaratrustUserScopesTest extends LaratrustTestCase
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);
 
-        $roleA->attachPermissions([$permissionA]);
+        $roleA->givePermissions([$permissionA]);
         $this->user->attachPermissions([$permissionB]);
         $this->user->attachRoles([$roleA]);
         $userWithoutPerms = User::create(['name' => 'test2', 'email' => 'test2@test.com']);
