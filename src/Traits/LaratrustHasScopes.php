@@ -3,8 +3,8 @@
 namespace Laratrust\Traits;
 
 use Laratrust\Helper;
-use Illuminate\Support\Facades\Config;
 use Laratrust\Models\Team;
+use Illuminate\Support\Facades\Config;
 
 trait LaratrustHasScopes
 {

@@ -33,8 +33,7 @@ class UserQueryChecker extends UserChecker
         string|array $name,
         array|string|int|Model|UuidInterface $team = null,
         bool $requireAll = false
-    ): bool
-    {
+    ): bool {
         if (empty($name)) {
             return true;
         }
@@ -61,8 +60,7 @@ class UserQueryChecker extends UserChecker
         string|array $permission,
         array|string|int|Model|UuidInterface $team = null,
         bool $requireAll = false
-    ): bool
-    {
+    ): bool {
         if (empty($permission)) {
             return true;
         }

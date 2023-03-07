@@ -17,7 +17,6 @@ use Laratrust\Checkers\User\UserDefaultChecker;
 
 class CheckersManager
 {
-
     public function __construct(protected LaratrustUser|Role|Model $model)
     {
     }

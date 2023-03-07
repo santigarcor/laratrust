@@ -13,8 +13,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Laratrust\Checkers\CheckersManager;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Laratrust\Checkers\User\UserChecker;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 trait HasRolesAndPermissions
 {
@@ -176,8 +176,7 @@ trait HasRolesAndPermissions
         string|array $name,
         array|string|int|Model|UuidInterface $team = null,
         bool $requireAll = false
-    ): bool
-    {
+    ): bool {
         return $this->laratrustUserChecker()->currentUserHasRole(
             $name,
             $team,
@@ -192,8 +191,7 @@ trait HasRolesAndPermissions
         string|array $permission,
         array|string|int|Model|UuidInterface $team = null,
         bool $requireAll = false
-    ): bool
-    {
+    ): bool {
         return $this->laratrustUserChecker()->currentUserHasPermission(
             $permission,
             $team,
@@ -208,8 +206,7 @@ trait HasRolesAndPermissions
         string|array $permission,
         array|string|int|Model|UuidInterface $team = null,
         bool $requireAll = false
-    ): bool
-    {
+    ): bool {
         return $this->hasPermission($permission, $team, $requireAll);
     }
 
@@ -224,8 +221,7 @@ trait HasRolesAndPermissions
         string|array $permissions,
         array|string|int|Model|UuidInterface $team = null,
         array $options = []
-    ): array|bool
-    {
+    ): array|bool {
         return $this->laratrustUserChecker()->currentUserHasAbility(
             $roles,
             $permissions,
@@ -249,8 +245,7 @@ trait HasRolesAndPermissions
         string $relationship,
         array|string|int|Model|UuidInterface $object,
         array|string|int|Model|UuidInterface|null $team
-    ): static
-    {
+    ): static {
         if (!$this->isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
@@ -291,8 +286,7 @@ trait HasRolesAndPermissions
         string $relationship,
         array|string|int|Model|UuidInterface $object,
         array|string|int|Model|UuidInterface|null $team
-    ): static
-    {
+    ): static {
         if (!$this->isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
@@ -324,8 +318,7 @@ trait HasRolesAndPermissions
         array|string|int|Model|UuidInterface $objects,
         array|string|int|Model|UuidInterface|null $team,
         bool $detaching
-    ): static
-    {
+    ): static {
         if (!$this->isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
@@ -363,8 +356,7 @@ trait HasRolesAndPermissions
     public function addRole(
         array|string|int|Model|UuidInterface $role,
         array|string|int|Model|UuidInterface $team = null
-    ): static
-    {
+    ): static {
         return $this->attachModel('roles', $role, $team);
     }
 
@@ -374,8 +366,7 @@ trait HasRolesAndPermissions
     public function removeRole(
         array|string|int|Model|UuidInterface $role,
         array|string|int|Model|UuidInterface $team = null
-    ): static
-    {
+    ): static {
         return $this->detachModel('roles', $role, $team);
     }
 
@@ -385,8 +376,7 @@ trait HasRolesAndPermissions
     public function addRoles(
         array $roles = [],
         array|string|int|Model|UuidInterface $team = null
-    ): static
-    {
+    ): static {
         foreach ($roles as $role) {
             $this->addRole($role, $team);
         }
@@ -400,8 +390,7 @@ trait HasRolesAndPermissions
     public function removeRoles(
         array $roles = [],
         array|string|int|Model|UuidInterface $team = null
-    ): static
-    {
+    ): static {
         if (empty($roles)) {
             return $this->syncRoles([], $team);
         }
@@ -420,8 +409,7 @@ trait HasRolesAndPermissions
         array $roles = [],
         array|string|int|Model|UuidInterface $team = null,
         bool $detaching = true
-    ): static
-    {
+    ): static {
         return $this->syncModels('roles', $roles, $team, $detaching);
     }
 
@@ -431,8 +419,7 @@ trait HasRolesAndPermissions
     public function syncRolesWithoutDetaching(
         array $roles = [],
         array|string|int|Model|UuidInterface $team = null,
-    ): static
-    {
+    ): static {
         return $this->syncRoles($roles, $team, false);
     }
 
@@ -442,8 +429,7 @@ trait HasRolesAndPermissions
     public function addPermission(
         array|string|int|Model|UuidInterface $permission,
         array|string|int|Model|UuidInterface $team = null
-    ): static
-    {
+    ): static {
         return $this->attachModel('permissions', $permission, $team);
     }
 
@@ -453,8 +439,7 @@ trait HasRolesAndPermissions
     public function removePermission(
         array|string|int|Model|UuidInterface $permission,
         array|string|int|Model|UuidInterface $team = null
-    ): static
-    {
+    ): static {
         return $this->detachModel('permissions', $permission, $team);
     }
 
@@ -464,8 +449,7 @@ trait HasRolesAndPermissions
     public function addPermissions(
         array $permissions = [],
         array|string|int|Model|UuidInterface $team = null
-    ): static
-    {
+    ): static {
         foreach ($permissions as $permission) {
             $this->addPermission($permission, $team);
         }
@@ -479,8 +463,7 @@ trait HasRolesAndPermissions
     public function removePermissions(
         array $permissions = [],
         array|string|int|Model|UuidInterface $team = null
-    ): static
-    {
+    ): static {
         if (!$permissions) {
             return $this->syncPermissions([], $team);
         }
@@ -499,8 +482,7 @@ trait HasRolesAndPermissions
         array $permissions = [],
         array|string|int|Model|UuidInterface $team = null,
         bool $detaching = true
-    ): static
-    {
+    ): static {
         return $this->syncModels('permissions', $permissions, $team, $detaching);
     }
 
@@ -510,8 +492,7 @@ trait HasRolesAndPermissions
     public function syncPermissionsWithoutDetaching(
         array $permissions = [],
         array|string|int|Model|UuidInterface $team = null
-    ): static
-    {
+    ): static {
         return $this->syncPermissions($permissions, $team, false);
     }
 
@@ -532,7 +513,7 @@ trait HasRolesAndPermissions
         $roles = $this->roles()
             ->when(
                 Config::get('laratrust.teams.enabled') && $team !== false,
-                fn($query) => $query->whereHas('permissions', function ($permissionQuery) use ($team) {
+                fn ($query) => $query->whereHas('permissions', function ($permissionQuery) use ($team) {
                     $permissionQuery->where(
                         Config::get('laratrust.foreign_keys.team'),
                         Helper::getIdFor($team, 'team')
@@ -549,7 +530,7 @@ trait HasRolesAndPermissions
         $directPermissions = $this->permissions()
             ->when(
                 Config::get('laratrust.teams.enabled') && $team !== false,
-                fn($query) => $query->where(
+                fn ($query) => $query->where(
                     config('laratrust.foreign_keys.team'),
                     Helper::getIdFor($team, 'team')
                 )

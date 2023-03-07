@@ -9,11 +9,11 @@ use Laratrust\Models\Team;
 use Illuminate\Support\Str;
 use Laratrust\Contracts\Role;
 use Ramsey\Uuid\UuidInterface;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
-use Illuminate\Support\Collection;
 
 class UserDefaultChecker extends UserChecker
 {
@@ -37,7 +37,7 @@ class UserDefaultChecker extends UserChecker
         $teamId = Team::getId($team);
 
         return $roles
-            ->filter(fn($role) => $role['pivot'][Team::modelForeignKey()] == $teamId)
+            ->filter(fn ($role) => $role['pivot'][Team::modelForeignKey()] == $teamId)
             ->pluck('name')
             ->toArray();
     }
@@ -46,8 +46,7 @@ class UserDefaultChecker extends UserChecker
         string|array $name,
         array|string|int|Model|UuidInterface $team = null,
         bool $requireAll = false
-    ): bool
-    {
+    ): bool {
         $name = Helper::standardize($name);
         list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
 
@@ -87,8 +86,7 @@ class UserDefaultChecker extends UserChecker
         string|array $permission,
         null|array|string|int|Model|UuidInterface $team = null,
         bool $requireAll = false
-    ): bool
-    {
+    ): bool {
         $permission = Helper::standardize($permission);
         list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
 
