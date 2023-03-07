@@ -231,15 +231,15 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
     /**
     * Check if a role or permission is attach to the user in a same team.
     */
-   private function isInSameTeam($rolePermission, ?int $teamId = null): bool
-   {
-       if (
+    private function isInSameTeam($rolePermission, ?int $teamId = null): bool
+    {
+        if (
            !Config::get('laratrust.teams.enabled')
            || (!Config::get('laratrust.teams.strict_check') && !$teamId)
        ) {
-           return true;
-       }
+            return true;
+        }
 
-       return $rolePermission['pivot'][Team::modelForeignKey()] == $teamId;
-   }
+        return $rolePermission['pivot'][Team::modelForeignKey()] == $teamId;
+    }
 }
