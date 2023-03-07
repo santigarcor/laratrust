@@ -5,13 +5,11 @@ namespace Laratrust\Checkers\User;
 use Laratrust\Helper;
 use InvalidArgumentException;
 use Ramsey\Uuid\UuidInterface;
-use Illuminate\Support\Collection;
 use Laratrust\Contracts\LaratrustUser;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class UserChecker
 {
-
     public function __construct(protected LaratrustUser|Model $user)
     {
     }
@@ -19,7 +17,7 @@ abstract class UserChecker
     /**
      * Get the user roles
      */
-    abstract function getCurrentUserRoles(
+    abstract public function getCurrentUserRoles(
         array|string|int|Model|UuidInterface $team = null
     ): array;
 
@@ -54,8 +52,7 @@ abstract class UserChecker
         string|array $permissions,
         array|string|int|Model|UuidInterface $team = null,
         array $options = []
-    ): array|bool
-    {
+    ): array|bool {
         list($team, $options) = Helper::assignRealValuesTo($team, $options, 'is_array');
         // Convert string to array if that's what is passed in.
         $roles = Helper::standardize($roles, true);
@@ -109,10 +106,10 @@ abstract class UserChecker
         return [$validateAll, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
     }
 
-     /**
-     * Checks if the option exists inside the array,
-     * otherwise, it sets the first option inside the default values array.
-     */
+    /**
+    * Checks if the option exists inside the array,
+    * otherwise, it sets the first option inside the default values array.
+    */
     private function validateAndSetOptions(array $options, array $toVerify):array
     {
         foreach ($toVerify as $option => $config) {
