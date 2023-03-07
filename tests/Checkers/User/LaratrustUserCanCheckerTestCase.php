@@ -25,7 +25,7 @@ abstract class LaratrustUserCanCheckerTestCase extends LaratrustTestCase
         $role->givePermissions([$permissionA, $permissionB]);
 
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
-        $this->user->attachRole($role);
+        $this->user->addRole($role);
     }
 
     protected function canShouldReturnBooleanAssertions()

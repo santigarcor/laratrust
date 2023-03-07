@@ -31,7 +31,7 @@ class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
         $roleB->givePermissions([$permissionB, $permissionC]);
 
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
-        $this->user->attachRole($roleA)->attachRole($roleB, $team);
+        $this->user->addRole($roleA)->addRole($roleB, $team);
     }
 
     protected function abilityShouldReturnBooleanAssertions()

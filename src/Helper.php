@@ -78,32 +78,6 @@ class Helper
     }
 
     /**
-     * Checks if the option exists inside the array,
-     * otherwise, it sets the first option inside the default values array.
-     *
-     * @param  string  $option
-     * @param  array  $array
-     * @param  array  $possibleValues
-     * @return array
-     */
-    public static function checkOrSet($option, $array, $possibleValues)
-    {
-        if (!isset($array[$option])) {
-            $array[$option] = $possibleValues[0];
-
-            return $array;
-        }
-
-        $ignoredOptions = ['team', 'foreignKeyName'];
-
-        if (!in_array($option, $ignoredOptions) && !in_array($array[$option], $possibleValues, true)) {
-            throw new InvalidArgumentException();
-        }
-
-        return $array;
-    }
-
-    /**
      * Return two arrays with the filtered permissions between the permissions
      * with wildcard and the permissions without it.
      *

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests;
 
 use Laratrust\Tests\Models\Role;
@@ -8,7 +10,7 @@ use Laratrust\Tests\Models\Permission;
 
 class LaratrustUserEventsTest extends LaratrustEventsTestCase
 {
-    protected $user;
+    protected User $user;
 
     protected function setUp(): void
     {
@@ -66,19 +68,19 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
 
         $this->dispatcherShouldFire('role.attached', [$this->user, $role->id, null], User::class);
 
-        $this->user->attachRole($role);
+        $this->user->addRole($role);
     }
 
     public function testAnEventIsFiredWhenRoleIsDetachedFromUser()
     {
         $role = Role::create(['name' => 'role']);
-        $this->user->attachRole($role);
+        $this->user->addRole($role);
 
         User::setEventDispatcher($this->dispatcher);
 
         $this->dispatcherShouldFire('role.detached', [$this->user, $role->id, null], User::class);
 
-        $this->user->detachRole($role);
+        $this->user->removeRole($role);
     }
 
     public function testAnEventIsFiredWhenPermissionIsAttachedToUser()
@@ -89,19 +91,19 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
 
         $this->dispatcherShouldFire('permission.attached', [$this->user, $permission->id, null], User::class);
 
-        $this->user->attachPermission($permission);
+        $this->user->addPermission($permission);
     }
 
     public function testAnEventIsFiredWhenPermissionIsDetachedFromUser()
     {
         $permission = Permission::create(['name' => 'permission']);
-        $this->user->attachPermission($permission);
+        $this->user->addPermission($permission);
 
         User::setEventDispatcher($this->dispatcher);
 
         $this->dispatcherShouldFire('permission.detached', [$this->user, $permission->id, null], User::class);
 
-        $this->user->detachPermission($permission);
+        $this->user->removePermission($permission);
     }
 
     public function testAnEventIsFiredWhenRolesAreSynced()
@@ -124,7 +126,7 @@ class LaratrustUserEventsTest extends LaratrustEventsTestCase
     public function testAnEventIsFiredWhenPermissionsAreSynced()
     {
         $permission = Permission::create(['name' => 'permission']);
-        $this->user->attachPermission($permission);
+        $this->user->addPermission($permission);
 
         User::setEventDispatcher($this->dispatcher);
 

@@ -4,46 +4,42 @@ declare(strict_types=1);
 
 namespace Laratrust\Checkers;
 
+use Laratrust\Contracts\Role;
 use Illuminate\Support\Facades\Config;
+use Laratrust\Contracts\LaratrustUser;
+use Illuminate\Database\Eloquent\Model;
 use Laratrust\Checkers\Role\RoleChecker;
+use Laratrust\Checkers\User\UserChecker;
 use Laratrust\Checkers\Role\RoleQueryChecker;
+use Laratrust\Checkers\User\UserQueryChecker;
 use Laratrust\Checkers\Role\RoleDefaultChecker;
-use Laratrust\Checkers\User\LaratrustUserQueryChecker;
-use Laratrust\Checkers\User\LaratrustUserDefaultChecker;
+use Laratrust\Checkers\User\UserDefaultChecker;
 
 class CheckersManager
 {
-    /**
-     * The object in charge of checking the roles and permissions.
-     *
-     * @var \Illuminate\Database\Eloquent\Model
-     */
-    protected $model;
 
-    public function __construct($model)
+    public function __construct(protected LaratrustUser|Role|Model $model)
     {
-        $this->model = $model;
     }
 
     /**
      * Return the right checker according to the configuration.
-     *
-     * @return \Laratrust\Checkers\LaratrustChecker|void
      */
-    public function getUserChecker()
+    public function getUserChecker(): UserChecker
     {
         switch (Config::get('laratrust.checker', 'default')) {
+            default:
             case 'default':
-                return new LaratrustUserDefaultChecker($this->model);
+                return new UserDefaultChecker($this->model);
             case 'query':
-                return new LaratrustUserQueryChecker($this->model);
+                return new UserQueryChecker($this->model);
         }
     }
 
     /**
      * Return the right checker according to the configuration.
      */
-    public function getRoleChecker():RoleChecker
+    public function getRoleChecker(): RoleChecker
     {
         switch (Config::get('laratrust.checker', 'default')) {
             case 'query':

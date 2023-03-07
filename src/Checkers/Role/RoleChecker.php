@@ -2,15 +2,13 @@
 
 namespace Laratrust\Checkers\Role;
 
+use Laratrust\Contracts\Role;
 use Illuminate\Database\Eloquent\Model;
 
 abstract class RoleChecker
 {
-    protected Model $role;
-
-    public function __construct(Model $role)
+    public function __construct(protected Role|Model $role)
     {
-        $this->role = $role;
     }
 
     abstract public function currentRoleHasPermission(

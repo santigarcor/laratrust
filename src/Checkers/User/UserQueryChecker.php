@@ -4,17 +4,13 @@ namespace Laratrust\Checkers\User;
 
 use Laratrust\Helper;
 use Laratrust\Models\Team;
+use Ramsey\Uuid\UuidInterface;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
 
-class LaratrustUserQueryChecker extends LaratrustUserChecker
+class UserQueryChecker extends UserChecker
 {
-    /**
-     * Checks if the user has a role by its name.
-     *
-     * @param  string|bool   $team      Team name.
-     * @return array
-     */
-    public function getCurrentUserRoles($team = null)
+    public function getCurrentUserRoles(array|string|int|Model|UuidInterface $team = null): array
     {
         if (config('laratrust.teams.enabled') === false) {
             return $this->user->roles->pluck('name')->toArray();
@@ -33,15 +29,11 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
             ->toArray();
     }
 
-    /**
-     * Checks if the user has a role by its name.
-     *
-     * @param  string|array  $name       Role name or array of role names.
-     * @param  string|bool   $team      Team name or requiredAll roles.
-     * @param  bool          $requireAll All roles in the array are required.
-     * @return bool
-     */
-    public function currentUserHasRole($name, $team = null, $requireAll = false)
+    public function currentUserHasRole(
+        string|array $name,
+        array|string|int|Model|UuidInterface $team = null,
+        bool $requireAll = false
+    ): bool
     {
         if (empty($name)) {
             return true;
@@ -65,15 +57,11 @@ class LaratrustUserQueryChecker extends LaratrustUserChecker
         return $requireAll ? $rolesCount == count($rolesNames) : $rolesCount > 0;
     }
 
-    /**
-     * Check if user has a permission by its name.
-     *
-     * @param  string|array  $permission Permission string or array of permissions.
-     * @param  string|bool  $team      Team name or requiredAll roles.
-     * @param  bool  $requireAll All roles in the array are required.
-     * @return bool
-     */
-    public function currentUserHasPermission($permission, $team = null, $requireAll = false)
+    public function currentUserHasPermission(
+        string|array $permission,
+        array|string|int|Model|UuidInterface $team = null,
+        bool $requireAll = false
+    ): bool
     {
         if (empty($permission)) {
             return true;

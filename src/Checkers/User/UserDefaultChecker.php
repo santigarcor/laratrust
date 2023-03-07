@@ -1,58 +1,52 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Checkers\User;
 
 use Laratrust\Helper;
 use Laratrust\Models\Team;
 use Illuminate\Support\Str;
 use Laratrust\Contracts\Role;
+use Ramsey\Uuid\UuidInterface;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Illuminate\Support\Collection;
 
-class LaratrustUserDefaultChecker extends LaratrustUserChecker
+class UserDefaultChecker extends UserChecker
 {
-    /**
-     * Checks if the user has a role by its name.
-     *
-     * @param  string|bool   $team      Team name.
-     * @return array
-     */
-    public function getCurrentUserRoles($team = null)
+    public function getCurrentUserRoles(array|string|int|Model|UuidInterface $team = null): array
     {
-        $roles = collect($this->userCachedRoles());
+        $roles = Collection::make($this->userCachedRoles());
 
-        if (config('laratrust.teams.enabled') === false) {
-            return $roles->pluck('name')->toArray();
-        }
-
-        if ($team === null && config('laratrust.teams.strict_check') === false) {
+        if (
+            Config::get('laratrust.teams.enabled') === false ||
+            ($team === null && Config::get('laratrust.teams.strict_check') === false)
+        ) {
             return $roles->pluck('name')->toArray();
         }
 
         if ($team === null) {
             return $roles->filter(function ($role) {
-                return $role['pivot'][config('laratrust.foreign_keys.team')] === null;
+                return $role['pivot'][Team::modelForeignKey()] === null;
             })->pluck('name')->toArray();
         }
 
         $teamId = Team::getId($team);
 
-        return $roles->filter(function ($role) use ($teamId) {
-            return $role['pivot'][config('laratrust.foreign_keys.team')] == $teamId;
-        })->pluck('name')->toArray();
+        return $roles
+            ->filter(fn($role) => $role['pivot'][Team::modelForeignKey()] == $teamId)
+            ->pluck('name')
+            ->toArray();
     }
 
-    /**
-     * Checks if the user has a role by its name.
-     *
-     * @param  string|array  $name       Role name or array of role names.
-     * @param  string|bool   $team      Team name or requiredAll roles.
-     * @param  bool          $requireAll All roles in the array are required.
-     * @return bool
-     */
-    public function currentUserHasRole($name, $team = null, $requireAll = false)
+    public function currentUserHasRole(
+        string|array $name,
+        array|string|int|Model|UuidInterface $team = null,
+        bool $requireAll = false
+    ): bool
     {
         $name = Helper::standardize($name);
         list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
@@ -89,15 +83,11 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
         return false;
     }
 
-    /**
-     * Check if user has a permission by its name.
-     *
-     * @param  string|array  $permission Permission string or array of permissions.
-     * @param  string|bool  $team      Team name or requiredAll roles.
-     * @param  bool  $requireAll All roles in the array are required.
-     * @return bool
-     */
-    public function currentUserHasPermission($permission, $team = null, $requireAll = false)
+    public function currentUserHasPermission(
+        string|array $permission,
+        null|array|string|int|Model|UuidInterface $team = null,
+        bool $requireAll = false
+    ): bool
     {
         $permission = Helper::standardize($permission);
         list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
@@ -152,16 +142,13 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
      * Tries to return all the cached roles of the user.
      * If it can't bring the roles from the cache,
      * it brings them back from the DB.
-     *
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @return \Illuminate\Database\Eloquent\Collection
      */
-    protected function userCachedRoles()
+    protected function userCachedRoles():array
     {
         $cacheKey = 'laratrust_roles_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey();
 
         if (!Config::get('laratrust.cache.enabled')) {
-            return $this->user->roles()->get();
+            return $this->user->roles()->get()->toArray();
         }
 
         return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
@@ -231,15 +218,15 @@ class LaratrustUserDefaultChecker extends LaratrustUserChecker
     /**
     * Check if a role or permission is attach to the user in a same team.
     */
-   private function isInSameTeam($rolePermission, ?int $teamId = null): bool
-   {
-       if (
-           !Config::get('laratrust.teams.enabled')
-           || (!Config::get('laratrust.teams.strict_check') && !$teamId)
-       ) {
-           return true;
-       }
+    private function isInSameTeam($rolePermission, ?int $teamId = null): bool
+    {
+        if (
+            !Config::get('laratrust.teams.enabled')
+            || (!Config::get('laratrust.teams.strict_check') && !$teamId)
+        ) {
+            return true;
+        }
 
-       return $rolePermission['pivot'][Team::modelForeignKey()] == $teamId;
-   }
+        return $rolePermission['pivot'][Team::modelForeignKey()] == $teamId;
+    }
 }

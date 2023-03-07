@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests\Checkers\User;
 
 use Laratrust\Tests\Models\Role;
@@ -11,7 +13,7 @@ use Laratrust\Tests\Models\Permission;
 
 class LaratrustUserCheckerTestCase extends LaratrustTestCase
 {
-    protected $user;
+    protected User $user;
 
     protected function setUp(): void
     {
@@ -95,12 +97,12 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
         $this->assertTrue($this->user->hasRole(['role_a', 'role_c']));
         $this->assertTrue($this->user->hasRole(['role_a', 'role_c'], 'team_a'));
         $this->assertFalse($this->user->hasRole(['role_a', 'role_c'], 'team_a', true));
-        $this->assertTrue($this->user->hasRole(['role_a', 'role_c'], true));
-        $this->assertFalse($this->user->hasRole(['role_c', 'role_d'], true));
+        $this->assertTrue($this->user->hasRole(['role_a', 'role_c'], requireAll: true));
+        $this->assertFalse($this->user->hasRole(['role_c', 'role_d'], requireAll: true));
 
         $this->app['config']->set('laratrust.teams.enabled', false);
         $this->assertTrue($this->user->hasRole(['role_a', 'role_c'], 'team_a'));
-        $this->assertFalse($this->user->hasRole(['role_c', 'role_d'], true));
+        $this->assertFalse($this->user->hasRole(['role_c', 'role_d'], requireAll: true));
 
         $this->app['config']->set('laratrust.cache.enabled', false);
         $this->assertTrue($this->user->hasRole('role_a'));
@@ -152,11 +154,11 @@ class LaratrustUserCheckerTestCase extends LaratrustTestCase
 
         $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_c', 'permission_d', 'permission_e']));
         $this->assertTrue($this->user->hasPermission('permission_a|permission_b|permission_c|permission_d|permission_e'));
-        $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_d'], true));
-        $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], true));
+        $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_d'], requireAll: true));
+        $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], requireAll: true));
         $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], 'team_a', true));
         $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], $team, true));
-        $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b', 'permission_e'], true));
+        $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b', 'permission_e'], requireAll: true));
         $this->assertFalse($this->user->hasPermission(['permission_e', 'permission_f']));
 
         $this->app['config']->set('laratrust.teams.enabled', false);
