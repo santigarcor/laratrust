@@ -12,14 +12,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 
 /**
- * @method Builder whereHasRole(string|array $role = '', array|string|int|Model|UuidInterface $team = null, string $boolean = 'and')
- * @method Builder orWhereHasRole(string|array $role = '', array|string|int|Model|UuidInterface $team = null)
+ * @method Builder whereHasRole(string|array $role = '', mixed $team = null, string $boolean = 'and')
+ * @method Builder orWhereHasRole(string|array $role = '', mixed $team = null)
  * @method Builder whereHasPermission(string|array $permission = '', string $boolean = 'and')
  * @method Builder orWhereHasPermission(string|array $permission = '')
  * @method Builder whereDoesntHaveRoles()
  * @method Builder whereDoesntHavePermissions()
- * @method static Builder whereHasRole(string|array $role = '', array|string|int|Model|UuidInterface $team = null, string $boolean = 'and')
- * @method static Builder orWhereHasRole(string|array $role = '', array|string|int|Model|UuidInterface $team = null)
+ * @method static Builder whereHasRole(string|array $role = '', mixed $team = null, string $boolean = 'and')
+ * @method static Builder orWhereHasRole(string|array $role = '', mixed $team = null)
  * @method static Builder whereHasPermission(string|array $permission = '', string $boolean = 'and')
  * @method static Builder orWhereHasPermission(string|array $permission = '')
  * @method static Builder whereDoesntHaveRoles()
@@ -33,7 +33,7 @@ trait HasLaratrustScopes
     public function scopeWhereHasRole(
         Builder $query,
         string|array $role = '',
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         string $boolean = 'and'
     ): Builder {
         $method = $boolean == 'and' ? 'whereHas' : 'orWhereHas';
@@ -56,7 +56,7 @@ trait HasLaratrustScopes
     public function scopeOrWhereHasRole(
         Builder $query,
         string|array $role = '',
-        array|string|int|Model|UuidInterface $team = null
+        mixed $team = null
     ): Builder {
         return $this->scopeWhereHasRole($query, $role, $team, 'or');
     }

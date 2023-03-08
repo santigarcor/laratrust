@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
 class UserDefaultChecker extends UserChecker
 {
-    public function getCurrentUserRoles(array|string|int|Model|UuidInterface $team = null): array
+    public function getCurrentUserRoles(mixed $team = null): array
     {
         $roles = Collection::make($this->userCachedRoles());
 
@@ -44,7 +44,7 @@ class UserDefaultChecker extends UserChecker
 
     public function currentUserHasRole(
         string|array $name,
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         bool $requireAll = false
     ): bool {
         $name = Helper::standardize($name);
@@ -87,7 +87,7 @@ class UserDefaultChecker extends UserChecker
 
     public function currentUserHasPermission(
         string|array $permission,
-        null|array|string|int|Model|UuidInterface $team = null,
+        null|mixed $team = null,
         bool $requireAll = false
     ): bool {
         $permission = Helper::standardize($permission);

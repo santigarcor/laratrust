@@ -17,16 +17,14 @@ abstract class UserChecker
     /**
      * Get the user roles
      */
-    abstract public function getCurrentUserRoles(
-        array|string|int|Model|UuidInterface $team = null
-    ): array;
+    abstract public function getCurrentUserRoles(mixed $team = null): array;
 
     /**
      * Checks if the user has a role by its name.
      */
     abstract public function currentUserHasRole(
         string|array $name,
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         bool $requireAll = false
     ): bool;
 
@@ -35,7 +33,7 @@ abstract class UserChecker
      */
     abstract public function currentUserHasPermission(
         string|array $permission,
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         bool $requireAll = false
     ): bool;
 
@@ -66,7 +64,7 @@ abstract class UserChecker
     public function currentUserHasAbility(
         string|array $roles,
         string|array $permissions,
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         array $options = []
     ): array|bool {
         ['team' => $team, 'options' => $options] = $this->getRealValues($team, $options, 'is_array');

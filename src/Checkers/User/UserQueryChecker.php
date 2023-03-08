@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserQueryChecker extends UserChecker
 {
-    public function getCurrentUserRoles(array|string|int|Model|UuidInterface $team = null): array
+    public function getCurrentUserRoles(mixed $team = null): array
     {
         if (config('laratrust.teams.enabled') === false) {
             return $this->user->roles->pluck('name')->toArray();
@@ -31,7 +31,7 @@ class UserQueryChecker extends UserChecker
 
     public function currentUserHasRole(
         string|array $name,
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         bool $requireAll = false
     ): bool {
         if (empty($name)) {
@@ -61,7 +61,7 @@ class UserQueryChecker extends UserChecker
 
     public function currentUserHasPermission(
         string|array $permission,
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         bool $requireAll = false
     ): bool {
         if (empty($permission)) {
