@@ -4,7 +4,6 @@ namespace Laratrust\Checkers\User;
 
 use Laratrust\Helper;
 use InvalidArgumentException;
-use Ramsey\Uuid\UuidInterface;
 use Laratrust\Contracts\LaratrustUser;
 use Illuminate\Database\Eloquent\Model;
 
