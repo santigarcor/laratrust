@@ -9,23 +9,22 @@ $adminRole = Role::where('name', 'admin')->first();
 $editUserPermission = Permission::where('name', 'edit-user')->first();
 $user = User::find(1);
 
-$user->attachRole($adminRole);
+$user->addRole($adminRole);
 // Or
-$user->attachRole('admin');
+$user->addRole('admin');
 
-$user->attachPermission($editUserPermission);
+$user->givePermission($editUserPermission);
 // Or
-$user->attachPermission('edit-user');
+$user->givePermission('edit-user');
 ```
 
 You can also check if a user has some permissions or roles:
 
 ```php
 $user->isAbleTo('edit-user');
+$user->hasPermission('edit-user');
 
 $user->hasRole('admin');
-$user->isA('guide');
-$user->isAn('admin');
 ```
 
 It also supports teams, multiple users and it has a simple admin panel and it is compatible with Laravel's policies and gates system.

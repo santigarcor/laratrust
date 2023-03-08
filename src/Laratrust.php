@@ -36,7 +36,7 @@ class Laratrust
     /**
      * Check if the current user has a permission by its name.
      */
-    public function isAbleTo(
+    public function hasPermission(
         string|array $permission,
         mixed $team = null,
         bool $requireAll = false

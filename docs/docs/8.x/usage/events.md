@@ -1,9 +1,9 @@
 # Events
 
-Laratrust comes with an events system that works like the Laravel [model events](https://laravel.com/docs/eloquent#events). The events that you can listen to are **roleAttached**, **roleDetached**, **permissionAttached**, **permissionDetached**, **roleSynced**, **permissionSynced**.
+Laratrust comes with an events system that works like the Laravel [model events](https://laravel.com/docs/eloquent#events). The events that you can listen to are **roleAdded**, **roleRemoved**, **permissionAdded**, **permissionRemoved**, **roleSynced**, **permissionSynced**.
 
 ::: tip NOTE
-Inside the Role model only the **permissionAttached**, **permissionDetached** and **permissionSynced** events will be fired.
+Inside the Role model only the **permissionAdded**, **permissionRemoved** and **permissionSynced** events will be fired.
 :::
 
 If you want to listen to a Laratrust event, inside your `User` or `Role` models put this:
@@ -13,16 +13,16 @@ If you want to listen to a Laratrust event, inside your `User` or `Role` models 
 
 namespace App;
 
-use Laratrust\Traits\LaratrustUserTrait;
+use Laratrust\Traits\HasRolesAndPermissions;
 
 class User extends Model
 {
-    use LaratrustUserTrait;
+    use HasRolesAndPermissions;
 
     public static function boot() {
         parent::boot();
 
-        static::roleAttached(function($user, $role, $team) {
+        static::roleAdded(function($user, $role, $team) {
         });
         static::roleSynced(function($user, $changes, $team) {
         });
@@ -46,7 +46,7 @@ use App\User;
 class UserObserver
 {
 
-    public function roleAttached(User $user, $role, $team)
+    public function roleAdded(User $user, $role, $team)
     {
         //
     }
@@ -86,9 +86,10 @@ class AppServiceProvider extends ServiceProvider
 ```
 
 ::: tip NOTE
+
 - Inside your observable classes you can have your normal model events methods alongside Laratrust's events methods.
 - If you want to register Laratrust events and also eloquent events you should call both `observe` and `laratrustObserve` methods.
-:::
+  :::
 
 ### Flushing events and observables
 
@@ -101,50 +102,55 @@ User::flushEventListeners();
 
 ## Available Events
 
-
 ### User Events
 
-- `roleAttached($user, $role, $team = null)`
-    - `$user`: The user to whom the role was attached.
-    - `$role`: The role id that was attached to the `$user`.
-    - `$team`: The team id that was used to attach the role to the `$user`.
+- `roleAdded($user, $role, $team = null)`
 
-- `roleDetached($user, $role, $team = null)`
-    - `$user`: The user to whom the role was detached.
-    - `$role`: The role id that was detached from the `$user`.
-    - `$team`: The team id that was used to detach the role from the `$user`.
+  - `$user`: The user to whom the role was attached.
+  - `$role`: The role id that was attached to the `$user`.
+  - `$team`: The team id that was used to attach the role to the `$user`.
 
-- `permissionAttached($user, $permission, $team = null)`
-    - `$user`: The user to whom the permission was attached.
-    - `$permission`: The permission id that was attached to the `$user`.
-    - `$team`: The team id that was used to attach the permission to the `$user`.
+- `roleRemoved($user, $role, $team = null)`
 
-- `permissionDetached($user, $permission, $team = null)`
-    - `$user`: The user to whom the permission was detached.
-    - `$permission`: The permission id that was detached from the `$user`.
-    - `$team`: The team id that was used to detach the permission from the `$user`.
+  - `$user`: The user to whom the role was detached.
+  - `$role`: The role id that was detached from the `$user`.
+  - `$team`: The team id that was used to detach the role from the `$user`.
+
+- `permissionAdded($user, $permission, $team = null)`
+
+  - `$user`: The user to whom the permission was attached.
+  - `$permission`: The permission id that was attached to the `$user`.
+  - `$team`: The team id that was used to attach the permission to the `$user`.
+
+- `permissionRemoved($user, $permission, $team = null)`
+
+  - `$user`: The user to whom the permission was detached.
+  - `$permission`: The permission id that was detached from the `$user`.
+  - `$team`: The team id that was used to detach the permission from the `$user`.
 
 - `roleSynced($user, $changes, $team)`
-    - `$user`: The user to whom the roles were synced.
-    - `$changes`: The value returned by the eloquent `sync` method containing the changes made in the database.
-    - `$team`: The team id that was used to sync the roles to the user.
+
+  - `$user`: The user to whom the roles were synced.
+  - `$changes`: The value returned by the eloquent `sync` method containing the changes made in the database.
+  - `$team`: The team id that was used to sync the roles to the user.
 
 - `permissionSynced()`
-    - `$user`: The user to whom the permissions were synced.
-    - `$changes`: The value returned by the eloquent `sync` method containing the changes made in the database.
-    - `$team`: The team id that was used to sync the permissions to the user.
+  - `$user`: The user to whom the permissions were synced.
+  - `$changes`: The value returned by the eloquent `sync` method containing the changes made in the database.
+  - `$team`: The team id that was used to sync the permissions to the user.
 
 ### Role Events
 
-- `permissionAttached($role, $permission)`
-    - `$role`: The role to whom the permission was attached.
-    - `$permission`: The permission id that was attached to the `$role`.
+- `permissionAdded($role, $permission)`
 
-- `permissionDetached($role, $permission)`
-    - `$role`: The role to whom the permission was detached.
-    - `$permission`: The permission id that was detached from the `$role`.
+  - `$role`: The role to whom the permission was attached.
+  - `$permission`: The permission id that was attached to the `$role`.
+
+- `permissionRemoved($role, $permission)`
+
+  - `$role`: The role to whom the permission was detached.
+  - `$permission`: The permission id that was detached from the `$role`.
 
 - `permissionSynced()`
-    - `$role`: The role to whom the permissions were synced.
-    - `$changes`: The value returned by the eloquent `sync` method containing the changes made in the database.
-
+  - `$role`: The role to whom the permissions were synced.
+  - `$changes`: The value returned by the eloquent `sync` method containing the changes made in the database.

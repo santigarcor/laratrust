@@ -16,7 +16,7 @@ The roles assignment and removal are the same, but this time you can pass the te
 $team = Team::where('name', 'my-awesome-team')->first();
 $admin = Role::where('name', 'admin')->first();
 
-$user->attachRole($admin, $team); // parameter can be an object, array, id or the string name.
+$user->addRole($admin, $team); // parameter can be an object, array, id or the string name.
 ```
 
 This will attach the `admin` role to the user but only within the `my-awesome-team` team.
@@ -28,14 +28,14 @@ $team = Team::where('name', 'my-awesome-team')->first();
 $admin = Role::where('name', 'admin')->first();
 $owner = Role::where('name', 'owner')->first();
 
-$user->attachRoles([$admin, $owner], $team); // parameter can be an object, array, id or the string name.
+$user->addRoles([$admin, $owner], $team); // parameter can be an object, array, id or the string name.
 ```
 
 To remove the roles you can do:
 
 ```php
-$user->detachRole($admin, $team); // parameter can be an object, array, id or the string name.
-$user->detachRoles([$admin, $owner], $team); // parameter can be an object, array, id or the string name.
+$user->removeRole($admin, $team); // parameter can be an object, array, id or the string name.
+$user->removeRoles([$admin, $owner], $team); // parameter can be an object, array, id or the string name.
 ```
 
 You can also sync roles within a group:
@@ -58,7 +58,7 @@ The permissions assignment and removal are the same, but this time you can pass 
 $team = Team::where('name', 'my-awesome-team')->first();
 $editUser = Permission::where('name', 'edit-user')->first();
 
-$user->attachPermission($editUser, $team); // parameter can be an object, array, id or the string name.
+$user->givePermission($editUser, $team); // parameter can be an object, array, id or the string name.
 ```
 
 This will attach the `edit-user` permission to the user but only within the `my-awesome-team` team.
@@ -70,14 +70,14 @@ $team = Team::where('name', 'my-awesome-team')->first();
 $editUser = Permission::where('name', 'edit-user')->first();
 $manageUsers = Permission::where('name', 'manage-users')->first();
 
-$user->attachPermissions([$editUser, $manageUsers], $team); // parameter can be an object, array, id or the string name.
+$user->givePermissions([$editUser, $manageUsers], $team); // parameter can be an object, array, id or the string name.
 ```
 
 To remove the permissions you can do:
 
 ```php
-$user->detachPermission($editUser, $team); // parameter can be an object, array, id or the string name.
-$user->detachPermissions([$editUser, $manageUsers], $team); // parameter can be an object, array, id or the string name.
+$user->removePermission($editUser, $team); // parameter can be an object, array, id or the string name.
+$user->removePermissions([$editUser, $manageUsers], $team); // parameter can be an object, array, id or the string name.
 ```
 
 You can also sync permissions within a group:
