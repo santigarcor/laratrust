@@ -33,16 +33,16 @@ class LaratrustFacadeTest extends LaratrustTestCase
         $this->assertFalse($this->laratrust->hasRole('AnyRole'));
     }
 
-    public function testIsAbleTo()
+    public function testHasPermission()
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
         $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
         $this->user->shouldReceive('hasPermission')->with('user_can', null, false)->andReturn(true)->once();
         $this->user->shouldReceive('hasPermission')->with('user_cannot', null, false)->andReturn(false)->once();
 
-        $this->assertTrue($this->laratrust->isAbleTo('user_can'));
-        $this->assertFalse($this->laratrust->isAbleTo('user_cannot'));
-        $this->assertFalse($this->laratrust->isAbleTo('any_permission'));
+        $this->assertTrue($this->laratrust->hasPermission('user_can'));
+        $this->assertFalse($this->laratrust->hasPermission('user_cannot'));
+        $this->assertFalse($this->laratrust->hasPermission('any_permission'));
     }
 
     public function testAbility()
