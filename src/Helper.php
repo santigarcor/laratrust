@@ -69,8 +69,7 @@ class Helper
     public static function standardize(
         string|array $value,
         bool $toArray = false
-    ): string|array
-    {
+    ): string|array {
         if (is_array($value) || ((strpos($value, '|') === false) && !$toArray)) {
             return $value;
         }
