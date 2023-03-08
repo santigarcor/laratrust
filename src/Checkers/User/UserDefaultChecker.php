@@ -7,8 +7,8 @@ namespace Laratrust\Checkers\User;
 use Laratrust\Helper;
 use Laratrust\Models\Team;
 use Illuminate\Support\Str;
+use UnexpectedValueException;
 use Laratrust\Contracts\Role;
-use Ramsey\Uuid\UuidInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
@@ -87,7 +87,7 @@ class UserDefaultChecker extends UserChecker
 
     public function currentUserHasPermission(
         string|array $permission,
-        null|mixed $team = null,
+        mixed $team = null,
         bool $requireAll = false
     ): bool {
         $permission = Helper::standardize($permission);
@@ -164,15 +164,13 @@ class UserDefaultChecker extends UserChecker
      * Tries to return all the cached permissions of the user
      * and if it can't bring the permissions from the cache,
      * it brings them back from the DB.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function userCachedPermissions()
+    public function userCachedPermissions(): array
     {
         $cacheKey = 'laratrust_permissions_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey();
 
         if (!Config::get('laratrust.cache.enabled')) {
-            return $this->user->permissions()->get();
+            return $this->user->permissions()->get()->toArray();
         }
 
         return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
@@ -185,13 +183,17 @@ class UserDefaultChecker extends UserChecker
      *
      * @return string|void default key user
      */
-    public function userModelCacheKey()
+    public function userModelCacheKey(): string
     {
         foreach (Config::get('laratrust.user_models') as $key => $model) {
             if ($this->user instanceof $model) {
                 return $key;
             }
         }
+
+        $modelClass = get_class($this);
+
+        throw new UnexpectedValueException("Class '{$modelClass}' is not defined in the laratrust.user_models");
     }
 
     /**
@@ -210,11 +212,13 @@ class UserDefaultChecker extends UserChecker
         $role = new $class;
         $primaryKey = $role->getKeyName();
 
-        $role->setAttribute($primaryKey, $data[$primaryKey])->setAttribute('name', $data['name']);
-        $role->setRelation(
-            'pivot',
-            MorphPivot::fromRawAttributes($role, $data['pivot'], 'pivot_table')
-        );
+        $role
+            ->setAttribute($primaryKey, $data[$primaryKey])
+            ->setAttribute('name', $data['name'])
+            ->setRelation(
+                'pivot',
+                MorphPivot::fromRawAttributes($role, $data['pivot'], 'pivot_table')
+            );
 
         return $role;
     }

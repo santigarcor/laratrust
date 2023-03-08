@@ -91,13 +91,13 @@ class UserEventsTest extends EventsTestCase
 
         $this->dispatcherShouldFire('permission.added', [$this->user, $permission->id, null], User::class);
 
-        $this->user->addPermission($permission);
+        $this->user->givePermission($permission);
     }
 
     public function testAnEventIsFiredWhenPermissionIsRemovedFromUser()
     {
         $permission = Permission::create(['name' => 'permission']);
-        $this->user->addPermission($permission);
+        $this->user->givePermission($permission);
 
         User::setEventDispatcher($this->dispatcher);
 
@@ -128,7 +128,7 @@ class UserEventsTest extends EventsTestCase
     public function testAnEventIsFiredWhenPermissionsAreSynced()
     {
         $permission = Permission::create(['name' => 'permission']);
-        $this->user->addPermission($permission);
+        $this->user->givePermission($permission);
 
         User::setEventDispatcher($this->dispatcher);
 

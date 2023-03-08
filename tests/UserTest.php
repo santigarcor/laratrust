@@ -58,7 +58,7 @@ class UserTest extends LaratrustTestCase
     {
         $team = Team::create(['name' => 'team_a']);
 
-        $this->user->addPermissions([
+        $this->user->givePermissions([
             Permission::create(['name' => 'permission_a']),
             Permission::create(['name' => 'permission_b']),
         ], $team);
@@ -94,7 +94,7 @@ class UserTest extends LaratrustTestCase
 
         $teamA = Team::create(['name' => 'team_a']);
         $teamB = Team::create(['name' => 'team_b']);
-        $this->user->addPermissions([
+        $this->user->givePermissions([
             Permission::create(['name' => 'permission_a']),
             Permission::create(['name' => 'permission_b']),
             Permission::create(['name' => 'permission_c'])
@@ -367,7 +367,7 @@ class UserTest extends LaratrustTestCase
         $this->assertEquals(4, $this->user->roles()->count());
     }
 
-    public function testAddPermission()
+    public function testgivePermission()
     {
         /*
         |------------------------------------------------------------
@@ -383,28 +383,28 @@ class UserTest extends LaratrustTestCase
         |------------------------------------------------------------
         */
         // Can attach permission by passing an object
-        $this->assertWasAttached('permission', $this->user->addPermission($permission));
+        $this->assertWasAttached('permission', $this->user->givePermission($permission));
         // Can attach permission by passing an id
-        $this->assertWasAttached('permission', $this->user->addPermission($permission->id));
+        $this->assertWasAttached('permission', $this->user->givePermission($permission->id));
         // Can attach permission by passing an array with 'id' => $id
-        $this->assertWasAttached('permission', $this->user->addPermission($permission->toArray()));
+        $this->assertWasAttached('permission', $this->user->givePermission($permission->toArray()));
         // Can attach permission by passing the permission name
-        $this->assertWasAttached('permission', $this->user->addPermission('permission_a'));
+        $this->assertWasAttached('permission', $this->user->givePermission('permission_a'));
         // Can attach permission by passing the permission and team
-        $this->assertWasAttached('permission', $this->user->addPermission($permission, $team));
+        $this->assertWasAttached('permission', $this->user->givePermission($permission, $team));
         // Can attach permission by passing the permission and team id
-        $this->assertInstanceOf('Laratrust\Tests\Models\User', $this->user->addPermission($permission, $team->id));
+        $this->assertInstanceOf('Laratrust\Tests\Models\User', $this->user->givePermission($permission, $team->id));
         $this->assertEquals($team->id, $this->user->permissions()->first()->pivot->team_id);
         $this->user->permissions()->sync([]);
         // Can attach permission by passing the permission and team name
-        $this->assertInstanceOf('Laratrust\Tests\Models\User', $this->user->addPermission($permission, 'team_a'));
+        $this->assertInstanceOf('Laratrust\Tests\Models\User', $this->user->givePermission($permission, 'team_a'));
         $this->assertEquals($team->id, $this->user->permissions()->first()->pivot->team_id);
         $this->user->permissions()->sync([]);
 
         $this->app['config']->set('laratrust.teams.enabled', false);
-        $this->assertWasAttached('permission', $this->user->addPermission($permission));
+        $this->assertWasAttached('permission', $this->user->givePermission($permission));
 
-        $this->assertInstanceOf('Laratrust\Tests\Models\User', $this->user->addPermission($permission, 'team_a'));
+        $this->assertInstanceOf('Laratrust\Tests\Models\User', $this->user->givePermission($permission, 'team_a'));
         $this->assertNull($this->user->permissions()->first()->pivot->team_id);
         $this->user->permissions()->sync([]);
     }
@@ -451,7 +451,7 @@ class UserTest extends LaratrustTestCase
         $this->assertWasDetached('permission', $this->user->removePermission($permission, 'team_a'), $permission);
     }
 
-    public function testaddPermissions()
+    public function testgivePermissions()
     {
         /*
         |------------------------------------------------------------
@@ -465,15 +465,15 @@ class UserTest extends LaratrustTestCase
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('addPermission')->with(m::anyOf(1, 2, 3), m::anyOf(null, 'TeamA'))->times(6);
+        $user->shouldReceive('givePermission')->with(m::anyOf(1, 2, 3), m::anyOf(null, 'TeamA'))->times(6);
 
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertInstanceOf('Laratrust\Tests\Models\User', $user->addPermissions([1, 2, 3]));
-        $this->assertInstanceOf('Laratrust\Tests\Models\User', $user->addPermissions([1, 2, 3], 'TeamA'));
+        $this->assertInstanceOf('Laratrust\Tests\Models\User', $user->givePermissions([1, 2, 3]));
+        $this->assertInstanceOf('Laratrust\Tests\Models\User', $user->givePermissions([1, 2, 3], 'TeamA'));
     }
 
     public function testRemovePermissions()
@@ -505,7 +505,7 @@ class UserTest extends LaratrustTestCase
             Permission::create(['name' => 'permission_a'])->id,
             Permission::create(['name' => 'permission_b']),
         ];
-        $this->user->addPermission(Permission::create(['name' => 'permission_c']));
+        $this->user->givePermission(Permission::create(['name' => 'permission_c']));
 
         /*
         |------------------------------------------------------------
@@ -538,7 +538,7 @@ class UserTest extends LaratrustTestCase
             Permission::create(['name' => 'permission_a'])->id,
             Permission::create(['name' => 'permission_b'])->id,
         ];
-        $this->user->addPermission(Permission::create(['name' => 'permission_c']));
+        $this->user->givePermission(Permission::create(['name' => 'permission_c']));
 
         /*
         |------------------------------------------------------------
@@ -573,7 +573,7 @@ class UserTest extends LaratrustTestCase
 
         $roleA->givePermissions([$permissionA, $permissionB]);
         $roleB->givePermissions([$permissionB, $permissionC]);
-        $this->user->addPermissions([$permissionB, $permissionC]);
+        $this->user->givePermissions([$permissionB, $permissionC]);
         $this->user->addRoles([$roleA, $roleB]);
 
         /*
@@ -614,8 +614,8 @@ class UserTest extends LaratrustTestCase
         $roleB->givePermissions([$permissionB, $permissionC]);
         $roleC->givePermissions([$permissionD]);
 
-        $this->user->addPermissions([$permissionB, $permissionC]);
-        $this->user->addPermissions([$permissionC], $teamA);
+        $this->user->givePermissions([$permissionB, $permissionC]);
+        $this->user->givePermissions([$permissionC], $teamA);
         $this->user->addRole($roleA);
         $this->user->addRole($roleB, $teamA);
         $this->user->addRole($roleC, $teamB);

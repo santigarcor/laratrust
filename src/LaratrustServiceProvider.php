@@ -2,6 +2,7 @@
 
 namespace Laratrust;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -88,7 +89,32 @@ class LaratrustServiceProvider extends ServiceProvider
             return;
         }
 
-        (new LaratrustRegistersBladeDirectives)->handle($this->app->version());
+        // Call to Laratrust::hasRole.
+        Blade::directive('role', function ($expression) {
+            return "<?php if (app('laratrust')->hasRole({$expression})) : ?>";
+        });
+
+        // Call to Laratrust::permission.
+        Blade::directive('permission', function ($expression) {
+            return "<?php if (app('laratrust')->isAbleTo({$expression})) : ?>";
+        });
+
+        // Call to Laratrust::ability.
+        Blade::directive('ability', function ($expression) {
+            return "<?php if (app('laratrust')->ability({$expression})) : ?>";
+        });
+
+        Blade::directive('endrole', function () {
+            return "<?php endif; // app('laratrust')->hasRole ?>";
+        });
+
+        Blade::directive('endpermission', function () {
+            return "<?php endif; // app('laratrust')->permission ?>";
+        });
+
+        Blade::directive('endability', function () {
+            return "<?php endif; // app('laratrust')->ability ?>";
+        });
     }
 
     /**

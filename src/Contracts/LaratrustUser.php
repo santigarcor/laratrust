@@ -105,7 +105,7 @@ interface LaratrustUser
     /**
      * Add direct permissions to the user.
      */
-    public function addPermission(
+    public function givePermission(
         array|string|int|Model|UuidInterface $permission,
         mixed $team = null
     ): static;
@@ -121,7 +121,7 @@ interface LaratrustUser
     /**
      * Add multiple permissions to the user.
      */
-    public function addPermissions(
+    public function givePermissions(
         array $permissions = [],
         mixed $team = null
     ): static;

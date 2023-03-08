@@ -82,7 +82,7 @@ class UserScopesTest extends LaratrustTestCase
 
         $roleA->givePermissions([$permissionA, $permissionB]);
         $roleB->givePermissions([$permissionB, $permissionC]);
-        $this->user->addPermissions([$permissionB, $permissionC]);
+        $this->user->givePermissions([$permissionB, $permissionC]);
         $this->user->addRoles([$roleA, $roleB]);
 
         $this->assertCount(1, User::whereHasPermission('permission_a')->get());
@@ -102,7 +102,7 @@ class UserScopesTest extends LaratrustTestCase
 
         $roleA->givePermissions([$permissionA, $permissionB]);
         $roleB->givePermissions([$permissionB, $permissionC]);
-        $this->user->addPermissions([$permissionB, $permissionC]);
+        $this->user->givePermissions([$permissionB, $permissionC]);
         $this->user->addRoles([$roleA, $roleB]);
 
         $this->assertCount(
@@ -146,7 +146,7 @@ class UserScopesTest extends LaratrustTestCase
         $permissionB = Permission::create(['name' => 'permission_b']);
 
         $roleA->givePermissions([$permissionA]);
-        $this->user->addPermissions([$permissionB]);
+        $this->user->givePermissions([$permissionB]);
         $this->user->addRoles([$roleA]);
         $userWithoutPerms = User::create(['name' => 'test2', 'email' => 'test2@test.com']);
         $userWithoutPerms->addRole($roleB);

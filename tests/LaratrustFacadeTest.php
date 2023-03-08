@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Mockery as m;
+use Laratrust\Laratrust;
+use Laratrust\Tests\Models\User;
 use Laratrust\Tests\LaratrustTestCase;
 
 class LaratrustFacadeTest extends LaratrustTestCase
@@ -13,14 +15,16 @@ class LaratrustFacadeTest extends LaratrustTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->laratrust = m::mock('Laratrust\Laratrust[user]', [$this->app]);
-        $this->user = m::mock('_mockedUser');
+        $this->laratrust = m::mock(Laratrust::class, [$this->app])
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $this->user = m::mock(User::class);
     }
 
     public function testHasRole()
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
-        $this->laratrust->shouldReceive('user')->andReturn(false)->once()->ordered();
+        $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
         $this->user->shouldReceive('hasRole')->with('UserRole', null, false)->andReturn(true)->once();
         $this->user->shouldReceive('hasRole')->with('NonUserRole', null, false)->andReturn(false)->once();
 
@@ -32,7 +36,7 @@ class LaratrustFacadeTest extends LaratrustTestCase
     public function testIsAbleTo()
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
-        $this->laratrust->shouldReceive('user')->andReturn(false)->once()->ordered();
+        $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
         $this->user->shouldReceive('hasPermission')->with('user_can', null, false)->andReturn(true)->once();
         $this->user->shouldReceive('hasPermission')->with('user_cannot', null, false)->andReturn(false)->once();
 
@@ -44,7 +48,7 @@ class LaratrustFacadeTest extends LaratrustTestCase
     public function testAbility()
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
-        $this->laratrust->shouldReceive('user')->andReturn(false)->once()->ordered();
+        $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
         $this->user->shouldReceive('ability')->with('admin', 'user_can', null, [])->andReturn(true)->once();
         $this->user->shouldReceive('ability')->with('admin', 'user_cannot', null, [])->andReturn(false)->once();
 

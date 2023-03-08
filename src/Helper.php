@@ -43,7 +43,7 @@ class Helper
         }
 
         throw new InvalidArgumentException(
-            'getIdFor function only accepts an integer, a Model object or an array with an "id" key'
+            'getIdFor function only supports UuidInterface, Model, array{id: string}, int, string'
         );
     }
 

@@ -423,7 +423,7 @@ trait HasRolesAndPermissions
     /**
      * Add direct permissions to the user.
      */
-    public function addPermission(
+    public function givePermission(
         array|string|int|Model|UuidInterface $permission,
         mixed $team = null
     ): static {
@@ -443,12 +443,12 @@ trait HasRolesAndPermissions
     /**
      * Add multiple permissions to the user.
      */
-    public function addPermissions(
+    public function givePermissions(
         array $permissions = [],
         mixed $team = null
     ): static {
         foreach ($permissions as $permission) {
-            $this->addPermission($permission, $team);
+            $this->givePermission($permission, $team);
         }
 
         return $this;
