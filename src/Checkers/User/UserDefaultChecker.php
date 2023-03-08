@@ -8,7 +8,6 @@ use Laratrust\Helper;
 use Laratrust\Models\Team;
 use Illuminate\Support\Str;
 use Laratrust\Contracts\Role;
-use Ramsey\Uuid\UuidInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
