@@ -3,7 +3,6 @@
 namespace Laratrust\Checkers\User;
 
 use Laratrust\Helper;
-use Laratrust\Models\Team;
 use Ramsey\Uuid\UuidInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
