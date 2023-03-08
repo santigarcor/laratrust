@@ -61,8 +61,7 @@ trait HasLaratrustEvents
     public static function registerLaratrustEvent(
         string $event,
         Closure|string|array $callback
-    ): void
-    {
+    ): void {
         if (isset(static::$dispatcher)) {
             $name = static::class;
 
