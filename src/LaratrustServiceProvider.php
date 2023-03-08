@@ -67,9 +67,9 @@ class LaratrustServiceProvider extends ServiceProvider
         }
 
         $middlewares = [
-            'role' => \Laratrust\Middleware\LaratrustRole::class,
-            'permission' => \Laratrust\Middleware\LaratrustPermission::class,
-            'ability' => \Laratrust\Middleware\LaratrustAbility::class,
+            'role' => \Laratrust\Middleware\Role::class,
+            'permission' => \Laratrust\Middleware\Permission::class,
+            'ability' => \Laratrust\Middleware\Ability::class,
         ];
 
         foreach ($middlewares as $key => $class) {
@@ -195,7 +195,7 @@ class LaratrustServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__. '/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
             ], 'laratrust-seeder');
-            
+
             $this->publishes([
                 __DIR__. '/../resources/views/panel' => resource_path('views/vendor/laratrust/panel'),
             ], 'laratrust-views');

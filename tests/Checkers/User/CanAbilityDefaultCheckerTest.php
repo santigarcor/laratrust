@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests\Checkers\User;
 
-class LaratrustCanAbilityDefaultCheckerTest extends LaratrustUserCanCheckerTestCase
+class CanAbilityDefaultCheckerTest extends CanCheckerTestCase
 {
     protected function setUp(): void
     {

@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests\Middleware;
 
 use Mockery as m;
+use Illuminate\Http\Request;
+use Illuminate\Contracts\Auth\Guard;
 use Laratrust\Tests\LaratrustTestCase;
 
 abstract class MiddlewareTest extends LaratrustTestCase
@@ -14,7 +18,7 @@ abstract class MiddlewareTest extends LaratrustTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->request = m::mock('Illuminate\Http\Request');
-        $this->guard = m::mock('Illuminate\Contracts\Auth\Guard');
+        $this->request = m::mock(Request::class);
+        $this->guard = m::mock(Guard::class);
     }
 }

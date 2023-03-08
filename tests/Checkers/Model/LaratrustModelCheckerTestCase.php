@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests\Checkers\Model;
 
 use Laratrust\Tests\Models\Role;

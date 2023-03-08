@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
-class LaratrustUserCheckerTestCase extends LaratrustTestCase
+class CheckerTestCase extends LaratrustTestCase
 {
     protected User $user;
 

@@ -1,60 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests\Middleware;
 
 use Mockery as m;
+use Laratrust\Middleware\Role;
+use Laratrust\Tests\Models\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
-use Laratrust\Middleware\LaratrustRole;
 
-class LaratrustRoleTest extends MiddlewareTest
+class RoleTest extends MiddlewareTest
 {
     public function testHandle_IsGuestWithMismatchingRole_ShouldAbort403()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $middleware = new LaratrustRole($this->guard);
+        $middleware = new Role($this->guard);
 
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
         Auth::shouldReceive('guard')->with('web')->andReturn($this->guard);
         $this->guard->shouldReceive('guest')->andReturn(true);
         App::shouldReceive('abort')
             ->with(403, self::ABORT_MESSAGE)
             ->andReturn(403);
 
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
         $this->assertEquals(403, $middleware->handle($this->request, function () {
         }, 'admin|user'));
     }
 
     public function testHandle_IsLoggedInWithMismatchRole_ShouldAbort403()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
-        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
-        $middleware = new LaratrustRole($this->guard);
+        $user = m::mock(User::class)->makePartial();
+        $middleware = new Role($this->guard);
 
-        /*
-        |------------------------------------------------------------
-        | Expectation
-        |------------------------------------------------------------
-        */
         $this->guard->shouldReceive('guest')->andReturn(false);
         Auth::shouldReceive('guard')->with(m::anyOf('web', 'api'))->andReturn($this->guard);
         $this->guard->shouldReceive('user')->andReturn($user);
@@ -100,8 +78,8 @@ class LaratrustRoleTest extends MiddlewareTest
         | Set
         |------------------------------------------------------------
         */
-        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
-        $middleware = new LaratrustRole($this->guard);
+        $user = m::mock(User::class)->makePartial();
+        $middleware = new Role($this->guard);
 
         /*
         |------------------------------------------------------------
@@ -152,8 +130,8 @@ class LaratrustRoleTest extends MiddlewareTest
         */
         Session::start();
         Config::set('laratrust.middleware.handling', 'redirect');
-        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
-        $middleware = new LaratrustRole($this->guard);
+        $user = m::mock(User::class)->makePartial();
+        $middleware = new Role($this->guard);
 
 
         /*
@@ -224,8 +202,8 @@ class LaratrustRoleTest extends MiddlewareTest
         Session::start();
         Config::set('laratrust.middleware.handling', 'redirect');
         Config::set('laratrust.middleware.handlers.redirect.message.content', 'The message was flashed');
-        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
-        $middleware = new LaratrustRole($this->guard);
+        $user = m::mock(User::class)->makePartial();
+        $middleware = new Role($this->guard);
 
 
         /*

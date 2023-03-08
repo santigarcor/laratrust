@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests\Checkers\User;
 
 use Laratrust\Tests\Models\Role;
@@ -8,9 +10,9 @@ use Laratrust\Tests\Models\User;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
-class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
+class AbilityCheckerTestCase extends LaratrustTestCase
 {
-    protected $user;
+    protected User $user;
 
     protected function setUp(): void
     {
@@ -36,11 +38,6 @@ class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
 
     protected function abilityShouldReturnBooleanAssertions()
     {
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
         // Case: User has everything.
         $this->assertTrue(
             $this->user->ability(
@@ -111,11 +108,6 @@ class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
 
     protected function abilityShouldReturnArrayAssertions()
     {
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
         // Case: User has everything.
         $this->assertSame(
             [
@@ -155,11 +147,6 @@ class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
 
     protected function abilityShouldReturnBothAssertions()
     {
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
         $this->assertSame(
             [
                 true,
@@ -207,11 +194,6 @@ class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
 
     protected function abilityShouldAcceptStringsAssertions()
     {
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
         $this->assertSame(
             $this->user->ability(
                 ['role_a', 'Nonrole_b'],
@@ -241,11 +223,6 @@ class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
 
     protected function abilityDefaultOptionsAssertions()
     {
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
         // Case: User has everything.
         $this->assertSame(
             $this->user->ability(
@@ -289,11 +266,6 @@ class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
 
     protected function abilityShouldThrowInvalidArgumentExceptionAssertions()
     {
-        /*
-        |------------------------------------------------------------
-        | Assertion
-        |------------------------------------------------------------
-        */
         $this->assertFalse($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['return_type' => 'boolean']));
         $this->assertFalse($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['return_type' => 'array']));
         $this->assertFalse($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['return_type' => 'both']));
@@ -303,13 +275,8 @@ class LaratrustUserAbilityCheckerTestCase extends LaratrustTestCase
 
     /**
      * Check if an exception is thrown when checking the user ability
-     * @param  \Laratrust\Tests\Models\User  $user
-     * @param  array  $roles
-     * @param  array  $perms
-     * @param  array  $options
-     * @return boolean
      */
-    public function isExceptionThrown($user, $roles, $perms, $options)
+    public function isExceptionThrown(User $user, array $roles, array $perms, array $options): bool
     {
         $isExceptionThrown = false;
 

@@ -142,7 +142,7 @@ class UserTest extends LaratrustTestCase
         | Set
         |------------------------------------------------------------
         */
-        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
+        $user = m::mock(User::class)->makePartial();
 
         /*
         |------------------------------------------------------------
@@ -250,7 +250,7 @@ class UserTest extends LaratrustTestCase
         | Set
         |------------------------------------------------------------
         */
-        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
+        $user = m::mock(User::class)->makePartial();
 
         /*
         |------------------------------------------------------------
@@ -458,7 +458,7 @@ class UserTest extends LaratrustTestCase
         | Set
         |------------------------------------------------------------
         */
-        $user = m::mock('Laratrust\Tests\Models\User')->makePartial();
+        $user = m::mock(User::class)->makePartial();
 
         /*
         |------------------------------------------------------------

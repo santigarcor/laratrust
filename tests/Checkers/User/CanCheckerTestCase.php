@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests\Checkers\User;
 
 use Laratrust\Tests\Models\Role;
@@ -7,7 +9,7 @@ use Laratrust\Tests\Models\User;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
-abstract class LaratrustUserCanCheckerTestCase extends LaratrustTestCase
+abstract class CanCheckerTestCase extends LaratrustTestCase
 {
     protected $user;
 

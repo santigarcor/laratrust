@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Test;
 
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
-class LaratrustPermissionTest extends LaratrustTestCase
+class PermissionModelTest extends LaratrustTestCase
 {
     protected $permission;
 

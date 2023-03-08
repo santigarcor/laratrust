@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Test\Checkers\Role;
 
 use Laratrust\Tests\Models\Role;
@@ -7,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 
-class LaratrustRoleDefaultCheckerCacheTest extends LaratrustTestCase
+class DefaultCheckerCacheTest extends LaratrustTestCase
 {
     protected function setUp(): void
     {
@@ -18,11 +20,6 @@ class LaratrustRoleDefaultCheckerCacheTest extends LaratrustTestCase
 
     public function testUserDisableTheRolesAndPermissionsCaching()
     {
-        /*
-        |------------------------------------------------------------
-        | Set
-        |------------------------------------------------------------
-        */
         $role = Role::create(['name' => 'role_a'])
             ->givePermissions([
                 Permission::create(['name' => 'permission_a']),

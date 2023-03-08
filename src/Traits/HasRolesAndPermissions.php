@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 trait HasRolesAndPermissions
 {
     use HasLaratrustEvents;
-    use LaratrustHasScopes;
+    use HasLaratrustScopes;
 
     /**
      * Boots the user model and attaches event listener to

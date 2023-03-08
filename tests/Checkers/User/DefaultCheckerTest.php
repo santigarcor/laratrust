@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests\Checkers\User;
 
-use Illuminate\Support\Facades\Config;
-
-class LaratrustUserQueryCheckerTest extends LaratrustUserCheckerTestCase
+class DefaultCheckerTest extends CheckerTestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->app['config']->set('laratrust.checker', 'query');
+        $this->app['config']->set('laratrust.checker', 'default');
     }
 
     public function testGetRoles()
@@ -33,8 +33,8 @@ class LaratrustUserQueryCheckerTest extends LaratrustUserCheckerTestCase
         $this->hasPermissionWithPlaceholderSupportAssertions();
     }
 
-    // public function testUserCanDisableTheRolesAndPermissionsCaching()
-    // {
-    //     $this->userCanDisableTheRolesAndPermissionsCachingAssertions();
-    // }
+    public function testUserDisableTheRolesAndPermissionsCaching()
+    {
+        $this->userDisableTheRolesAndPermissionsCachingAssertions();
+    }
 }

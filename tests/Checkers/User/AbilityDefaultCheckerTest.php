@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests\Checkers\User;
 
-class LaratrustUserAbilityQueryCheckerTest extends LaratrustUserAbilityCheckerTestCase
+class AbilityDefaultCheckerTest extends AbilityCheckerTestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->app['config']->set('laratrust.checker', 'query');
+        $this->app['config']->set('laratrust.checker', 'default');
     }
 
     public function testAbilityShouldReturnBoolean()

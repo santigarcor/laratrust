@@ -65,10 +65,11 @@ class Helper
 
     /**
      * Checks if the string passed contains a pipe '|' and explodes the string to an array.
-     * @param  string|array  $value
-     * @return string|array
      */
-    public static function standardize($value, $toArray = false)
+    public static function standardize(
+        string|array $value,
+        bool $toArray = false
+    ): string|array
     {
         if (is_array($value) || ((strpos($value, '|') === false) && !$toArray)) {
             return $value;
