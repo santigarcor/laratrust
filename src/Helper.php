@@ -9,13 +9,9 @@ use Illuminate\Support\Facades\Config;
 class Helper
 {
     /**
-     * Gets the id from an array, object or integer.
-     *
-     * @param  mixed  $object
-     * @param  string  $type
-     * @return int
+     * Get the id of the given object, string, int, uuid, array.
      */
-    public static function getIdFor($object, string $type)
+    public static function getIdFor(mixed $object, string $type): int|string|null
     {
         if (is_null($object)) {
             return null;
@@ -46,21 +42,6 @@ class Helper
         throw new InvalidArgumentException(
             'getIdFor function only accepts an integer, a Model object or an array with an "id" key'
         );
-    }
-
-    /**
-     * Assing the real values to the team and requireAllOrOptions parameters.
-     *
-     * @param  mixed  $team
-     * @param  mixed  $requireAllOrOptions
-     * @return array
-     */
-    public static function assignRealValuesTo($team, $requireAllOrOptions, $method)
-    {
-        return [
-            ($method($team) ? null : $team),
-            ($method($team) ? $team : $requireAllOrOptions),
-        ];
     }
 
     /**

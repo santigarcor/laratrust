@@ -42,6 +42,22 @@ abstract class UserChecker
     abstract public function currentUserFlushCache();
 
     /**
+     * Assing the real values to the team and requireAllOrOptions parameters.
+     */
+    protected function getRealValues(
+        mixed $team,
+        mixed $requireAllOrOptions,
+        string $methodToEvaluate
+    ): array {
+        $requireAllOrOptions = ($methodToEvaluate($team) ? $team : $requireAllOrOptions);
+        return [
+            'team' => ($methodToEvaluate($team) ? null : $team),
+            'options' => $requireAllOrOptions,
+            'require_all' => $requireAllOrOptions,
+        ];
+    }
+
+    /**
      * Checks role(s) and permission(s).
      *
      * @param  array  $options     validate_all (true|false) or return_type (boolean|array|both)
@@ -53,7 +69,7 @@ abstract class UserChecker
         array|string|int|Model|UuidInterface $team = null,
         array $options = []
     ): array|bool {
-        list($team, $options) = Helper::assignRealValuesTo($team, $options, 'is_array');
+        ['team' => $team, 'options' => $options] = $this->getRealValues($team, $options, 'is_array');
         // Convert string to array if that's what is passed in.
         $roles = Helper::standardize($roles, true);
         $permissions = Helper::standardize($permissions, true);

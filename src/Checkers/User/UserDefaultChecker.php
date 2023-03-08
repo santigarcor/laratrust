@@ -48,7 +48,10 @@ class UserDefaultChecker extends UserChecker
         bool $requireAll = false
     ): bool {
         $name = Helper::standardize($name);
-        list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
+        [
+            'team' => $team,
+            'require_all' => $requireAll
+        ] = $this->getRealValues($team, $requireAll, 'is_bool');
 
         if (is_array($name)) {
             if (empty($name)) {
@@ -88,7 +91,10 @@ class UserDefaultChecker extends UserChecker
         bool $requireAll = false
     ): bool {
         $permission = Helper::standardize($permission);
-        list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
+        [
+            'team' => $team,
+            'require_all' => $requireAll
+        ] = $this->getRealValues($team, $requireAll, 'is_bool');
 
         if (is_array($permission)) {
             if (empty($permission)) {

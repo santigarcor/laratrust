@@ -40,7 +40,10 @@ class UserQueryChecker extends UserChecker
 
         $name = Helper::standardize($name);
         $rolesNames = is_array($name) ? $name : [$name];
-        list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
+        [
+            'team' => $team,
+            'require_all' => $requireAll
+        ] = $this->getRealValues($team, $requireAll, 'is_bool');
         $useTeams = Config::get('laratrust.teams.enabled');
         $teamStrictCheck = Config::get('laratrust.teams.strict_check');
 
@@ -67,7 +70,10 @@ class UserQueryChecker extends UserChecker
 
         $permission = Helper::standardize($permission);
         $permissionsNames = is_array($permission) ? $permission : [$permission];
-        list($team, $requireAll) = Helper::assignRealValuesTo($team, $requireAll, 'is_bool');
+        [
+            'team' => $team,
+            'require_all' => $requireAll
+        ] = $this->getRealValues($team, $requireAll, 'is_bool');
         $useTeams = Config::get('laratrust.teams.enabled');
         $teamStrictCheck = Config::get('laratrust.teams.strict_check');
 
