@@ -68,16 +68,4 @@ class Team extends Model implements TeamContract
     {
         return Config::get('laratrust.foreign_keys.team');
     }
-
-    /**
-     * Fetch the team model from the name.
-     */
-    public static function getId($team = null): ?int
-    {
-        if (is_null($team) || !Config::get('laratrust.teams.enabled')) {
-            return null;
-        }
-
-        return Helper::getIdFor($team, 'team');
-    }
 }

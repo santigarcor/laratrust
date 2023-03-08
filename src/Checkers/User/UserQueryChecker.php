@@ -20,7 +20,7 @@ class UserQueryChecker extends UserChecker
             return $this->user->roles->pluck('name')->toArray();
         }
 
-        $teamId = $team ? Team::getId($team) : null;
+        $teamId = Helper::getIdFor($team, 'team');
 
         return $this->user
             ->roles()
@@ -50,7 +50,7 @@ class UserQueryChecker extends UserChecker
         $rolesCount = $this->user->roles()
             ->whereIn('name', $rolesNames)
             ->when($useTeams && ($teamStrictCheck || !is_null($team)), function ($query) use ($team) {
-                $teamId = Team::getId($team);
+                $teamId = Helper::getIdFor($team, 'team');
 
                 return $query->where(Config::get('laratrust.foreign_keys.team'), $teamId);
             })
@@ -90,7 +90,7 @@ class UserQueryChecker extends UserChecker
                 }
             ])
             ->when($useTeams && ($teamStrictCheck || !is_null($team)), function ($query) use ($team) {
-                $teamId = Team::getId($team);
+                $teamId = Helper::getIdFor($team, 'team');
 
                 return $query->where(Config::get('laratrust.foreign_keys.team'), $teamId);
             })
@@ -107,7 +107,7 @@ class UserQueryChecker extends UserChecker
                 return $query;
             })
             ->when($useTeams && ($teamStrictCheck || !is_null($team)), function ($query) use ($team) {
-                $teamId = Team::getId($team);
+                $teamId = Helper::getIdFor($team, 'team');
 
                 return $query->where(Config::get('laratrust.foreign_keys.team'), $teamId);
             })

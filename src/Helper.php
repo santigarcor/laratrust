@@ -13,7 +13,10 @@ class Helper
      */
     public static function getIdFor(mixed $object, string $type): int|string|null
     {
-        if (is_null($object)) {
+        if (
+            is_null($object)
+            || ($type === 'team' && !Config::get('laratrust.teams.enabled'))
+        ) {
             return null;
         }
 

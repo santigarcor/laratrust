@@ -34,7 +34,7 @@ class UserDefaultChecker extends UserChecker
             })->pluck('name')->toArray();
         }
 
-        $teamId = Team::getId($team);
+        $teamId = Helper::getIdFor($team, 'team');
 
         return $roles
             ->filter(fn ($role) => $role['pivot'][Team::modelForeignKey()] == $teamId)
@@ -74,10 +74,10 @@ class UserDefaultChecker extends UserChecker
             return $requireAll;
         }
 
-        $team = Team::getId($team);
+        $teamId = Helper::getIdFor($team, 'team');
 
         foreach ($this->userCachedRoles() as $role) {
-            if ($role['name'] == $name && $this->isInSameTeam($role, $team)) {
+            if ($role['name'] == $name && $this->isInSameTeam($role, $teamId)) {
                 return true;
             }
         }
@@ -117,10 +117,10 @@ class UserDefaultChecker extends UserChecker
             return $requireAll;
         }
 
-        $team = Team::getId($team);
+        $teamId = Helper::getIdFor($team, 'team');
 
         foreach ($this->userCachedPermissions() as $perm) {
-            if ($this->isInSameTeam($perm, $team) && Str::is($permission, $perm['name'])) {
+            if ($this->isInSameTeam($perm, $teamId) && Str::is($permission, $perm['name'])) {
                 return true;
             }
         }
@@ -128,7 +128,7 @@ class UserDefaultChecker extends UserChecker
         foreach ($this->userCachedRoles() as $role) {
             $role = $this->hidrateRole(Config::get('laratrust.models.role'), $role);
 
-            if ($this->isInSameTeam($role, $team) && $role->hasPermission($permission)) {
+            if ($this->isInSameTeam($role, $teamId) && $role->hasPermission($permission)) {
                 return true;
             }
         }
@@ -222,7 +222,7 @@ class UserDefaultChecker extends UserChecker
     /**
     * Check if a role or permission is attach to the user in a same team.
     */
-    private function isInSameTeam($rolePermission, ?int $teamId = null): bool
+    private function isInSameTeam($rolePermission, int|string $teamId = null): bool
     {
         if (
             !Config::get('laratrust.teams.enabled')

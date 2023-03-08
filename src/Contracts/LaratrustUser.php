@@ -26,7 +26,7 @@ interface LaratrustUser
      */
     public function hasRole(
         string|array $name,
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         bool $requireAll = false
     ): bool;
 
@@ -35,7 +35,7 @@ interface LaratrustUser
      */
     public function hasPermission(
         string|array $permission,
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         bool $requireAll = false
     ): bool;
 
@@ -44,7 +44,7 @@ interface LaratrustUser
      */
     public function isAbleTo(
         string|array $permission,
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         bool $requireAll = false
     ): bool;
 
@@ -57,7 +57,7 @@ interface LaratrustUser
     public function ability(
         string|array $roles,
         string|array $permissions,
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         array $options = []
     ): array|bool;
 
@@ -66,7 +66,7 @@ interface LaratrustUser
      */
     public function addRole(
         array|string|int|Model|UuidInterface $role,
-        array|string|int|Model|UuidInterface $team = null
+        mixed $team = null
     ): static;
 
     /**
@@ -74,7 +74,7 @@ interface LaratrustUser
      */
     public function removeRole(
         array|string|int|Model|UuidInterface $role,
-        array|string|int|Model|UuidInterface $team = null
+        mixed $team = null
     ): static;
 
     /**
@@ -82,7 +82,7 @@ interface LaratrustUser
      */
     public function addRoles(
         array $roles = [],
-        array|string|int|Model|UuidInterface $team = null
+        mixed $team = null
     ): static;
 
     /**
@@ -90,7 +90,7 @@ interface LaratrustUser
      */
     public function removeRoles(
         array $roles = [],
-        array|string|int|Model|UuidInterface $team = null
+        mixed $team = null
     ): static;
 
     /**
@@ -98,7 +98,7 @@ interface LaratrustUser
      */
     public function syncRoles(
         array $roles = [],
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         bool $detaching = true
     ): static;
 
@@ -107,7 +107,7 @@ interface LaratrustUser
      */
     public function addPermission(
         array|string|int|Model|UuidInterface $permission,
-        array|string|int|Model|UuidInterface $team = null
+        mixed $team = null
     ): static;
 
     /**
@@ -115,7 +115,7 @@ interface LaratrustUser
      */
     public function removePermission(
         array|string|int|Model|UuidInterface $permission,
-        array|string|int|Model|UuidInterface $team = null
+        mixed $team = null
     ): static;
 
     /**
@@ -123,7 +123,7 @@ interface LaratrustUser
      */
     public function addPermissions(
         array $permissions = [],
-        array|string|int|Model|UuidInterface $team = null
+        mixed $team = null
     ): static;
 
     /**
@@ -131,7 +131,7 @@ interface LaratrustUser
      */
     public function removePermissions(
         array $permissions = [],
-        array|string|int|Model|UuidInterface $team = null
+        mixed $team = null
     ): static;
 
     /**
@@ -139,7 +139,7 @@ interface LaratrustUser
      */
     public function syncPermissions(
         array $permissions = [],
-        array|string|int|Model|UuidInterface $team = null,
+        mixed $team = null,
         bool $detaching = true
     ): static;
 
