@@ -35,8 +35,7 @@ trait HasLaratrustScopes
         string|array $role = '',
         array|string|int|Model|UuidInterface $team = null,
         string $boolean = 'and'
-    ): Builder
-    {
+    ): Builder {
         $method = $boolean == 'and' ? 'whereHas' : 'orWhereHas';
 
         return $query->$method('roles', function ($roleQuery) use ($role, $team) {
@@ -58,8 +57,7 @@ trait HasLaratrustScopes
         Builder $query,
         string|array $role = '',
         array|string|int|Model|UuidInterface $team = null
-    ): Builder
-    {
+    ): Builder {
         return $this->scopeWhereHasRole($query, $role, $team, 'or');
     }
 
@@ -70,8 +68,7 @@ trait HasLaratrustScopes
         Builder $query,
         string|array $permission = '',
         string $boolean = 'and'
-    ): Builder
-    {
+    ): Builder {
         $method = $boolean == 'and' ? 'where' : 'orWhere';
 
         return $query->$method(function ($query) use ($permission) {
@@ -91,8 +88,7 @@ trait HasLaratrustScopes
     public function scopeOrWhereHasPermission(
         Builder $query,
         string|array $permission = ''
-    ): Builder
-    {
+    ): Builder {
         return $this->scopeWhereHasPermission($query, $permission, 'or');
     }
 

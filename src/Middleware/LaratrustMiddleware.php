@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Redirect;
 
@@ -23,8 +22,7 @@ class LaratrustMiddleware
         string|array $rolesPermissions,
         ?string $team,
         ?string $options
-    ) : bool
-    {
+    ) : bool {
         [
             'team' => $team,
             'require_all' => $requireAll,
