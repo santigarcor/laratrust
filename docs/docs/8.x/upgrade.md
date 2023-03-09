@@ -30,7 +30,17 @@ In order to upgrade from Laratrust 7.x to 8.x you have to follow these steps:
 
 6. The methods `isA` and `isAn` have been removed, replace with `hasRole`.
 
-7. The methods signatures have been changed. Follow this table to migrate them.
+7. The user model now must implement the `Laratrust\Contracts\LaratrustUser` interface and use the `Laratrust\Traits\HasRolesAndPermissions` trait.
+
+8. The `Role`, `Permission` and `Team` models should inherit now from the following classes:
+
+| Old                                    | New                           |
+| :------------------------------------- | :---------------------------- |
+| `Laratrust\Models\LaratrustRole`       | `Laratrust\Models\Role`       |
+| `Laratrust\Models\LaratrustPermission` | `Laratrust\Models\Permission` |
+| `Laratrust\Models\LaratrustTeam`       | `Laratrust\Models\Team`       |
+
+9. The methods signatures have been changed. Follow this table to migrate them.
 
 | Old                | New                |
 | :----------------- | :----------------- |
@@ -39,7 +49,7 @@ In order to upgrade from Laratrust 7.x to 8.x you have to follow these steps:
 | `attachRole`       | `addRole`          |
 | `detachRole`       | `removeRole`       |
 
-7. The methods signatures for the events have been changed. Follow this table to migrate them.
+10. The methods signatures for the events have been changed. Follow this table to migrate them.
 
 | Old                  | New                 |
 | :------------------- | :------------------ |
