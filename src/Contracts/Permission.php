@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 interface Permission
 {
-
     /**
      * Many-to-Many relations with role model.
      */
