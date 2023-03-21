@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class Ability extends LaratrustMiddleware
 {
-
     /**
      * Handle incoming request.
      */
@@ -34,7 +33,7 @@ class Ability extends LaratrustMiddleware
             Auth::guard($guard)->guest()
             || !Auth::guard($guard)->user()
                 ->ability($roles, $permissions, $team, ['validate_all' => $validateAll])
-         ) {
+        ) {
             return $this->unauthorized();
         }
 
