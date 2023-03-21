@@ -40,11 +40,15 @@ trait HasLaratrustScopes
             $teamsStrictCheck = Config::get('laratrust.teams.strict_check');
             $method = is_array($role) ? 'whereIn' : 'where';
 
-            $roleQuery->$method('name', $role)
-                ->when($team || $teamsStrictCheck, function ($query) use ($team) {
-                    $team = Helper::getIdFor($team, 'team');
-                    return $query->where(Team::modelForeignKey(), $team);
-                });
+            $roleQuery
+                ->$method('name', $role)
+                ->when(
+                    $team || $teamsStrictCheck,
+                    fn ($q) => $q->where(
+                        Team::modelForeignKey(),
+                        Helper::getIdFor($team, 'team')
+                    )
+                );
         });
     }
 
@@ -65,18 +69,40 @@ trait HasLaratrustScopes
     public function scopeWhereHasPermission(
         Builder $query,
         string|array $permission = '',
+        mixed $team = null,
         string $boolean = 'and'
     ): Builder {
         $method = $boolean == 'and' ? 'where' : 'orWhere';
 
-        return $query->$method(function ($query) use ($permission) {
+        return $query->$method(function ($query) use ($permission, $team) {
+            $teamsStrictCheck = Config::get('laratrust.teams.strict_check');
             $method = is_array($permission) ? 'whereIn' : 'where';
 
-            $query->whereHas('roles.permissions', function ($permissionQuery) use ($method, $permission) {
-                $permissionQuery->$method('name', $permission);
-            })->orWhereHas('permissions', function ($permissionQuery) use ($method, $permission) {
-                $permissionQuery->$method('name', $permission);
-            });
+            $query
+            ->whereHas(
+                'roles.permissions',
+                fn ($permissionQuery) => $permissionQuery
+                    ->$method('name', $permission)
+                    ->when(
+                        $team || $teamsStrictCheck,
+                        fn ($q) => $q->where(
+                            Team::modelForeignKey(),
+                            Helper::getIdFor($team, 'team')
+                        )
+                    )
+            )
+            ->orWhereHas(
+                'permissions',
+                fn ($permissionQuery) => $permissionQuery
+                    ->$method('name', $permission)
+                    ->when(
+                        $team || $teamsStrictCheck,
+                        fn ($q) => $q->where(
+                            Team::modelForeignKey(),
+                            Helper::getIdFor($team, 'team')
+                        )
+                    )
+            );
         });
     }
 
@@ -85,9 +111,10 @@ trait HasLaratrustScopes
      */
     public function scopeOrWhereHasPermission(
         Builder $query,
-        string|array $permission = ''
+        string|array $permission = '',
+        mixed $team = null
     ): Builder {
-        return $this->scopeWhereHasPermission($query, $permission, 'or');
+        return $this->scopeWhereHasPermission($query, $permission, $team, 'or');
     }
 
     /**

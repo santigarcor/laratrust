@@ -255,11 +255,11 @@ trait HasRolesAndPermissions
             $team = Helper::getIdFor($team, 'team');
 
             if (
-                    $this->$relationship()
-                    ->wherePivot(Team::modelForeignKey(), $team)
-                    ->wherePivot(Config::get("laratrust.foreign_keys.{$objectType}"), $object)
-                    ->count()
-                ) {
+                $this->$relationship()
+                ->wherePivot(Team::modelForeignKey(), $team)
+                ->wherePivot(Config::get("laratrust.foreign_keys.{$objectType}"), $object)
+                ->count()
+            ) {
                 return $this;
             }
 

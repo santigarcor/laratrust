@@ -154,4 +154,30 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertEquals($userWithoutPerms->id, User::whereDoesntHavePermissions()->first()->id);
         $this->assertCount(1, User::whereDoesntHavePermissions()->get());
     }
+
+    public function testScopeWherePermissionIsForTeam()
+    {
+        $permissionA = Permission::create(['name' => 'permission_a']);
+        $permissionB = Permission::create(['name' => 'permission_b']);
+        $permissionC = Permission::create(['name' => 'permission_c']);
+        $roleB = Role::create(['name' => 'role_b']);
+        $teamA = Team::create(['name' => 'team_a']);
+        $teamB = Team::create(['name' => 'team_b']);
+
+        $roleB->givePermissions([$permissionB]);
+        $this->user->givePermissions([$permissionA], $teamA);
+        $this->user->addRoles([$roleB], $teamA);
+
+        $this->app['config']->set('laratrust.teams.strict_check', false);
+        $this->assertCount(1, User::whereHasPermission(['permission_a'], $teamA)->get());
+        $this->assertCount(1, User::whereHasPermission(['permission_b'], $teamA)->get());
+        $this->assertCount(0, User::whereHasPermission(['permission_a'], $teamB)->get());
+        $this->assertCount(0, User::whereHasPermission(['permission_b'], $teamB)->get());
+        $this->app['config']->set('laratrust.teams.strict_check', true);
+        $this->assertCount(0, User::whereHasPermission(['permission_a'])->get());
+        $this->assertCount(0, User::whereHasPermission(['permission_b'])->get());
+        $this->app['config']->set('laratrust.teams.strict_check', false);
+        $this->assertCount(1, User::whereHasPermission(['permission_a'])->get());
+        $this->assertCount(1, User::whereHasPermission(['permission_b'])->get());
+    }
 }
