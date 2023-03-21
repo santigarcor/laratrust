@@ -12,7 +12,7 @@ Let's start by creating the following `Role`s:
 $owner = Role::create([
     'name' => 'owner',
     'display_name' => 'Project Owner', // optional
-'description' => 'User is the owner of a given project', // optional
+    'description' => 'User is the owner of a given project', // optional
 ]);
 
 $admin = Role::create([
@@ -26,15 +26,15 @@ Now we need to add `Permission`s:
 
 ```php
 $createPost = Permission::create([
-'name' => 'create-post',
-'display_name' => 'Create Posts', // optional
-'description' => 'create new blog posts', // optional
+    'name' => 'create-post',
+    'display_name' => 'Create Posts', // optional
+    'description' => 'create new blog posts', // optional
 ]);
 
 $editUser = Permission::create([
-'name' => 'edit-user',
-'display_name' => 'Edit Users', // optional
-'description' => 'edit existing users', // optional
+    'name' => 'edit-user',
+    'display_name' => 'Edit Users', // optional
+    'description' => 'edit existing users', // optional
 ]);
 ```
 
@@ -43,10 +43,10 @@ $editUser = Permission::create([
 ### Assignment
 
 ```php
-$admin->attachPermission($createPost); // parameter can be a Permission object, array or id
+$admin->givePermission($createPost); // parameter can be a Permission object, array or id
 // equivalent to $admin->permissions()->attach([$createPost->id]);
 
-$owner->attachPermissions([$createPost, $editUser]); // parameter can be a Permission object, array or id
+$owner->givePermissions([$createPost, $editUser]); // parameter can be a Permission object, array or id
 // equivalent to $owner->permissions()->attach([$createPost->id, $editUser->id]);
 
 $owner->syncPermissions([$createPost, $editUser]); // parameter can be a Permission object, array or id
@@ -56,10 +56,10 @@ $owner->syncPermissions([$createPost, $editUser]); // parameter can be a Permiss
 ### Removal
 
 ```php
-$admin->detachPermission($createPost); // parameter can be a Permission object, array or id
+$admin->removePermission($createPost); // parameter can be a Permission object, array or id
 // equivalent to $admin->permissions()->detach([$createPost->id]);
 
-$owner->detachPermissions([$createPost, $editUser]); // parameter can be a Permission object, array or id
+$owner->removePermissions([$createPost, $editUser]); // parameter can be a Permission object, array or id
 // equivalent to $owner->permissions()->detach([$createPost->id, $editUser->id]);
 ```
 
@@ -70,10 +70,10 @@ With both roles created let's assign them to the users.
 ### Assignment
 
 ```php
-$user->attachRole($admin); // parameter can be a Role object, array, id or the role string name
+$user->addRole($admin); // parameter can be a Role object, array, id or the role string name
 // equivalent to $user->roles()->attach([$admin->id]);
 
-$user->attachRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
+$user->addRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
 // equivalent to $user->roles()->attach([$admin->id, $owner->id]);
 
 $user->syncRoles([$admin->id, $owner->id]);
@@ -86,10 +86,10 @@ $user->syncRolesWithoutDetaching([$admin->id, $owner->id]);
 ### Removal
 
 ```php
-$user->detachRole($admin); // parameter can be a Role object, array, id or the role string name
+$user->removeRole($admin); // parameter can be a Role object, array, id or the role string name
 // equivalent to $user->roles()->detach([$admin->id]);
 
-$user->detachRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
+$user->removeRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
 // equivalent to $user->roles()->detach([$admin->id, $owner->id]);
 ```
 
@@ -100,10 +100,10 @@ You can attach single permissions to a user, so in order to do it you only have 
 ### Assignment
 
 ```php
-$user->attachPermission($editUser); // parameter can be a Permission object, array, id or the permission string name
+$user->givePermission($editUser); // parameter can be a Permission object, array, id or the permission string name
 // equivalent to $user->permissions()->attach([$editUser->id]);
 
-$user->attachPermissions([$editUser, $createPost]); // parameter can be a Permission object, array, id or the permission string name
+$user->givePermissions([$editUser, $createPost]); // parameter can be a Permission object, array, id or the permission string name
 // equivalent to $user->permissions()->attach([$editUser->id, $createPost->id]);
 
 $user->syncPermissions([$editUser->id, $createPost->id]);
@@ -116,10 +116,10 @@ $user->syncPermissionsWithoutDetaching([$editUser, $createPost]); // parameter c
 ### Removal
 
 ```php
-$user->detachPermission($createPost); // parameter can be a Permission object, array, id or the permission string name
+$user->removePermission($createPost); // parameter can be a Permission object, array, id or the permission string name
 // equivalent to $user->permissions()->detach([$createPost->id]);
 
-$user->detachPermissions([$createPost, $editUser]); // parameter can be a Permission object, array, id or the permission string name
+$user->removePermissions([$createPost, $editUser]); // parameter can be a Permission object, array, id or the permission string name
 // equivalent to $user->permissions()->detach([$createPost->id, $editUser->id]);
 ```
 
@@ -130,28 +130,28 @@ Now we can check for roles and permissions simply by doing:
 ```php
 $user->hasRole('owner');   // false
 $user->hasRole('admin');   // true
+$user->hasPermission('edit-user');   // false
 $user->isAbleTo('edit-user');   // false
+$user->hasPermission('create-post'); // true
 $user->isAbleTo('create-post'); // true
 ```
 
 ::: tip NOTE
-
-- If you want, you can use the `hasPermission` or `isAbleTo`.
-- If you want, you can use the `isA` and `isAn` methods instead of the `hasRole` method.
-  :::
+If you want, you can use the `hasPermission` or `isAbleTo`.
+:::
 
 ::: tip NOTE
 We dropped the usage of the `can` method in order to have full support to Laravel's Gates and Policies.
 :::
 
-Both `isAbleTo()` and `hasRole()` can receive an array or pipe separated string of roles & permissions to check:
+Both `hasPermission()` and `hasRole()` can receive an array or pipe separated string of roles & permissions to check:
 
 ```php
 $user->hasRole(['owner', 'admin']);       // true
-$user->isAbleTo(['edit-user', 'create-post']); // true
+$user->hasPermission(['edit-user', 'create-post']); // true
 
 $user->hasRole('owner|admin');       // true
-$user->isAbleTo('edit-user|create-post'); // true
+$user->hasPermission('edit-user|create-post'); // true
 ```
 
 By default, if any of the roles or permissions are present for a user then the method will return true.
@@ -160,17 +160,17 @@ Passing `true` as a second parameter instructs the method to require **all** of 
 ```php
 $user->hasRole(['owner', 'admin']);             // true
 $user->hasRole(['owner', 'admin'], true);       // false, user does not have admin role
-$user->isAbleTo(['edit-user', 'create-post']);       // true
-$user->isAbleTo(['edit-user', 'create-post'], true); // false, user does not have edit-user permission
+$user->hasPermission(['edit-user', 'create-post']);       // true
+$user->hasPermission(['edit-user', 'create-post'], true); // false, user does not have edit-user permission
 ```
 
 You can have as many `Role`s as you want for each `User` and vice versa. Also, you can have as many direct `Permissions`s as you want for each `User` and vice versa.
 
-The `Laratrust` class has shortcuts to both `isAbleTo()` and `hasRole()` for the currently logged in user:
+The `Laratrust` class has shortcuts to both `hasPermission()` and `hasRole()` for the currently logged in user:
 
 ```php
 Laratrust::hasRole('role-name');
-Laratrust::isAbleTo('permission-name');
+Laratrust::hasPermission('permission-name');
 
 // is identical to
 
@@ -182,30 +182,10 @@ You can also use wildcard to check any matching permission by doing:
 
 ```php
 // match any admin permission
-$user->isAbleTo('admin.*'); // true
+$user->hasPermission('admin.*'); // true
 
 // match any permission about users
-$user->isAbleTo('*-users'); // true
-```
-
-### Magic `is able to` method
-
-You can check if a user has some permissions by using the magic `isAbleTo` method:
-
-```php
-$user->isAbleToCreateUsers();
-// Same as $user->isAbleTo('create-users');
-```
-
-If you want to change the case used when checking for the permission, you can change the `magic_can_method_case` value in your `config/laratrust.php` file.
-
-```php
-// config/laratrust.php
-'magic_can_method_case' => 'snake_case', // The default value is 'kebab_case'
-
-// In you controller
-$user->isAbleToCreateUsers();
-// Same as $user->isAbleTo('create_users');
+$user->hasPermission('*-users'); // true
 ```
 
 ## User ability

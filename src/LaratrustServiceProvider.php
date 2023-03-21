@@ -2,6 +2,7 @@
 
 namespace Laratrust;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Auth\Access\Gate;
@@ -67,9 +68,9 @@ class LaratrustServiceProvider extends ServiceProvider
         }
 
         $middlewares = [
-            'role' => \Laratrust\Middleware\LaratrustRole::class,
-            'permission' => \Laratrust\Middleware\LaratrustPermission::class,
-            'ability' => \Laratrust\Middleware\LaratrustAbility::class,
+            'role' => \Laratrust\Middleware\Role::class,
+            'permission' => \Laratrust\Middleware\Permission::class,
+            'ability' => \Laratrust\Middleware\Ability::class,
         ];
 
         foreach ($middlewares as $key => $class) {
@@ -88,7 +89,32 @@ class LaratrustServiceProvider extends ServiceProvider
             return;
         }
 
-        (new LaratrustRegistersBladeDirectives)->handle($this->app->version());
+        // Call to Laratrust::hasRole.
+        Blade::directive('role', function ($expression) {
+            return "<?php if (app('laratrust')->hasRole({$expression})) : ?>";
+        });
+
+        // Call to Laratrust::permission.
+        Blade::directive('permission', function ($expression) {
+            return "<?php if (app('laratrust')->isAbleTo({$expression})) : ?>";
+        });
+
+        // Call to Laratrust::ability.
+        Blade::directive('ability', function ($expression) {
+            return "<?php if (app('laratrust')->ability({$expression})) : ?>";
+        });
+
+        Blade::directive('endrole', function () {
+            return "<?php endif; // app('laratrust')->hasRole ?>";
+        });
+
+        Blade::directive('endpermission', function () {
+            return "<?php endif; // app('laratrust')->permission ?>";
+        });
+
+        Blade::directive('endability', function () {
+            return "<?php endif; // app('laratrust')->ability ?>";
+        });
     }
 
     /**
@@ -195,7 +221,7 @@ class LaratrustServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__. '/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
             ], 'laratrust-seeder');
-            
+
             $this->publishes([
                 __DIR__. '/../resources/views/panel' => resource_path('views/vendor/laratrust/panel'),
             ], 'laratrust-views');

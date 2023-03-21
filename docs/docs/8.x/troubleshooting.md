@@ -1,5 +1,7 @@
 # Troubleshooting
+
 ---
+
 If you make changes directly to the Laratrust tables and when you run your code the changes are not reflected, please clear your application cache using::
 
 ```bash
@@ -11,6 +13,7 @@ Remember that Laratrust uses cache in the roles and permissions checks.
 ---
 
 If you encounter an error when doing the migration that looks like::
+
 ```log
 SQLSTATE[HY000]: General error: 1005 Can't create table 'laravelbootstrapstarter.#sql-42c_f8' (errno: 150)
     (SQL: alter table `role_user` add constraint role_user_user_id_foreign foreign key (`user_id`)
@@ -22,7 +25,7 @@ Make sure both are `INT(10)`.
 
 ---
 
-When trying to use the LaratrustUserTrait methods, you encounter the error which looks like::
+When trying to use the HasRolesAndPermissions methods, you encounter the error which looks like::
 
     Class name must be a valid object or a string
 
@@ -31,4 +34,3 @@ First of all check that you have the `laratrust.php` file in your `app/config` d
 If you don't, then try `php artisan vendor:publish` and, if it does not appear, manually copy the `/vendor/santigarcor/laratrust/src/config/config.php` file in your config directory and rename it `laratrust.php`.
 
 ---
-

@@ -231,17 +231,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Laratrust Magic 'isAbleTo' Method
-    |--------------------------------------------------------------------------
-    |
-    | Supported cases for the magic is able to method (Refer to the docs).
-    | Available: camel_case|snake_case|kebab_case
-    |
-    */
-    'magic_is_able_to_method_case' => 'kebab_case',
-
-    /*
-    |--------------------------------------------------------------------------
     | Laratrust Permissions as Gates
     |--------------------------------------------------------------------------
     |
@@ -280,7 +269,7 @@ return [
         |
         */
         'domain' => env('LARATRUST_PANEL_DOMAIN', env('LARATRUST_PANEL_DOMAIN', (app()->runningInConsole() === false) ? request()->getHost() : 'localhost')),
-        
+
         /*
         |--------------------------------------------------------------------------
         | Laratrust Panel Path

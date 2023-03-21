@@ -3,14 +3,15 @@
 ```php
 <?php
 
-use Laratrust\Traits\LaratrustUserTrait;
+use Laratrust\Contracts\LaratrustUser;
+use Laratrust\Traits\HasRolesAndPermissions;
 
-class User extends Model
+class User extends Model implements LaratrustUser
 {
-    use LaratrustUserTrait; // add this trait to your user model
+    use HasRolesAndPermissions; // add this trait to your user model
 
     ...
 }
 ```
 
-This class uses the `LaratrustUserTrait` to enable the relationships with `Role` and `Permission`.It also adds the following methods `roles()`, `hasRole($name)`, `hasPermission($permission)`, `isAbleTo($permission)`, `ability($roles, $permissions, $options)`, and `rolesTeams()` to the model.
+This class uses the `HasRolesAndPermissions` to enable the relationships with `Role` and `Permission`.It also adds the following methods `roles()`, `hasRole($name)`, `hasPermission($permission)`, `isAbleTo($permission)`, `ability($roles, $permissions, $options)`, and `rolesTeams()` to the model.

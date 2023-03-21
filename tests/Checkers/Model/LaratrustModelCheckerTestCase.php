@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests\Checkers\Model;
 
 use Laratrust\Tests\Models\Role;
@@ -38,7 +40,7 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         |------------------------------------------------------------
         */
         $role = Role::create(['name' => 'role_a'])
-            ->attachPermissions([
+            ->givePermissions([
                 Permission::create(['name' => 'permission_a']),
                 Permission::create(['name' => 'permission_b']),
                 Permission::create(['name' => 'permission_c']),

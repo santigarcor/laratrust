@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests;
 
+use Laratrust\LaratrustFacade;
 use Orchestra\Testbench\TestCase;
 
 class LaratrustTestCase extends TestCase
@@ -13,7 +16,7 @@ class LaratrustTestCase extends TestCase
 
     protected function getPackageAliases($app)
     {
-        return ['Laratrust' => 'Laratrust\LaratrustFacade'];
+        return ['Laratrust' => LaratrustFacade::class];
     }
 
     protected function getEnvironmentSetUp($app)

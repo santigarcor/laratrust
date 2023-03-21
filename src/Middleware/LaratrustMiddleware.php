@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Middleware;
 
+use Laratrust\Helper;
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
@@ -11,25 +14,22 @@ use Illuminate\Support\Facades\Redirect;
 
 class LaratrustMiddleware
 {
-    const DELIMITER = '|';
-
     /**
      * Check if the request has authorization to continue.
-     *
-     * @param  string $type
-     * @param  string $rolesPermissions
-     * @param  string|null $team
-     * @param  string|null $options
-     * @return boolean
      */
-    protected function authorization($type, $rolesPermissions, $team, $options)
-    {
-        list($team, $requireAll, $guard) = $this->assignRealValuesTo($team, $options);
+    protected function authorization(
+        string $type,
+        string|array $rolesPermissions,
+        ?string $team,
+        ?string $options
+    ) : bool {
+        [
+            'team' => $team,
+            'require_all' => $requireAll,
+            'guard' => $guard,
+        ] = $this->getValuesFromParameters($team, $options);
         $method = $type == 'roles' ? 'hasRole' : 'hasPermission';
-
-        if (!is_array($rolesPermissions)) {
-            $rolesPermissions = explode(self::DELIMITER, $rolesPermissions);
-        }
+        $rolesPermissions = Helper::standardize($rolesPermissions, true);
 
         return !Auth::guard($guard)->guest()
             && Auth::guard($guard)->user()->$method($rolesPermissions, $team, $requireAll);
@@ -37,10 +37,8 @@ class LaratrustMiddleware
 
     /**
      * The request is unauthorized, so it handles the aborting/redirecting.
-     *
-     * @return \Illuminate\Http\Response
      */
-    protected function unauthorized()
+    protected function unauthorized(): mixed
     {
         $handling = Config::get('laratrust.middleware.handling');
         $handler = Config::get("laratrust.middleware.handlers.{$handling}");
@@ -59,39 +57,33 @@ class LaratrustMiddleware
     }
 
     /**
-     * Generate an array with the real values of the parameters given to the middleware.
-     *
-     * @param  string $team
-     * @param  string $options
-     * @return array
+     * Generate an array with the values of the parameters given to the middleware.
      */
-    protected function assignRealValuesTo($team, $options)
+    protected function getValuesFromParameters(?string $team, ?string $options): array
     {
         return [
-            (Str::contains((string)$team, ['require_all', 'guard:']) ? null : $team),
-            (Str::contains((string)$team, 'require_all') ?: Str::contains((string)$options, 'require_all')),
-            (Str::contains((string)$team, 'guard:') ? $this->extractGuard($team) : (
-                Str::contains((string)$options, 'guard:')
-                ? $this->extractGuard($options)
-                : Config::get('auth.defaults.guard')
-            )),
+            'team' => Str::contains($team, ['require_all', 'guard:']) ? null : $team,
+            'require_all' => Str::contains($team, 'require_all') ?: Str::contains($options, 'require_all'),
+            'guard' => Str::contains($team, 'guard:')
+                ? $this->extractGuard($team)
+                : (
+                    Str::contains($options, 'guard:')
+                    ? $this->extractGuard($options)
+                    : Config::get('auth.defaults.guard')
+                ),
         ];
     }
 
     /**
      * Extract the guard type from the given string.
-     *
-     * @param  string $string
-     * @return string
      */
-    protected function extractGuard($string)
+    protected function extractGuard(string $string): string
     {
         $options = Collection::make(explode('|', $string));
 
-        return $options->reject(function ($option) {
-            return strpos($option, 'guard:') === false;
-        })->map(function ($option) {
-            return explode(':', $option)[1];
-        })->first();
+        return $options
+            ->reject(fn ($option) => !Str::contains($option, 'guard:'))
+            ->map(fn ($option) => Str::of($option)->explode(':')->get(1))
+            ->first();
     }
 }

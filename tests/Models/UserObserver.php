@@ -1,22 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Tests\Models;
 
 class UserObserver
 {
-    public function roleAttached($user, $thing, $team)
+    public function roleAdded($user, $thing, $team)
     {
     }
 
-    public function roleDetached($user, $thing, $team)
+    public function roleRemoved($user, $thing, $team)
     {
     }
 
-    public function permissionAttached($user, $thing, $team)
+    public function permissionAdded($user, $thing, $team)
     {
     }
 
-    public function permissionDetached($user, $thing, $team)
+    public function permissionRemoved($user, $thing, $team)
     {
     }
 

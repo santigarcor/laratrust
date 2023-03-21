@@ -19,7 +19,7 @@ class UpgradeCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Creates a migration to upgrade laratrust from version 4.0 to 5.0.';
+    protected $description = 'Creates a migration to upgrade laratrust from version 7.x to 8.x.';
 
     /**
      * Suffix of the migration name.
