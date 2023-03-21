@@ -2,7 +2,7 @@
 
 # Laratrust (Laravel Package)
 
-[![Sponsor](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#white)](//packagist.org/packages/santigarcor/laratrust)
+[![Sponsor](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#white)](//github.com/sponsors/santigarcor)
 [![Latest Stable Version](https://poser.pugx.org/santigarcor/laratrust/v?style=for-the-badge)](//packagist.org/packages/santigarcor/laratrust)
 [![Total Downloads](https://poser.pugx.org/santigarcor/laratrust/downloads?style=for-the-badge)](//packagist.org/packages/santigarcor/laratrust)
 [![License](https://poser.pugx.org/santigarcor/laratrust/license?style=for-the-badge)](//packagist.org/packages/santigarcor/laratrust)
