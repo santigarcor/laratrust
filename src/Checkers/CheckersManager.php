@@ -26,12 +26,18 @@ class CheckersManager
      */
     public function getUserChecker(): UserChecker
     {
-        switch (Config::get('laratrust.checker', 'default')) {
-            default:
+        $checker = Config::get('laratrust.checkers.user', Config::get('laratrust.checker', 'default'));
+
+        switch ($checker) {
             case 'default':
                 return new UserDefaultChecker($this->model);
             case 'query':
                 return new UserQueryChecker($this->model);
+            default:
+                if (!is_a($checker, UserChecker::class, true)) {
+                    throw new \RuntimeException("User checker must extend UserChecker");
+                }
+                return app()->make($checker, ['user' => $this->model]);
         }
     }
 
@@ -40,12 +46,18 @@ class CheckersManager
      */
     public function getRoleChecker(): RoleChecker
     {
-        switch (Config::get('laratrust.checker', 'default')) {
+        $checker = Config::get('laratrust.checkers.role', Config::get('laratrust.checker', 'default'));
+
+        switch ($checker) {
+            case 'default':
+                return new RoleDefaultChecker($this->model);
             case 'query':
                 return new RoleQueryChecker($this->model);
             default:
-            case 'default':
-                return new RoleDefaultChecker($this->model);
+                if (!is_a($checker, RoleChecker::class, true)) {
+                    throw new \RuntimeException("Role checker must extend RoleChecker");
+                }
+                return app()->make($checker, ['role' => $this->model]);
         }
     }
 }
