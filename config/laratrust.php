@@ -17,7 +17,7 @@ return [
     | Checkers
     |--------------------------------------------------------------------------
     |
-    | Manage Laratrust's role and permissions checkers configurations. 
+    | Manage Laratrust's role and permissions checkers configurations.
     |
     */
     'checkers' => [
