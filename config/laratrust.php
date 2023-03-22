@@ -14,18 +14,44 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Which permissions and role checker to use.
+    | Checkers
     |--------------------------------------------------------------------------
     |
-    | Defines if you want to use the roles and permissions checker.
-    | Available:
-    | - default: Check for the roles and permissions using the method that Laratrust
-                 has always used.
-    | - query: Check for the roles and permissions using direct queries to the database.
-    |           This method doesn't support cache yet.
+    | Manage Laratrust's role and permissions checkers configurations. 
     |
-     */
-    'checker' => 'default',
+    */
+    'checkers' => [
+
+        /*
+        |--------------------------------------------------------------------------
+        | Which permissions checker to use.
+        |--------------------------------------------------------------------------
+        |
+        | Defines if you want to use the roles and permissions checker.
+        | Available:
+        | - default: Check for the roles and permissions using the method that Laratrust
+        |            has always used.
+        | - query: Check for the roles and permissions using direct queries to the database.
+        |           This method doesn't support cache yet.
+        | - class that extends Laratrust\Checkers\User\UserChecker
+        */
+        'user' => 'default',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Which role checker to use.
+        |--------------------------------------------------------------------------
+        |
+        | Defines if you want to use the roles and permissions checker.
+        | Available:
+        | - default: Check for the roles and permissions using the method that Laratrust
+                     has always used.
+        | - query: Check for the roles and permissions using direct queries to the database.
+        |          This method doesn't support cache yet.
+        | - class that extends Laratrust\Checkers\Role\RoleChecker
+        */
+        'role' => 'default',
+    ],
 
     /*
     |--------------------------------------------------------------------------
