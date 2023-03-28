@@ -1,0 +1,24 @@
+name: Build and Deploy Docs
+on:
+  push:
+    branches:
+      - "master"
+      - "8.x"
+    tags:
+      - 8.**
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@master
+
+      - name: vuepress-deploy
+        uses: jenkey2011/vuepress-deploy@master
+        env:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          TARGET_REPO: santigarcor/laratrust
+          TARGET_BRANCH: gh-pages
+          BUILD_SCRIPT: yarn && yarn docs:build
+          BUILD_DIR: docs/.vuepress/dist
+          CNAME: laratrust.santigarcor.me
