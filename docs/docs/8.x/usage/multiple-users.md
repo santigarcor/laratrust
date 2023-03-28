@@ -1,6 +1,6 @@
 # Multiple User Models
 
-Laratrust supports attaching roles/permissions to multiple user models.
+Laratrust supports adding roles/permissions to multiple user models.
 
 In the `config/laratrust.php` file you will find an `user_models` array, it contains the information about the multiple user models and the name of the relationships inside the `Role` and `Permission` models. For example:
 

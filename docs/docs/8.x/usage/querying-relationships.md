@@ -6,9 +6,9 @@ sidebarDepth: 2
 
 The `HasRolesAndPermissions` has the `roles` and `permissions` relationship, that return a `MorphToMany` relationships.
 
-The `roles` relationship has all the roles attached to the user.
+The `roles` relationship has all the roles added to the user.
 
-The `permissions` relationship has all the direct permissions attached to the user.
+The `permissions` relationship has all the direct permissions given to the user.
 
 ## All Permissions
 

@@ -32,7 +32,7 @@ class Team extends Model implements TeamContract
     }
 
     /**
-     * Boots the team model and attaches event listener to
+     * Boots the team model and adds event listener to
      * remove the many-to-many records when trying to delete.
      * It WON'T delete any records if the team model uses soft deletes.
      */

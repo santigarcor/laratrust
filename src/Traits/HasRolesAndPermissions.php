@@ -22,7 +22,7 @@ trait HasRolesAndPermissions
     use HasLaratrustScopes;
 
     /**
-     * Boots the user model and attaches event listener to
+     * Boots the user model and adds event listener to
      * remove the many-to-many records when trying to delete.
      * Will NOT delete any records if the user model uses soft deletes.
      */

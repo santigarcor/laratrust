@@ -12,6 +12,7 @@
 
 | Laravel       | Laratrust                                           |
 | :------------ | :-------------------------------------------------- |
+| 10.x          | [8.x](//laratrust.santigarcor.me/docs/8.x/)         |
 | 9.x-10.x      | [7.x](//laratrust.santigarcor.me/docs/7.x/)         |
 | 8.x           | [6.x](//laratrust.santigarcor.me/docs/6.x/)         |
 | 7.x           | [6.x](//laratrust.santigarcor.me/docs/6.x/)         |

@@ -95,7 +95,7 @@ $user->removeRoles([$admin, $owner]); // parameter can be a Role object, array, 
 
 ## User Permissions Assignment & Removal
 
-You can attach single permissions to a user, so in order to do it you only have to make:
+You can give single permissions to a user, so in order to do it you only have to make:
 
 ### Assignment
 

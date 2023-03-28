@@ -70,7 +70,7 @@ trait HasLaratrustEvents
     }
 
     /**
-     * Register a role attached laratrust event with the dispatcher.
+     * Register a role added laratrust event with the dispatcher.
      */
     public static function roleAdded(Closure|string|array $callback): void
     {
@@ -78,7 +78,7 @@ trait HasLaratrustEvents
     }
 
     /**
-     * Register a role detached laratrust event with the dispatcher.
+     * Register a role removed laratrust event with the dispatcher.
      */
     public static function roleRemoved(Closure|string|array $callback): void
     {
@@ -86,7 +86,7 @@ trait HasLaratrustEvents
     }
 
     /**
-     * Register a permission attached laratrust event with the dispatcher.
+     * Register a permission added laratrust event with the dispatcher.
      */
     public static function permissionAdded(\Closure|string|array $callback): void
     {
@@ -94,7 +94,7 @@ trait HasLaratrustEvents
     }
 
     /**
-     * Register a permission detached laratrust event with the dispatcher.
+     * Register a permission removed laratrust event with the dispatcher.
      */
     public static function permissionRemoved(\Closure|string|array $callback): void
     {

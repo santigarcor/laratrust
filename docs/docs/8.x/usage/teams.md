@@ -19,9 +19,9 @@ $admin = Role::where('name', 'admin')->first();
 $user->addRole($admin, $team); // parameter can be an object, array, id or the string name.
 ```
 
-This will attach the `admin` role to the user but only within the `my-awesome-team` team.
+This will add the `admin` role to the user but only within the `my-awesome-team` team.
 
-You can also attach multiple roles to the user within a team:
+You can also add multiple roles to the user within a team:
 
 ```php
 $team = Team::where('name', 'my-awesome-team')->first();
@@ -45,7 +45,7 @@ $user->syncRoles([$admin, $owner], $team); // parameter can be an object, array,
 ```
 
 ::: tip IMPORTANT
-It will sync the roles depending of the team passed, because there is a `wherePivot` constraint in the syncing method. So if you pass a team with id of 1, it will sync all the roles that are attached to the user where the team id is 1.
+It will sync the roles depending of the team passed, because there is a `wherePivot` constraint in the syncing method. So if you pass a team with id of 1, it will sync all the roles that are added to the user where the team id is 1.
 
 So if you don't pass any team, it will sync the roles where the team id is `null` in the pivot table.
 :::
@@ -61,9 +61,9 @@ $editUser = Permission::where('name', 'edit-user')->first();
 $user->givePermission($editUser, $team); // parameter can be an object, array, id or the string name.
 ```
 
-This will attach the `edit-user` permission to the user but only within the `my-awesome-team` team.
+This will give the `edit-user` permission to the user but only within the `my-awesome-team` team.
 
-You can also attach multiple permissions to the user within a team:
+You can also give multiple permissions to the user within a team:
 
 ```php
 $team = Team::where('name', 'my-awesome-team')->first();
@@ -87,7 +87,7 @@ $user->syncPermissions([$editUser, $manageUsers], $team); // parameter can be an
 ```
 
 ::: tip IMPORTANT
-It will sync the permissions depending of the team passed, because there is a `wherePivot` constraint in the syncing method. So if you pass a team with id of 1, it will sync all the permissions that are attached to the user where the team id is 1 in the pivot table.
+It will sync the permissions depending of the team passed, because there is a `wherePivot` constraint in the syncing method. So if you pass a team with id of 1, it will sync all the permissions given to the user where the team id is 1 in the pivot table.
 
 So if you don't pass any team, it will sync the permissions where the team id is `null` in the pivot table.
 :::
@@ -99,7 +99,7 @@ The roles and permissions verification is the same, but this time you can pass t
 The teams roles and permissions check can be configured by changing the `teams_strict_check` value inside the `config/laratrust.php` file. This value can be `true` or `false`:
 
 - If `teams_strict_check` is set to `false`:
-  When checking for a role or permission if no team is given, it will check if the user has the role or permission regardless if that role or permissions was attached inside a team.
+  When checking for a role or permission if no team is given, it will check if the user has the role or permission regardless if that role or permissions was given inside a team.
 
 - If `teams_strict_check` is set to `true`:
   When checking for a role or permission if no team is given, it will check if the user has the role or permission where the team id is null.

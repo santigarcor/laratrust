@@ -106,9 +106,9 @@ User::flushEventListeners();
 
 - `roleAdded($user, $role, $team = null)`
 
-  - `$user`: The user to whom the role was attached.
-  - `$role`: The role id that was attached to the `$user`.
-  - `$team`: The team id that was used to attach the role to the `$user`.
+  - `$user`: The user to whom the role was added.
+  - `$role`: The role id that was added to the `$user`.
+  - `$team`: The team id that was used to add the role to the `$user`.
 
 - `roleRemoved($user, $role, $team = null)`
 
@@ -118,9 +118,9 @@ User::flushEventListeners();
 
 - `permissionAdded($user, $permission, $team = null)`
 
-  - `$user`: The user to whom the permission was attached.
-  - `$permission`: The permission id that was attached to the `$user`.
-  - `$team`: The team id that was used to attach the permission to the `$user`.
+  - `$user`: The user to whom the permission was added.
+  - `$permission`: The permission id that was added to the `$user`.
+  - `$team`: The team id that was used to add the permission to the `$user`.
 
 - `permissionRemoved($user, $permission, $team = null)`
 
@@ -143,8 +143,8 @@ User::flushEventListeners();
 
 - `permissionAdded($role, $permission)`
 
-  - `$role`: The role to whom the permission was attached.
-  - `$permission`: The permission id that was attached to the `$role`.
+  - `$role`: The role to whom the permission was added.
+  - `$permission`: The permission id that was added to the `$role`.
 
 - `permissionRemoved($role, $permission)`
 

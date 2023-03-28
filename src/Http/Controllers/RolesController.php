@@ -122,7 +122,7 @@ class RolesController
         }
 
         if ($usersAssignedToRole > 0) {
-            Session::flash('laratrust-warning', 'Role is attached to one or more users. It can not be deleted');
+            Session::flash('laratrust-warning', 'Role is added to one or more users. It can not be deleted');
         } else {
             Session::flash('laratrust-success', 'Role deleted successfully');
             $this->rolesModel::destroy($id);
