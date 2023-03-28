@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - "master"
-      - "8.x"
     tags:
       - 8.**
 jobs:
