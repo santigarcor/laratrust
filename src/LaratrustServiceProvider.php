@@ -96,7 +96,7 @@ class LaratrustServiceProvider extends ServiceProvider
 
         // Call to Laratrust::permission.
         Blade::directive('permission', function ($expression) {
-            return "<?php if (app('laratrust')->isAbleTo({$expression})) : ?>";
+            return "<?php if (app('laratrust')->hasPermission({$expression})) : ?>";
         });
 
         // Call to Laratrust::ability.
