@@ -10,7 +10,7 @@ Five directives are available for use within your Blade templates. What you give
 
 @permission('manage-admins')
     <p>This is visible to users with the given permissions. Gets translated to
-    \Laratrust::isAbleTo('manage-admins'). The @can directive is already taken by core
+    \Laratrust::hasPermission('manage-admins'). The @can directive is already taken by core
     laravel authorization package, hence the @permission directive instead.</p>
 @endpermission
 
