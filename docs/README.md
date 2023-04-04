@@ -3,8 +3,11 @@ layout: "Home"
 actionText: Get Started →
 actionLink: /docs/
 footer: MIT Licensed | Copyright © 2018-present Santiago Garcia
-title: Laravel role-based access control package
-tagline: Laravel role-based access control package
+title: Laravel roles and permission package
+tagline: Laravel roles and permission package
+meta:
+  - name: keywords
+    content: laravel roles permissions package teams panel role permission
 ---
 
 [![Sponsor](https://img.shields.io/badge/sponsor-30363D?style=for-the-badge&logo=GitHub-Sponsors&logoColor=#white)](//github.com/sponsors/santigarcor)
