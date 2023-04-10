@@ -1,0 +1,46 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::disableForeignKeyConstraints();
+
+        $tables = Config::get('laratrust.tables');
+        $foreignKeys = Config::get('laratrust.foreign_keys');
+
+        // Roles' table
+        Schema::create($tables['roles'], function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 64)->unique()->index();
+            $table->string('display_name', 64)->nullable();
+            $table->string('description')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::enableForeignKeyConstraints();
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        $tables = Config::get('laratrust.tables');
+
+        Schema::dropIfExists($tables['permission_role']);
+        Schema::dropIfExists($tables['permission_user']);
+        Schema::dropIfExists($tables['role_user']);
+        Schema::dropIfExists($tables['roles']);
+        Schema::dropIfExists($tables['permissions']);
+    }
+};
