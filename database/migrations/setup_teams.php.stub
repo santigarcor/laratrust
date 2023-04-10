@@ -18,8 +18,8 @@ return new class extends Migration
         $tables = Config::get('laratrust.tables');
         $foreignKeys = Config::get('laratrust.foreign_keys');
 
-        // Roles' table
-        Schema::create($tables['roles'], function (Blueprint $table) {
+        // Teams' table
+        Schema::create($tables['teams'], function (Blueprint $table) {
             $table->id();
             $table->string('name', 64)->unique()->index();
             $table->string('display_name', 64)->nullable();
@@ -37,10 +37,6 @@ return new class extends Migration
     {
         $tables = Config::get('laratrust.tables');
 
-        Schema::dropIfExists($tables['permission_role']);
-        Schema::dropIfExists($tables['permission_user']);
-        Schema::dropIfExists($tables['role_user']);
-        Schema::dropIfExists($tables['roles']);
-        Schema::dropIfExists($tables['permissions']);
+        Schema::dropIfExists($tables['teams']);
     }
 };
