@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 
@@ -10,32 +9,74 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * @return void
      */
-    public function up(): void
+    public function up()
     {
-        Schema::disableForeignKeyConstraints();
-
         $tables = Config::get('laratrust.tables');
         $foreignKeys = Config::get('laratrust.foreign_keys');
 
-        // Teams' table
-        Schema::create($tables['teams'], function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 64)->unique()->index();
-            $table->string('display_name', 64)->nullable();
-            $table->string('description')->nullable();
-            $table->timestamps();
+        Schema::table($tables['role_user'], function (Blueprint $table) use ($foreignKeys, $tables) {
+            // Drop role foreign key and primary key
+            $table->dropForeign([$foreignKeys['role']]);
+            $table->dropPrimary([$foreignKeys['role'], $foreignKeys['user'], 'user_type']);
+
+            // Add company_id column
+            $table->foreignId($foreignKeys['team'])->nullable()->constrained();
+
+            // Create foreign keys
+            $table->foreign($foreignKeys['role'])
+                ->references('id')
+                ->on($tables['roles']);
+
+            // Create a unique key
+            $table->unique([
+                $foreignKeys['role'],
+                $foreignKeys['team'],
+                $foreignKeys['user'],
+                'user_type',
+            ]);
         });
 
-        Schema::enableForeignKeyConstraints();
+        Schema::table($tables['permission_user'], function (Blueprint $table) use ($foreignKeys, $tables) {
+            // Drop permission foreign key and primary key
+            $table->dropForeign([$foreignKeys['permission']]);
+            $table->dropPrimary([$foreignKeys['permission'], $foreignKeys['user'], 'user_type']);
+
+            // Add company_id column
+            $table->foreignId($foreignKeys['team'])->nullable()->constrained();
+
+            $table->foreign($foreignKeys['permission'])
+                ->references('id')
+                ->on($tables['permissions']);
+
+            $table->unique([
+                $foreignKeys['permission'],
+                $foreignKeys['team'],
+                $foreignKeys['user'],
+                'user_type',
+            ]);
+        });
     }
 
     /**
      * Reverse the migrations.
+     *
+     * @return void
      */
-    public function down(): void
+    public function down()
     {
         $tables = Config::get('laratrust.tables');
+        $foreignKeys = Config::get('laratrust.foreign_keys');
+
+        Schema::table($tables['role_user'], function (Blueprint $table) use ($foreignKeys) {
+            $table->dropForeign([$foreignKeys['team']]);
+        });
+
+        Schema::table($tables['permission_user'], function (Blueprint $table) use ($foreignKeys) {
+            $table->dropForeign([$foreignKeys['team']]);
+        });
 
         Schema::dropIfExists($tables['teams']);
     }
