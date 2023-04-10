@@ -40,7 +40,7 @@ module.exports = {
     logo: "/logo.svg",
     activeVersion: getActiveVersion(),
     algolia: {
-      apiKey: "feb79d4f7397b8f410909711f924d524",
+      apiKey: "5dd7c0bdd6b962b4bd61684d863e5ccd",
       indexName: "laratrust",
       algoliaOptions: { facetFilters: ["version:$VERSION$"] },
     },
