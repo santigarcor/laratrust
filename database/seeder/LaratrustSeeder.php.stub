@@ -61,7 +61,7 @@ class LaratrustSeeder extends Seeder
                     $action = $actionsMap->get($actionKey);
                     $permissionDisplayName = ucfirst($action).' '.strtolower($module);
                     $permissions[] = $permissionClass::firstOrCreate(
-                        attributes: ['name' => $roleName],
+                        attributes: ['name' => "{$action}-{$module}"],
                         values: [
                             'display_name' => $permissionDisplayName,
                             'description' => $permissionDisplayName,
@@ -75,6 +75,8 @@ class LaratrustSeeder extends Seeder
             // Add all permissions to the role
             $role->syncPermissions($permissions);
         }
+
+        $permissionClass::whereDoesntHave('roles')->delete();
     }
 
     /**
