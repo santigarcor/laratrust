@@ -1,0 +1,99 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
+
+class LaratrustSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        /** @var class-string<\Laratrust\Models\Role> */
+        $roleClass = Config::get('laratrust.models.role');
+        /** @var class-string<\Laratrust\Models\Permission> */
+        $permissionClass = Config::get('laratrust.models.permission');
+        $rolesPerms = Config::get('laratrust_seeder.roles_permissions');
+        $actionsMap = Collection::make(Config::get('laratrust_seeder.actions_map'));
+
+        if (Config::get('laratrust_seeder.truncate_tables')) {
+            $this->truncateLaratrustTables();
+        }
+
+        if (! $rolesPerms) {
+            $this->command->error('The configuration has not been published. Run `php artisan vendor:publish --tag="laratrust-seeder"`');
+            $this->command->line('');
+
+            return;
+        }
+
+        foreach ($rolesPerms as $roleName => $modules) {
+            $roleDisplayName = Str::of($roleName)
+                ->replace('_', ' ')
+                ->ucfirst()
+                ->toString();
+
+            /** @var \Laratrust\Models\Role */
+            $role = $roleClass::firstOrCreate(
+                attributes: ['name' => $roleName],
+                values: [
+                    'display_name' => $roleDisplayName,
+                    'description' => $roleDisplayName,
+                ]
+            );
+            /** @var int[] */
+            $permissions = [];
+
+            $this->command->info("Creating Role {$roleDisplayName}");
+
+            // Reading role permission modules
+            foreach ($modules as $module => $actionKeys) {
+                foreach (explode(',', $actionKeys) as $actionKey) {
+                    $action = $actionsMap->get($actionKey);
+                    $permissionDisplayName = ucfirst($action).' '.strtolower($module);
+                    $permissions[] = $permissionClass::firstOrCreate(
+                        attributes: ['name' => $roleName],
+                        values: [
+                            'display_name' => $permissionDisplayName,
+                            'description' => $permissionDisplayName,
+                        ]
+                    )->id;
+
+                    $this->command->info("Creating Permission: {$permissionDisplayName}");
+                }
+            }
+
+            // Add all permissions to the role
+            $role->syncPermissions($permissions);
+        }
+    }
+
+    /**
+     * Truncate all the Laratrust tables
+     */
+    public function truncateLaratrustTables(): void
+    {
+        $this->command->info('Truncating User, Role and Permission tables');
+        Schema::disableForeignKeyConstraints();
+
+        $tables = Config::get('laratrust.tables');
+
+        DB::table($tables['permission_role'])->truncate();
+        DB::table($tables['permission_user'])->truncate();
+        DB::table($tables['role_user'])->truncate();
+
+        DB::table($tables['roles'])->truncate();
+        DB::table($tables['permissions'])->truncate();
+
+        Schema::enableForeignKeyConstraints();
+    }
+}

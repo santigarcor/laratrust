@@ -1,38 +1,30 @@
 <?php
 
-return [
-    /**
-     * Control if the seeder should create a user per role while seeding the data.
-     */
-    'create_users' => false,
+declare(strict_types=1);
 
+return [
     /**
      * Control if all the laratrust tables should be truncated before running the seeder.
      */
     'truncate_tables' => true,
 
-    'roles_structure' => [
-        'superadministrator' => [
-            'users' => 'c,r,u,d',
-            'payments' => 'c,r,u,d',
-            'profile' => 'r,u'
-        ],
-        'administrator' => [
-            'users' => 'c,r,u,d',
-            'profile' => 'r,u'
-        ],
-        'user' => [
-            'profile' => 'r,u',
-        ],
-        'role_name' => [
-            'module_1_name' => 'c,r,u,d',
-        ]
+    'roles_permissions' => [
+        // // Examples:
+        // 'superadmin' => [                    // We have a super admin,
+        //     'users' => ['c','r','u','d'],    // that can create-users, read-users, ...
+        //     'posts' => ['c','r','u','d'],    // that can create-posts, read-posts, ...
+        // ],
+
+        // 'user' => [                          // We have an user,
+        //     'users' => ['r'],                // that only can read-users.
+        //     'posts' => ['c','r'],            // that only can create-posts and read-posts.
+        // ],
     ],
 
-    'permissions_map' => [
+    'actions_map' => [
         'c' => 'create',
         'r' => 'read',
         'u' => 'update',
-        'd' => 'delete'
-    ]
+        'd' => 'delete',
+    ],
 ];
