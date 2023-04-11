@@ -35,6 +35,20 @@ module.exports = {
           "Laratrust is an easy and flexible way to add roles, permissions and teams authorization to your Laravel application",
       },
     ],
+    [
+      "script",
+      {
+        async: true,
+        src: "https://www.googletagmanager.com/gtag/js?id=G-3HPC9MWDPF",
+      },
+    ],
+    [
+      "script",
+      {},
+      [
+        "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-3HPC9MWDPF');",
+      ],
+    ],
   ],
   themeConfig: {
     logo: "/logo.svg",
