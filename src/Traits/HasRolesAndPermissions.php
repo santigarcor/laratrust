@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Laratrust\Traits;
 
 use BackedEnum;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Str;
-use InvalidArgumentException;
-use Laratrust\Checkers\CheckersManager;
-use Laratrust\Checkers\User\UserChecker;
 use Laratrust\Helper;
 use Laratrust\Models\Team;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Ramsey\Uuid\UuidInterface;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
+use Laratrust\Checkers\CheckersManager;
+use Laratrust\Checkers\User\UserChecker;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 trait HasRolesAndPermissions
 {

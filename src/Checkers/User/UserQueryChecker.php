@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Laratrust\Checkers\User;
 
 use BackedEnum;
-use Illuminate\Support\Facades\Config;
 use Laratrust\Helper;
+use Illuminate\Support\Facades\Config;
 
 class UserQueryChecker extends UserChecker
 {

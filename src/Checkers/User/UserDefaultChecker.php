@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Laratrust\Checkers\User;
 
 use BackedEnum;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Laratrust\Helper;
+use Laratrust\Models\Team;
+use Illuminate\Support\Str;
+use Laratrust\Contracts\Role;
+use UnexpectedValueException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Str;
-use Laratrust\Contracts\Role;
-use Laratrust\Helper;
-use Laratrust\Models\Team;
-use UnexpectedValueException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 
 class UserDefaultChecker extends UserChecker
 {

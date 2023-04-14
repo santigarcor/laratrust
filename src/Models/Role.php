@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Laratrust\Models;
 
 use BackedEnum;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Laratrust\Helper;
+use Ramsey\Uuid\UuidInterface;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
 use Laratrust\Checkers\CheckersManager;
 use Laratrust\Checkers\Role\RoleChecker;
-use Laratrust\Contracts\Role as RoleContract;
-use Laratrust\Helper;
-use Laratrust\Traits\DynamicUserRelationshipCalls;
 use Laratrust\Traits\HasLaratrustEvents;
-use Ramsey\Uuid\UuidInterface;
+use Laratrust\Contracts\Role as RoleContract;
+use Laratrust\Traits\DynamicUserRelationshipCalls;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Role extends Model implements RoleContract
 {

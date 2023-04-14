@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Laratrust\Checkers\User;
 
 use BackedEnum;
-use Illuminate\Database\Eloquent\Model;
+use Laratrust\Helper;
 use InvalidArgumentException;
 use Laratrust\Contracts\LaratrustUser;
-use Laratrust\Helper;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class UserChecker
 {

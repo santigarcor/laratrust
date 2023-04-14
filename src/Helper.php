@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Laratrust;
 
 use BackedEnum;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
 use Ramsey\Uuid\UuidInterface;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 
 class Helper
 {

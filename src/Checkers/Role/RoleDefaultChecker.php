@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Laratrust\Checkers\Role;
 
 use BackedEnum;
+use Laratrust\Helper;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Str;
-use Laratrust\Helper;
 
 class RoleDefaultChecker extends RoleChecker
 {

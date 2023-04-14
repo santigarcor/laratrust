@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Laratrust;
 
-use Illuminate\Contracts\Auth\Access\Authorizable;
-use Illuminate\Contracts\Auth\Access\Gate;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Contracts\Auth\Access\Authorizable;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class LaratrustServiceProvider extends ServiceProvider
 {

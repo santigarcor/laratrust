@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Laratrust;
 
 use BackedEnum;
-use Illuminate\Contracts\Foundation\Application;
 use Laratrust\Contracts\LaratrustUser;
+use Illuminate\Contracts\Foundation\Application;
 
 /**
  * This class is the main entry point of laratrust. Usually this the interaction

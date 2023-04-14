@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Laratrust\Contracts;
 
 use BackedEnum;
+use Ramsey\Uuid\UuidInterface;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Support\Collection;
-use Ramsey\Uuid\UuidInterface;
 
 interface LaratrustUser
 {

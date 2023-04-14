@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Laratrust\Checkers\Role;
 
 use BackedEnum;
-use Illuminate\Database\Eloquent\Model;
 use Laratrust\Contracts\Role;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class RoleChecker
 {

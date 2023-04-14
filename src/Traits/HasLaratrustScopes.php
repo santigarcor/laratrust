@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Laratrust\Traits;
 
 use BackedEnum;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Config;
 use Laratrust\Helper;
 use Laratrust\Models\Team;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 /**
  * @method Builder whereHasRole(string|array|BackedEnum $role = '', mixed $team = null, string $boolean = 'and')
