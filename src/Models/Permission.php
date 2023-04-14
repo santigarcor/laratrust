@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Laratrust\Models;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
-use Laratrust\Traits\DynamicUserRelationshipCalls;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Facades\Config;
 use Laratrust\Contracts\Permission as PermissionContract;
+use Laratrust\Traits\DynamicUserRelationshipCalls;
 
 class Permission extends Model implements PermissionContract
 {
@@ -34,7 +34,7 @@ class Permission extends Model implements PermissionContract
     protected static function booted(): void
     {
         static::deleting(function ($permission) {
-            if (method_exists($permission, 'bootSoftDeletes') && !$permission->forceDeleting) {
+            if (method_exists($permission, 'bootSoftDeletes') && ! $permission->forceDeleting) {
                 return;
             }
 
@@ -49,7 +49,7 @@ class Permission extends Model implements PermissionContract
     /**
      * Many-to-Many relations with role model.
      */
-    public function roles():BelongsToMany
+    public function roles(): BelongsToMany
     {
         return $this->belongsToMany(
             Config::get('laratrust.models.role'),

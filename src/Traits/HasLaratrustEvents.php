@@ -36,7 +36,7 @@ trait HasLaratrustEvents
     {
         foreach (self::$laratrustObservables as $event) {
             $event = Str::snake($event, '.');
-            static::$dispatcher->forget("laratrust.{$event}: " . static::class);
+            static::$dispatcher->forget("laratrust.{$event}: ".static::class);
         }
     }
 

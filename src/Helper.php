@@ -90,7 +90,7 @@ class Helper
      * Return two arrays with the filtered permissions between the permissions
      * with wildcard and the permissions without it.
      *
-     * @param array $permissions
+     * @param  array  $permissions
      * @return array [$wildcard, $noWildcard]
      */
     public static function getPermissionWithAndWithoutWildcards($permissions)
@@ -112,7 +112,7 @@ class Helper
     /**
      * Check if a role is editable in the admin panel.
      *
-     * @param string|\Laratrust\Models\LaratrustRole $role
+     * @param  string|\Laratrust\Models\LaratrustRole  $role
      * @return bool
      */
     public static function roleIsEditable($role)
@@ -128,7 +128,7 @@ class Helper
     /**
      * Check if a role is deletable in the admin panel.
      *
-     * @param string|\Laratrust\Models\LaratrustRole $role
+     * @param  string|\Laratrust\Models\LaratrustRole  $role
      * @return bool
      */
     public static function roleIsDeletable($role)
@@ -144,7 +144,7 @@ class Helper
     /**
      * Check if a role is removable in the admin panel.
      *
-     * @param string|\Laratrust\Models\LaratrustRole $role
+     * @param  string|\Laratrust\Models\LaratrustRole  $role
      * @return bool
      */
     public static function roleIsRemovable($role)

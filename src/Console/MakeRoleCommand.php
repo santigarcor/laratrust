@@ -2,8 +2,8 @@
 
 namespace Laratrust\Console;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Facades\Config;
 
 class MakeRoleCommand extends GeneratorCommand
 {
@@ -35,7 +35,7 @@ class MakeRoleCommand extends GeneratorCommand
      */
     protected function getStub()
     {
-        return __DIR__. '/../../stubs/role.stub';
+        return __DIR__.'/../../stubs/role.stub';
     }
 
     /**

@@ -2,11 +2,11 @@
 
 namespace Laratrust\Models;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Facades\Config;
 use Laratrust\Contracts\Team as TeamContract;
 use Laratrust\Traits\DynamicUserRelationshipCalls;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Team extends Model implements TeamContract
 {
@@ -39,7 +39,7 @@ class Team extends Model implements TeamContract
     protected static function booted(): void
     {
         static::deleting(function ($team) {
-            if (method_exists($team, 'bootSoftDeletes') && !$team->forceDeleting) {
+            if (method_exists($team, 'bootSoftDeletes') && ! $team->forceDeleting) {
                 return;
             }
 
@@ -63,7 +63,7 @@ class Team extends Model implements TeamContract
     /**
      * Returns the team's foreign key.
      */
-    public static function modelForeignKey():string
+    public static function modelForeignKey(): string
     {
         return Config::get('laratrust.foreign_keys.team');
     }

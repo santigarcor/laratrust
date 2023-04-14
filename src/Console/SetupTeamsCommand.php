@@ -35,14 +35,15 @@ class SetupTeamsCommand extends Command
      */
     public function handle()
     {
-        if (!Config::get('laratrust.teams.enabled')) {
+        if (! Config::get('laratrust.teams.enabled')) {
             $this->error('Not using teams in your Laratrust configuration file.');
             $this->warn('Please enable the teams usage in your configuration.');
+
             return;
         }
 
         $this->line('');
-        $this->info("The Laratrust teams feature setup is going to add a migration and a model");
+        $this->info('The Laratrust teams feature setup is going to add a migration and a model');
 
         $existingMigrations = $this->alreadyExistingMigrations();
 
@@ -54,20 +55,20 @@ class SetupTeamsCommand extends Command
 
         $this->line('');
 
-        if (! $this->confirm("Proceed with the migration creation?", "yes")) {
+        if (! $this->confirm('Proceed with the migration creation?', 'yes')) {
             return;
         }
 
         $this->line('');
 
-        $this->line("Creating migration");
+        $this->line('Creating migration');
 
         if ($this->createMigration()) {
-            $this->info("Migration created successfully.");
+            $this->info('Migration created successfully.');
         } else {
             $this->error(
                 "Couldn't create migration.\n".
-                "Check the write permissions within the database/migrations directory."
+                'Check the write permissions within the database/migrations directory.'
             );
         }
 
@@ -92,9 +93,10 @@ class SetupTeamsCommand extends Command
             ->with(['laratrust' => Config::get('laratrust')])
             ->render();
 
-        if (!file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
+        if (! file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
             fwrite($fs, $output);
             fclose($fs);
+
             return true;
         }
 
@@ -105,7 +107,7 @@ class SetupTeamsCommand extends Command
      * Build a warning regarding possible duplication
      * due to already existing migrations.
      *
-     * @param  array $existingMigrations
+     * @param  array  $existingMigrations
      * @return string
      */
     protected function getExistingMigrationsWarning(array $existingMigrations)
@@ -116,8 +118,8 @@ class SetupTeamsCommand extends Command
             $base = "Laratrust setup teams migration already exists.\nFollowing file was found: ";
         }
 
-        return $base . array_reduce($existingMigrations, function ($carry, $fileName) {
-            return $carry . "\n - " . $fileName;
+        return $base.array_reduce($existingMigrations, function ($carry, $fileName) {
+            return $carry."\n - ".$fileName;
         });
     }
 
@@ -142,7 +144,7 @@ class SetupTeamsCommand extends Command
      * The date parameter is optional for ability
      * to provide a custom value or a wildcard.
      *
-     * @param  string|null $date
+     * @param  string|null  $date
      * @return string
      */
     protected function getMigrationPath($date = null)

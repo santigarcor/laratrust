@@ -17,7 +17,7 @@ abstract class UserChecker
     }
 
     /**
-     * Get the user roles
+     * Get the user roles.
      */
     abstract public function getCurrentUserRoles(mixed $team = null): array;
 
@@ -61,7 +61,7 @@ abstract class UserChecker
     /**
      * Checks role(s) and permission(s).
      *
-     * @param  array  $options     validate_all (true|false) or return_type (boolean|array|both)
+     * @param  array  $options  validate_all (true|false) or return_type (boolean|array|both)
      *
      * @throws \InvalidArgumentException
      */

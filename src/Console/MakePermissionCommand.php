@@ -2,8 +2,8 @@
 
 namespace Laratrust\Console;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Console\GeneratorCommand;
+use Illuminate\Support\Facades\Config;
 
 class MakePermissionCommand extends GeneratorCommand
 {

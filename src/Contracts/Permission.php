@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Laratrust\Contracts;
 
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 interface Permission
 {

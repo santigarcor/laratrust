@@ -3,9 +3,9 @@
 namespace Laratrust\Middleware;
 
 use Closure;
-use Laratrust\Helper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Laratrust\Helper;
 
 class Ability extends LaratrustMiddleware
 {
@@ -31,7 +31,7 @@ class Ability extends LaratrustMiddleware
 
         if (
             Auth::guard($guard)->guest()
-            || !Auth::guard($guard)->user()
+            || ! Auth::guard($guard)->user()
                 ->ability($roles, $permissions, $team, ['validate_all' => $validateAll])
         ) {
             return $this->unauthorized();

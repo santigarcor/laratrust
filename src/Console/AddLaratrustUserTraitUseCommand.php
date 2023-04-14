@@ -2,11 +2,11 @@
 
 namespace Laratrust\Console;
 
-use Traitor\Traitor;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Traits\LaratrustUserTrait;
+use Traitor\Traitor;
 
 class AddLaratrustUserTraitUseCommand extends Command
 {
@@ -18,7 +18,7 @@ class AddLaratrustUserTraitUseCommand extends Command
     protected $name = 'laratrust:add-trait';
 
     /**
-     * Trait added to User model
+     * Trait added to User model.
      *
      * @var string
      */
@@ -31,11 +31,12 @@ class AddLaratrustUserTraitUseCommand extends Command
      */
     public function handle()
     {
-        $models = $this->getUserModels() ;
+        $models = $this->getUserModels();
 
         foreach ($models as $model) {
-            if (!class_exists($model)) {
+            if (! class_exists($model)) {
                 $this->error("Class $model does not exist.");
+
                 return;
             }
 

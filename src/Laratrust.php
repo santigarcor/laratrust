@@ -10,7 +10,7 @@ use Laratrust\Contracts\LaratrustUser;
 
 /**
  * This class is the main entry point of laratrust. Usually this the interaction
- * with this class will be done through the Laratrust Facade
+ * with this class will be done through the Laratrust Facade.
  */
 class Laratrust
 {
@@ -54,9 +54,9 @@ class Laratrust
     /**
      * Check if the current user has a role or permission by its name.
      *
-     * @param  array|string  $roles            The role(s) needed.
-     * @param  array|string  $permissions      The permission(s) needed.
-     * @param  array  $options                 The Options.
+     * @param  array|string  $roles  The role(s) needed.
+     * @param  array|string  $permissions  The permission(s) needed.
+     * @param  array  $options  The Options.
      * @return bool
      */
     public function ability($roles, $permissions, $team = null, $options = [])
