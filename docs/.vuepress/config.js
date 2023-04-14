@@ -35,12 +35,27 @@ module.exports = {
           "Laratrust is an easy and flexible way to add roles, permissions and teams authorization to your Laravel application",
       },
     ],
+    [
+      "script",
+      {
+        async: true,
+        src: "https://www.googletagmanager.com/gtag/js?id=G-3HPC9MWDPF",
+      },
+    ],
+    [
+      "script",
+      {},
+      [
+        "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-3HPC9MWDPF');",
+      ],
+    ],
   ],
   themeConfig: {
     logo: "/logo.svg",
     activeVersion: getActiveVersion(),
     algolia: {
-      apiKey: "feb79d4f7397b8f410909711f924d524",
+      appId: "KIV4BYVWX7",
+      apiKey: "5dd7c0bdd6b962b4bd61684d863e5ccd",
       indexName: "laratrust",
       algoliaOptions: { facetFilters: ["version:$VERSION$"] },
     },

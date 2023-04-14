@@ -1,6 +1,12 @@
+---
+meta:
+  - name: keywords
+    content: laravel roles permissions package teams panel role permission
+---
+
 # Introduction
 
-Laratrust is a Laravel package that lets you handle very easily roles and permissions inside your application. All of this through a very simple configuration process and API.
+Laratrust is a package that lets you add roles and permissions inside your Laravel application. All of this through a very simple configuration process and API.
 
 Here you can see some examples:
 

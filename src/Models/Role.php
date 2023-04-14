@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Laratrust\Models;
 
-use Laratrust\Helper;
-use Ramsey\Uuid\UuidInterface;
-use Illuminate\Support\Facades\Config;
+use BackedEnum;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Facades\Config;
 use Laratrust\Checkers\CheckersManager;
 use Laratrust\Checkers\Role\RoleChecker;
-use Laratrust\Traits\HasLaratrustEvents;
 use Laratrust\Contracts\Role as RoleContract;
+use Laratrust\Helper;
 use Laratrust\Traits\DynamicUserRelationshipCalls;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Laratrust\Traits\HasLaratrustEvents;
+use Ramsey\Uuid\UuidInterface;
 
 class Role extends Model implements RoleContract
 {
@@ -52,7 +53,7 @@ class Role extends Model implements RoleContract
         static::saved($flushCache);
 
         static::deleting(function ($role) {
-            if (method_exists($role, 'bootSoftDeletes') && !$role->forceDeleting) {
+            if (method_exists($role, 'bootSoftDeletes') && ! $role->forceDeleting) {
                 return;
             }
 
@@ -67,7 +68,7 @@ class Role extends Model implements RoleContract
     /**
      * Return the right checker for the role model.
      */
-    protected function laratrustRoleChecker() :RoleChecker
+    protected function laratrustRoleChecker(): RoleChecker
     {
         return (new CheckersManager($this))->getRoleChecker();
     }
@@ -83,7 +84,7 @@ class Role extends Model implements RoleContract
         );
     }
 
-    public function permissions():BelongsToMany
+    public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(
             Config::get('laratrust.models.permission'),
@@ -93,13 +94,13 @@ class Role extends Model implements RoleContract
         );
     }
 
-    public function hasPermission(string|array $permission, bool $requireAll = false): bool
+    public function hasPermission(string|array|BackedEnum $permission, bool $requireAll = false): bool
     {
         return $this->laratrustRoleChecker()
             ->currentRoleHasPermission($permission, $requireAll);
     }
 
-    public function syncPermissions(iterable $permissions):static
+    public function syncPermissions(iterable $permissions): static
     {
         $mappedPermissions = [];
 
@@ -114,7 +115,7 @@ class Role extends Model implements RoleContract
         return $this;
     }
 
-    public function givePermission(array|string|int|Model|UuidInterface $permission): static
+    public function givePermission(array|string|int|Model|UuidInterface|BackedEnum $permission): static
     {
         $permission = Helper::getIdFor($permission, 'permission');
 
@@ -125,7 +126,7 @@ class Role extends Model implements RoleContract
         return $this;
     }
 
-    public function removePermission(array|string|int|Model|UuidInterface $permission): static
+    public function removePermission(array|string|int|Model|UuidInterface|BackedEnum $permission): static
     {
         $permission = Helper::getIdFor($permission, 'permission');
 
@@ -147,8 +148,9 @@ class Role extends Model implements RoleContract
 
     public function removePermissions(iterable $permissions = null): static
     {
-        if (!$permissions) {
+        if (! $permissions) {
             $this->syncPermissions([]);
+
             return $this;
         }
 
@@ -162,7 +164,7 @@ class Role extends Model implements RoleContract
     /**
      * Flush the role's cache.
      */
-    public function flushCache():void
+    public function flushCache(): void
     {
         $this->laratrustRoleChecker()->currentRoleFlushCache();
     }

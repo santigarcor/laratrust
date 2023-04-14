@@ -1,14 +1,4 @@
-preset: psr2
-
-enabled:
-  - no_useless_else
-  - short_array_syntax
-  - no_unused_imports
-  - length_ordered_imports
-  - binary_operator_spaces
-  - single_blank_line_before_namespace
-  - no_blank_lines_after_phpdoc
-  - no_empty_comment
+preset: laravel
 
 finder:
   exclude:

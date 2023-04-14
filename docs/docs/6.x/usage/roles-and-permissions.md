@@ -5,6 +5,7 @@ sidebarDepth: 2
 # Roles & Permissions
 
 ## Setting things up
+
 Let's start by creating the following `Role`s:
 
 ```php
@@ -69,10 +70,10 @@ With both roles created let's assign them to the users.
 ### Assignment
 
 ```php
-$user->attachRole($admin); // parameter can be a Role object, array, id or the role string name
+$user->attachRole($admin); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->attach([$admin->id]);
 
-$user->attachRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
+$user->attachRoles([$admin, $owner]); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->attach([$admin->id, $owner->id]);
 
 $user->syncRoles([$admin->id, $owner->id]);
@@ -83,11 +84,12 @@ $user->syncRolesWithoutDetaching([$admin->id, $owner->id]);
 ```
 
 ### Removal
+
 ```php
-$user->detachRole($admin); // parameter can be a Role object, array, id or the role string name
+$user->detachRole($admin); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->detach([$admin->id]);
 
-$user->detachRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
+$user->detachRoles([$admin, $owner]); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->detach([$admin->id, $owner->id]);
 ```
 
@@ -122,6 +124,7 @@ $user->detachPermissions([$createPost, $editUser]); // parameter can be a Permis
 ```
 
 ## Checking for Roles & Permissions
+
 Now we can check for roles and permissions simply by doing:
 
 ```php
@@ -132,9 +135,10 @@ $user->isAbleTo('create-post'); // true
 ```
 
 ::: tip NOTE
+
 - If you want, you can use the `hasPermission` or `isAbleTo`.
 - If you want, you can use the `isA` and `isAn` methods instead of the `hasRole` method.
-:::
+  :::
 
 ::: tip NOTE
 We dropped the usage of the `can` method in order to have full support to Laravel's Gates and Policies.
@@ -185,6 +189,7 @@ $user->isAbleTo('*-users'); // true
 ```
 
 ### Magic `is able to` method
+
 You can check if a user has some permissions by using the magic `isAbleTo` method:
 
 ```php
@@ -208,9 +213,9 @@ $user->isAbleToCreateUsers();
 More advanced checking can be done using the awesome `ability` function.
 It takes in three parameters (roles, permissions, options):
 
-* `roles` is a set of roles to check.
-* `permissions` is a set of permissions to check.
-* `options` is a set of options to change the method behavior.
+- `roles` is a set of roles to check.
+- `permissions` is a set of permissions to check.
+- `options` is a set of options to change the method behavior.
 
 Either of the roles or permissions variable can be a pipe separated string or an array:
 
@@ -234,8 +239,8 @@ $options = [
 ];
 ```
 
-* `validate_all` is a boolean flag to set whether to check all the values for true, or to return true if at least one role or permission is matched.
-* `return_type` specifies whether to return a boolean, array of checked values, or both in an array.
+- `validate_all` is a boolean flag to set whether to check all the values for true, or to return true if at least one role or permission is matched.
+- `return_type` specifies whether to return a boolean, array of checked values, or both in an array.
 
 Here is an example output:
 

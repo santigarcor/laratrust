@@ -34,7 +34,7 @@ class SetupCommand extends Command
     ];
 
     /**
-     * Create a new command instance
+     * Create a new command instance.
      *
      * @return void
      */
@@ -55,7 +55,7 @@ class SetupCommand extends Command
     public function handle()
     {
         foreach ($this->calls as $command => $info) {
-            $this->line(PHP_EOL . $info);
+            $this->line(PHP_EOL.$info);
             $this->call($command);
         }
     }

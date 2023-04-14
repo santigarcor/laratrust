@@ -17,7 +17,7 @@ class Role extends LaratrustMiddleware
         ?string $team = null,
         ?string $options = ''
     ) {
-        if (!$this->authorization('roles', $roles, $team, $options)) {
+        if (! $this->authorization('roles', $roles, $team, $options)) {
             return $this->unauthorized();
         }
 

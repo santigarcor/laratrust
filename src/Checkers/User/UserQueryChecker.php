@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Checkers\User;
 
-use Laratrust\Helper;
+use BackedEnum;
 use Illuminate\Support\Facades\Config;
+use Laratrust\Helper;
 
 class UserQueryChecker extends UserChecker
 {
@@ -27,7 +30,7 @@ class UserQueryChecker extends UserChecker
     }
 
     public function currentUserHasRole(
-        string|array $name,
+        string|array|BackedEnum $name,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
@@ -46,7 +49,7 @@ class UserQueryChecker extends UserChecker
 
         $rolesCount = $this->user->roles()
             ->whereIn('name', $rolesNames)
-            ->when($useTeams && ($teamStrictCheck || !is_null($team)), function ($query) use ($team) {
+            ->when($useTeams && ($teamStrictCheck || ! is_null($team)), function ($query) use ($team) {
                 $teamId = Helper::getIdFor($team, 'team');
 
                 return $query->where(Config::get('laratrust.foreign_keys.team'), $teamId);
@@ -57,7 +60,7 @@ class UserQueryChecker extends UserChecker
     }
 
     public function currentUserHasPermission(
-        string|array $permission,
+        string|array|BackedEnum $permission,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
@@ -74,19 +77,18 @@ class UserQueryChecker extends UserChecker
         $useTeams = Config::get('laratrust.teams.enabled');
         $teamStrictCheck = Config::get('laratrust.teams.strict_check');
 
-        list($permissionsWildcard, $permissionsNoWildcard) =
+        [$permissionsWildcard, $permissionsNoWildcard] =
             Helper::getPermissionWithAndWithoutWildcards($permissionsNames);
 
         $rolesPermissionsCount = $this->user->roles()
-            ->withCount(['permissions' =>
-                function ($query) use ($permissionsNoWildcard, $permissionsWildcard) {
-                    $query->whereIn('name', $permissionsNoWildcard);
-                    foreach ($permissionsWildcard as $permission) {
-                        $query->orWhere('name', 'like', $permission);
-                    }
+            ->withCount(['permissions' => function ($query) use ($permissionsNoWildcard, $permissionsWildcard) {
+                $query->whereIn('name', $permissionsNoWildcard);
+                foreach ($permissionsWildcard as $permission) {
+                    $query->orWhere('name', 'like', $permission);
                 }
+            },
             ])
-            ->when($useTeams && ($teamStrictCheck || !is_null($team)), function ($query) use ($team) {
+            ->when($useTeams && ($teamStrictCheck || ! is_null($team)), function ($query) use ($team) {
                 $teamId = Helper::getIdFor($team, 'team');
 
                 return $query->where(Config::get('laratrust.foreign_keys.team'), $teamId);
@@ -103,7 +105,7 @@ class UserQueryChecker extends UserChecker
 
                 return $query;
             })
-            ->when($useTeams && ($teamStrictCheck || !is_null($team)), function ($query) use ($team) {
+            ->when($useTeams && ($teamStrictCheck || ! is_null($team)), function ($query) use ($team) {
                 $teamId = Helper::getIdFor($team, 'team');
 
                 return $query->where(Config::get('laratrust.foreign_keys.team'), $teamId);

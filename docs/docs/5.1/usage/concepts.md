@@ -9,6 +9,7 @@ You are using an old version of Laratrust. Consider updating to the <docs-link t
 # Concepts
 
 ## Set things up
+
 Let's start by creating the following `Role`s:
 
 ```php
@@ -44,6 +45,7 @@ $editUser->save();
 ```
 
 ## Role Permissions Assignment & Removal
+
 By using the `LaratrustRoleTrait` we can do the following:
 
 ### Assignment
@@ -77,10 +79,10 @@ Thanks to the `LaratrustUserTrait` this is as easy as:
 ### Assignment
 
 ```php
-$user->attachRole($admin); // parameter can be a Role object, array, id or the role string name
+$user->attachRole($admin); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->attach([$admin->id]);
 
-$user->attachRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
+$user->attachRoles([$admin, $owner]); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->attach([$admin->id, $owner->id]);
 
 $user->syncRoles([$admin->id, $owner->id]);
@@ -91,11 +93,12 @@ $user->syncRolesWithoutDetaching([$admin->id, $owner->id]);
 ```
 
 ### Removal
+
 ```php
-$user->detachRole($admin); // parameter can be a Role object, array, id or the role string name
+$user->detachRole($admin); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->detach([$admin->id]);
 
-$user->detachRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
+$user->detachRoles([$admin, $owner]); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->detach([$admin->id, $owner->id]);
 ```
 
@@ -130,6 +133,7 @@ $user->detachPermissions([$createPost, $editUser]); // parameter can be a Permis
 ```
 
 ## Checking for Roles & Permissions
+
 Now we can check for roles and permissions simply by doing:
 
 ```php
@@ -140,9 +144,10 @@ $user->can('create-post'); // true
 ```
 
 ::: tip NOTE
+
 - If you want, you can use the `hasPermission` and `isAbleTo` methods instead of the `can` method.
 - If you want, you can use the `isA` and `isAn` methods instead of the `hasRole` method.
-:::
+  :::
 
 ::: tip NOTE
 If you want to use the Authorizable trait alongside Laratrust please check the <docs-link to="/troubleshooting.html">troubleshooting</docs-link> page.
@@ -183,7 +188,7 @@ Auth::user()->hasPermission('permission-name');
 ```
 
 ::: warning
-There aren't  `Laratrust::hasPermission` or `Laratrust::isAbleTo` facade methods, because you can use the `Laratrust::can` even when using the `Authorizable` trait.
+There aren't `Laratrust::hasPermission` or `Laratrust::isAbleTo` facade methods, because you can use the `Laratrust::can` even when using the `Authorizable` trait.
 :::
 
 You can also use wildcard to check any matching permission by doing:
@@ -197,6 +202,7 @@ $user->can('*-users'); // true
 ```
 
 ### Magic can method
+
 You can check if a user has some permissions by using the magic can method:
 
 ```php
@@ -220,9 +226,9 @@ $user->canCreateUsers();
 More advanced checking can be done using the awesome `ability` function.
 It takes in three parameters (roles, permissions, options):
 
-* `roles` is a set of roles to check.
-* `permissions` is a set of permissions to check.
-* `options` is a set of options to change the method behavior.
+- `roles` is a set of roles to check.
+- `permissions` is a set of permissions to check.
+- `options` is a set of options to change the method behavior.
 
 Either of the roles or permissions variable can be a pipe separated string or an array:
 
@@ -246,8 +252,8 @@ $options = [
 ];
 ```
 
-* `validate_all` is a boolean flag to set whether to check all the values for true, or to return true if at least one role or permission is matched.
-* `return_type` specifies whether to return a boolean, array of checked values, or both in an array.
+- `validate_all` is a boolean flag to set whether to check all the values for true, or to return true if at least one role or permission is matched.
+- `return_type` specifies whether to return a boolean, array of checked values, or both in an array.
 
 Here is an example output:
 
@@ -286,6 +292,7 @@ Auth::user()->ability('admin|owner', 'create-post|edit-user');
 ```
 
 ## Retrieving Relationships
+
 The `LaratrustUserTrait` has the `roles` and `permissions` relationship, that return a `MorphToMany` relationships.
 
 The `roles` relationship has all the roles attached to the user.
@@ -343,6 +350,7 @@ $users = User::wherePermissionIs('edit-user')->orWherePermissionIs('create-user'
 ```
 
 ## Objects Ownership
+
 If you need to check if the user owns an object you can use the user function `owns`:
 
 ```php
@@ -368,13 +376,14 @@ public function update (Post $post) {
 ```
 
 ### Permissions, Roles & Ownership Checks
+
 If you want to check if a user can do something or has a role, and also is the owner of an object you can use the `canAndOwns` and `hasRoleAndOwns` methods:
 
 Both methods accept three parameters:
 
-* `permission` or `role` are the permission or role to check (This can be an array of roles or permissions).
-* `thing` is the object used to check the ownership.
-* `options` is a set of options to change the method behavior (optional).
+- `permission` or `role` are the permission or role to check (This can be an array of roles or permissions).
+- `thing` is the object used to check the ownership.
+- `options` is a set of options to change the method behavior (optional).
 
 The third parameter is an options array:
 
@@ -412,6 +421,7 @@ Laratrust::hasRoleAndOwns(['admin', 'writer'], $post, ['requireAll' => false, 'f
 ```
 
 ### Ownable Interface
+
 If the object ownership is resolved through a more complex logic you can implement the Ownable interface so you can use the `owns`, `canAndOwns` and `hasRoleAndOwns` methods in those cases:
 
 ```php
@@ -429,9 +439,10 @@ class SomeOwnedObject implements \Laratrust\Contracts\Ownable
 ```
 
 ::: tip IMPORTANT
+
 - The `ownerKey` method **must** return the object's owner id value.
 - The `ownerKey` method receives as a parameter the object that called the `owns` method.
-:::
+  :::
 
 After implementing it, you can simply do:
 
@@ -442,11 +453,13 @@ $user->owns($theObject);            // This will return true or false depending 
 ```
 
 ## Teams
+
 ::: tip NOTE
 The teams feature is **optional**, please go to the <docs-link to="/configuration/teams.html">teams configuration</docs-link> in order to use the feature.
 :::
 
 ### Roles Assignment & Removal
+
 The roles assignment and removal are the same, but this time you can pass the team as an optional parameter.
 
 ```php
@@ -488,6 +501,7 @@ So if you don't pass any team, it will sync the roles where the team id is `null
 :::
 
 ### Permissions Assignment & Removal
+
 The permissions assignment and removal are the same, but this time you can pass the team as an optional parameter.
 
 ```php
@@ -529,15 +543,16 @@ So if you don't pass any team, it will sync the permissions where the team id is
 :::
 
 ### Checking Roles & Permissions
+
 The roles and permissions verification is the same, but this time you can pass the team parameter.
 
 The teams roles and permissions check can be configured by changing the `teams_strict_check` value inside the `config/laratrust.php` file. This value can be `true` or `false`:
 
 - If `teams_strict_check` is set to `false`:
-    When checking for a role or permission if no team is given, it will check if the user has the role or permission regardless if that role or permissions was attached inside a team.
+  When checking for a role or permission if no team is given, it will check if the user has the role or permission regardless if that role or permissions was attached inside a team.
 
 - If `teams_strict_check` is set to `true`:
-    When checking for a role or permission if no team is given, it will check if the user has the role or permission where the team id is null.
+  When checking for a role or permission if no team is given, it will check if the user has the role or permission where the team id is null.
 
 Check roles:
 
@@ -547,6 +562,7 @@ Check roles:
 ```
 
 Check permissions:
+
 ```php
     $user->can('edit-user', 'my-awesome-team');
     $user->can(['edit-user', 'manage-users'], 'my-awesome-team', true);
@@ -567,6 +583,7 @@ $user->ability(['admin'], ['edit-user'], 'my-awesome-team', $options);
 ```
 
 ### Permissions, Roles & Ownership Checks
+
 The permissions, roles and ownership checks work the same, but this time you can pass the team in the options array.
 
 ```php

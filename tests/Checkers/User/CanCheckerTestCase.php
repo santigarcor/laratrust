@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Checkers\User;
 
-use Laratrust\Tests\Models\Role;
-use Laratrust\Tests\Models\User;
+use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
+use Laratrust\Tests\Models\Role;
+use Laratrust\Tests\Models\User;
 
 abstract class CanCheckerTestCase extends LaratrustTestCase
 {
@@ -40,7 +41,7 @@ abstract class CanCheckerTestCase extends LaratrustTestCase
         // Case: User has everything.
         $this->assertTrue(
             $this->user->can(
-                ['permission_a', 'permission_b']
+                [EnumsPermission::PERM_A, 'permission_b']
             )
         );
 

@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust;
 
+use Illuminate\Contracts\Auth\Access\Authorizable;
+use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Contracts\Auth\Access\Gate;
-use Illuminate\Contracts\Auth\Access\Authorizable;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 class LaratrustServiceProvider extends ServiceProvider
 {
@@ -53,7 +55,7 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     protected function registerMiddlewares()
     {
-        if (!$this->app['config']->get('laratrust.middleware.register')) {
+        if (! $this->app['config']->get('laratrust.middleware.register')) {
             return;
         }
 
@@ -85,7 +87,7 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     private function registerBladeDirectives()
     {
-        if (!class_exists('\Blade')) {
+        if (! class_exists('\Blade')) {
             return;
         }
 
@@ -124,7 +126,7 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     protected function registerRoutes()
     {
-        if (!$this->app['config']->get('laratrust.panel.register')) {
+        if (! $this->app['config']->get('laratrust.panel.register')) {
             return;
         }
 
@@ -134,7 +136,7 @@ class LaratrustServiceProvider extends ServiceProvider
             'namespace' => 'Laratrust\Http\Controllers',
             'middleware' => config('laratrust.panel.middleware', 'web'),
         ], function () {
-            Route::redirect('/', '/'. config('laratrust.panel.path'). '/roles-assignment');
+            Route::redirect('/', '/'.config('laratrust.panel.path').'/roles-assignment');
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
     }
@@ -150,17 +152,17 @@ class LaratrustServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register permissions to Laravel Gate
+     * Register permissions to Laravel Gate.
      *
      * @return void
      */
     protected function registerPermissionsToGate()
     {
-        if (!$this->app['config']->get('laratrust.permissions_as_gates')) {
+        if (! $this->app['config']->get('laratrust.permissions_as_gates')) {
             return;
         }
 
-        app(Gate::class)->before(function (Authorizable $user, string $ability) {
+        app(Gate::class)->before(function (Authorizable $user, mixed $ability) {
             if (method_exists($user, 'hasPermission')) {
                 return $user->hasPermission($ability) ?: null;
             }
@@ -174,7 +176,7 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     protected function defineAssetPublishing()
     {
-        if (!$this->app['config']->get('laratrust.panel.register')) {
+        if (! $this->app['config']->get('laratrust.panel.register')) {
             return;
         }
 
@@ -219,11 +221,11 @@ class LaratrustServiceProvider extends ServiceProvider
             ], 'laratrust');
 
             $this->publishes([
-                __DIR__. '/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
+                __DIR__.'/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
             ], 'laratrust-seeder');
 
             $this->publishes([
-                __DIR__. '/../resources/views/panel' => resource_path('views/vendor/laratrust/panel'),
+                __DIR__.'/../resources/views/panel' => resource_path('views/vendor/laratrust/panel'),
             ], 'laratrust-views');
         }
     }

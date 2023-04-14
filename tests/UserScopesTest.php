@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Laratrust\Test;
 
+use Laratrust\Tests\Enums\Permission as EnumsPermission;
+use Laratrust\Tests\Enums\Role as EnumsRole;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
@@ -27,7 +29,7 @@ class UserScopesTest extends LaratrustTestCase
 
     public function testScopeWhereRoleIs()
     {
-        $roleA = Role::create(['name' => 'role_a']);
+        $roleA = Role::create(['name' => EnumsRole::ROLE_A]);
         $roleB = Role::create(['name' => 'role_b']);
         $roleC = Role::create(['name' => 'role_c']);
         $roleD = Role::create(['name' => 'role_d']);
@@ -35,8 +37,9 @@ class UserScopesTest extends LaratrustTestCase
         $this->user->addRoles([$roleA, $roleB]);
         $this->user->addRole($roleD, $team->id);
 
-        $this->assertCount(1, User::whereHasRole(['role_a', 'role_c'])->get());
-        $this->assertCount(0, User::whereHasRole('role_c')->get());
+        $this->assertCount(1, User::whereHasRole([EnumsRole::ROLE_A, 'role_c'])->get());
+        $this->assertCount(1, User::whereHasRole([EnumsRole::ROLE_A, 'role_c'])->get());
+        $this->assertCount(0, User::whereHasRole(EnumsRole::ROLE_C)->get());
         $this->assertCount(0, User::whereHasRole(['role_c', 'role_x'])->get());
 
         $this->assertCount(1, User::whereHasRole('role_d', 'team_a')->get());
@@ -59,14 +62,14 @@ class UserScopesTest extends LaratrustTestCase
             1,
             User::query()
                 ->whereHasRole('role_a')
-                ->orWhereHasRole('role_c')
+                ->orWhereHasRole(EnumsRole::ROLE_C)
                 ->get()
         );
         $this->assertCount(
             0,
             User::query()
                 ->whereHasRole('role_d')
-                ->orWhereHasRole('role_c')
+                ->orWhereHasRole(EnumsRole::ROLE_C)
                 ->get()
         );
     }
@@ -75,7 +78,7 @@ class UserScopesTest extends LaratrustTestCase
     {
         $roleA = Role::create(['name' => 'role_a']);
         $roleB = Role::create(['name' => 'role_b']);
-        $permissionA = Permission::create(['name' => 'permission_a']);
+        $permissionA = Permission::create(['name' => EnumsPermission::PERM_A]);
         $permissionB = Permission::create(['name' => 'permission_b']);
         $permissionC = Permission::create(['name' => 'permission_c']);
         $permissionD = Permission::create(['name' => 'permission_d']);
@@ -85,7 +88,7 @@ class UserScopesTest extends LaratrustTestCase
         $this->user->givePermissions([$permissionB, $permissionC]);
         $this->user->addRoles([$roleA, $roleB]);
 
-        $this->assertCount(1, User::whereHasPermission('permission_a')->get());
+        $this->assertCount(1, User::whereHasPermission(EnumsPermission::PERM_A)->get());
         $this->assertCount(1, User::whereHasPermission('permission_c')->get());
         $this->assertCount(1, User::whereHasPermission(['permission_c', 'permission_d'])->get());
         $this->assertCount(0, User::whereHasPermission('permission_d')->get());
@@ -115,7 +118,7 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(
             1,
             User::query()
-                ->whereHasPermission('permission_c')
+                ->whereHasPermission(EnumsPermission::PERM_C)
                 ->orWhereHasPermission('permission_d')
                 ->get()
         );

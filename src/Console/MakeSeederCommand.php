@@ -3,9 +3,9 @@
 namespace Laratrust\Console;
 
 use Exception;
+use Illuminate\Database\Console\Seeds\SeederMakeCommand as LaravelMakeSeederCommand;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Database\Console\Seeds\SeederMakeCommand as LaravelMakeSeederCommand;
 
 class MakeSeederCommand extends LaravelMakeSeederCommand
 {
@@ -33,15 +33,16 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
         if (file_exists($this->seederPath())) {
             $this->line('');
 
-            $this->warn("The LaratrustSeeder file already exists. Delete the existing one if you want to create a new one.");
+            $this->warn('The LaratrustSeeder file already exists. Delete the existing one if you want to create a new one.');
             $this->line('');
+
             return;
         }
 
         try {
             $seederClass = $this->createSeederClass();
             $this->files->put($this->seederPath(), $seederClass);
-            $this->info("Seeder successfully created!");
+            $this->info('Seeder successfully created!');
         } catch (Exception $exception) {
             $folder = $this->files->dirname($this->seederPath());
             $where = substr($folder, strpos($folder, 'database'));
@@ -56,7 +57,7 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
     }
 
     /**
-     * Create the seeder
+     * Create the seeder.
      *
      * @return string
      */
@@ -73,9 +74,10 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
 
     /**
      * Replace the namespace of the seeder.
+     *
      * @param  string  $stub
      */
-    protected function replaceSeederNamespace(string & $stub)
+    protected function replaceSeederNamespace(string &$stub)
     {
         $namespace = '';
 
@@ -88,26 +90,28 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
 
     /**
      * Replace the models class names in the stub.
+     *
      * @param  string  $stub
      */
-    protected function replaceModelClassNames(string & $stub)
+    protected function replaceModelClassNames(string &$stub)
     {
         $role = Config::get('laratrust.models.role', 'App\Role');
-        $this->replaceStubParameter($stub, 'roleConfiguredModelClass', '\\' . ltrim($role, '\\'));
+        $this->replaceStubParameter($stub, 'roleConfiguredModelClass', '\\'.ltrim($role, '\\'));
 
         $permission = Config::get('laratrust.models.permission', 'App\Permission');
-        $this->replaceStubParameter($stub, 'permissionConfiguredModelClass', '\\' . ltrim($permission, '\\'));
-   
+        $this->replaceStubParameter($stub, 'permissionConfiguredModelClass', '\\'.ltrim($permission, '\\'));
+
         $user = new Collection(Config::get('laratrust.user_models', ['App\User']));
         $user = $user->first();
-        $this->replaceStubParameter($stub, 'userConfiguredModelClass', '\\' . ltrim($user, '\\'));
+        $this->replaceStubParameter($stub, 'userConfiguredModelClass', '\\'.ltrim($user, '\\'));
     }
 
     /**
      * Replace the table names in the stub.
+     *
      * @param  string  $stub
      */
-    protected function replaceTableNames(string & $stub)
+    protected function replaceTableNames(string &$stub)
     {
         $rolePermission = Config::get('laratrust.tables.permission_role');
         $this->replaceStubParameter($stub, 'permission_roleConfiguredTableName', $rolePermission);
@@ -127,11 +131,12 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
 
     /**
      * Replace a placeholder parameter in the stub.
+     *
      * @param  string  $stub
      * @param  string  $parameter
      * @param  string  $value
      */
-    protected function replaceStubParameter(string & $stub, string $parameter, string $value)
+    protected function replaceStubParameter(string &$stub, string $parameter, string $value)
     {
         $stub = str_replace('{{'.$parameter.'}}', $value, $stub);
     }
