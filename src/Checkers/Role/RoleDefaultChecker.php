@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Checkers\Role;
 
-use Illuminate\Support\Str;
+use BackedEnum;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
+use Laratrust\Helper;
 
 class RoleDefaultChecker extends RoleChecker
 {
     /**
      * Checks if the role has a permission by its name.
      */
-    public function currentRoleHasPermission(string|array $permission, bool $requireAll = false):bool
+    public function currentRoleHasPermission(string|array|BackedEnum $permission, bool $requireAll = false): bool
     {
         if (is_array($permission)) {
             if (empty($permission)) {
@@ -21,9 +25,9 @@ class RoleDefaultChecker extends RoleChecker
             foreach ($permission as $permissionName) {
                 $hasPermission = $this->currentRoleHasPermission($permissionName);
 
-                if ($hasPermission && !$requireAll) {
+                if ($hasPermission && ! $requireAll) {
                     return true;
-                } elseif (!$hasPermission && $requireAll) {
+                } elseif (! $hasPermission && $requireAll) {
                     return false;
                 }
             }
@@ -35,7 +39,7 @@ class RoleDefaultChecker extends RoleChecker
         }
 
         foreach ($this->currentRoleCachedPermissions() as $perm) {
-            if (Str::is($permission, $perm['name'])) {
+            if (Str::is(Helper::ensureString($permission), $perm['name'])) {
                 return true;
             }
         }
@@ -46,9 +50,9 @@ class RoleDefaultChecker extends RoleChecker
     /**
      * Flush the role's cache.
      */
-    public function currentRoleFlushCache():void
+    public function currentRoleFlushCache(): void
     {
-        Cache::forget('laratrust_permissions_for_role_' . $this->role->getKey());
+        Cache::forget('laratrust_permissions_for_role_'.$this->role->getKey());
     }
 
     /**
@@ -58,9 +62,9 @@ class RoleDefaultChecker extends RoleChecker
      */
     public function currentRoleCachedPermissions(): array
     {
-        $cacheKey = 'laratrust_permissions_for_role_' . $this->role->getKey();
+        $cacheKey = 'laratrust_permissions_for_role_'.$this->role->getKey();
 
-        if (!Config::get('laratrust.cache.enabled')) {
+        if (! Config::get('laratrust.cache.enabled')) {
             return $this->role->permissions()->get()->toArray();
         }
 

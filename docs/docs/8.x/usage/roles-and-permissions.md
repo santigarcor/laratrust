@@ -70,10 +70,10 @@ With both roles created let's assign them to the users.
 ### Assignment
 
 ```php
-$user->addRole($admin); // parameter can be a Role object, array, id or the role string name
+$user->addRole($admin); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->attach([$admin->id]);
 
-$user->addRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
+$user->addRoles([$admin, $owner]); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->attach([$admin->id, $owner->id]);
 
 $user->syncRoles([$admin->id, $owner->id]);
@@ -86,10 +86,10 @@ $user->syncRolesWithoutDetaching([$admin->id, $owner->id]);
 ### Removal
 
 ```php
-$user->removeRole($admin); // parameter can be a Role object, array, id or the role string name
+$user->removeRole($admin); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->detach([$admin->id]);
 
-$user->removeRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
+$user->removeRoles([$admin, $owner]); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->detach([$admin->id, $owner->id]);
 ```
 

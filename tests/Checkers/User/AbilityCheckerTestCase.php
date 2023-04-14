@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Checkers\User;
 
+use Laratrust\Tests\Enums\Permission as EnumsPermission;
+use Laratrust\Tests\Enums\Role as EnumsRole;
+use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
-use Laratrust\Tests\LaratrustTestCase;
-use Laratrust\Tests\Models\Permission;
 
-class AbilityCheckerTestCase extends LaratrustTestCase
+abstract class AbilityCheckerTestCase extends LaratrustTestCase
 {
     protected User $user;
 
@@ -30,7 +32,7 @@ class AbilityCheckerTestCase extends LaratrustTestCase
         $roleB = Role::create(['name' => 'role_b']);
 
         $roleA->givePermission($permissionA);
-        $roleB->givePermissions([$permissionB, $permissionC]);
+        $roleB->givePermissions([$permissionB, EnumsPermission::PERM_C]);
 
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
         $this->user->addRole($roleA)->addRole($roleB, $team);
@@ -41,20 +43,20 @@ class AbilityCheckerTestCase extends LaratrustTestCase
         // Case: User has everything.
         $this->assertTrue(
             $this->user->ability(
-                ['role_a', 'role_b'],
-                ['permission_a', 'permission_c']
+                [EnumsRole::ROLE_A, 'role_b'],
+                [EnumsPermission::PERM_A, 'permission_c']
             )
         );
         $this->assertTrue(
             $this->user->ability(
                 ['role_a', 'role_b'],
-                ['permission_a', 'permission_c'],
+                [EnumsPermission::PERM_A, 'permission_c'],
                 'team_a'
             )
         );
         $this->assertTrue(
             $this->user->ability(
-                ['role_a'],
+                [EnumsRole::ROLE_A],
                 ['permission_a'],
                 ['validate_all' => true]
             )
@@ -112,7 +114,7 @@ class AbilityCheckerTestCase extends LaratrustTestCase
         $this->assertSame(
             [
                 'roles' => ['role_a' => true, 'role_b' => true],
-                'permissions' => ['permission_a' => true, 'permission_b' => true]
+                'permissions' => ['permission_a' => true, 'permission_b' => true],
             ],
             $this->user->ability(
                 ['role_a', 'role_b'],
@@ -123,7 +125,7 @@ class AbilityCheckerTestCase extends LaratrustTestCase
         $this->assertSame(
             [
                 'roles' => ['role_a' => false, 'role_b' => true],
-                'permissions' => ['permission_a' => false, 'permission_b' => true]
+                'permissions' => ['permission_a' => false, 'permission_b' => true],
             ],
             $this->user->ability(
                 ['role_a', 'role_b'],
@@ -135,7 +137,7 @@ class AbilityCheckerTestCase extends LaratrustTestCase
         $this->assertSame(
             [
                 'roles' => ['role_a' => true],
-                'permissions' => ['permission_a' => true]
+                'permissions' => ['permission_a' => true],
             ],
             $this->user->ability(
                 ['role_a'],
@@ -152,8 +154,8 @@ class AbilityCheckerTestCase extends LaratrustTestCase
                 true,
                 [
                     'roles' => ['role_a' => true, 'role_b' => true],
-                    'permissions' => ['permission_a' => true, 'permission_b' => true]
-                ]
+                    'permissions' => ['permission_a' => true, 'permission_b' => true],
+                ],
             ],
             $this->user->ability(
                 ['role_a', 'role_b'],
@@ -166,8 +168,8 @@ class AbilityCheckerTestCase extends LaratrustTestCase
                 true,
                 [
                     'roles' => ['role_a' => false, 'role_b' => true],
-                    'permissions' => ['permission_a' => false, 'permission_b' => true]
-                ]
+                    'permissions' => ['permission_a' => false, 'permission_b' => true],
+                ],
             ],
             $this->user->ability(
                 ['role_a', 'role_b'],
@@ -181,8 +183,8 @@ class AbilityCheckerTestCase extends LaratrustTestCase
                 true,
                 [
                     'roles' => ['role_a' => true, 'role_b' => true],
-                    'permissions' => ['permission_a' => true, 'permission_b' => true]
-                ]
+                    'permissions' => ['permission_a' => true, 'permission_b' => true],
+                ],
             ],
             $this->user->ability(
                 ['role_a', 'role_b'],

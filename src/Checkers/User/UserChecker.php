@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Checkers\User;
 
-use Laratrust\Helper;
+use BackedEnum;
+use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use Laratrust\Contracts\LaratrustUser;
-use Illuminate\Database\Eloquent\Model;
+use Laratrust\Helper;
 
 abstract class UserChecker
 {
@@ -22,7 +25,7 @@ abstract class UserChecker
      * Checks if the user has a role by its name.
      */
     abstract public function currentUserHasRole(
-        string|array $name,
+        string|array|BackedEnum $name,
         mixed $team = null,
         bool $requireAll = false
     ): bool;
@@ -31,7 +34,7 @@ abstract class UserChecker
      * Check if user has a permission by its name.
      */
     abstract public function currentUserHasPermission(
-        string|array $permission,
+        string|array|BackedEnum $permission,
         mixed $team = null,
         bool $requireAll = false
     ): bool;
@@ -47,6 +50,7 @@ abstract class UserChecker
         string $methodToEvaluate
     ): array {
         $requireAllOrOptions = ($methodToEvaluate($team) ? $team : $requireAllOrOptions);
+
         return [
             'team' => ($methodToEvaluate($team) ? null : $team),
             'options' => $requireAllOrOptions,
@@ -58,11 +62,12 @@ abstract class UserChecker
      * Checks role(s) and permission(s).
      *
      * @param  array  $options     validate_all (true|false) or return_type (boolean|array|both)
+     *
      * @throws \InvalidArgumentException
      */
     public function currentUserHasAbility(
-        string|array $roles,
-        string|array $permissions,
+        string|array|BackedEnum $roles,
+        string|array|BackedEnum $permissions,
         mixed $team = null,
         array $options = []
     ): array|bool {
@@ -105,7 +110,7 @@ abstract class UserChecker
         // If validate all and there is a false in either.
         // Check that if validate all, then there should not be any false.
         // Check that if not validate all, there must be at least one true.
-        if (($options['validate_all'] && !(in_array(false, $checkedRoles) || in_array(false, $checkedPermissions))) || (!$options['validate_all'] && (in_array(true, $checkedRoles) || in_array(true, $checkedPermissions)))) {
+        if (($options['validate_all'] && ! (in_array(false, $checkedRoles) || in_array(false, $checkedPermissions))) || (! $options['validate_all'] && (in_array(true, $checkedRoles) || in_array(true, $checkedPermissions)))) {
             $validateAll = true;
         } else {
             $validateAll = false;
@@ -120,13 +125,13 @@ abstract class UserChecker
     }
 
     /**
-    * Checks if the option exists inside the array,
-    * otherwise, it sets the first option inside the default values array.
-    */
-    private function validateAndSetOptions(array $options, array $toVerify):array
+     * Checks if the option exists inside the array,
+     * otherwise, it sets the first option inside the default values array.
+     */
+    private function validateAndSetOptions(array $options, array $toVerify): array
     {
         foreach ($toVerify as $option => $config) {
-            if (!isset($options[$option])) {
+            if (! isset($options[$option])) {
                 $options[$option] = $config['default'];
 
                 continue;
@@ -135,8 +140,8 @@ abstract class UserChecker
             $ignoredOptions = ['team', 'foreignKeyName'];
 
             if (
-                !in_array($option, $ignoredOptions)
-                && !in_array($options[$option], $config['available'], true)
+                ! in_array($option, $ignoredOptions)
+                && ! in_array($options[$option], $config['available'], true)
             ) {
                 throw new InvalidArgumentException();
             }

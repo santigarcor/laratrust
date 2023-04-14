@@ -77,10 +77,10 @@ Thanks to the `LaratrustUserTrait` this is as easy as:
 ### Assignment
 
 ```php
-$user->attachRole($admin); // parameter can be a Role object, array, id or the role string name
+$user->attachRole($admin); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->attach([$admin->id]);
 
-$user->attachRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
+$user->attachRoles([$admin, $owner]); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->attach([$admin->id, $owner->id]);
 
 $user->syncRoles([$admin->id, $owner->id]);
@@ -92,10 +92,10 @@ $user->syncRolesWithoutDetaching([$admin->id, $owner->id]);
 
 ### Removal
 ```php
-$user->detachRole($admin); // parameter can be a Role object, array, id or the role string name
+$user->detachRole($admin); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->detach([$admin->id]);
 
-$user->detachRoles([$admin, $owner]); // parameter can be a Role object, array, id or the role string name
+$user->detachRoles([$admin, $owner]); // parameter can be a Role object, BackedEnum, array, id or the role string name
 // equivalent to $user->roles()->detach([$admin->id, $owner->id]);
 ```
 

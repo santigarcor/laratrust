@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Laratrust\Checkers\User;
 
-use Laratrust\Helper;
-use Laratrust\Models\Team;
-use Illuminate\Support\Str;
-use Laratrust\Contracts\Role;
-use UnexpectedValueException;
+use BackedEnum;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphPivot;
+use Illuminate\Support\Str;
+use Laratrust\Contracts\Role;
+use Laratrust\Helper;
+use Laratrust\Models\Team;
+use UnexpectedValueException;
 
 class UserDefaultChecker extends UserChecker
 {
@@ -43,7 +44,7 @@ class UserDefaultChecker extends UserChecker
     }
 
     public function currentUserHasRole(
-        string|array $name,
+        string|array|BackedEnum $name,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
@@ -61,9 +62,9 @@ class UserDefaultChecker extends UserChecker
             foreach ($name as $roleName) {
                 $hasRole = $this->currentUserHasRole($roleName, $team);
 
-                if ($hasRole && !$requireAll) {
+                if ($hasRole && ! $requireAll) {
                     return true;
-                } elseif (!$hasRole && $requireAll) {
+                } elseif (! $hasRole && $requireAll) {
                     return false;
                 }
             }
@@ -86,7 +87,7 @@ class UserDefaultChecker extends UserChecker
     }
 
     public function currentUserHasPermission(
-        string|array $permission,
+        string|array|BackedEnum $permission,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
@@ -104,9 +105,9 @@ class UserDefaultChecker extends UserChecker
             foreach ($permission as $permissionName) {
                 $hasPermission = $this->currentUserHasPermission($permissionName, $team);
 
-                if ($hasPermission && !$requireAll) {
+                if ($hasPermission && ! $requireAll) {
                     return true;
-                } elseif (!$hasPermission && $requireAll) {
+                } elseif (! $hasPermission && $requireAll) {
                     return false;
                 }
             }
@@ -138,8 +139,8 @@ class UserDefaultChecker extends UserChecker
 
     public function currentUserFlushCache()
     {
-        Cache::forget('laratrust_roles_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey());
-        Cache::forget('laratrust_permissions_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey());
+        Cache::forget('laratrust_roles_for_'.$this->userModelCacheKey().'_'.$this->user->getKey());
+        Cache::forget('laratrust_permissions_for_'.$this->userModelCacheKey().'_'.$this->user->getKey());
     }
 
     /**
@@ -147,11 +148,11 @@ class UserDefaultChecker extends UserChecker
      * If it can't bring the roles from the cache,
      * it brings them back from the DB.
      */
-    protected function userCachedRoles():array
+    protected function userCachedRoles(): array
     {
-        $cacheKey = 'laratrust_roles_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey();
+        $cacheKey = 'laratrust_roles_for_'.$this->userModelCacheKey().'_'.$this->user->getKey();
 
-        if (!Config::get('laratrust.cache.enabled')) {
+        if (! Config::get('laratrust.cache.enabled')) {
             return $this->user->roles()->get()->toArray();
         }
 
@@ -167,9 +168,9 @@ class UserDefaultChecker extends UserChecker
      */
     public function userCachedPermissions(): array
     {
-        $cacheKey = 'laratrust_permissions_for_'.$this->userModelCacheKey() .'_'. $this->user->getKey();
+        $cacheKey = 'laratrust_permissions_for_'.$this->userModelCacheKey().'_'.$this->user->getKey();
 
-        if (!Config::get('laratrust.cache.enabled')) {
+        if (! Config::get('laratrust.cache.enabled')) {
             return $this->user->permissions()->get()->toArray();
         }
 
@@ -199,13 +200,13 @@ class UserDefaultChecker extends UserChecker
     /**
      * Creates a model from an array filled with the class data.
      */
-    private function hidrateRole(string $class, Model|array $data):Role
+    private function hidrateRole(string $class, Model|array $data): Role
     {
         if ($data instanceof Model) {
             return $data;
         }
 
-        if (!isset($data['pivot'])) {
+        if (! isset($data['pivot'])) {
             throw new \Exception("The 'pivot' attribute in the {$class} is hidden");
         }
 
@@ -224,13 +225,13 @@ class UserDefaultChecker extends UserChecker
     }
 
     /**
-    * Check if a role or permission is added to the user in a same team.
-    */
+     * Check if a role or permission is added to the user in a same team.
+     */
     private function isInSameTeam($rolePermission, int|string $teamId = null): bool
     {
         if (
-            !Config::get('laratrust.teams.enabled')
-            || (!Config::get('laratrust.teams.strict_check') && !$teamId)
+            ! Config::get('laratrust.teams.enabled')
+            || (! Config::get('laratrust.teams.strict_check') && ! $teamId)
         ) {
             return true;
         }

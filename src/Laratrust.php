@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust;
 
-use Laratrust\Contracts\LaratrustUser;
+use BackedEnum;
 use Illuminate\Contracts\Foundation\Application;
+use Laratrust\Contracts\LaratrustUser;
 
 /**
  * This class is the main entry point of laratrust. Usually this the interaction
@@ -22,7 +25,7 @@ class Laratrust
      * Checks if the current user has a role by its name.
      */
     public function hasRole(
-        string|array $role,
+        string|array|BackedEnum $role,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
@@ -37,7 +40,7 @@ class Laratrust
      * Check if the current user has a permission by its name.
      */
     public function hasPermission(
-        string|array $permission,
+        string|array|BackedEnum $permission,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
