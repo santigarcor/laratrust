@@ -2,12 +2,12 @@
 
 namespace Laratrust\Http\Controllers;
 
-use Laratrust\Helper;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\View;
+use Laratrust\Helper;
 
 class RolesController
 {
@@ -49,7 +49,7 @@ class RolesController
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:' . config('laratrust.tables.roles', 'roles') . ',name',
+            'name' => 'required|string|unique:'.config('laratrust.tables.roles', 'roles').',name',
             'display_name' => 'nullable|string',
             'description' => 'nullable|string',
         ]);
@@ -58,6 +58,7 @@ class RolesController
         $role->syncPermissions($request->get('permissions') ?? []);
 
         Session::flash('laratrust-success', 'Role created successfully');
+
         return redirect(route('laratrust.roles.index'));
     }
 
@@ -67,8 +68,9 @@ class RolesController
             ->with('permissions:id')
             ->findOrFail($id);
 
-        if (!Helper::roleIsEditable($role)) {
+        if (! Helper::roleIsEditable($role)) {
             Session::flash('laratrust-error', 'The role is not editable');
+
             return redirect()->back();
         }
 
@@ -92,8 +94,9 @@ class RolesController
     {
         $role = $this->rolesModel::findOrFail($id);
 
-        if (!Helper::roleIsEditable($role)) {
+        if (! Helper::roleIsEditable($role)) {
             Session::flash('laratrust-error', 'The role is not editable');
+
             return redirect()->back();
         }
 
@@ -106,6 +109,7 @@ class RolesController
         $role->syncPermissions($request->get('permissions') ?? []);
 
         Session::flash('laratrust-success', 'Role updated successfully');
+
         return redirect(route('laratrust.roles.index'));
     }
 
@@ -116,8 +120,9 @@ class RolesController
             ->count();
         $role = $this->rolesModel::findOrFail($id);
 
-        if (!Helper::roleIsDeletable($role)) {
+        if (! Helper::roleIsDeletable($role)) {
             Session::flash('laratrust-error', 'The role is not deletable');
+
             return redirect()->back();
         }
 

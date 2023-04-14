@@ -25,8 +25,8 @@ interface Role
     /**
      * Checks if the role has a permission by its name.
      *
-     * @param string|array|BackedEnum $permission Permission name or array of permission names.
-     * @param bool $requireAll All permissions in the array are required.
+     * @param  string|array|BackedEnum  $permission  Permission name or array of permission names.
+     * @param  bool  $requireAll  All permissions in the array are required.
      */
     public function hasPermission(string|array|BackedEnum $permission, bool $requireAll = false): bool;
 
@@ -51,7 +51,7 @@ interface Role
     public function givePermissions(iterable $permissions): static;
 
     /**
-     * Detach multiple permissions from current role
+     * Detach multiple permissions from current role.
      */
     public function removePermissions(iterable $permissions = null): static;
 }

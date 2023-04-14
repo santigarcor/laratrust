@@ -209,7 +209,7 @@ trait HasRolesAndPermissions
     /**
      * Checks role(s) and permission(s).
      *
-     * @param  array  $options validate_all{true|false} or return_type{boolean|array|both}
+     * @param  array  $options  validate_all{true|false} or return_type{boolean|array|both}
      *
      * @throws \InvalidArgumentException
      */

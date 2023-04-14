@@ -180,7 +180,7 @@ class UserDefaultChecker extends UserChecker
     }
 
     /**
-     * Tries return key name for user_models
+     * Tries return key name for user_models.
      *
      * @return string|void default key user
      */

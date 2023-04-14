@@ -35,11 +35,12 @@ class UpgradeCommand extends Command
      */
     public function handle()
     {
-        $this->info("There is nothing to upgrade through the command.");
+        $this->info('There is nothing to upgrade through the command.');
+
         return;
 
         $this->line('');
-        $this->info("The Laratrust upgrade migration will be created in the database/migration directory");
+        $this->info('The Laratrust upgrade migration will be created in the database/migration directory');
 
         $existingMigrations = $this->alreadyExistingMigrations();
 
@@ -51,20 +52,20 @@ class UpgradeCommand extends Command
 
         $this->line('');
 
-        if (! $this->confirm("Proceed with the migration creation?", "yes")) {
+        if (! $this->confirm('Proceed with the migration creation?', 'yes')) {
             return;
         }
 
         $this->line('');
 
-        $this->info("Creating migration...");
+        $this->info('Creating migration...');
 
         if ($this->createMigration()) {
-            $this->info("Migration successfully created!");
+            $this->info('Migration successfully created!');
         } else {
             $this->error(
                 "Couldn't create migration.\n".
-                "Check the write permissions within the database/migrations directory."
+                'Check the write permissions within the database/migrations directory.'
             );
         }
 
@@ -86,9 +87,10 @@ class UpgradeCommand extends Command
             ->with(['laratrust' => Config::get('laratrust')])
             ->render();
 
-        if (!file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
+        if (! file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
             fwrite($fs, $output);
             fclose($fs);
+
             return true;
         }
 
@@ -99,7 +101,7 @@ class UpgradeCommand extends Command
      * Build a warning regarding possible duplication
      * due to already existing migrations.
      *
-     * @param  array $existingMigrations
+     * @param  array  $existingMigrations
      * @return string
      */
     protected function getExistingMigrationsWarning(array $existingMigrations)
@@ -110,8 +112,8 @@ class UpgradeCommand extends Command
             $base = "Laratrust upgrade migration already exists.\nFollowing file was found: ";
         }
 
-        return $base . array_reduce($existingMigrations, function ($carry, $fileName) {
-            return $carry . "\n - " . $fileName;
+        return $base.array_reduce($existingMigrations, function ($carry, $fileName) {
+            return $carry."\n - ".$fileName;
         });
     }
 
@@ -136,7 +138,7 @@ class UpgradeCommand extends Command
      * The date parameter is optional for ability
      * to provide a custom value or a wildcard.
      *
-     * @param  string|null $date
+     * @param  string|null  $date
      * @return string
      */
     protected function getMigrationPath($date = null)

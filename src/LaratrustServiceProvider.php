@@ -152,7 +152,7 @@ class LaratrustServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register permissions to Laravel Gate
+     * Register permissions to Laravel Gate.
      *
      * @return void
      */
