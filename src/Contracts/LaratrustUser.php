@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Laratrust\Contracts;
 
-use Ramsey\Uuid\UuidInterface;
-use Illuminate\Support\Collection;
+use BackedEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Collection;
+use Ramsey\Uuid\UuidInterface;
 
 interface LaratrustUser
 {
@@ -25,7 +26,7 @@ interface LaratrustUser
      * Checks if the user has a role by its name.
      */
     public function hasRole(
-        string|array $name,
+        string|array|BackedEnum $name,
         mixed $team = null,
         bool $requireAll = false
     ): bool;
@@ -34,7 +35,7 @@ interface LaratrustUser
      * Check if user has a permission by its name.
      */
     public function hasPermission(
-        string|array $permission,
+        string|array|BackedEnum $permission,
         mixed $team = null,
         bool $requireAll = false
     ): bool;
@@ -43,7 +44,7 @@ interface LaratrustUser
      * Check if user has a permission by its name.
      */
     public function isAbleTo(
-        string|array $permission,
+        string|array|BackedEnum $permission,
         mixed $team = null,
         bool $requireAll = false
     ): bool;
@@ -51,12 +52,13 @@ interface LaratrustUser
     /**
      * Checks role(s) and permission(s).
      *
-     * @param  array  $options validate_all{true|false} or return_type{boolean|array|both}
+     * @param  array  $options  validate_all{true|false} or return_type{boolean|array|both}
+     *
      * @throws \InvalidArgumentException
      */
     public function ability(
-        string|array $roles,
-        string|array $permissions,
+        string|array|BackedEnum $roles,
+        string|array|BackedEnum $permissions,
         mixed $team = null,
         array $options = []
     ): array|bool;
@@ -65,7 +67,7 @@ interface LaratrustUser
      * Add a role to the user.
      */
     public function addRole(
-        array|string|int|Model|UuidInterface $role,
+        array|string|int|Model|UuidInterface|BackedEnum $role,
         mixed $team = null
     ): static;
 
@@ -73,7 +75,7 @@ interface LaratrustUser
      * Remove a role from the user.
      */
     public function removeRole(
-        array|string|int|Model|UuidInterface $role,
+        array|string|int|Model|UuidInterface|BackedEnum $role,
         mixed $team = null
     ): static;
 
@@ -106,7 +108,7 @@ interface LaratrustUser
      * Add direct permissions to the user.
      */
     public function givePermission(
-        array|string|int|Model|UuidInterface $permission,
+        array|string|int|Model|UuidInterface|BackedEnum $permission,
         mixed $team = null
     ): static;
 
@@ -114,7 +116,7 @@ interface LaratrustUser
      * Remove direct permissions from the user.
      */
     public function removePermission(
-        array|string|int|Model|UuidInterface $permission,
+        array|string|int|Model|UuidInterface|BackedEnum $permission,
         mixed $team = null
     ): static;
 

@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace Laratrust\Checkers;
 
-use Laratrust\Contracts\Role;
-use Illuminate\Support\Facades\Config;
-use Laratrust\Contracts\LaratrustUser;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 use Laratrust\Checkers\Role\RoleChecker;
-use Laratrust\Checkers\User\UserChecker;
-use Laratrust\Checkers\Role\RoleQueryChecker;
-use Laratrust\Checkers\User\UserQueryChecker;
 use Laratrust\Checkers\Role\RoleDefaultChecker;
+use Laratrust\Checkers\Role\RoleQueryChecker;
+use Laratrust\Checkers\User\UserChecker;
 use Laratrust\Checkers\User\UserDefaultChecker;
+use Laratrust\Checkers\User\UserQueryChecker;
+use Laratrust\Contracts\LaratrustUser;
+use Laratrust\Contracts\Role;
 
 class CheckersManager
 {
@@ -34,9 +34,10 @@ class CheckersManager
             case 'query':
                 return new UserQueryChecker($this->model);
             default:
-                if (!is_a($checker, UserChecker::class, true)) {
-                    throw new \RuntimeException("User checker must extend UserChecker");
+                if (! is_a($checker, UserChecker::class, true)) {
+                    throw new \RuntimeException('User checker must extend UserChecker');
                 }
+
                 return app()->make($checker, ['user' => $this->model]);
         }
     }
@@ -54,9 +55,10 @@ class CheckersManager
             case 'query':
                 return new RoleQueryChecker($this->model);
             default:
-                if (!is_a($checker, RoleChecker::class, true)) {
-                    throw new \RuntimeException("Role checker must extend RoleChecker");
+                if (! is_a($checker, RoleChecker::class, true)) {
+                    throw new \RuntimeException('Role checker must extend RoleChecker');
                 }
+
                 return app()->make($checker, ['role' => $this->model]);
         }
     }

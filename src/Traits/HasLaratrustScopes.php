@@ -4,22 +4,23 @@ declare(strict_types=1);
 
 namespace Laratrust\Traits;
 
+use BackedEnum;
+use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Config;
 use Laratrust\Helper;
 use Laratrust\Models\Team;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 
 /**
- * @method Builder whereHasRole(string|array $role = '', mixed $team = null, string $boolean = 'and')
- * @method Builder orWhereHasRole(string|array $role = '', mixed $team = null)
- * @method Builder whereHasPermission(string|array $permission = '', string $boolean = 'and')
- * @method Builder orWhereHasPermission(string|array $permission = '')
+ * @method Builder whereHasRole(string|array|BackedEnum $role = '', mixed $team = null, string $boolean = 'and')
+ * @method Builder orWhereHasRole(string|array|BackedEnum $role = '', mixed $team = null)
+ * @method Builder whereHasPermission(string|array|BackedEnum $permission = '', string $boolean = 'and')
+ * @method Builder orWhereHasPermission(string|array|BackedEnum $permission = '')
  * @method Builder whereDoesntHaveRoles()
  * @method Builder whereDoesntHavePermissions()
- * @method static Builder whereHasRole(string|array $role = '', mixed $team = null, string $boolean = 'and')
- * @method static Builder orWhereHasRole(string|array $role = '', mixed $team = null)
- * @method static Builder whereHasPermission(string|array $permission = '', string $boolean = 'and')
- * @method static Builder orWhereHasPermission(string|array $permission = '')
+ * @method static Builder whereHasRole(string|array|BackedEnum $role = '', mixed $team = null, string $boolean = 'and')
+ * @method static Builder orWhereHasRole(string|array|BackedEnum $role = '', mixed $team = null)
+ * @method static Builder whereHasPermission(string|array|BackedEnum $permission = '', string $boolean = 'and')
+ * @method static Builder orWhereHasPermission(string|array|BackedEnum $permission = '')
  * @method static Builder whereDoesntHaveRoles()
  * @method static Builder whereDoesntHavePermissions()
  */
@@ -30,7 +31,7 @@ trait HasLaratrustScopes
      */
     public function scopeWhereHasRole(
         Builder $query,
-        string|array $role = '',
+        string|array|BackedEnum $role = '',
         mixed $team = null,
         string $boolean = 'and'
     ): Builder {
@@ -57,7 +58,7 @@ trait HasLaratrustScopes
      */
     public function scopeOrWhereHasRole(
         Builder $query,
-        string|array $role = '',
+        string|array|BackedEnum $role = '',
         mixed $team = null
     ): Builder {
         return $this->scopeWhereHasRole($query, $role, $team, 'or');
@@ -68,7 +69,7 @@ trait HasLaratrustScopes
      */
     public function scopeWhereHasPermission(
         Builder $query,
-        string|array $permission = '',
+        string|array|BackedEnum $permission = '',
         mixed $team = null,
         string $boolean = 'and'
     ): Builder {
@@ -111,7 +112,7 @@ trait HasLaratrustScopes
      */
     public function scopeOrWhereHasPermission(
         Builder $query,
-        string|array $permission = '',
+        string|array|BackedEnum $permission = '',
         mixed $team = null
     ): Builder {
         return $this->scopeWhereHasPermission($query, $permission, $team, 'or');

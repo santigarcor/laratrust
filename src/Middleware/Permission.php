@@ -17,7 +17,7 @@ class Permission extends LaratrustMiddleware
         ?string $team = null,
         ?string $options = ''
     ) {
-        if (!$this->authorization('permissions', $permissions, $team, $options)) {
+        if (! $this->authorization('permissions', $permissions, $team, $options)) {
             return $this->unauthorized();
         }
 

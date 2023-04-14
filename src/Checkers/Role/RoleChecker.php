@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Checkers\Role;
 
-use Laratrust\Contracts\Role;
+use BackedEnum;
 use Illuminate\Database\Eloquent\Model;
+use Laratrust\Contracts\Role;
 
 abstract class RoleChecker
 {
@@ -12,7 +15,7 @@ abstract class RoleChecker
     }
 
     abstract public function currentRoleHasPermission(
-        string|array $permission,
+        string|array|BackedEnum $permission,
         bool $requireAll = false
     ): bool;
 

@@ -3,9 +3,9 @@
 namespace Laratrust\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\View;
 
 class PermissionsController
 {
@@ -35,15 +35,15 @@ class PermissionsController
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:' . config('laratrust.tables.roles', 'roles') . ',name',
+            'name' => 'required|string|unique:'.config('laratrust.tables.roles', 'roles').',name',
             'display_name' => 'nullable|string',
             'description' => 'nullable|string',
         ]);
 
         $permission = $this->permissionModel::create($data);
 
-
         Session::flash('laratrust-success', 'Permission created successfully');
+
         return redirect(route('laratrust.permissions.index'));
     }
 
@@ -69,6 +69,7 @@ class PermissionsController
         $permission->update($data);
 
         Session::flash('laratrust-success', 'Permission updated successfully');
+
         return redirect(route('laratrust.permissions.index'));
     }
 }

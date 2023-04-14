@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Checkers\User;
 
+use Illuminate\Support\Facades\Cache;
+use Laratrust\Tests\Enums\Permission as EnumsPermission;
+use Laratrust\Tests\Enums\Role as EnumsRole;
+use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
-use Illuminate\Support\Facades\Cache;
-use Laratrust\Tests\LaratrustTestCase;
-use Laratrust\Tests\Models\Permission;
 
-class CheckerTestCase extends LaratrustTestCase
+abstract class CheckerTestCase extends LaratrustTestCase
 {
     protected User $user;
 
@@ -36,7 +38,7 @@ class CheckerTestCase extends LaratrustTestCase
         $roles = [
             Role::create(['name' => 'role_a'])->id => ['team_id' => null],
             Role::create(['name' => 'role_b'])->id => ['team_id' => null],
-            Role::create(['name' => 'role_c'])->id => ['team_id' => $team->id ]
+            Role::create(['name' => 'role_c'])->id => ['team_id' => $team->id],
         ];
         $this->app['config']->set('laratrust.teams.enabled', true);
         $this->user->roles()->attach($roles);
@@ -72,7 +74,7 @@ class CheckerTestCase extends LaratrustTestCase
         $roles = [
             Role::create(['name' => 'role_a'])->id => ['team_id' => null],
             Role::create(['name' => 'role_b'])->id => ['team_id' => null],
-            Role::create(['name' => 'role_c'])->id => ['team_id' => $team->id ]
+            Role::create(['name' => 'role_c'])->id => ['team_id' => $team->id],
         ];
         $this->app['config']->set('laratrust.teams.enabled', true);
         $this->user->roles()->attach($roles);
@@ -83,17 +85,17 @@ class CheckerTestCase extends LaratrustTestCase
         |------------------------------------------------------------
         */
         $this->assertTrue($this->user->hasRole([]));
-        $this->assertTrue($this->user->hasRole('role_a'));
+        $this->assertTrue($this->user->hasRole(EnumsRole::ROLE_A));
         $this->assertTrue($this->user->hasRole('role_b'));
         $this->assertTrue($this->user->hasRole('role_c'));
         $this->app['config']->set('laratrust.teams.strict_check', true);
         $this->assertFalse($this->user->hasRole('role_c'));
         $this->app['config']->set('laratrust.teams.strict_check', false);
         $this->assertTrue($this->user->hasRole('role_c', 'team_a'));
-        $this->assertFalse($this->user->hasRole('role_a', 'team_a'));
+        $this->assertFalse($this->user->hasRole(EnumsRole::ROLE_A, 'team_a'));
 
         $this->assertTrue($this->user->hasRole('role_a|role_b'));
-        $this->assertTrue($this->user->hasRole(['role_a', 'role_b']));
+        $this->assertTrue($this->user->hasRole([EnumsRole::ROLE_A, 'role_b']));
         $this->assertTrue($this->user->hasRole(['role_a', 'role_c']));
         $this->assertTrue($this->user->hasRole(['role_a', 'role_c'], 'team_a'));
         $this->assertFalse($this->user->hasRole(['role_a', 'role_c'], 'team_a', true));
@@ -126,11 +128,11 @@ class CheckerTestCase extends LaratrustTestCase
 
         $this->user->roles()->attach([
             $roleA->id => ['team_id' => null],
-            $roleB->id => ['team_id' => $team->id ]
+            $roleB->id => ['team_id' => $team->id],
         ]);
 
         $this->user->permissions()->attach([
-            Permission::create(['name' => 'permission_c'])->id => ['team_id' => $team->id ],
+            Permission::create(['name' => 'permission_c'])->id => ['team_id' => $team->id],
             Permission::create(['name' => 'permission_d'])->id => ['team_id' => null],
         ]);
 
@@ -140,7 +142,7 @@ class CheckerTestCase extends LaratrustTestCase
         |------------------------------------------------------------
         */
         $this->assertTrue($this->user->hasPermission([]));
-        $this->assertTrue($this->user->hasPermission('permission_a'));
+        $this->assertTrue($this->user->hasPermission(EnumsPermission::PERM_A));
         $this->assertTrue($this->user->hasPermission('permission_b', 'team_a'));
         $this->assertTrue($this->user->hasPermission('permission_b', $team));
         $this->app['config']->set('laratrust.teams.strict_check', true);
@@ -152,11 +154,11 @@ class CheckerTestCase extends LaratrustTestCase
         $this->assertTrue($this->user->hasPermission('permission_d'));
         $this->assertFalse($this->user->hasPermission('permission_e'));
 
-        $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_c', 'permission_d', 'permission_e']));
+        $this->assertTrue($this->user->hasPermission([EnumsPermission::PERM_A, 'permission_b', 'permission_c', 'permission_d', 'permission_e']));
         $this->assertTrue($this->user->hasPermission('permission_a|permission_b|permission_c|permission_d|permission_e'));
         $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_d'], requireAll: true));
         $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], requireAll: true));
-        $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], 'team_a', true));
+        $this->assertFalse($this->user->hasPermission([EnumsPermission::PERM_A, 'permission_b', 'permission_d'], 'team_a', true));
         $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], $team, true));
         $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b', 'permission_e'], requireAll: true));
         $this->assertFalse($this->user->hasPermission(['permission_e', 'permission_f']));
@@ -189,7 +191,7 @@ class CheckerTestCase extends LaratrustTestCase
         $this->user->roles()->attach($role->id);
 
         $this->user->permissions()->attach([
-            Permission::create(['name' => 'config.things'])->id => ['team_id' => $team->id ],
+            Permission::create(['name' => 'config.things'])->id => ['team_id' => $team->id],
             Permission::create(['name' => 'config.another_things'])->id => ['team_id' => $team->id],
         ]);
 
@@ -228,7 +230,7 @@ class CheckerTestCase extends LaratrustTestCase
         $this->user->roles()->attach($role->id);
 
         $this->user->permissions()->attach([
-            Permission::create(['name' => 'permission_d'])->id => ['team_id' => $team->id ],
+            Permission::create(['name' => 'permission_d'])->id => ['team_id' => $team->id],
             Permission::create(['name' => 'permission_e'])->id => ['team_id' => $team->id],
         ]);
 

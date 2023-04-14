@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Laratrust\Traits;
 
-use Laratrust\Helper;
-use Laratrust\Models\Team;
-use Illuminate\Support\Str;
-use InvalidArgumentException;
-use Ramsey\Uuid\UuidInterface;
+use BackedEnum;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Laratrust\Checkers\CheckersManager;
 use Laratrust\Checkers\User\UserChecker;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Laratrust\Helper;
+use Laratrust\Models\Team;
+use Ramsey\Uuid\UuidInterface;
 
 trait HasRolesAndPermissions
 {
@@ -41,7 +42,7 @@ trait HasRolesAndPermissions
         static::saved($flushCache);
 
         static::deleting(function ($user) {
-            if (method_exists($user, 'bootSoftDeletes') && !$user->forceDeleting) {
+            if (method_exists($user, 'bootSoftDeletes') && ! $user->forceDeleting) {
                 return;
             }
 
@@ -75,7 +76,7 @@ trait HasRolesAndPermissions
      */
     public function rolesTeams(): ?MorphToMany
     {
-        if (!Config::get('laratrust.teams.enabled')) {
+        if (! Config::get('laratrust.teams.enabled')) {
             return null;
         }
 
@@ -94,7 +95,7 @@ trait HasRolesAndPermissions
      */
     public function permissionsTeams(): ?MorphToMany
     {
-        if (!Config::get('laratrust.teams.enabled')) {
+        if (! Config::get('laratrust.teams.enabled')) {
             return null;
         }
 
@@ -108,7 +109,6 @@ trait HasRolesAndPermissions
             ->withPivot(Config::get('laratrust.foreign_keys.permission'));
     }
 
-
     /**
      * Get a collection of all user teams.
      */
@@ -120,7 +120,7 @@ trait HasRolesAndPermissions
             $columns = array_unique($columns);
         }
 
-        if (!Config::get('laratrust.teams.enabled')) {
+        if (! Config::get('laratrust.teams.enabled')) {
             return collect([]);
         }
         $permissionTeams = $this->permissionsTeams()->get($columns);
@@ -128,7 +128,6 @@ trait HasRolesAndPermissions
 
         return $roleTeams->merge($permissionTeams)->unique('id');
     }
-
 
     /**
      * Many-to-Many relations with Permission.
@@ -170,7 +169,7 @@ trait HasRolesAndPermissions
      * Checks if the user has a role by its name.
      */
     public function hasRole(
-        string|array $name,
+        string|array|BackedEnum $name,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
@@ -185,7 +184,7 @@ trait HasRolesAndPermissions
      * Check if user has a permission by its name.
      */
     public function hasPermission(
-        string|array $permission,
+        string|array|BackedEnum $permission,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
@@ -200,7 +199,7 @@ trait HasRolesAndPermissions
      * Check if user has a permission by its name.
      */
     public function isAbleTo(
-        string|array $permission,
+        string|array|BackedEnum $permission,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
@@ -210,12 +209,13 @@ trait HasRolesAndPermissions
     /**
      * Checks role(s) and permission(s).
      *
-     * @param  array  $options validate_all{true|false} or return_type{boolean|array|both}
+     * @param  array  $options  validate_all{true|false} or return_type{boolean|array|both}
+     *
      * @throws \InvalidArgumentException
      */
     public function ability(
-        string|array $roles,
-        string|array $permissions,
+        string|array|BackedEnum $roles,
+        string|array|BackedEnum $permissions,
         mixed $team = null,
         array $options = []
     ): array|bool {
@@ -240,10 +240,10 @@ trait HasRolesAndPermissions
      */
     private function attachModel(
         string $relationship,
-        array|string|int|Model|UuidInterface $object,
+        array|string|int|Model|UuidInterface|BackedEnum $object,
         array|string|int|Model|UuidInterface|null $team
     ): static {
-        if (!$this->isValidRelationship($relationship)) {
+        if (! $this->isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
@@ -281,10 +281,10 @@ trait HasRolesAndPermissions
      */
     private function detachModel(
         string $relationship,
-        array|string|int|Model|UuidInterface $object,
+        array|string|int|Model|UuidInterface|BackedEnum $object,
         array|string|int|Model|UuidInterface|null $team
     ): static {
-        if (!$this->isValidRelationship($relationship)) {
+        if (! $this->isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
@@ -312,11 +312,11 @@ trait HasRolesAndPermissions
      */
     private function syncModels(
         string $relationship,
-        array|string|int|Model|UuidInterface $objects,
+        array|string|int|Model|UuidInterface|BackedEnum $objects,
         array|string|int|Model|UuidInterface|null $team,
         bool $detaching
     ): static {
-        if (!$this->isValidRelationship($relationship)) {
+        if (! $this->isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
@@ -351,7 +351,7 @@ trait HasRolesAndPermissions
      * Add a role to the user.
      */
     public function addRole(
-        array|string|int|Model|UuidInterface $role,
+        array|string|int|Model|UuidInterface|BackedEnum $role,
         mixed $team = null
     ): static {
         return $this->attachModel('roles', $role, $team);
@@ -361,7 +361,7 @@ trait HasRolesAndPermissions
      * Remove a role from the user.
      */
     public function removeRole(
-        array|string|int|Model|UuidInterface $role,
+        array|string|int|Model|UuidInterface|BackedEnum $role,
         mixed $team = null
     ): static {
         return $this->detachModel('roles', $role, $team);
@@ -424,7 +424,7 @@ trait HasRolesAndPermissions
      * Add direct permissions to the user.
      */
     public function givePermission(
-        array|string|int|Model|UuidInterface $permission,
+        array|string|int|Model|UuidInterface|BackedEnum $permission,
         mixed $team = null
     ): static {
         return $this->attachModel('permissions', $permission, $team);
@@ -434,7 +434,7 @@ trait HasRolesAndPermissions
      * Remove direct permissions from the user.
      */
     public function removePermission(
-        array|string|int|Model|UuidInterface $permission,
+        array|string|int|Model|UuidInterface|BackedEnum $permission,
         mixed $team = null
     ): static {
         return $this->detachModel('permissions', $permission, $team);
@@ -461,7 +461,7 @@ trait HasRolesAndPermissions
         array $permissions = [],
         mixed $team = null
     ): static {
-        if (!$permissions) {
+        if (! $permissions) {
             return $this->syncPermissions([], $team);
         }
 
@@ -505,7 +505,7 @@ trait HasRolesAndPermissions
             $columns[] = 'id';
             $columns = array_unique($columns);
         }
-        $withColumns = $columns ? ":" . implode(',', $columns) : '';
+        $withColumns = $columns ? ':'.implode(',', $columns) : '';
 
         $roles = $this->roles()
             ->when(

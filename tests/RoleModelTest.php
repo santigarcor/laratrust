@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Laratrust\Test;
 
-use Laratrust\Tests\Models\Role;
+use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
+use Laratrust\Tests\Models\Role;
 
 class RoleModelTest extends LaratrustTestCase
 {
@@ -40,6 +41,7 @@ class RoleModelTest extends LaratrustTestCase
         $permA = Permission::create(['name' => 'permission_a']);
         $permB = Permission::create(['name' => 'permission_b']);
         $permC = Permission::create(['name' => 'permission_c']);
+        Permission::create(['name' => 'permission_d']);
 
         $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->givePermission($permA));
         $this->assertCount(1, $this->role->permissions()->get()->toArray());
@@ -50,45 +52,56 @@ class RoleModelTest extends LaratrustTestCase
         $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->givePermission($permC->id));
         $this->assertCount(3, $this->role->permissions()->get()->toArray());
 
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->givePermission(EnumsPermission::PERM_D));
+        $this->assertCount(4, $this->role->permissions()->get()->toArray());
+
         $this->expectException('TypeError');
         $this->role->givePermission(true);
     }
 
-    public function testremovePermission()
+    public function testRemovePermission()
     {
         $permA = Permission::create(['name' => 'permission_a']);
         $permB = Permission::create(['name' => 'permission_b']);
         $permC = Permission::create(['name' => 'permission_c']);
-        $this->role->permissions()->attach([$permA->id, $permB->id, $permC->id]);
+        $permD = Permission::create(['name' => 'permission_d']);
+        $this->role->permissions()->attach([$permA->id, $permB->id, $permC->id, $permD->id]);
 
         $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->removePermission($permA));
-        $this->assertCount(2, $this->role->permissions()->get()->toArray());
+        $this->assertCount(3, $this->role->permissions()->get()->toArray());
 
         $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->removePermission($permB->toArray()));
-        $this->assertCount(1, $this->role->permissions()->get()->toArray());
+        $this->assertCount(2, $this->role->permissions()->get()->toArray());
 
         $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->removePermission($permB->id));
+        $this->assertCount(2, $this->role->permissions()->get()->toArray());
+
+        $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->removePermission(EnumsPermission::PERM_D));
         $this->assertCount(1, $this->role->permissions()->get()->toArray());
     }
 
     public function testgivePermissions()
     {
+        Permission::create(['name' => 'permission_d']);
         $perms = [
             Permission::create(['name' => 'permission_a']),
             Permission::create(['name' => 'permission_b']),
             Permission::create(['name' => 'permission_c']),
+            EnumsPermission::PERM_D,
         ];
 
         $this->assertInstanceOf('Laratrust\Tests\Models\Role', $this->role->givePermissions($perms));
-        $this->assertCount(3, $this->role->permissions()->get()->toArray());
+        $this->assertCount(4, $this->role->permissions()->get()->toArray());
     }
 
-    public function testremovePermissions()
+    public function testRemovePermissions()
     {
+        Permission::create(['name' => 'permission_d']);
         $perms = [
             Permission::create(['name' => 'permission_a']),
             Permission::create(['name' => 'permission_b']),
             Permission::create(['name' => 'permission_c']),
+            EnumsPermission::PERM_D,
         ];
         $this->role->givePermissions($perms);
 
