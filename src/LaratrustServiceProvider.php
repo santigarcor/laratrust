@@ -7,6 +7,7 @@ namespace Laratrust;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -162,9 +163,16 @@ class LaratrustServiceProvider extends ServiceProvider
             return;
         }
 
-        app(Gate::class)->before(function (Authorizable $user, mixed $ability) {
+        app(Gate::class)->before(function (Authorizable $user, mixed $ability, $attributes) {
             if (method_exists($user, 'hasPermission')) {
-                return $user->hasPermission($ability) ?: null;
+                $team = Collection::make($attributes)
+                    ->filter(fn ($attr) => ! is_bool($attr))
+                    ->first();
+                $requireAll = Collection::make($attributes)
+                    ->filter(fn ($attr) => is_bool($attr))
+                    ->first() || false;
+
+                return $user->hasPermission($ability, $team, $requireAll) ?: null;
             }
         });
     }

@@ -8,9 +8,10 @@ use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
+use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
 
-abstract class CanCheckerTestCase extends LaratrustTestCase
+class CanCheckerTest extends LaratrustTestCase
 {
     protected $user;
 
@@ -19,7 +20,7 @@ abstract class CanCheckerTestCase extends LaratrustTestCase
         parent::setUp();
 
         $this->migrate();
-
+        Team::create(['name' => 'team_a']);
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);
 
@@ -31,7 +32,16 @@ abstract class CanCheckerTestCase extends LaratrustTestCase
         $this->user->addRole($role);
     }
 
-    protected function canShouldReturnBooleanAssertions()
+    protected function getEnvironmentSetUp($app)
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $app['config']->set('laratrust.teams.enabled', true);
+        $app['config']->set('laratrust.checker', 'default');
+        $app['config']->set('laratrust.permissions_as_gates', true);
+    }
+
+    public function testCanShouldReturnBoolean()
     {
         /*
         |------------------------------------------------------------
@@ -41,8 +51,12 @@ abstract class CanCheckerTestCase extends LaratrustTestCase
         // Case: User has everything.
         $this->assertTrue(
             $this->user->can(
-                [EnumsPermission::PERM_A, 'permission_b']
+                [EnumsPermission::PERM_A->value, 'permission_b']
             )
+        );
+
+        $this->assertFalse(
+            $this->user->can(EnumsPermission::PERM_A->value, ['team_a'])
         );
 
         // Case: User lacks a permission.
