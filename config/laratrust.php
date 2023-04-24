@@ -293,7 +293,7 @@ return [
         | will be accessible from.
         |
         */
-        'domain' => env('LARATRUST_PANEL_DOMAIN', env('LARATRUST_PANEL_DOMAIN', (app()->runningInConsole() === false) ? request()->getHost() : 'localhost')),
+        'domain' => env('LARATRUST_PANEL_DOMAIN'),
 
         /*
         |--------------------------------------------------------------------------
