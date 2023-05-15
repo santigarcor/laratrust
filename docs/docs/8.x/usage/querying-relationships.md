@@ -85,7 +85,7 @@ $users = User::whereHasPermission(['edit-user', 'create-user'])->get();
 To retrive all the users that don't have any roles or permissions you can use:
 
 ```php
-User::whereDoesntHaveRole()->get();
+User::whereDoesntHaveRoles()->get();
 
 User::whereDoesntHavePermission()->get();
 ```
