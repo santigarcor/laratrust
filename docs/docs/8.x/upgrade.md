@@ -45,7 +45,9 @@ In order to upgrade from Laratrust 7.x to 8.x you have to follow these steps:
 | Old                | New                |
 | :----------------- | :----------------- |
 | `attachPermission` | `givePermission`   |
+| `attachPermissions`| `givePermissions`  |
 | `detachPermission` | `removePermission` |
+| `detachPermissions`| `removePermissions`|
 | `attachRole`       | `addRole`          |
 | `detachRole`       | `removeRole`       |
 
