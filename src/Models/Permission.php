@@ -22,6 +22,12 @@ class Permission extends Model implements PermissionContract
      */
     protected $table;
 
+    protected $fillable = [
+        'name',
+        'display_name',
+        'description'
+    ];
+
     /**
      * Creates a new instance of the model.
      */
