@@ -22,7 +22,7 @@ class Team extends Model implements TeamContract
     protected $fillable = [
         'name',
         'display_name',
-        'description'
+        'description',
     ];
 
     /**

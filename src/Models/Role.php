@@ -32,7 +32,7 @@ class Role extends Model implements RoleContract
     protected $fillable = [
         'name',
         'display_name',
-        'description'
+        'description',
     ];
 
     /**
