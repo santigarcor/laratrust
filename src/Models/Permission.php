@@ -25,7 +25,7 @@ class Permission extends Model implements PermissionContract
     protected $fillable = [
         'name',
         'display_name',
-        'description'
+        'description',
     ];
 
     /**
