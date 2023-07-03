@@ -19,6 +19,12 @@ class Team extends Model implements TeamContract
      */
     protected $table;
 
+    protected $fillable = [
+        'name',
+        'display_name',
+        'description'
+    ];
+
     /**
      * Creates a new instance of the model.
      *
