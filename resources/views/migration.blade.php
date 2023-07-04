@@ -46,7 +46,14 @@ class LaratrustSetupTables extends Migration
         // Create table for associating roles to users and teams (Many To Many Polymorphic)
         Schema::create('{{ $laratrust['tables']['role_user'] }}', function (Blueprint $table) {
             $table->unsignedBigInteger('{{ $laratrust['foreign_keys']['role'] }}');
+@if ($laratrust['user_foreign_key_type'] === 'integer')
             $table->unsignedBigInteger('{{ $laratrust['foreign_keys']['user'] }}');
+@endif
+
+@if ($laratrust['user_foreign_key_type'] === 'uuid')
+            $table->uuid('{{ $laratrust['foreign_keys']['user'] }}');
+@endif
+
             $table->string('user_type');
 @if ($laratrust['teams']['enabled'])
             $table->unsignedBigInteger('{{ $laratrust['foreign_keys']['team'] }}')->nullable();
@@ -68,7 +75,13 @@ class LaratrustSetupTables extends Migration
         // Create table for associating permissions to users (Many To Many Polymorphic)
         Schema::create('{{ $laratrust['tables']['permission_user'] }}', function (Blueprint $table) {
             $table->unsignedBigInteger('{{ $laratrust['foreign_keys']['permission'] }}');
+@if ($laratrust['user_foreign_key_type'] === 'integer')
             $table->unsignedBigInteger('{{ $laratrust['foreign_keys']['user'] }}');
+@endif
+
+@if ($laratrust['user_foreign_key_type'] === 'uuid')
+            $table->uuid('{{ $laratrust['foreign_keys']['user'] }}');
+@endif
             $table->string('user_type');
 @if ($laratrust['teams']['enabled'])
             $table->unsignedBigInteger('{{ $laratrust['foreign_keys']['team'] }}')->nullable();

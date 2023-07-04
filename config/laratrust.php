@@ -182,6 +182,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | User Foreign Key Type
+    |--------------------------------------------------------------------------
+    |
+    | This configures the data type to be used to set up the user foreign key constraint. example uuid or integer
+    | Default value is integer
+    |
+    */
+    'user_foreign_key_type' => 'integer', //uuid or integer
+
+    /*
+    |--------------------------------------------------------------------------
     | Laratrust Middleware
     |--------------------------------------------------------------------------
     |
