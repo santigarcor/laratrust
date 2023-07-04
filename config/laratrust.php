@@ -189,7 +189,7 @@ return [
     | Default value is integer
     |
     */
-    'user_foreign_key_type' => 'integer', //uuid or integer
+    'user_primary_key_type' => 'integer', //uuid or integer
 
     /*
     |--------------------------------------------------------------------------
