@@ -60,4 +60,15 @@ In order to upgrade from Laratrust 7.x to 8.x you have to follow these steps:
 | `permissionAttached` | `permissionAdded`   |
 | `permissionDetached` | `permissionRemoved` |
 
+11. The Querying relation signatures have been changed. Follow this table to migrate them.
+
+| Old                  | New                    |
+| :------------------- | :--------------------- |
+| `whereRoleIs`        | `whereHasRole`         |
+| `orWhereRoleIs`      | `orWhereHasRole`       |
+| `wherePermissionIs`  | `whereHasPermission`   |
+| `orWherePermissionIs`| `orWhereHasPermission` |
+| `whereDoesntHaveRole`| `whereDoesntHaveRoles` |
+    
+
 Now you can use the 8.x version without any problem.
