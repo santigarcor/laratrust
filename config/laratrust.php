@@ -76,6 +76,18 @@ return [
 
         /*
         |--------------------------------------------------------------------------
+        | Cache Key Prefix
+        |--------------------------------------------------------------------------
+        |
+        | In SAAS applications where the same code is shared for all tenants
+        | it is necessary to have a cache prefix.
+        | For that reason, you can prepend each cache key to avoid collisions.
+        |
+        */
+        'prefix' => env('LARATRUST_CACHE_PREFIX', 'laratrust_cache_prefix_'),
+
+        /*
+        |--------------------------------------------------------------------------
         | Time to store in cache Laratrust's roles and permissions.
         |--------------------------------------------------------------------------
         |

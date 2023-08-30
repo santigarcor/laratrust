@@ -139,8 +139,8 @@ class UserDefaultChecker extends UserChecker
 
     public function currentUserFlushCache()
     {
-        Cache::forget('laratrust_roles_for_'.$this->userModelCacheKey().'_'.$this->user->getKey());
-        Cache::forget('laratrust_permissions_for_'.$this->userModelCacheKey().'_'.$this->user->getKey());
+        Cache::forget(Config::get('laratrust.cache.prefix').'laratrust_roles_for_'.$this->userModelCacheKey().'_'.$this->user->getKey());
+        Cache::forget(Config::get('laratrust.cache.prefix').'laratrust_permissions_for_'.$this->userModelCacheKey().'_'.$this->user->getKey());
     }
 
     /**
@@ -150,7 +150,7 @@ class UserDefaultChecker extends UserChecker
      */
     protected function userCachedRoles(): array
     {
-        $cacheKey = 'laratrust_roles_for_'.$this->userModelCacheKey().'_'.$this->user->getKey();
+        $cacheKey = Config::get('laratrust.cache.prefix').'laratrust_roles_for_'.$this->userModelCacheKey().'_'.$this->user->getKey();
 
         if (! Config::get('laratrust.cache.enabled')) {
             return $this->user->roles()->get()->toArray();
@@ -168,7 +168,7 @@ class UserDefaultChecker extends UserChecker
      */
     public function userCachedPermissions(): array
     {
-        $cacheKey = 'laratrust_permissions_for_'.$this->userModelCacheKey().'_'.$this->user->getKey();
+        $cacheKey = Config::get('laratrust.cache.prefix').'laratrust_permissions_for_'.$this->userModelCacheKey().'_'.$this->user->getKey();
 
         if (! Config::get('laratrust.cache.enabled')) {
             return $this->user->permissions()->get()->toArray();
