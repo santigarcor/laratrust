@@ -19,7 +19,7 @@ php artisan vendor:publish --tag=laratrust-assets --force
 
 By default the URL to access the panel is `/laratrust`.
 
-To customize the the URL and other available settings in the panel please go to the `panel` section in the `config/laratrust.php` file.
+To customize the URL and other available settings in the panel please go to the `panel` section in the `config/laratrust.php` file.
 
 ## How to customize the views
 
