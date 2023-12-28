@@ -15,6 +15,11 @@ interface Permission
     public function roles(): BelongsToMany;
 
     /**
+     * Many-to-Many relations with group model.
+     */
+    public function groups(): BelongsToMany;
+
+    /**
      * Morph by Many relationship between the permission and the one of the possible user models.
      */
     public function getMorphByUserRelation(string $relationship): MorphToMany;

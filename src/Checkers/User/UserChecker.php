@@ -22,9 +22,33 @@ abstract class UserChecker
     abstract public function getCurrentUserRoles(mixed $team = null): array;
 
     /**
+     * Get the user groups.
+     */
+    abstract public function getCurrentUserGroups(mixed $team = null): array;
+
+    /**
+     * Get the user permissions.
+     */
+    abstract public function getCurrentUserPermissions(mixed $team = null): array;
+
+    /**
+     * Resolve user permissions.
+     */
+    abstract public function resolvePermissions(): array;
+
+    /**
      * Checks if the user has a role by its name.
      */
     abstract public function currentUserHasRole(
+        string|array|BackedEnum $name,
+        mixed $team = null,
+        bool $requireAll = false
+    ): bool;
+
+    /**
+     * Checks if the user is in a group by its name.
+     */
+    abstract public function currentUserHasGroup(
         string|array|BackedEnum $name,
         mixed $team = null,
         bool $requireAll = false
@@ -39,7 +63,7 @@ abstract class UserChecker
         bool $requireAll = false
     ): bool;
 
-    abstract public function currentUserFlushCache();
+    abstract public function currentUserFlushCache(bool $recreate = true);
 
     /**
      * Assing the real values to the team and requireAllOrOptions parameters.
@@ -110,7 +134,7 @@ abstract class UserChecker
         // If validate all and there is a false in either.
         // Check that if validate all, then there should not be any false.
         // Check that if not validate all, there must be at least one true.
-        if (($options['validate_all'] && ! (in_array(false, $checkedRoles) || in_array(false, $checkedPermissions))) || (! $options['validate_all'] && (in_array(true, $checkedRoles) || in_array(true, $checkedPermissions)))) {
+        if (($options['validate_all'] && !(in_array(false, $checkedRoles) || in_array(false, $checkedPermissions))) || (!$options['validate_all'] && (in_array(true, $checkedRoles) || in_array(true, $checkedPermissions)))) {
             $validateAll = true;
         } else {
             $validateAll = false;
@@ -131,7 +155,7 @@ abstract class UserChecker
     private function validateAndSetOptions(array $options, array $toVerify): array
     {
         foreach ($toVerify as $option => $config) {
-            if (! isset($options[$option])) {
+            if (!isset($options[$option])) {
                 $options[$option] = $config['default'];
 
                 continue;
@@ -140,8 +164,8 @@ abstract class UserChecker
             $ignoredOptions = ['team', 'foreignKeyName'];
 
             if (
-                ! in_array($option, $ignoredOptions)
-                && ! in_array($options[$option], $config['available'], true)
+                !in_array($option, $ignoredOptions)
+                && !in_array($options[$option], $config['available'], true)
             ) {
                 throw new InvalidArgumentException();
             }

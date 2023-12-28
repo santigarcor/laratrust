@@ -40,9 +40,6 @@ class RoleQueryChecker extends RoleChecker
             : $permissionsCount > 0;
     }
 
-    /**
-     * Flush the role's cache.
-     */
     public function currentRoleFlushCache(): void
     {
     }

@@ -31,7 +31,7 @@ class LaratrustMiddleware
         $method = $type == 'roles' ? 'hasRole' : 'hasPermission';
         $rolesPermissions = Helper::standardize($rolesPermissions, true);
 
-        return ! Auth::guard($guard)->guest()
+        return !Auth::guard($guard)->guest()
             && Auth::guard($guard)->user()->$method($rolesPermissions, $team, $requireAll);
     }
 
@@ -50,7 +50,7 @@ class LaratrustMiddleware
         }
 
         $redirect = Redirect::to($handler['url']);
-        if (! empty($handler['message']['content'])) {
+        if (!empty($handler['message']['content'])) {
             $redirect->with($handler['message']['key'], $handler['message']['content']);
         }
 
@@ -83,7 +83,7 @@ class LaratrustMiddleware
         $options = Collection::make(explode('|', $string));
 
         return $options
-            ->reject(fn ($option) => ! Str::contains($option, 'guard:'))
+            ->reject(fn ($option) => !Str::contains($option, 'guard:'))
             ->map(fn ($option) => Str::of($option)->explode(':')->get(1))
             ->first();
     }

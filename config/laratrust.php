@@ -27,11 +27,11 @@ return [
         | Which permissions checker to use.
         |--------------------------------------------------------------------------
         |
-        | Defines if you want to use the roles and permissions checker.
+        | Defines if you want to use the permissions checker.
         | Available:
-        | - default: Check for the roles and permissions using the method that Laratrust
+        | - default: Check for the permissions using the method that Laratrust
         |            has always used.
-        | - query: Check for the roles and permissions using direct queries to the database.
+        | - query: Check for the permissions using direct queries to the database.
         |           This method doesn't support cache yet.
         | - class that extends Laratrust\Checkers\User\UserChecker
         */
@@ -42,15 +42,30 @@ return [
         | Which role checker to use.
         |--------------------------------------------------------------------------
         |
-        | Defines if you want to use the roles and permissions checker.
+        | Defines if you want to use the roles checker.
         | Available:
-        | - default: Check for the roles and permissions using the method that Laratrust
+        | - default: Check for the roles using the method that Laratrust
                      has always used.
-        | - query: Check for the roles and permissions using direct queries to the database.
+        | - query: Check for the roles using direct queries to the database.
         |          This method doesn't support cache yet.
         | - class that extends Laratrust\Checkers\Role\RoleChecker
         */
         'role' => 'default',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Which group checker to use.
+        |--------------------------------------------------------------------------
+        |
+        | Defines if you want to use the groups checker.
+        | Available:
+        | - default: Check for the groups using the method that Laratrust
+                     has always used.
+        | - query: Check for the groups using direct queries to the database.
+        |          This method doesn't support cache yet.
+        | - class that extends Laratrust\Checkers\Role\RoleChecker
+        */
+        'group' => 'default'
     ],
 
     /*
@@ -118,6 +133,8 @@ return [
 
         'permission' => \App\Models\Permission::class,
 
+        'group' => \App\Models\Group::class,
+
         /**
          * Will be used only if the teams functionality is enabled.
          */
@@ -134,6 +151,8 @@ return [
     */
     'tables' => [
 
+        'groups' => 'groups',
+
         'roles' => 'roles',
 
         'permissions' => 'permissions',
@@ -143,11 +162,17 @@ return [
          */
         'teams' => 'teams',
 
+        'group_user' => 'group_user',
+
+        'group_role' => 'group_role',
+
         'role_user' => 'role_user',
 
         'permission_user' => 'permission_user',
 
         'permission_role' => 'permission_role',
+
+        'permission_group' => 'permission_group',
     ],
 
     /*
@@ -168,6 +193,11 @@ return [
          * Role foreign key on Laratrust's role_user and permission_role tables.
          */
         'role' => 'role_id',
+
+        /**
+         * Role foreign key on Laratrust's group_role and permission_group tables.
+         */
+        'group' => 'group_id',
 
         /**
          * Role foreign key on Laratrust's permission_user and permission_role tables.

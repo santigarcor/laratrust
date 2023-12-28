@@ -59,7 +59,7 @@ class Role extends Model implements RoleContract
         static::saved($flushCache);
 
         static::deleting(function ($role) {
-            if (method_exists($role, 'bootSoftDeletes') && ! $role->forceDeleting) {
+            if (method_exists($role, 'bootSoftDeletes') && !$role->forceDeleting) {
                 return;
             }
 
@@ -97,6 +97,16 @@ class Role extends Model implements RoleContract
             Config::get('laratrust.tables.permission_role'),
             Config::get('laratrust.foreign_keys.role'),
             Config::get('laratrust.foreign_keys.permission')
+        );
+    }
+
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Config::get('laratrust.models.group'),
+            Config::get('laratrust.tables.group_role'),
+            Config::get('laratrust.foreign_keys.role'),
+            Config::get('laratrust.foreign_keys.group')
         );
     }
 
@@ -154,7 +164,7 @@ class Role extends Model implements RoleContract
 
     public function removePermissions(iterable $permissions = null): static
     {
-        if (! $permissions) {
+        if (!$permissions) {
             $this->syncPermissions([]);
 
             return $this;

@@ -40,7 +40,7 @@ class Permission extends Model implements PermissionContract
     protected static function booted(): void
     {
         static::deleting(function ($permission) {
-            if (method_exists($permission, 'bootSoftDeletes') && ! $permission->forceDeleting) {
+            if (method_exists($permission, 'bootSoftDeletes') && !$permission->forceDeleting) {
                 return;
             }
 
@@ -62,6 +62,19 @@ class Permission extends Model implements PermissionContract
             Config::get('laratrust.tables.permission_role'),
             Config::get('laratrust.foreign_keys.permission'),
             Config::get('laratrust.foreign_keys.role')
+        );
+    }
+
+    /**
+     * Many-to-Many relations with role model.
+     */
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Config::get('laratrust.models.group'),
+            Config::get('laratrust.tables.permission_group'),
+            Config::get('laratrust.foreign_keys.permission'),
+            Config::get('laratrust.foreign_keys.group')
         );
     }
 

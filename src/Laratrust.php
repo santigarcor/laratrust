@@ -22,6 +22,21 @@ class Laratrust
     }
 
     /**
+     * Checks if the user is in a group by its name.
+     */
+    public function isInGroup(
+        string|array|BackedEnum $group,
+        mixed $team = null,
+        bool $requireAll = false
+    ): bool {
+        if ($user = $this->user()) {
+            return $user->isInGroup($group, $team, $requireAll);
+        }
+
+        return false;
+    }
+
+    /**
      * Checks if the current user has a role by its name.
      */
     public function hasRole(

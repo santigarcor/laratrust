@@ -10,10 +10,13 @@ use Illuminate\Support\Str;
 trait HasLaratrustEvents
 {
     protected static array $laratrustObservables = [
+        'groupAdded',
+        'groupRemoved',
         'roleAdded',
         'roleRemoved',
         'permissionAdded',
         'permissionRemoved',
+        'groupSynced',
         'roleSynced',
         'permissionSynced',
     ];
@@ -27,7 +30,7 @@ trait HasLaratrustEvents
 
         foreach (self::$laratrustObservables as $event) {
             if (method_exists($class, $event)) {
-                static::registerLaratrustEvent(Str::snake($event, '.'), $className.'@'.$event);
+                static::registerLaratrustEvent(Str::snake($event, '.'), $className . '@' . $event);
             }
         }
     }
@@ -36,7 +39,7 @@ trait HasLaratrustEvents
     {
         foreach (self::$laratrustObservables as $event) {
             $event = Str::snake($event, '.');
-            static::$dispatcher->forget("laratrust.{$event}: ".static::class);
+            static::$dispatcher->forget("laratrust.{$event}: " . static::class);
         }
     }
 
@@ -45,12 +48,12 @@ trait HasLaratrustEvents
      */
     protected function fireLaratrustEvent(string $event, array $payload)
     {
-        if (! isset(static::$dispatcher)) {
+        if (!isset(static::$dispatcher)) {
             return true;
         }
 
         return static::$dispatcher->dispatch(
-            "laratrust.{$event}: ".static::class,
+            "laratrust.{$event}: " . static::class,
             $payload
         );
     }
@@ -67,6 +70,22 @@ trait HasLaratrustEvents
 
             static::$dispatcher->listen("laratrust.{$event}: {$name}", $callback);
         }
+    }
+
+    /**
+     * Register a group added laratrust event with the dispatcher.
+     */
+    public static function groupAdded(Closure|string|array $callback): void
+    {
+        static::registerLaratrustEvent('group.added', $callback);
+    }
+
+    /**
+     * Register a group removed laratrust event with the dispatcher.
+     */
+    public static function groupRemoved(Closure|string|array $callback): void
+    {
+        static::registerLaratrustEvent('group.removed', $callback);
     }
 
     /**
@@ -99,6 +118,14 @@ trait HasLaratrustEvents
     public static function permissionRemoved(\Closure|string|array $callback): void
     {
         static::registerLaratrustEvent('permission.removed', $callback);
+    }
+
+    /**
+     * Register a group synced laratrust event with the dispatcher.
+     */
+    public static function groupSynced(\Closure|string|array $callback): void
+    {
+        static::registerLaratrustEvent('group.synced', $callback);
     }
 
     /**

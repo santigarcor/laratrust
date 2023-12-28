@@ -17,7 +17,7 @@ use Laratrust\Helper;
 use Laratrust\Models\Team;
 use Ramsey\Uuid\UuidInterface;
 
-trait HasRolesAndPermissions
+trait HasGroupsAndRolesAndPermissions
 {
     use HasLaratrustEvents;
     use HasLaratrustScopes;
@@ -27,6 +27,7 @@ trait HasRolesAndPermissions
      * remove the many-to-many records when trying to delete.
      * Will NOT delete any records if the user model uses soft deletes.
      */
+    // TODO: Check if needs updates for groups
     public static function bootLaratrustUserTrait(): void
     {
         $flushCache = function ($user) {
@@ -42,13 +43,33 @@ trait HasRolesAndPermissions
         static::saved($flushCache);
 
         static::deleting(function ($user) {
-            if (method_exists($user, 'bootSoftDeletes') && ! $user->forceDeleting) {
+            if (method_exists($user, 'bootSoftDeletes') && !$user->forceDeleting) {
                 return;
             }
 
             $user->roles()->sync([]);
             $user->permissions()->sync([]);
         });
+    }
+
+    /**
+     * Many-to-Many relations with Group.
+     */
+    public function groups(): MorphToMany
+    {
+        $roles = $this->morphToMany(
+            Config::get('laratrust.models.group'),
+            'user',
+            Config::get('laratrust.tables.group_user'),
+            Config::get('laratrust.foreign_keys.user'),
+            Config::get('laratrust.foreign_keys.group')
+        );
+
+        if (Config::get('laratrust.teams.enabled')) {
+            $roles->withPivot(Config::get('laratrust.foreign_keys.team'));
+        }
+
+        return $roles;
     }
 
     /**
@@ -76,7 +97,7 @@ trait HasRolesAndPermissions
      */
     public function rolesTeams(): ?MorphToMany
     {
-        if (! Config::get('laratrust.teams.enabled')) {
+        if (!Config::get('laratrust.teams.enabled')) {
             return null;
         }
 
@@ -95,7 +116,7 @@ trait HasRolesAndPermissions
      */
     public function permissionsTeams(): ?MorphToMany
     {
-        if (! Config::get('laratrust.teams.enabled')) {
+        if (!Config::get('laratrust.teams.enabled')) {
             return null;
         }
 
@@ -120,7 +141,7 @@ trait HasRolesAndPermissions
             $columns = array_unique($columns);
         }
 
-        if (! Config::get('laratrust.teams.enabled')) {
+        if (!Config::get('laratrust.teams.enabled')) {
             return collect([]);
         }
         $permissionTeams = $this->permissionsTeams()->get($columns);
@@ -166,6 +187,22 @@ trait HasRolesAndPermissions
     }
 
     /**
+     * Get the the names of the user's groups.
+     */
+    public function getGroups(mixed $team = null): array
+    {
+        return $this->laratrustUserChecker()->getCurrentUserGroups($team);
+    }
+
+    /**
+     * Get the the names of the user's permissions.
+     */
+    public function getPermissions(mixed $team = null): array
+    {
+        return $this->laratrustUserChecker()->getCurrentUserPermissions($team);
+    }
+
+    /**
      * Checks if the user has a role by its name.
      */
     public function hasRole(
@@ -174,6 +211,21 @@ trait HasRolesAndPermissions
         bool $requireAll = false
     ): bool {
         return $this->laratrustUserChecker()->currentUserHasRole(
+            $name,
+            $team,
+            $requireAll
+        );
+    }
+
+    /**
+     * Checks if the user is in a group by its name.
+     */
+    public function isInGroup(
+        string|array|BackedEnum $name,
+        mixed $team = null,
+        bool $requireAll = false
+    ): bool {
+        return $this->laratrustUserChecker()->currentUserHasGroup(
             $name,
             $team,
             $requireAll
@@ -232,7 +284,7 @@ trait HasRolesAndPermissions
      */
     private function isValidRelationship(string $relationship): bool
     {
-        return in_array($relationship, ['roles', 'permissions']);
+        return in_array($relationship, ['roles', 'permissions', 'groups']);
     }
 
     /**
@@ -243,7 +295,7 @@ trait HasRolesAndPermissions
         array|string|int|Model|UuidInterface|BackedEnum $object,
         array|string|int|Model|UuidInterface|null $team
     ): static {
-        if (! $this->isValidRelationship($relationship)) {
+        if (!$this->isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
@@ -284,7 +336,7 @@ trait HasRolesAndPermissions
         array|string|int|Model|UuidInterface|BackedEnum $object,
         array|string|int|Model|UuidInterface|null $team
     ): static {
-        if (! $this->isValidRelationship($relationship)) {
+        if (!$this->isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
@@ -316,7 +368,7 @@ trait HasRolesAndPermissions
         array|string|int|Model|UuidInterface|null $team,
         bool $detaching
     ): static {
-        if (! $this->isValidRelationship($relationship)) {
+        if (!$this->isValidRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
@@ -358,6 +410,16 @@ trait HasRolesAndPermissions
     }
 
     /**
+     * Add the user to a group.
+     */
+    public function addToGroup(
+        array|string|int|Model|UuidInterface|BackedEnum $group,
+        mixed $team = null
+    ): static {
+        return $this->attachModel('groups', $group, $team);
+    }
+
+    /**
      * Remove a role from the user.
      */
     public function removeRole(
@@ -365,6 +427,16 @@ trait HasRolesAndPermissions
         mixed $team = null
     ): static {
         return $this->detachModel('roles', $role, $team);
+    }
+
+    /**
+     * Remove the user from a group.
+     */
+    public function removeFromGroup(
+        array|string|int|Model|UuidInterface|BackedEnum $group,
+        mixed $team = null
+    ): static {
+        return $this->detachModel('groups', $group, $team);
     }
 
     /**
@@ -376,6 +448,20 @@ trait HasRolesAndPermissions
     ): static {
         foreach ($roles as $role) {
             $this->addRole($role, $team);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Add user to multiple groups.
+     */
+    public function addToGroups(
+        array $groups = [],
+        mixed $team = null
+    ): static {
+        foreach ($groups as $group) {
+            $this->addToGroup($group, $team);
         }
 
         return $this;
@@ -400,6 +486,24 @@ trait HasRolesAndPermissions
     }
 
     /**
+     * Remove user from multiple groups.
+     */
+    public function removeFromGroups(
+        array $groups = [],
+        mixed $team = null
+    ): static {
+        if (empty($groups)) {
+            return $this->syncGroups([], $team);
+        }
+
+        foreach ($groups as $group) {
+            $this->removeFromGroup($group, $team);
+        }
+
+        return $this;
+    }
+
+    /**
      * Sync roles to the user.
      */
     public function syncRoles(
@@ -408,6 +512,17 @@ trait HasRolesAndPermissions
         bool $detaching = true
     ): static {
         return $this->syncModels('roles', $roles, $team, $detaching);
+    }
+
+    /**
+     * Sync groups to the user.
+     */
+    public function syncGroups(
+        array $groups = [],
+        mixed $team = null,
+        bool $detaching = true
+    ): static {
+        return $this->syncModels('groups', $groups, $team, $detaching);
     }
 
     /**
@@ -461,7 +576,7 @@ trait HasRolesAndPermissions
         array $permissions = [],
         mixed $team = null
     ): static {
-        if (! $permissions) {
+        if (!$permissions) {
             return $this->syncPermissions([], $team);
         }
 
@@ -505,7 +620,7 @@ trait HasRolesAndPermissions
             $columns[] = 'id';
             $columns = array_unique($columns);
         }
-        $withColumns = $columns ? ':'.implode(',', $columns) : '';
+        $withColumns = $columns ? ':' . implode(',', $columns) : '';
 
         $roles = $this->roles()
             ->when(
@@ -545,5 +660,13 @@ trait HasRolesAndPermissions
     public function flushCache(): void
     {
         $this->laratrustUserChecker()->currentUserFlushCache();
+    }
+
+    /**
+     * Resolve and cache user's permissions.
+     */
+    public function resolvePermissions(): array
+    {
+        return $this->laratrustUserChecker()->resolvePermissions();
     }
 }

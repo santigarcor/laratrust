@@ -13,6 +13,11 @@ use Ramsey\Uuid\UuidInterface;
 interface LaratrustUser
 {
     /**
+     * Many-to-Many relations with Group.
+     */
+    public function groups(): MorphToMany;
+
+    /**
      * Many-to-Many relations with Role.
      */
     public function roles(): MorphToMany;
@@ -21,6 +26,14 @@ interface LaratrustUser
      * Many-to-Many relations with Permission.
      */
     public function permissions(): MorphToMany;
+
+    /**
+     * Checks if the user is in a group by its name.
+     */
+    public function isInGroup(
+        string|array|BackedEnum $name,
+        bool $requireAll = false
+    ): bool;
 
     /**
      * Checks if the user has a role by its name.
@@ -49,6 +62,7 @@ interface LaratrustUser
         bool $requireAll = false
     ): bool;
 
+    //TODO: Maybe add group?
     /**
      * Checks role(s) and permission(s).
      *
@@ -64,10 +78,26 @@ interface LaratrustUser
     ): array|bool;
 
     /**
+     * Add the user to a group.
+     */
+    public function addToGroup(
+        array|string|int|Model|UuidInterface|BackedEnum $group,
+        mixed $team = null
+    ): static;
+
+    /**
      * Add a role to the user.
      */
     public function addRole(
         array|string|int|Model|UuidInterface|BackedEnum $role,
+        mixed $team = null
+    ): static;
+
+    /**
+     * Remove the user from a group.
+     */
+    public function removeFromGroup(
+        array|string|int|Model|UuidInterface|BackedEnum $group,
         mixed $team = null
     ): static;
 
@@ -88,6 +118,14 @@ interface LaratrustUser
     ): static;
 
     /**
+     * Add user to multiple groups.
+     */
+    public function addToGroups(
+        array $groups = [],
+        mixed $team = null
+    ): static;
+
+    /**
      * Remove multiple roles from a user.
      */
     public function removeRoles(
@@ -96,10 +134,27 @@ interface LaratrustUser
     ): static;
 
     /**
+     * Remove user from multiple groups.
+     */
+    public function removeFromGroups(
+        array $groups = [],
+        mixed $team = null
+    ): static;
+
+    /**
      * Sync roles to the user.
      */
     public function syncRoles(
         array $roles = [],
+        mixed $team = null,
+        bool $detaching = true
+    ): static;
+
+    /**
+     * Sync groups to the user.
+     */
+    public function syncGroups(
+        array $groups = [],
         mixed $team = null,
         bool $detaching = true
     ): static;
@@ -150,5 +205,6 @@ interface LaratrustUser
      *
      * @return Collection<\Laratrust\Contracts\Permission>
      */
+    //TODO: Resolve groups here too
     public function allPermissions(array $columns = null, $team = false): Collection;
 }

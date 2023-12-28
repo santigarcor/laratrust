@@ -1,0 +1,10 @@
+<?php
+
+namespace DummyNamespace;
+
+use Laratrust\Models\Group as GroupModel;
+
+class DummyClass extends GroupModel
+{
+    public $guarded = [];
+}

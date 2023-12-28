@@ -23,6 +23,11 @@ interface Role
     public function permissions(): BelongsToMany;
 
     /**
+     * Many-to-Many relations with the group model.
+     */
+    public function groups(): BelongsToMany;
+
+    /**
      * Checks if the role has a permission by its name.
      *
      * @param  string|array|BackedEnum  $permission  Permission name or array of permission names.
