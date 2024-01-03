@@ -31,7 +31,7 @@ class LaratrustMiddleware
         $method = $type == 'roles' ? 'hasRole' : 'hasPermission';
         $rolesPermissions = Helper::standardize($rolesPermissions, true);
 
-        return ! Auth::guard($guard)->guest()
+        return !Auth::guard($guard)->guest()
             && Auth::guard($guard)->user()->$method($rolesPermissions, $team, $requireAll);
     }
 
@@ -50,7 +50,7 @@ class LaratrustMiddleware
         }
 
         $redirect = Redirect::to($handler['url']);
-        if (! empty($handler['message']['content'])) {
+        if (!empty($handler['message']['content'])) {
             $redirect->with($handler['message']['key'], $handler['message']['content']);
         }
 
@@ -63,12 +63,12 @@ class LaratrustMiddleware
     protected function getValuesFromParameters(?string $team, ?string $options): array
     {
         return [
-            'team' => Str::contains($team, ['require_all', 'guard:']) ? null : $team,
-            'require_all' => Str::contains($team, 'require_all') ?: Str::contains($options, 'require_all'),
-            'guard' => Str::contains($team, 'guard:')
+            'team' => Str::contains((string)$team, ['require_all', 'guard:']) ? null : $team,
+            'require_all' => Str::contains((string)$team, 'require_all') ?: Str::contains((string)$options, 'require_all'),
+            'guard' => Str::contains((string)$team, 'guard:')
                 ? $this->extractGuard($team)
                 : (
-                    Str::contains($options, 'guard:')
+                    Str::contains((string)$options, 'guard:')
                     ? $this->extractGuard($options)
                     : Config::get('auth.defaults.guard')
                 ),
@@ -83,7 +83,7 @@ class LaratrustMiddleware
         $options = Collection::make(explode('|', $string));
 
         return $options
-            ->reject(fn ($option) => ! Str::contains($option, 'guard:'))
+            ->reject(fn ($option) => !Str::contains($option, 'guard:'))
             ->map(fn ($option) => Str::of($option)->explode(':')->get(1))
             ->first();
     }
