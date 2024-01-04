@@ -39,7 +39,6 @@ class RoleTest extends MiddlewareTest
         $user->shouldReceive('hasRole')
             ->with(
                 ['admin', 'user'],
-                m::anyOf(null, 'TeamA'),
                 m::anyOf(true, false)
             )
             ->andReturn(false);
@@ -92,7 +91,6 @@ class RoleTest extends MiddlewareTest
         $user->shouldReceive('hasRole')
             ->with(
                 ['admin', 'user'],
-                m::anyOf(null, 'TeamA'),
                 m::anyOf(true, false)
             )
             ->andReturn(true);
@@ -145,7 +143,6 @@ class RoleTest extends MiddlewareTest
         $user->shouldReceive('hasRole')
             ->with(
                 ['admin', 'user'],
-                m::anyOf(null, 'TeamA'),
                 m::anyOf(true, false)
             )
             ->andReturn(false);
@@ -217,7 +214,6 @@ class RoleTest extends MiddlewareTest
         $user->shouldReceive('hasRole')
             ->with(
                 ['admin', 'user'],
-                m::anyOf(null, 'TeamA'),
                 m::anyOf(true, false)
             )
             ->andReturn(false);

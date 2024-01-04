@@ -122,7 +122,7 @@ return [
     | Laratrust Models
     |--------------------------------------------------------------------------
     |
-    | These are the models used by Laratrust to define the roles, permissions and teams.
+    | These are the models used by Laratrust to define the roles, permissions and groups.
     | If you want the Laratrust models to be in a different namespace or
     | to have a different name, you can do it here.
     |
@@ -134,11 +134,6 @@ return [
         'permission' => \App\Models\Permission::class,
 
         'group' => \App\Models\Group::class,
-
-        /**
-         * Will be used only if the teams functionality is enabled.
-         */
-        'team' => \App\Models\Team::class,
     ],
 
     /*
@@ -156,11 +151,6 @@ return [
         'roles' => 'roles',
 
         'permissions' => 'permissions',
-
-        /**
-         * Will be used only if the teams functionality is enabled.
-         */
-        'teams' => 'teams',
 
         'group_user' => 'group_user',
 
@@ -203,11 +193,6 @@ return [
          * Role foreign key on Laratrust's permission_user and permission_role tables.
          */
         'permission' => 'permission_id',
-
-        /**
-         * Role foreign key on Laratrust's role_user and permission_user tables.
-         */
-        'team' => 'team_id',
     ],
 
     /*
@@ -257,31 +242,6 @@ return [
                 ],
             ],
         ],
-    ],
-
-    'teams' => [
-        /*
-        |--------------------------------------------------------------------------
-        | Use teams feature in the package
-        |--------------------------------------------------------------------------
-        |
-        | Defines if Laratrust will use the teams feature.
-        | Please check the docs to see what you need to do in case you have the package already configured.
-        |
-        */
-        'enabled' => false,
-
-        /*
-        |--------------------------------------------------------------------------
-        | Strict check for roles/permissions inside teams
-        |--------------------------------------------------------------------------
-        |
-        | Determines if a strict check should be done when checking if a role or permission is added inside a team.
-        | If it's false, when checking a role/permission without specifying the team,
-        | it will check only if the user has added that role/permission ignoring the team.
-        |
-        */
-        'strict_check' => false,
     ],
 
     /*

@@ -17,13 +17,6 @@ class Helper
      */
     public static function getIdFor(mixed $object, string $type): int|string|null
     {
-        if (
-            is_null($object)
-            || ($type === 'team' && ! Config::get('laratrust.teams.enabled'))
-        ) {
-            return null;
-        }
-
         if ($object instanceof BackedEnum) {
             $object = $object->value;
         }
@@ -74,7 +67,7 @@ class Helper
             })->toArray();
         }
 
-        if ((strpos($value, '|') === false) && ! $toArray) {
+        if ((strpos($value, '|') === false) && !$toArray) {
             return $value;
         }
 
@@ -119,7 +112,7 @@ class Helper
     {
         $roleName = is_string($role) ? $role : $role->name;
 
-        return ! in_array(
+        return !in_array(
             $roleName,
             Config::get('laratrust.panel.roles_restrictions.not_editable') ?? []
         );
@@ -135,7 +128,7 @@ class Helper
     {
         $roleName = is_string($role) ? $role : $role->name;
 
-        return ! in_array(
+        return !in_array(
             $roleName,
             Config::get('laratrust.panel.roles_restrictions.not_deletable') ?? []
         );
@@ -151,7 +144,7 @@ class Helper
     {
         $roleName = is_string($role) ? $role : $role->name;
 
-        return ! in_array(
+        return !in_array(
             $roleName,
             Config::get('laratrust.panel.roles_restrictions.not_removable') ?? []
         );

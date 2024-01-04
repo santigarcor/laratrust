@@ -14,10 +14,9 @@ class Role extends LaratrustMiddleware
         Request $request,
         Closure $next,
         string|array $roles,
-        ?string $team = null,
         ?string $options = ''
     ) {
-        if (! $this->authorization('roles', $roles, $team, $options)) {
+        if (!$this->authorization('roles', $roles, $options)) {
             return $this->unauthorized();
         }
 

@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 use Laratrust\Traits\LaratrustUserTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laratrust\Contracts\LaratrustUser;
-use Laratrust\Traits\HasRolesAndPermissions;
+use Laratrust\Traits\HasGroupsAndRolesAndPermissions;
 
 class Other extends Model implements LaratrustUser
 {
-    use HasRolesAndPermissions;
+    use HasGroupsAndRolesAndPermissions;
     use SoftDeletes;
 
     protected $guarded = [];

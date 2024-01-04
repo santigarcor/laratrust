@@ -25,8 +25,8 @@ class LaratrustFacadeTest extends LaratrustTestCase
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
         $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
-        $this->user->shouldReceive('hasRole')->with('UserRole', null, false)->andReturn(true)->once();
-        $this->user->shouldReceive('hasRole')->with('NonUserRole', null, false)->andReturn(false)->once();
+        $this->user->shouldReceive('hasRole')->with('UserRole', false)->andReturn(true)->once();
+        $this->user->shouldReceive('hasRole')->with('NonUserRole', false)->andReturn(false)->once();
 
         $this->assertTrue($this->laratrust->hasRole('UserRole'));
         $this->assertFalse($this->laratrust->hasRole('NonUserRole'));
@@ -37,8 +37,8 @@ class LaratrustFacadeTest extends LaratrustTestCase
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
         $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
-        $this->user->shouldReceive('hasPermission')->with('user_can', null, false)->andReturn(true)->once();
-        $this->user->shouldReceive('hasPermission')->with('user_cannot', null, false)->andReturn(false)->once();
+        $this->user->shouldReceive('hasPermission')->with('user_can', false)->andReturn(true)->once();
+        $this->user->shouldReceive('hasPermission')->with('user_cannot', false)->andReturn(false)->once();
 
         $this->assertTrue($this->laratrust->hasPermission('user_can'));
         $this->assertFalse($this->laratrust->hasPermission('user_cannot'));
@@ -49,8 +49,8 @@ class LaratrustFacadeTest extends LaratrustTestCase
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
         $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
-        $this->user->shouldReceive('ability')->with('admin', 'user_can', null, [])->andReturn(true)->once();
-        $this->user->shouldReceive('ability')->with('admin', 'user_cannot', null, [])->andReturn(false)->once();
+        $this->user->shouldReceive('ability')->with('admin', 'user_can', [])->andReturn(true)->once();
+        $this->user->shouldReceive('ability')->with('admin', 'user_cannot', [])->andReturn(false)->once();
 
         $this->assertTrue($this->laratrust->ability('admin', 'user_can'));
         $this->assertFalse($this->laratrust->ability('admin', 'user_cannot'));

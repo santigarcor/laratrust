@@ -33,7 +33,7 @@ class LaratrustTestCase extends TestCase
         $app['config']->set('laratrust.models', [
             'role' => 'Laratrust\Tests\Models\Role',
             'permission' => 'Laratrust\Tests\Models\Permission',
-            'team' => 'Laratrust\Tests\Models\Team',
+            'group' => 'Laratrust\Tests\Models\Group',
         ]);
     }
 

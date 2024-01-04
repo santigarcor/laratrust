@@ -41,10 +41,6 @@ class SetupCommand extends Command
      */
     public function __construct()
     {
-        if (Config::get('laratrust.teams.enabled')) {
-            $this->calls['laratrust:team'] = 'Creating Team model';
-        }
-
         parent::__construct();
     }
 

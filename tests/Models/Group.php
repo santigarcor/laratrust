@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Models;
 
-use Laratrust\Models\Team as TeamModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Laratrust\Models\Group as GroupModel;
 
-class Team extends TeamModel
+class Group extends GroupModel
 {
     use SoftDeletes;
 

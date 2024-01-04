@@ -40,7 +40,6 @@ interface LaratrustUser
      */
     public function hasRole(
         string|array|BackedEnum $name,
-        mixed $team = null,
         bool $requireAll = false
     ): bool;
 
@@ -49,7 +48,6 @@ interface LaratrustUser
      */
     public function hasPermission(
         string|array|BackedEnum $permission,
-        mixed $team = null,
         bool $requireAll = false
     ): bool;
 
@@ -58,11 +56,9 @@ interface LaratrustUser
      */
     public function isAbleTo(
         string|array|BackedEnum $permission,
-        mixed $team = null,
         bool $requireAll = false
     ): bool;
 
-    //TODO: Maybe add group?
     /**
      * Checks role(s) and permission(s).
      *
@@ -70,10 +66,10 @@ interface LaratrustUser
      *
      * @throws \InvalidArgumentException
      */
+    //TODO: Add groups here too
     public function ability(
         string|array|BackedEnum $roles,
         string|array|BackedEnum $permissions,
-        mixed $team = null,
         array $options = []
     ): array|bool;
 
@@ -81,64 +77,56 @@ interface LaratrustUser
      * Add the user to a group.
      */
     public function addToGroup(
-        array|string|int|Model|UuidInterface|BackedEnum $group,
-        mixed $team = null
+        array|string|int|Model|UuidInterface|BackedEnum $group
     ): static;
 
     /**
      * Add a role to the user.
      */
     public function addRole(
-        array|string|int|Model|UuidInterface|BackedEnum $role,
-        mixed $team = null
+        array|string|int|Model|UuidInterface|BackedEnum $role
     ): static;
 
     /**
      * Remove the user from a group.
      */
     public function removeFromGroup(
-        array|string|int|Model|UuidInterface|BackedEnum $group,
-        mixed $team = null
+        array|string|int|Model|UuidInterface|BackedEnum $group
     ): static;
 
     /**
      * Remove a role from the user.
      */
     public function removeRole(
-        array|string|int|Model|UuidInterface|BackedEnum $role,
-        mixed $team = null
+        array|string|int|Model|UuidInterface|BackedEnum $role
     ): static;
 
     /**
      * Add multiple roles to a user.
      */
     public function addRoles(
-        array $roles = [],
-        mixed $team = null
+        array $roles = []
     ): static;
 
     /**
      * Add user to multiple groups.
      */
     public function addToGroups(
-        array $groups = [],
-        mixed $team = null
+        array $groups = []
     ): static;
 
     /**
      * Remove multiple roles from a user.
      */
     public function removeRoles(
-        array $roles = [],
-        mixed $team = null
+        array $roles = []
     ): static;
 
     /**
      * Remove user from multiple groups.
      */
     public function removeFromGroups(
-        array $groups = [],
-        mixed $team = null
+        array $groups = []
     ): static;
 
     /**
@@ -146,7 +134,6 @@ interface LaratrustUser
      */
     public function syncRoles(
         array $roles = [],
-        mixed $team = null,
         bool $detaching = true
     ): static;
 
@@ -155,7 +142,6 @@ interface LaratrustUser
      */
     public function syncGroups(
         array $groups = [],
-        mixed $team = null,
         bool $detaching = true
     ): static;
 
@@ -163,32 +149,28 @@ interface LaratrustUser
      * Add direct permissions to the user.
      */
     public function givePermission(
-        array|string|int|Model|UuidInterface|BackedEnum $permission,
-        mixed $team = null
+        array|string|int|Model|UuidInterface|BackedEnum $permission
     ): static;
 
     /**
      * Remove direct permissions from the user.
      */
     public function removePermission(
-        array|string|int|Model|UuidInterface|BackedEnum $permission,
-        mixed $team = null
+        array|string|int|Model|UuidInterface|BackedEnum $permission
     ): static;
 
     /**
      * Add multiple permissions to the user.
      */
     public function givePermissions(
-        array $permissions = [],
-        mixed $team = null
+        array $permissions = []
     ): static;
 
     /**
      * Remove multiple permissions from the user.
      */
     public function removePermissions(
-        array $permissions = [],
-        mixed $team = null
+        array $permissions = []
     ): static;
 
     /**
@@ -196,7 +178,6 @@ interface LaratrustUser
      */
     public function syncPermissions(
         array $permissions = [],
-        mixed $team = null,
         bool $detaching = true
     ): static;
 
@@ -205,6 +186,5 @@ interface LaratrustUser
      *
      * @return Collection<\Laratrust\Contracts\Permission>
      */
-    //TODO: Resolve groups here too
-    public function allPermissions(array $columns = null, $team = false): Collection;
+    public function allPermissions(array $columns = null): Collection;
 }

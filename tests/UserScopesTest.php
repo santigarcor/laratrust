@@ -6,8 +6,8 @@ namespace Laratrust\Test;
 
 use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\Enums\Role as EnumsRole;
+use Laratrust\Tests\Models\Group;
 use Laratrust\Tests\Models\Role;
-use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
@@ -22,8 +22,6 @@ class UserScopesTest extends LaratrustTestCase
 
         $this->migrate();
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
-
-        $this->app['config']->set('laratrust.teams.enabled', true);
     }
 
 
@@ -33,21 +31,15 @@ class UserScopesTest extends LaratrustTestCase
         $roleB = Role::create(['name' => 'role_b']);
         $roleC = Role::create(['name' => 'role_c']);
         $roleD = Role::create(['name' => 'role_d']);
-        $team = Team::create(['name' => 'team_a']);
+        $group = Group::create(['name' => 'group_a']);
         $this->user->addRoles([$roleA, $roleB]);
-        $this->user->addRole($roleD, $team->id);
+        $group->addRoles([$roleD]);
+        $this->user->addToGroup($group);
 
         $this->assertCount(1, User::whereHasRole([EnumsRole::ROLE_A, 'role_c'])->get());
         $this->assertCount(1, User::whereHasRole([EnumsRole::ROLE_A, 'role_c'])->get());
         $this->assertCount(0, User::whereHasRole(EnumsRole::ROLE_C)->get());
         $this->assertCount(0, User::whereHasRole(['role_c', 'role_x'])->get());
-
-        $this->assertCount(1, User::whereHasRole('role_d', 'team_a')->get());
-
-        $this->app['config']->set('laratrust.teams.strict_check', true);
-        $this->assertCount(0, User::whereHasRole('role_d')->get());
-        $this->assertCount(0, User::whereHasRole(['role_d', 'role_c'])->get());
-        $this->app['config']->set('laratrust.teams.strict_check', false);
         $this->assertCount(1, User::whereHasRole('role_d')->get());
         $this->assertCount(1, User::whereHasRole(['role_d', 'role_c'])->get());
     }
@@ -158,28 +150,20 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(1, User::whereDoesntHavePermissions()->get());
     }
 
-    public function testScopeWherePermissionIsForTeam()
+    public function testScopeWherePermissionIsForGroup()
     {
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);
         $permissionC = Permission::create(['name' => 'permission_c']);
         $roleB = Role::create(['name' => 'role_b']);
-        $teamA = Team::create(['name' => 'team_a']);
-        $teamB = Team::create(['name' => 'team_b']);
+        $groupA = Group::create(['name' => 'group_a']);
+        $groupB = Group::create(['name' => 'group_b']);
 
         $roleB->givePermissions([$permissionB]);
-        $this->user->givePermissions([$permissionA], $teamA);
-        $this->user->addRoles([$roleB], $teamA);
+        $groupA->givePermissions([$permissionA]);
+        $groupA->addRoles([$roleB]);
+        $this->user->addToGroup($groupA);
 
-        $this->app['config']->set('laratrust.teams.strict_check', false);
-        $this->assertCount(1, User::whereHasPermission(['permission_a'], $teamA)->get());
-        $this->assertCount(1, User::whereHasPermission(['permission_b'], $teamA)->get());
-        $this->assertCount(0, User::whereHasPermission(['permission_a'], $teamB)->get());
-        $this->assertCount(0, User::whereHasPermission(['permission_b'], $teamB)->get());
-        $this->app['config']->set('laratrust.teams.strict_check', true);
-        $this->assertCount(0, User::whereHasPermission(['permission_a'])->get());
-        $this->assertCount(0, User::whereHasPermission(['permission_b'])->get());
-        $this->app['config']->set('laratrust.teams.strict_check', false);
         $this->assertCount(1, User::whereHasPermission(['permission_a'])->get());
         $this->assertCount(1, User::whereHasPermission(['permission_b'])->get());
     }

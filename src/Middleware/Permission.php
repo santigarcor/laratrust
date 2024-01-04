@@ -14,10 +14,9 @@ class Permission extends LaratrustMiddleware
         Request $request,
         Closure $next,
         string|array $permissions,
-        ?string $team = null,
         ?string $options = ''
     ) {
-        if (! $this->authorization('permissions', $permissions, $team, $options)) {
+        if (!$this->authorization('permissions', $permissions, $options)) {
             return $this->unauthorized();
         }
 

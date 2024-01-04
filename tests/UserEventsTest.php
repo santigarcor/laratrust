@@ -66,7 +66,7 @@ class UserEventsTest extends EventsTestCase
         User::setEventDispatcher($this->dispatcher);
         $role = Role::create(['name' => 'role']);
 
-        $this->dispatcherShouldFire('role.added', [$this->user, $role->id, null], User::class);
+        $this->dispatcherShouldFire('role.added', [$this->user, $role->id], User::class);
 
         $this->user->addRole($role);
     }
@@ -78,7 +78,7 @@ class UserEventsTest extends EventsTestCase
 
         User::setEventDispatcher($this->dispatcher);
 
-        $this->dispatcherShouldFire('role.removed', [$this->user, $role->id, null], User::class);
+        $this->dispatcherShouldFire('role.removed', [$this->user, $role->id], User::class);
 
         $this->user->removeRole($role);
     }
@@ -89,7 +89,7 @@ class UserEventsTest extends EventsTestCase
 
         User::setEventDispatcher($this->dispatcher);
 
-        $this->dispatcherShouldFire('permission.added', [$this->user, $permission->id, null], User::class);
+        $this->dispatcherShouldFire('permission.added', [$this->user, $permission->id], User::class);
 
         $this->user->givePermission($permission);
     }
@@ -101,7 +101,7 @@ class UserEventsTest extends EventsTestCase
 
         User::setEventDispatcher($this->dispatcher);
 
-        $this->dispatcherShouldFire('permission.removed', [$this->user, $permission->id, null], User::class);
+        $this->dispatcherShouldFire('permission.removed', [$this->user, $permission->id], User::class);
 
         $this->user->removePermission($permission);
     }
@@ -118,8 +118,7 @@ class UserEventsTest extends EventsTestCase
                 'attached' => [$role->id],
                 'detached' => [],
                 'updated' => [],
-            ],
-            null
+            ]
         ], User::class);
 
         $this->user->syncRoles([$role]);
@@ -138,8 +137,7 @@ class UserEventsTest extends EventsTestCase
                 'attached' => [],
                 'detached' => [$permission->id],
                 'updated' => [],
-            ],
-            null
+            ]
         ], User::class);
 
         $this->user->syncPermissions([]);

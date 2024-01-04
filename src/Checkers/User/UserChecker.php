@@ -19,17 +19,17 @@ abstract class UserChecker
     /**
      * Get the user roles.
      */
-    abstract public function getCurrentUserRoles(mixed $team = null): array;
+    abstract public function getCurrentUserRoles(): array;
 
     /**
      * Get the user groups.
      */
-    abstract public function getCurrentUserGroups(mixed $team = null): array;
+    abstract public function getCurrentUserGroups(): array;
 
     /**
      * Get the user permissions.
      */
-    abstract public function getCurrentUserPermissions(mixed $team = null): array;
+    abstract public function getCurrentUserPermissions(): array;
 
     /**
      * Resolve user permissions.
@@ -41,7 +41,6 @@ abstract class UserChecker
      */
     abstract public function currentUserHasRole(
         string|array|BackedEnum $name,
-        mixed $team = null,
         bool $requireAll = false
     ): bool;
 
@@ -50,7 +49,6 @@ abstract class UserChecker
      */
     abstract public function currentUserHasGroup(
         string|array|BackedEnum $name,
-        mixed $team = null,
         bool $requireAll = false
     ): bool;
 
@@ -59,28 +57,10 @@ abstract class UserChecker
      */
     abstract public function currentUserHasPermission(
         string|array|BackedEnum $permission,
-        mixed $team = null,
         bool $requireAll = false
     ): bool;
 
     abstract public function currentUserFlushCache(bool $recreate = true);
-
-    /**
-     * Assing the real values to the team and requireAllOrOptions parameters.
-     */
-    protected function getRealValues(
-        mixed $team,
-        mixed $requireAllOrOptions,
-        string $methodToEvaluate
-    ): array {
-        $requireAllOrOptions = ($methodToEvaluate($team) ? $team : $requireAllOrOptions);
-
-        return [
-            'team' => ($methodToEvaluate($team) ? null : $team),
-            'options' => $requireAllOrOptions,
-            'require_all' => $requireAllOrOptions,
-        ];
-    }
 
     /**
      * Checks role(s) and permission(s).
@@ -92,10 +72,8 @@ abstract class UserChecker
     public function currentUserHasAbility(
         string|array|BackedEnum $roles,
         string|array|BackedEnum $permissions,
-        mixed $team = null,
         array $options = []
     ): array|bool {
-        ['team' => $team, 'options' => $options] = $this->getRealValues($team, $options, 'is_array');
         // Convert string to array if that's what is passed in.
         $roles = Helper::standardize($roles, true);
         $permissions = Helper::standardize($permissions, true);
@@ -113,8 +91,8 @@ abstract class UserChecker
         ]);
 
         if ($options['return_type'] == 'boolean') {
-            $hasRoles = $this->currentUserHasRole($roles, $team, $options['validate_all']);
-            $hasPermissions = $this->currentUserHasPermission($permissions, $team, $options['validate_all']);
+            $hasRoles = $this->currentUserHasRole($roles, $options['validate_all']);
+            $hasPermissions = $this->currentUserHasPermission($permissions, $options['validate_all']);
 
             return $options['validate_all']
                 ? $hasRoles && $hasPermissions
@@ -125,10 +103,10 @@ abstract class UserChecker
         $checkedRoles = [];
         $checkedPermissions = [];
         foreach ($roles as $role) {
-            $checkedRoles[$role] = $this->currentUserHasRole($role, $team);
+            $checkedRoles[$role] = $this->currentUserHasRole($role);
         }
         foreach ($permissions as $permission) {
-            $checkedPermissions[$permission] = $this->currentUserHasPermission($permission, $team);
+            $checkedPermissions[$permission] = $this->currentUserHasPermission($permission);
         }
 
         // If validate all and there is a false in either.
@@ -161,12 +139,7 @@ abstract class UserChecker
                 continue;
             }
 
-            $ignoredOptions = ['team', 'foreignKeyName'];
-
-            if (
-                !in_array($option, $ignoredOptions)
-                && !in_array($options[$option], $config['available'], true)
-            ) {
+            if (!in_array($options[$option], $config['available'], true)) {
                 throw new InvalidArgumentException();
             }
         }

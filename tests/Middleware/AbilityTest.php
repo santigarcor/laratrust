@@ -78,10 +78,10 @@ class AbilityTest extends MiddlewareTest
             ->with(
                 ['admin', 'user'],
                 ['edit-users', 'update-users'],
-                m::anyOf(null, 'TeamA'),
                 m::anyOf(['validate_all' => true], ['validate_all' => false])
             )
             ->andReturn(true);
+        // dd("Here");
 
         $this->assertNull($middleware->handle($this->request, function () {
         }, 'admin|user', 'edit-users|update-users'));

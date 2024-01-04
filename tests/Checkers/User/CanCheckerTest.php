@@ -6,9 +6,9 @@ namespace Laratrust\Tests\Checkers\User;
 
 use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\Group;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
-use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
 
 class CanCheckerTest extends LaratrustTestCase
@@ -20,7 +20,7 @@ class CanCheckerTest extends LaratrustTestCase
         parent::setUp();
 
         $this->migrate();
-        Team::create(['name' => 'team_a']);
+        Group::create(['name' => 'group_a']);
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);
 
@@ -36,7 +36,6 @@ class CanCheckerTest extends LaratrustTestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $app['config']->set('laratrust.teams.enabled', true);
         $app['config']->set('laratrust.checker', 'default');
         $app['config']->set('laratrust.permissions_as_gates', true);
     }
@@ -56,7 +55,7 @@ class CanCheckerTest extends LaratrustTestCase
         );
 
         $this->assertFalse(
-            $this->user->can(EnumsPermission::PERM_A->value, ['team_a'])
+            $this->user->can(EnumsPermission::PERM_C->value)
         );
 
         // Case: User lacks a permission.

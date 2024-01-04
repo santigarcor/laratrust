@@ -39,7 +39,6 @@ class PermissionTest extends MiddlewareTest
         $user->shouldReceive('hasPermission')
             ->with(
                 ['users-create', 'users-update'],
-                m::anyOf(null, 'TeamA'),
                 m::anyOf(true, false)
             )
             ->andReturn(false);
@@ -82,7 +81,6 @@ class PermissionTest extends MiddlewareTest
         $user->shouldReceive('hasPermission')
             ->with(
                 ['users-create', 'users-update'],
-                m::anyOf(null, 'TeamA'),
                 m::anyOf(true, false)
             )
             ->andReturn(true);
@@ -120,7 +118,6 @@ class PermissionTest extends MiddlewareTest
         $user->shouldReceive('hasPermission')
             ->with(
                 ['users-create', 'users-update'],
-                m::anyOf(null, 'TeamA'),
                 m::anyOf(true, false)
             )
             ->andReturn(false);
@@ -160,7 +157,6 @@ class PermissionTest extends MiddlewareTest
         $user->shouldReceive('hasPermission')
             ->with(
                 ['users-create', 'users-update'],
-                m::anyOf(null, 'TeamA'),
                 m::anyOf(true, false)
             )
             ->andReturn(false);

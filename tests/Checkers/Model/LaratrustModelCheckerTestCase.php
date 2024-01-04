@@ -66,14 +66,11 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         $this->other->hasRole('some_role');
         $this->other->hasPermission('some_permission');
 
-        $this->assertTrue(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
-        $this->assertTrue(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
+        $this->assertTrue(Cache::has("laratrust_cache_for_{$this->user->id}"));
+        $this->assertTrue(Cache::has("laratrust_cache_for_{$this->other->id}"));
 
-        $this->assertTrue(Cache::has("laratrust_roles_for_others_{$this->other->id}"));
-        $this->assertTrue(Cache::has("laratrust_permissions_for_others_{$this->other->id}"));
-
-        $this->user->flushCache();
-        $this->other->flushCache();
+        $this->user->flushCache(false);
+        $this->other->flushCache(false);
 
         // Without cache
         $this->app['config']->set('laratrust.cache.enabled', false);
@@ -83,11 +80,8 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         $this->other->hasRole('some_role');
         $this->other->hasPermission('some_permission');
 
-        $this->assertFalse(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
-        $this->assertFalse(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
-
-        $this->assertFalse(Cache::has("laratrust_roles_for_others_{$this->other->id}"));
-        $this->assertFalse(Cache::has("laratrust_permissions_for_others_{$this->other->id}"));
+        $this->assertFalse(Cache::has("laratrust_cache_for_{$this->user->id}"));
+        $this->assertFalse(Cache::has("laratrust_cache_for_{$this->other->id}"));
     }
 
     public function migrate()

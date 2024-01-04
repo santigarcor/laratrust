@@ -5,105 +5,38 @@ declare(strict_types=1);
 namespace Laratrust\Checkers\User;
 
 use BackedEnum;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphPivot;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
-use Laratrust\Contracts\Role;
-use Laratrust\Contracts\Group;
 use Laratrust\Helper;
-use Laratrust\Models\Team;
 use UnexpectedValueException;
 
 class UserDefaultChecker extends UserChecker
 {
-    public function getCurrentUserRoles(mixed $team = null): array
+    public function getCurrentUserRoles(): array
     {
         $roles = Collection::make($this->userCachedRoles());
-
-        if (
-            Config::get('laratrust.teams.enabled') === false ||
-            ($team === null && Config::get('laratrust.teams.strict_check') === false)
-        ) {
-            return $roles->pluck('name')->toArray();
-        }
-
-        if ($team === null) {
-            return $roles->filter(function ($role) {
-                return $role['pivot'][Team::modelForeignKey()] === null;
-            })->pluck('name')->toArray();
-        }
-
-        $teamId = Helper::getIdFor($team, 'team');
-
-        return $roles
-            ->filter(fn ($role) => $role['pivot'][Team::modelForeignKey()] == $teamId)
-            ->pluck('name')
-            ->toArray();
+        return $roles->pluck('name')->toArray();
     }
 
-    public function getCurrentUserGroups(mixed $team = null): array
+    public function getCurrentUserGroups(): array
     {
         $groups = Collection::make($this->userCachedGroups());
-
-        if (
-            Config::get('laratrust.teams.enabled') === false ||
-            ($team === null && Config::get('laratrust.teams.strict_check') === false)
-        ) {
-            return $groups->pluck('name')->toArray();
-        }
-
-        if ($team === null) {
-            return $groups->filter(function ($group) {
-                return $group['pivot'][Team::modelForeignKey()] === null;
-            })->pluck('name')->toArray();
-        }
-
-        $teamId = Helper::getIdFor($team, 'team');
-
-        return $groups
-            ->filter(fn ($group) => $group['pivot'][Team::modelForeignKey()] == $teamId)
-            ->pluck('name')
-            ->toArray();
+        return $groups->pluck('name')->toArray();
     }
 
-    public function getCurrentUserPermissions(mixed $team = null): array
+    public function getCurrentUserPermissions(): array
     {
         $permissions = Collection::make($this->userCachedPermissions());
-
-        if (
-            Config::get('laratrust.teams.enabled') === false ||
-            ($team === null && Config::get('laratrust.teams.strict_check') === false)
-        ) {
-            return $permissions->pluck('name')->toArray();
-        }
-
-        if ($team === null) {
-            return $permissions->filter(function ($permission) {
-                return $permission['pivot'][Team::modelForeignKey()] === null;
-            })->pluck('name')->toArray();
-        }
-
-        $teamId = Helper::getIdFor($team, 'team');
-
-        return $permissions
-            ->filter(fn ($permission) => $permission['pivot'][Team::modelForeignKey()] == $teamId)
-            ->pluck('name')
-            ->toArray();
+        return $permissions->pluck('name')->toArray();
     }
 
     public function currentUserHasRole(
         string|array|BackedEnum $name,
-        mixed $team = null,
         bool $requireAll = false
     ): bool {
         $name = Helper::standardize($name);
-        [
-            'team' => $team,
-            'require_all' => $requireAll
-        ] = $this->getRealValues($team, $requireAll, 'is_bool');
 
         if (is_array($name)) {
             if (empty($name)) {
@@ -111,7 +44,7 @@ class UserDefaultChecker extends UserChecker
             }
 
             foreach ($name as $roleName) {
-                $hasRole = $this->currentUserHasRole($roleName, $team);
+                $hasRole = $this->currentUserHasRole($roleName);
 
                 if ($hasRole && !$requireAll) {
                     return true;
@@ -126,10 +59,8 @@ class UserDefaultChecker extends UserChecker
             return $requireAll;
         }
 
-        $teamId = Helper::getIdFor($team, 'team');
-
         foreach ($this->userCachedRoles() as $role) {
-            if ($role['name'] == $name && $this->isInSameTeam($role, $teamId)) {
+            if ($role['name'] == $name) {
                 return true;
             }
         }
@@ -139,14 +70,9 @@ class UserDefaultChecker extends UserChecker
 
     public function currentUserHasGroup(
         string|array|BackedEnum $name,
-        mixed $team = null,
         bool $requireAll = false
     ): bool {
         $name = Helper::standardize($name);
-        [
-            'team' => $team,
-            'require_all' => $requireAll
-        ] = $this->getRealValues($team, $requireAll, 'is_bool');
 
         if (is_array($name)) {
             if (empty($name)) {
@@ -154,7 +80,7 @@ class UserDefaultChecker extends UserChecker
             }
 
             foreach ($name as $grouName) {
-                $hasGroup = $this->currentUserHasGroup($grouName, $team);
+                $hasGroup = $this->currentUserHasGroup($grouName);
 
                 if ($hasGroup && !$requireAll) {
                     return true;
@@ -169,10 +95,8 @@ class UserDefaultChecker extends UserChecker
             return $requireAll;
         }
 
-        $teamId = Helper::getIdFor($team, 'team');
-
         foreach ($this->userCachedGroups() as $group) {
-            if ($group['name'] == $name && $this->isInSameTeam($group, $teamId)) {
+            if ($group['name'] == $name) {
                 return true;
             }
         }
@@ -182,14 +106,9 @@ class UserDefaultChecker extends UserChecker
 
     public function currentUserHasPermission(
         string|array|BackedEnum $permission,
-        mixed $team = null,
         bool $requireAll = false
     ): bool {
         $permission = Helper::standardize($permission);
-        [
-            'team' => $team,
-            'require_all' => $requireAll
-        ] = $this->getRealValues($team, $requireAll, 'is_bool');
 
         if (is_array($permission)) {
             if (empty($permission)) {
@@ -197,7 +116,7 @@ class UserDefaultChecker extends UserChecker
             }
 
             foreach ($permission as $permissionName) {
-                $hasPermission = $this->currentUserHasPermission($permissionName, $team);
+                $hasPermission = $this->currentUserHasPermission($permissionName);
 
                 if ($hasPermission && !$requireAll) {
                     return true;
@@ -212,29 +131,29 @@ class UserDefaultChecker extends UserChecker
             return $requireAll;
         }
 
-        $teamId = Helper::getIdFor($team, 'team');
-
         foreach ($this->userCachedPermissions() as $perm) {
-            if ($this->isInSameTeam($perm, $teamId) && Str::is($permission, $perm['name'])) {
+            if (Str::is($permission, $perm['name'])) {
                 return true;
             }
         }
 
-        foreach ($this->userCachedRoles() as $role) {
-            $role = $this->hidrateRole(Config::get('laratrust.models.role'), $role);
+        // THERE IS NO NEED TO HIDRATE ROLE PERMISSIONS ON CACHE ARE RESOLVED.
 
-            if ($this->isInSameTeam($role, $teamId) && $role->hasPermission($permission)) {
-                return true;
-            }
-        }
+        // foreach ($this->userCachedRoles() as $role) {
+        //     $role = $this->hidrateRole(Config::get('laratrust.models.role'), $role);
 
-        foreach ($this->userCachedGroups() as $group) {
-            $group = $this->hidrateGroup(Config::get('laratrust.models.group'), $group);
+        //     if ($role->hasPermission($permission)) {
+        //         return true;
+        //     }
+        // }
 
-            if ($this->isInSameTeam($group, $teamId) && $group->hasPermission($permission)) {
-                return true;
-            }
-        }
+        // foreach ($this->userCachedGroups() as $group) {
+        //     $group = $this->hidrateGroup(Config::get('laratrust.models.group'), $group);
+
+        //     if ($group->hasPermission($permission)) {
+        //         return true;
+        //     }
+        // }
 
         return false;
     }
@@ -298,74 +217,59 @@ class UserDefaultChecker extends UserChecker
         throw new UnexpectedValueException("Class '{$modelClass}' is not defined in the laratrust.user_models");
     }
 
-    /**
-     * Creates a model from an array filled with the class data.
-     */
-    private function hidrateRole(string $class, Model|array $data): Role
-    {
-        if ($data instanceof Model) {
-            return $data;
-        }
+    // /**
+    //  * Creates a model from an array filled with the class data.
+    //  */
+    // private function hidrateRole(string $class, Model|array $data): Role
+    // {
+    //     if ($data instanceof Model) {
+    //         return $data;
+    //     }
 
-        if (!isset($data['pivot'])) {
-            throw new \Exception("The 'pivot' attribute in the {$class} is hidden");
-        }
+    //     if (!isset($data['pivot'])) {
+    //         throw new \Exception("The 'pivot' attribute in the {$class} is hidden");
+    //     }
 
-        $role = new $class;
-        $primaryKey = $role->getKeyName();
+    //     $role = new $class;
+    //     $primaryKey = $role->getKeyName();
 
-        $role
-            ->setAttribute($primaryKey, $data[$primaryKey])
-            ->setAttribute('name', $data['name'])
-            ->setRelation(
-                'pivot',
-                MorphPivot::fromRawAttributes($role, $data['pivot'], 'pivot_table')
-            );
+    //     $role
+    //         ->setAttribute($primaryKey, $data[$primaryKey])
+    //         ->setAttribute('name', $data['name'])
+    //         ->setRelation(
+    //             'pivot',
+    //             MorphPivot::fromRawAttributes($role, $data['pivot'], 'pivot_table')
+    //         );
 
-        return $role;
-    }
+    //     return $role;
+    // }
 
-    /**
-     * Creates a model from an array filled with the class data.
-     */
-    private function hidrateGroup(string $class, Model|array $data): Group
-    {
-        if ($data instanceof Model) {
-            return $data;
-        }
+    // /**
+    //  * Creates a model from an array filled with the class data.
+    //  */
+    // private function hidrateGroup(string $class, Model|array $data): Group
+    // {
+    //     if ($data instanceof Model) {
+    //         return $data;
+    //     }
 
-        if (!isset($data['pivot'])) {
-            throw new \Exception("The 'pivot' attribute in the {$class} is hidden");
-        }
+    //     if (!isset($data['pivot'])) {
+    //         throw new \Exception("The 'pivot' attribute in the {$class} is hidden");
+    //     }
 
-        $group = new $class;
-        $primaryKey = $group->getKeyName();
+    //     $group = new $class;
+    //     $primaryKey = $group->getKeyName();
 
-        $group
-            ->setAttribute($primaryKey, $data[$primaryKey])
-            ->setAttribute('name', $data['name'])
-            ->setRelation(
-                'pivot',
-                MorphPivot::fromRawAttributes($group, $data['pivot'], 'pivot_table')
-            );
+    //     $group
+    //         ->setAttribute($primaryKey, $data[$primaryKey])
+    //         ->setAttribute('name', $data['name'])
+    //         ->setRelation(
+    //             'pivot',
+    //             MorphPivot::fromRawAttributes($group, $data['pivot'], 'pivot_table')
+    //         );
 
-        return $group;
-    }
-
-    /**
-     * Check if a role or permission is added to the user in a same team.
-     */
-    private function isInSameTeam($groupRolePermission, int|string $teamId = null): bool
-    {
-        if (
-            !Config::get('laratrust.teams.enabled')
-            || (!Config::get('laratrust.teams.strict_check') && !$teamId)
-        ) {
-            return true;
-        }
-
-        return $groupRolePermission['pivot'][Team::modelForeignKey()] == $teamId;
-    }
+    //     return $group;
+    // }
 
     public function resolvePermissions(): array
     {
@@ -384,13 +288,22 @@ class UserDefaultChecker extends UserChecker
     {
         $groups = $this->user->groups()->get();
         $roles = $this->user->roles()->get();
-        $permissions = new Collection();
+        $permissions = $this->user->permissions()->get();
 
         foreach ($groups as $group) {
             $roles = $roles->merge($group->roles()->get());
+            $permissions = $permissions->merge($group->permissions()->get());
         }
         foreach ($roles as $role) {
             $permissions = $permissions->merge($role->permissions()->get());
+        }
+
+        if (!Config::get('laratrust.cache.enabled')) {
+            return [
+                'groups' => $groups->unique('id')->toArray(),
+                'roles' => $roles->unique('id')->toArray(),
+                'permissions' => $permissions->unique('id')->toArray(),
+            ];
         }
 
         return [

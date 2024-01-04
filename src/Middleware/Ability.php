@@ -17,22 +17,20 @@ class Ability extends LaratrustMiddleware
         Closure $next,
         string|array $roles,
         string|array $permissions,
-        ?string $team = null,
         ?string $options = ''
     ) {
         [
-            'team' => $team,
             'require_all' => $validateAll,
             'guard' => $guard,
-        ] = $this->getValuesFromParameters($team, $options);
+        ] = $this->getValuesFromParameters($options);
 
         $roles = Helper::standardize($roles, true);
         $permissions = Helper::standardize($permissions, true);
 
         if (
             Auth::guard($guard)->guest()
-            || ! Auth::guard($guard)->user()
-                ->ability($roles, $permissions, $team, ['validate_all' => $validateAll])
+            || !Auth::guard($guard)->user()
+                ->ability($roles, $permissions, ['validate_all' => $validateAll])
         ) {
             return $this->unauthorized();
         }

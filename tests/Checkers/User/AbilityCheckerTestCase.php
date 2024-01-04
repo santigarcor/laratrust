@@ -7,9 +7,9 @@ namespace Laratrust\Tests\Checkers\User;
 use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\Enums\Role as EnumsRole;
 use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\Group;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
-use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
 
 abstract class AbilityCheckerTestCase extends LaratrustTestCase
@@ -21,13 +21,12 @@ abstract class AbilityCheckerTestCase extends LaratrustTestCase
         parent::setUp();
 
         $this->migrate();
-        $this->app['config']->set('laratrust.teams.enabled', true);
 
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);
         $permissionC = Permission::create(['name' => 'permission_c']);
 
-        $team = Team::create(['name' => 'team_a']);
+        $group = Group::create(['name' => 'group_a']);
         $roleA = Role::create(['name' => 'role_a']);
         $roleB = Role::create(['name' => 'role_b']);
 
@@ -35,7 +34,8 @@ abstract class AbilityCheckerTestCase extends LaratrustTestCase
         $roleB->givePermissions([$permissionB, EnumsPermission::PERM_C]);
 
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
-        $this->user->addRole($roleA)->addRole($roleB, $team);
+        $group->addRole($roleB);
+        $this->user->addRole($roleA)->addToGroup($group);
     }
 
     protected function abilityShouldReturnBooleanAssertions()
@@ -51,7 +51,6 @@ abstract class AbilityCheckerTestCase extends LaratrustTestCase
             $this->user->ability(
                 ['role_a', 'role_b'],
                 [EnumsPermission::PERM_A, 'permission_c'],
-                'team_a'
             )
         );
         $this->assertTrue(
@@ -124,13 +123,12 @@ abstract class AbilityCheckerTestCase extends LaratrustTestCase
         );
         $this->assertSame(
             [
-                'roles' => ['role_a' => false, 'role_b' => true],
-                'permissions' => ['permission_a' => false, 'permission_b' => true],
+                'roles' => ['role_a' => true, 'role_b' => true],
+                'permissions' => ['permission_a' => true, 'permission_b' => true],
             ],
             $this->user->ability(
                 ['role_a', 'role_b'],
                 ['permission_a', 'permission_b'],
-                'team_a',
                 ['validate_all' => true, 'return_type' => 'array']
             )
         );
@@ -167,14 +165,13 @@ abstract class AbilityCheckerTestCase extends LaratrustTestCase
             [
                 true,
                 [
-                    'roles' => ['role_a' => false, 'role_b' => true],
-                    'permissions' => ['permission_a' => false, 'permission_b' => true],
+                    'roles' => ['role_a' => true, 'role_b' => true],
+                    'permissions' => ['permission_a' => true, 'permission_b' => true],
                 ],
             ],
             $this->user->ability(
                 ['role_a', 'role_b'],
                 ['permission_a', 'permission_b'],
-                'team_a',
                 ['return_type' => 'both']
             )
         );
@@ -241,13 +238,11 @@ abstract class AbilityCheckerTestCase extends LaratrustTestCase
         $this->assertSame(
             $this->user->ability(
                 ['role_a', 'role_b'],
-                ['permission_a', 'permission_b'],
-                'team_a'
+                ['permission_a', 'permission_b']
             ),
             $this->user->ability(
                 ['role_a', 'role_b'],
                 ['permission_a', 'permission_b'],
-                'team_a',
                 ['validate_all' => false, 'return_type' => 'boolean']
             )
         );

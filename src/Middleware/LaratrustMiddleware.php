@@ -20,19 +20,17 @@ class LaratrustMiddleware
     protected function authorization(
         string $type,
         string|array $rolesPermissions,
-        ?string $team,
         ?string $options
     ): bool {
         [
-            'team' => $team,
             'require_all' => $requireAll,
             'guard' => $guard,
-        ] = $this->getValuesFromParameters($team, $options);
+        ] = $this->getValuesFromParameters($options);
         $method = $type == 'roles' ? 'hasRole' : 'hasPermission';
         $rolesPermissions = Helper::standardize($rolesPermissions, true);
 
         return !Auth::guard($guard)->guest()
-            && Auth::guard($guard)->user()->$method($rolesPermissions, $team, $requireAll);
+            && Auth::guard($guard)->user()->$method($rolesPermissions, $requireAll);
     }
 
     /**
@@ -60,18 +58,11 @@ class LaratrustMiddleware
     /**
      * Generate an array with the values of the parameters given to the middleware.
      */
-    protected function getValuesFromParameters(?string $team, ?string $options): array
+    protected function getValuesFromParameters(?string $options): array
     {
         return [
-            'team' => Str::contains($team, ['require_all', 'guard:']) ? null : $team,
-            'require_all' => Str::contains($team, 'require_all') ?: Str::contains($options, 'require_all'),
-            'guard' => Str::contains($team, 'guard:')
-                ? $this->extractGuard($team)
-                : (
-                    Str::contains($options, 'guard:')
-                    ? $this->extractGuard($options)
-                    : Config::get('auth.defaults.guard')
-                ),
+            'require_all' => Str::contains($options, 'require_all'),
+            'guard' => Str::contains($options, 'guard:') ? $this->extractGuard($options) : Config::get('auth.defaults.guard')
         ];
     }
 

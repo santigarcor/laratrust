@@ -165,14 +165,11 @@ class LaratrustServiceProvider extends ServiceProvider
 
         app(Gate::class)->before(function (Authorizable $user, mixed $ability, $attributes) {
             if (method_exists($user, 'hasPermission')) {
-                $team = Collection::make($attributes)
-                    ->filter(fn ($attr) => !is_bool($attr))
-                    ->first();
                 $requireAll = Collection::make($attributes)
                     ->filter(fn ($attr) => is_bool($attr))
                     ->first() || false;
 
-                return $user->hasPermission($ability, $team, $requireAll) ?: null;
+                return $user->hasPermission($ability, $requireAll) ?: null;
             }
         });
     }
@@ -266,10 +263,8 @@ class LaratrustServiceProvider extends ServiceProvider
                 Console\MakePermissionCommand::class,
                 Console\MakeRoleCommand::class,
                 Console\MakeSeederCommand::class,
-                Console\MakeTeamCommand::class,
                 Console\MigrationCommand::class,
                 Console\SetupCommand::class,
-                Console\SetupTeamsCommand::class,
                 Console\UpgradeCommand::class,
             ]);
         }

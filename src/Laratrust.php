@@ -26,11 +26,10 @@ class Laratrust
      */
     public function isInGroup(
         string|array|BackedEnum $group,
-        mixed $team = null,
         bool $requireAll = false
     ): bool {
         if ($user = $this->user()) {
-            return $user->isInGroup($group, $team, $requireAll);
+            return $user->isInGroup($group, $requireAll);
         }
 
         return false;
@@ -41,11 +40,10 @@ class Laratrust
      */
     public function hasRole(
         string|array|BackedEnum $role,
-        mixed $team = null,
         bool $requireAll = false
     ): bool {
         if ($user = $this->user()) {
-            return $user->hasRole($role, $team, $requireAll);
+            return $user->hasRole($role, $requireAll);
         }
 
         return false;
@@ -56,11 +54,10 @@ class Laratrust
      */
     public function hasPermission(
         string|array|BackedEnum $permission,
-        mixed $team = null,
         bool $requireAll = false
     ): bool {
         if ($user = $this->user()) {
-            return $user->hasPermission($permission, $team, $requireAll);
+            return $user->hasPermission($permission, $requireAll);
         }
 
         return false;
@@ -74,10 +71,10 @@ class Laratrust
      * @param  array  $options  The Options.
      * @return bool
      */
-    public function ability($roles, $permissions, $team = null, $options = [])
+    public function ability($roles, $permissions, $options = [])
     {
         if ($user = $this->user()) {
-            return $user->ability($roles, $permissions, $team, $options);
+            return $user->ability($roles, $permissions, $options);
         }
 
         return false;
