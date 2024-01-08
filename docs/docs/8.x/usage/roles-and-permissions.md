@@ -6,7 +6,7 @@ sidebarDepth: 2
 
 ## Setting things up
 
-Let's start by creating the following `Role`s:
+Let's start by creating the following `Roles`:
 
 ```php
 $owner = Role::create([
