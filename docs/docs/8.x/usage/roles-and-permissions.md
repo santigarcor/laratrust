@@ -8,7 +8,11 @@ sidebarDepth: 2
 
 Let's start by creating the following `Role`s:
 
+By default, the paths for the Role and Permission models will be `App\Models\Role` and `App\Models\Permission`. If you want to modify them, you can go to `config/laratrust.php`.
+
 ```php
+use App\Models\Role;
+
 $owner = Role::create([
     'name' => 'owner',
     'display_name' => 'Project Owner', // optional
@@ -25,6 +29,8 @@ $admin = Role::create([
 Now we need to add `Permission`s:
 
 ```php
+use App\Models\Permission;
+
 $createPost = Permission::create([
     'name' => 'create-post',
     'display_name' => 'Create Posts', // optional
