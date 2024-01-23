@@ -6,7 +6,7 @@ sidebarDepth: 2
 
 ## Setting things up
 
-Let's start by creating the following `Roles`:
+Let's start by creating the following `Role`s:
 
 By default, the paths for the Role and Permission models will be `App\Models\Role` and `App\Models\Permission`. If you want to modify them, you can go to `config/laratrust.php`.
 
