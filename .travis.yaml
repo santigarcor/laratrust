@@ -14,4 +14,4 @@ install:
 
 script:
   - php tests/test.php
-  - php ./vendor/bin/phpmd src ansi phpmd-ruleset.xml
+  - php ./vendor/bin/phpmd src/Test ansi phpmd-ruleset.xml
