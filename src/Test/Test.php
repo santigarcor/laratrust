@@ -6,7 +6,8 @@ class Test
 {
     public function get()
     {
-        $a = 123;
-        echo "hello world";
+        $aNames = 123;
+
+        return $aNames;
     }
 }
