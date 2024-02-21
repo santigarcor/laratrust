@@ -14,7 +14,7 @@ In order to upgrade from Laratrust 7.x to 8.x you have to follow these steps:
 
 2. Run `composer update` to update the source code.
 
-3. Run `php artisan config:clear` and `php artisan cache:clear`.
+3. Run `php artisan config:clear`, `php artisan cache:clear` and `php artisan view:clear`.
 
 4. Update your `config/laratrust.php`:
 
