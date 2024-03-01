@@ -22,7 +22,7 @@ Laratrust is an easy and flexible way to add roles, permissions and teams author
 
 | Laravel       | Laratrust                                                 |
 | :------------ | :-------------------------------------------------------- |
-| 10.x          | [8.x](/docs/8.x/)                                          |
+| 10.x, 11.X    | [8.x](/docs/8.x/)                                         |
 | 9.x-10.x      | [7.x](/docs/7.x/)                                         |
 | 8.x           | [6.x](/docs/6.x/)                                         |
 | 7.x           | [6.x](/docs/6.x/)                                         |
