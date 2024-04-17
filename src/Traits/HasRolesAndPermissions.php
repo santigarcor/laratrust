@@ -173,6 +173,16 @@ trait HasRolesAndPermissions
         mixed $team = null,
         bool $requireAll = false
     ): bool {
+        if(Config::get('laratrust.cache.once')){
+            return once(function () use ($name, $team, $requireAll) {
+                return $this->laratrustUserChecker()->currentUserHasRole(
+                    $name,
+                    $team,
+                    $requireAll
+                );
+            });
+        }
+
         return $this->laratrustUserChecker()->currentUserHasRole(
             $name,
             $team,
@@ -188,6 +198,16 @@ trait HasRolesAndPermissions
         mixed $team = null,
         bool $requireAll = false
     ): bool {
+        if(Config::get('laratrust.cache.once')) {
+            return once(function () use ($permission, $team, $requireAll) {
+                return $this->laratrustUserChecker()->currentUserHasPermission(
+                    $permission,
+                    $team,
+                    $requireAll
+                );
+            });
+        }
+        
         return $this->laratrustUserChecker()->currentUserHasPermission(
             $permission,
             $team,

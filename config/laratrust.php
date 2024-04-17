@@ -83,6 +83,19 @@ return [
         |
         */
         'expiration_time' => 3600,
+
+        /*
+        |--------------------------------------------------------------------------
+        | Use the once() memoization function
+        |--------------------------------------------------------------------------
+        |
+        | Determines if the once() function should be used to cache the roles and permissions
+        | during the request. Only enable this if you are running Laravel 11 or above.
+        | If you are running Laravel 10 or below, you will need to require the
+        | spatie/once package via composer.
+        |
+        */
+        'once' => false,
     ],
 
     /*
