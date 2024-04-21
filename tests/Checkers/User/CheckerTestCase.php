@@ -234,7 +234,16 @@ abstract class CheckerTestCase extends LaratrustTestCase
             Permission::create(['name' => 'permission_e'])->id => ['team_id' => $team->id],
         ]);
 
-        // With cache
+        // With cache and without once
+        $this->app['config']->set('laratrust.cache.enabled', true);
+        $this->app['config']->set('laratrust.cache.once', false);
+        $this->user->hasRole('some_role');
+        $this->user->hasPermission('some_permission');
+        $this->assertTrue(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
+        $this->assertTrue(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
+        $this->user->flushCache();
+        
+        //With cache and once
         $this->app['config']->set('laratrust.cache.enabled', true);
         $this->app['config']->set('laratrust.cache.once', true);
         $this->user->hasRole('some_role');
@@ -243,7 +252,15 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->assertTrue(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
         $this->user->flushCache();
 
-        // Without cache
+        // Without cache and with once
+        $this->app['config']->set('laratrust.cache.enabled', false);
+        $this->app['config']->set('laratrust.cache.once', true);
+        $this->user->hasRole('some_role');
+        $this->user->hasPermission('some_permission');
+        $this->assertFalse(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
+        $this->assertFalse(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
+        
+        //Without cache and without once
         $this->app['config']->set('laratrust.cache.enabled', false);
         $this->app['config']->set('laratrust.cache.once', false);
         $this->user->hasRole('some_role');
