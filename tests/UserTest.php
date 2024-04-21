@@ -38,22 +38,18 @@ class UserTest extends LaratrustTestCase
     public function testPermissionsRelationship()
     {
         $this->app['config']->set('laratrust.teams.enabled', false);
-        $this->app['config']->set('laratrust.cache.once', false);
         $this->assertInstanceOf(MorphToMany::class, $this->user->permissions());
 
         $this->app['config']->set('laratrust.teams.enabled', true);
-        $this->app['config']->set('laratrust.cache.once', true);
         $this->assertInstanceOf(MorphToMany::class, $this->user->permissions());
     }
 
     public function testRolesTeams()
     {
         $this->app['config']->set('laratrust.teams.enabled', false);
-        $this->app['config']->set('laratrust.cache.once', false);
         $this->assertNull($this->user->rolesTeams());
 
         $this->app['config']->set('laratrust.teams.enabled', true);
-        $this->app['config']->set('laratrust.cache.once', true);
         $this->assertInstanceOf(MorphToMany::class, $this->user->rolesTeams());
     }
 
@@ -74,11 +70,9 @@ class UserTest extends LaratrustTestCase
         |------------------------------------------------------------
         */
         $this->app['config']->set('laratrust.teams.enabled', false);
-        $this->app['config']->set('laratrust.cache.once', false);
         $this->assertNull($this->user->permissionsTeams());
 
         $this->app['config']->set('laratrust.teams.enabled', true);
-        $this->app['config']->set('laratrust.cache.once', true);
         $this->assertInstanceOf(
             '\Illuminate\Database\Eloquent\Relations\MorphToMany',
             $this->user->permissionsTeams()
@@ -126,11 +120,9 @@ class UserTest extends LaratrustTestCase
 
 
         $this->app['config']->set('laratrust.teams.enabled', false);
-        $this->app['config']->set('laratrust.cache.once', false);
         $this->assertEmpty($this->user->allTeams());
 
         $this->app['config']->set('laratrust.teams.enabled', true);
-        $this->app['config']->set('laratrust.cache.once', true);
 
         $this->assertSame(
             ['team_a', 'team_b',],
