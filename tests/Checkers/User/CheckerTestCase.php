@@ -92,6 +92,10 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->assertFalse($this->user->hasRole('role_c'));
         $this->app['config']->set('laratrust.teams.strict_check', false);
         $this->assertTrue($this->user->hasRole('role_c', 'team_a'));
+        $this->app['config']->set('laratrust.cache.once', true);
+        $this->assertTrue($this->user->hasRole('role_c'));
+        $this->app['config']->set('laratrust.cache.once', false);
+        $this->assertTrue($this->user->hasRole('role_c', 'team_a'));
         $this->assertFalse($this->user->hasRole(EnumsRole::ROLE_A, 'team_a'));
 
         $this->assertTrue($this->user->hasRole('role_a|role_b'));
@@ -148,6 +152,10 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->app['config']->set('laratrust.teams.strict_check', true);
         $this->assertFalse($this->user->hasPermission('permission_c'));
         $this->app['config']->set('laratrust.teams.strict_check', false);
+        $this->assertTrue($this->user->hasPermission('permission_c'));
+        $this->app['config']->set('laratrust.cache.once', true);
+        $this->assertTrue($this->user->hasPermission('permission_c'));
+        $this->app['config']->set('laratrust.cache.once', false);
         $this->assertTrue($this->user->hasPermission('permission_c'));
         $this->assertTrue($this->user->hasPermission('permission_c', 'team_a'));
         $this->assertTrue($this->user->hasPermission('permission_c', $team));
