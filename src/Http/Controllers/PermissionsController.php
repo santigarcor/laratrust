@@ -35,7 +35,7 @@ class PermissionsController
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:'.config('laratrust.tables.roles', 'roles').',name',
+            'name' => 'required|string|unique:'.config('laratrust.tables.permissions', 'permissions').',name',
             'display_name' => 'nullable|string',
             'description' => 'nullable|string',
         ]);
