@@ -2,11 +2,11 @@
 
 ```php
 <?php
-
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laratrust\Contracts\LaratrustUser;
 use Laratrust\Traits\HasRolesAndPermissions;
 
-class User extends Model implements LaratrustUser
+class User extends Authenticatable implements LaratrustUser
 {
     use HasRolesAndPermissions; // add this trait to your user model
 
