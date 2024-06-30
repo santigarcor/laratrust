@@ -87,5 +87,5 @@ To retrive all the users that don't have any roles or permissions you can use:
 ```php
 User::whereDoesntHaveRoles()->get();
 
-User::whereDoesntHavePermission()->get();
+User::whereDoesntHavePermissions()->get();
 ```
