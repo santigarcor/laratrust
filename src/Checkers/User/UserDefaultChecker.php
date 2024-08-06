@@ -154,7 +154,7 @@ class UserDefaultChecker extends UserChecker
 
         return Cache::store('array')->rememberForever(
             $cacheKey,
-            function() {
+            function() use ($cacheKey) {
                 if (! Config::get('laratrust.cache.enabled')) {
                     return $this->user->roles()->get()->toArray();
                 }
@@ -176,7 +176,7 @@ class UserDefaultChecker extends UserChecker
 
         return Cache::store('array')->rememberForever(
             $cacheKey,
-            function() {
+            function() use ($cacheKey)  {
                 if (! Config::get('laratrust.cache.enabled')) {
                     return $this->user->permissions()->get()->toArray();
                 }
