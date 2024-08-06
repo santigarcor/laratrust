@@ -66,14 +66,14 @@ class RoleDefaultChecker extends RoleChecker
 
         return Cache::store('array')->rememberForever(
             $cacheKey,
-            function() use ($cacheKey) {
+            function () use ($cacheKey) {
                 if (! Config::get('laratrust.cache.enabled')) {
                     return $this->role->permissions()->get()->toArray();
                 }
-        
+
                 return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
                     return $this->role->permissions()->get()->toArray();
                 });
-        });
+            });
     }
 }
