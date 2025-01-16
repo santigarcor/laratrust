@@ -498,7 +498,7 @@ trait HasRolesAndPermissions
      *
      * @return Collection<\Laratrust\Contracts\Permission>
      */
-    public function allPermissions(array $columns = null, $team = false): Collection
+    public function allPermissions(?array $columns = null, mixed $team = false): Collection
     {
         $columns = is_array($columns) ? $columns : null;
         if ($columns) {
