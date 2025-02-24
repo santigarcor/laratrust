@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-use Mockery as m;
 use Laratrust\Laratrust;
-use Laratrust\Tests\Models\User;
 use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\User;
+use Mockery as m;
 
 class LaratrustFacadeTest extends LaratrustTestCase
 {
     protected $laratrust;
+
     protected $user;
 
     protected function setUp(): void
@@ -43,6 +44,18 @@ class LaratrustFacadeTest extends LaratrustTestCase
         $this->assertTrue($this->laratrust->hasPermission('user_can'));
         $this->assertFalse($this->laratrust->hasPermission('user_cannot'));
         $this->assertFalse($this->laratrust->hasPermission('any_permission'));
+    }
+
+    public function testIsAbleTo()
+    {
+        $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
+        $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
+        $this->user->shouldReceive('hasPermission')->with('user_can', null, false)->andReturn(true)->once();
+        $this->user->shouldReceive('hasPermission')->with('user_cannot', null, false)->andReturn(false)->once();
+
+        $this->assertTrue($this->laratrust->isAbleTo('user_can'));
+        $this->assertFalse($this->laratrust->isAbleTo('user_cannot'));
+        $this->assertFalse($this->laratrust->isAbleTo('any_permission'));
     }
 
     public function testAbility()
