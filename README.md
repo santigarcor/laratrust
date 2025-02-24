@@ -10,16 +10,16 @@
 
 ## Version Compatibility
 
-| Laravel       | Laratrust                                           |
-| :------------ | :-------------------------------------------------- |
-| 10.x, 11.X    | [8.x](//laratrust.santigarcor.me/docs/8.x/)         |
-| 9.x-10.x      | [7.x](//laratrust.santigarcor.me/docs/7.x/)         |
-| 8.x           | [6.x](//laratrust.santigarcor.me/docs/6.x/)         |
-| 7.x           | [6.x](//laratrust.santigarcor.me/docs/6.x/)         |
-| 6.x           | [6.x](//laratrust.santigarcor.me/docs/6.x/)         |
-| 5.6.x - 5.8.x | [5.2](//laratrust.santigarcor.me/docs/5.2/)         |
-| 5.3.x - 5.5.x | [5.1](//laratrust.santigarcor.me/docs/5.1/)         |
-| 5.0.x - 5.2.x | [4.0](//github.com/santigarcor/laratrust/tree/4.0). |
+| Laravel          | Laratrust                                           |
+| :--------------- | :-------------------------------------------------- |
+| 10.x, 11.X, 12.X | [8.x](//laratrust.santigarcor.me/docs/8.x/)         |
+| 9.x-10.x         | [7.x](//laratrust.santigarcor.me/docs/7.x/)         |
+| 8.x              | [6.x](//laratrust.santigarcor.me/docs/6.x/)         |
+| 7.x              | [6.x](//laratrust.santigarcor.me/docs/6.x/)         |
+| 6.x              | [6.x](//laratrust.santigarcor.me/docs/6.x/)         |
+| 5.6.x - 5.8.x    | [5.2](//laratrust.santigarcor.me/docs/5.2/)         |
+| 5.3.x - 5.5.x    | [5.1](//laratrust.santigarcor.me/docs/5.1/)         |
+| 5.0.x - 5.2.x    | [4.0](//github.com/santigarcor/laratrust/tree/4.0). |
 
 ## Installation, Configuration and Usage
 
