@@ -236,11 +236,11 @@ return [
              * - 'include_timestamp': Whether to include a timestamp in the response (true/false).
              * - 'structure': Defines the JSON response format.
              */
-            'json'     => [
-                'code'              => 403,
+            'json' => [
+                'code' => 403,
                 'include_timestamp' => true,
-                'structure'         => [
-                    'status'  => 'error',
+                'structure' => [
+                    'status' => 'error',
                     'message' => 'User does not have the necessary access rights to perform this action.',
                 ],
             ],
