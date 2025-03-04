@@ -226,6 +226,24 @@ return [
                     'content' => '',
                 ],
             ],
+
+            
+            /**
+             * Defines a custom JSON response format for unauthorized access.
+             * This can be used when a JSON response is preferred over a redirect or abort.
+             *
+             * - 'code': The HTTP status code to return (default: 403).
+             * - 'include_timestamp': Whether to include a timestamp in the response (true/false).
+             * - 'structure': Defines the JSON response format.
+             */
+            'json'     => [
+                'code'              => 403,
+                'include_timestamp' => true,
+                'structure'         => [
+                    'status'  => 'error',
+                    'message' => 'User does not have the necessary access rights to perform this action.',
+                ],
+            ],
         ],
     ],
 

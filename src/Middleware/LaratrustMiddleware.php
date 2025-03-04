@@ -49,6 +49,16 @@ class LaratrustMiddleware
             return App::abort($handler['code'], $handler['message'] ?? $defaultMessage);
         }
 
+        if ($handling === "json") {
+            $responseData = $handler['structure'] ?? [];
+
+            if (!empty($handler['include_timestamp']) && boolval($handler['include_timestamp'])) {
+                $responseData['timestamp'] = now()->toISOString();
+            }
+        
+            return response()->json($responseData, $handler['code'] ?? 403);
+        }
+
         $redirect = Redirect::to($handler['url']);
         if (! empty($handler['message']['content'])) {
             $redirect->with($handler['message']['key'], $handler['message']['content']);
