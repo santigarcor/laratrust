@@ -52,10 +52,10 @@ class LaratrustMiddleware
         if ($handling == 'json') {
             $responseData = $handler['structure'] ?? [];
 
-            if (!empty($handler['include_timestamp']) && boolval($handler['include_timestamp'])) {
+            if (! empty($handler['include_timestamp']) && boolval($handler['include_timestamp'])) {
                 $responseData['timestamp'] = now()->toISOString();
             }
-        
+
             return response()->json($responseData, $handler['code'] ?? 403);
         }
 
