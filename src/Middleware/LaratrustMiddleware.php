@@ -49,7 +49,7 @@ class LaratrustMiddleware
             return App::abort($handler['code'], $handler['message'] ?? $defaultMessage);
         }
 
-        if ($handling == "json") {
+        if ($handling == 'json') {
             $responseData = $handler['structure'] ?? [];
 
             if (!empty($handler['include_timestamp']) && boolval($handler['include_timestamp'])) {

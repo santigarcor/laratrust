@@ -226,7 +226,6 @@ return [
                     'content' => '',
                 ],
             ],
-
             
             /**
              * Defines a custom JSON response format for unauthorized access.
