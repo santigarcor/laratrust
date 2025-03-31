@@ -152,7 +152,7 @@ class Role extends Model implements RoleContract
         return $this;
     }
 
-    public function removePermissions(iterable $permissions = null): static
+    public function removePermissions(?iterable $permissions = null): static
     {
         if (! $permissions) {
             $this->syncPermissions([]);

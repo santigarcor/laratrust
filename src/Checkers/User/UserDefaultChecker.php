@@ -227,7 +227,7 @@ class UserDefaultChecker extends UserChecker
     /**
      * Check if a role or permission is added to the user in a same team.
      */
-    private function isInSameTeam($rolePermission, int|string $teamId = null): bool
+    private function isInSameTeam($rolePermission, int|string|null $teamId = null): bool
     {
         if (
             ! Config::get('laratrust.teams.enabled')
