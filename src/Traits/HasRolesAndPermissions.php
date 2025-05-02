@@ -196,6 +196,17 @@ trait HasRolesAndPermissions
     }
 
     /**
+     * Check if user does not have a permission by its name.
+     */
+    public function doesntHavePermission(
+        string|array|BackedEnum $permission,
+        mixed $team = null,
+        bool $requireAll = false
+    ): bool {
+        return ! $this->hasPermission($permission, $team, $requireAll);
+    }
+
+    /**
      * Check if user has a permission by its name.
      */
     public function isAbleTo(
@@ -204,6 +215,17 @@ trait HasRolesAndPermissions
         bool $requireAll = false
     ): bool {
         return $this->hasPermission($permission, $team, $requireAll);
+    }
+
+    /**
+     * Check if user does not have a permission by its name.
+     */
+    public function isNotAbleTo(
+        string|array|BackedEnum $permission,
+        mixed $team = null,
+        bool $requireAll = false
+    ): bool {
+        return ! $this->isAbleTo($permission, $team, $requireAll);
     }
 
     /**

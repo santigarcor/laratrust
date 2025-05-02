@@ -157,6 +157,7 @@ class UserTest extends LaratrustTestCase
         |------------------------------------------------------------
         */
         $this->assertTrue($user->isAbleTo('manage_user'));
+        $this->assertFalse($user->isNotAbleTo('manage_user'));
     }
 
     public function testAddRole()

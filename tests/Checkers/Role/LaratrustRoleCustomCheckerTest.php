@@ -44,9 +44,18 @@ class LaratrustRoleCustomCheckerTest extends LaratrustTestCase
         $this->assertTrue($this->role->hasPermission('permission_b'));
         $this->assertFalse($this->role->hasPermission('permission_c'));
 
+        $this->assertFalse($this->role->doesntHavePermission(EnumsPermission::PERM_A));
+        $this->assertFalse($this->role->doesntHavePermission('permission_b'));
+        $this->assertTrue($this->role->doesntHavePermission('permission_c'));
+
         $this->assertTrue($this->role->hasPermission(['permission_a', 'permission_b']));
         $this->assertTrue($this->role->hasPermission(['permission_a', 'permission_c']));
         $this->assertFalse($this->role->hasPermission([EnumsPermission::PERM_A, 'permission_c'], true));
         $this->assertFalse($this->role->hasPermission(['permission_c', 'permission_d']));
+
+        $this->assertFalse($this->role->doesntHavePermission(['permission_a', 'permission_b']));
+        $this->assertFalse($this->role->doesntHavePermission(['permission_a', 'permission_c']));
+        $this->assertTrue($this->role->doesntHavePermission([EnumsPermission::PERM_A, 'permission_c'], true));
+        $this->assertTrue($this->role->doesntHavePermission(['permission_c', 'permission_d']));
     }
 }
