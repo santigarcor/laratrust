@@ -149,7 +149,7 @@ class UserTest extends LaratrustTestCase
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('hasPermission')->with('manage_user', null, false)->andReturn(true)->once();
+        $user->shouldReceive('hasPermission')->with('manage_user', null, false)->andReturn(true)->twice();
 
         /*
         |------------------------------------------------------------
