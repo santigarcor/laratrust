@@ -106,6 +106,11 @@ class Role extends Model implements RoleContract
             ->currentRoleHasPermission($permission, $requireAll);
     }
 
+    public function doesntHavePermission(string|array|BackedEnum $permission, bool $requireAll = false): bool
+    {
+        return ! $this->hasPermission($permission, $requireAll);
+    }
+
     public function syncPermissions(iterable $permissions): static
     {
         $mappedPermissions = [];

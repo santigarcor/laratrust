@@ -52,6 +52,17 @@ class Laratrust
     }
 
     /**
+     * Check if the current user does not have a permission by its name.
+     */
+    public function doesntHavePermission(
+        string|array|BackedEnum $permission,
+        mixed $team = null,
+        bool $requireAll = false
+    ): bool {
+        return ! $this->hasPermission($permission, $team, $requireAll);
+    }
+
+    /**
      * Check if the current user has a permission by its name.
      * Alias to hasPermission.
      */
@@ -61,6 +72,18 @@ class Laratrust
         bool $requireAll = false
     ): bool {
         return $this->hasPermission($permission, $team, $requireAll);
+    }
+
+    /**
+     * Check if the current user does not have a permission by its name.
+     * Alias to doesntHavePermission.
+     */
+    public function isNotAbleTo(
+        string|array|BackedEnum $permission,
+        mixed $team = null,
+        bool $requireAll = false
+    ): bool {
+        return $this->doesntHavePermission($permission, $team, $requireAll);
     }
 
     /**

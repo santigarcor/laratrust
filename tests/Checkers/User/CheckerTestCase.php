@@ -145,14 +145,23 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->assertTrue($this->user->hasPermission(EnumsPermission::PERM_A));
         $this->assertTrue($this->user->hasPermission('permission_b', 'team_a'));
         $this->assertTrue($this->user->hasPermission('permission_b', $team));
+        $this->assertFalse($this->user->doesntHavePermission(EnumsPermission::PERM_A));
+        $this->assertFalse($this->user->doesntHavePermission('permission_b', 'team_a'));
+        $this->assertFalse($this->user->doesntHavePermission('permission_b', $team));
         $this->app['config']->set('laratrust.teams.strict_check', true);
         $this->assertFalse($this->user->hasPermission('permission_c'));
+        $this->assertTrue($this->user->doesntHavePermission('permission_c'));
         $this->app['config']->set('laratrust.teams.strict_check', false);
         $this->assertTrue($this->user->hasPermission('permission_c'));
         $this->assertTrue($this->user->hasPermission('permission_c', 'team_a'));
         $this->assertTrue($this->user->hasPermission('permission_c', $team));
         $this->assertTrue($this->user->hasPermission('permission_d'));
         $this->assertFalse($this->user->hasPermission('permission_e'));
+        $this->assertFalse($this->user->doesntHavePermission('permission_c'));
+        $this->assertFalse($this->user->doesntHavePermission('permission_c', 'team_a'));
+        $this->assertFalse($this->user->doesntHavePermission('permission_c', $team));
+        $this->assertFalse($this->user->doesntHavePermission('permission_d'));
+        $this->assertTrue($this->user->doesntHavePermission('permission_e'));
 
         $this->assertTrue($this->user->hasPermission([EnumsPermission::PERM_A, 'permission_b', 'permission_c', 'permission_d', 'permission_e']));
         $this->assertTrue($this->user->hasPermission('permission_a|permission_b|permission_c|permission_d|permission_e'));
@@ -163,13 +172,26 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b', 'permission_e'], requireAll: true));
         $this->assertFalse($this->user->hasPermission(['permission_e', 'permission_f']));
 
+        $this->assertFalse($this->user->doesntHavePermission([EnumsPermission::PERM_A, 'permission_b', 'permission_c', 'permission_d', 'permission_e']));
+        $this->assertFalse($this->user->doesntHavePermission('permission_a|permission_b|permission_c|permission_d|permission_e'));
+        $this->assertFalse($this->user->doesntHavePermission(['permission_a', 'permission_d'], requireAll: true));
+        $this->assertFalse($this->user->doesntHavePermission(['permission_a', 'permission_b', 'permission_d'], requireAll: true));
+        $this->assertTrue($this->user->doesntHavePermission([EnumsPermission::PERM_A, 'permission_b', 'permission_d'], 'team_a', true));
+        $this->assertTrue($this->user->doesntHavePermission(['permission_a', 'permission_b', 'permission_d'], $team, true));
+        $this->assertTrue($this->user->doesntHavePermission(['permission_a', 'permission_b', 'permission_e'], requireAll: true));
+        $this->assertTrue($this->user->doesntHavePermission(['permission_e', 'permission_f']));
+
         $this->app['config']->set('laratrust.teams.enabled', false);
         $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], 'team_a', true));
         $this->assertTrue($this->user->hasPermission(['permission_a', 'permission_b', 'permission_d'], $team, true));
+        $this->assertFalse($this->user->doesntHavePermission(['permission_a', 'permission_b', 'permission_d'], 'team_a', true));
+        $this->assertFalse($this->user->doesntHavePermission(['permission_a', 'permission_b', 'permission_d'], $team, true));
 
         $this->app['config']->set('laratrust.cache.enabled', false);
         $this->assertTrue($this->user->hasPermission('permission_b', 'team_a'));
         $this->assertTrue($this->user->hasPermission('permission_c', 'team_a'));
+        $this->assertFalse($this->user->doesntHavePermission('permission_b', 'team_a'));
+        $this->assertFalse($this->user->doesntHavePermission('permission_c', 'team_a'));
     }
 
     protected function hasPermissionWithPlaceholderSupportAssertions()
@@ -205,11 +227,22 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->assertTrue($this->user->hasPermission('admin.users'));
         $this->assertFalse($this->user->hasPermission('admin.config', 'team_a'));
 
+        $this->assertFalse($this->user->doesntHavePermission('admin.posts'));
+        $this->assertFalse($this->user->doesntHavePermission('admin.pages'));
+        $this->assertFalse($this->user->doesntHavePermission('admin.users'));
+        $this->assertTrue($this->user->doesntHavePermission('admin.config', 'team_a'));
+
         $this->assertTrue($this->user->hasPermission(['admin.*']));
         $this->assertTrue($this->user->hasPermission(['admin.*']));
         $this->assertTrue($this->user->hasPermission(['config.*'], 'team_a'));
         $this->assertTrue($this->user->hasPermission(['config.*']));
         $this->assertFalse($this->user->hasPermission(['site.*']));
+
+        $this->assertFalse($this->user->doesntHavePermission(['admin.*']));
+        $this->assertFalse($this->user->doesntHavePermission(['admin.*']));
+        $this->assertFalse($this->user->doesntHavePermission(['config.*'], 'team_a'));
+        $this->assertFalse($this->user->doesntHavePermission(['config.*']));
+        $this->assertTrue($this->user->doesntHavePermission(['site.*']));
     }
 
     public function userDisableTheRolesAndPermissionsCachingAssertions()
