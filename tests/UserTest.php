@@ -149,7 +149,7 @@ class UserTest extends LaratrustTestCase
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('hasPermission')->with('manage_user', null, false)->andReturn(true)->once();
+        $user->shouldReceive('hasPermission')->with('manage_user', null, false)->andReturn(true)->twice();
 
         /*
         |------------------------------------------------------------
@@ -157,6 +157,7 @@ class UserTest extends LaratrustTestCase
         |------------------------------------------------------------
         */
         $this->assertTrue($user->isAbleTo('manage_user'));
+        $this->assertFalse($user->isNotAbleTo('manage_user'));
     }
 
     public function testAddRole()

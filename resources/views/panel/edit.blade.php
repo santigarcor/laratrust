@@ -63,7 +63,7 @@
                   class="form-checkbox h-4 w-4"
                   name="permissions[]"
                   value="{{$permission->getKey()}}"
-                  {!! $permission->assigned ? 'checked' : '' !!}
+                  {!! ($model && $permission->assigned) ? 'checked' : '' !!}
                 >
                 <span class="ml-2">{{$permission->display_name ?? $permission->name}}</span>
               </label>
