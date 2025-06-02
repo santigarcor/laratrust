@@ -140,6 +140,8 @@ $user->hasPermission('edit-user');   // false
 $user->isAbleTo('edit-user');   // false
 $user->hasPermission('create-post'); // true
 $user->isAbleTo('create-post'); // true
+$user->doesntHavePermission('create-post'); // false
+$user->isNotAbleTo('create-post'); // false
 ```
 
 ::: tip NOTE
@@ -168,20 +170,24 @@ $user->hasRole(['owner', 'admin']);             // true
 $user->hasRole(['owner', 'admin'], true);       // false, user does not have admin role
 $user->hasPermission(['edit-user', 'create-post']);       // true
 $user->hasPermission(['edit-user', 'create-post'], true); // false, user does not have edit-user permission
+$user->doesntHavePermission(['edit-user', 'create-post']);       // true
+$user->doesntHavePermission(['edit-user', 'create-post'], true); // false, user does have create-post permission
 ```
 
 You can have as many `Role`s as you want for each `User` and vice versa. Also, you can have as many direct `Permissions`s as you want for each `User` and vice versa.
 
-The `Laratrust` class has shortcuts to both `hasPermission()` and `hasRole()` for the currently logged in user:
+The `Laratrust` class has shortcuts to `hasPermission()` and `doesntHavePermission()` and `hasRole()` for the currently logged in user:
 
 ```php
 Laratrust::hasRole('role-name');
 Laratrust::hasPermission('permission-name');
+Laratrust::doesntHavePermission('permission-name');
 
 // is identical to
 
 Auth::user()->hasRole('role-name');
 Auth::user()->hasPermission('permission-name');
+Auth::user()->doesntHavePermission('permission-name');
 ```
 
 You can also use wildcard to check any matching permission by doing:
