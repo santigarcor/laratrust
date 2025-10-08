@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Laratrust\Traits;
 
 use BackedEnum;
-use Illuminate\Contracts\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Helper;
 use Laratrust\Models\Team;
