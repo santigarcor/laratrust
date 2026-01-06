@@ -141,6 +141,10 @@ class UserDefaultChecker extends UserChecker
     {
         Cache::forget('laratrust_roles_for_'.$this->userModelCacheKey().'_'.$this->user->getKey());
         Cache::forget('laratrust_permissions_for_'.$this->userModelCacheKey().'_'.$this->user->getKey());
+        $this->user->unsetRelation('roles');
+        $this->user->unsetRelation('permissions');
+        $this->user->unsetRelation('permissionsTeams');
+        $this->user->unsetRelation('rolesTeams');
     }
 
     /**
@@ -171,11 +175,11 @@ class UserDefaultChecker extends UserChecker
         $cacheKey = 'laratrust_permissions_for_'.$this->userModelCacheKey().'_'.$this->user->getKey();
 
         if (! Config::get('laratrust.cache.enabled')) {
-            return $this->user->permissions()->get()->toArray();
+            return $this->user->getRelationValue('permissions')->toArray();
         }
 
         return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
-            return $this->user->permissions()->get()->toArray();
+            return $this->user->getRelationValue('permissions')->toArray();
         });
     }
 
