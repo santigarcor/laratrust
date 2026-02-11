@@ -27,7 +27,7 @@ trait HasRolesAndPermissions
      * remove the many-to-many records when trying to delete.
      * Will NOT delete any records if the user model uses soft deletes.
      */
-    public static function bootLaratrustUserTrait(): void
+    public static function bootHasRolesAndPermissions(): void
     {
         $flushCache = function ($user) {
             $user->flushCache();
