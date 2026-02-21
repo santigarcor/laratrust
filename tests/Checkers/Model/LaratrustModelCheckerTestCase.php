@@ -22,14 +22,15 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         parent::setUp();
 
         $this->migrate();
-        $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
-        $this->other = Other::create(['name' => 'test', 'email' => 'test@test.com']);
 
         $this->app['config']->set('laratrust.use_morph_map', true);
         $this->app['config']->set('laratrust.user_models', [
             'users' => 'Laratrust\Tests\Models\User',
             'others' => 'Laratrust\Tests\Models\Other'
         ]);
+
+        $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
+        $this->other = Other::create(['name' => 'test', 'email' => 'test@test.com']);
     }
 
     public function modelDisableTheRolesAndPermissionsCachingAssertions()
