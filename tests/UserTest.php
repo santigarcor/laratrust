@@ -646,6 +646,42 @@ class UserTest extends LaratrustTestCase
 
     }
 
+    public function testManyToManyRecordsAreRemoved()
+    {
+        /*
+        |------------------------------------------------------------
+        | Set
+        |------------------------------------------------------------
+        */
+        $roleA = Role::create(['name' => 'role_a']);
+        $permissionA = Permission::create(['name' => 'permission_a']);
+
+        $teamA = Team::create(['name' => 'team_a']);
+
+        $this->user->addRole($roleA, $teamA);
+        $this->user->givePermission($permissionA);
+
+        // force-deleting because the user model has soft-deletes enabled
+        $this->user->forceDelete();
+
+        /*
+        |------------------------------------------------------------
+        | Assertion
+        |------------------------------------------------------------
+        */
+        $this->assertModelMissing($this->user);
+
+        $this->assertDatabaseMissing(
+            $this->app['config']->get('laratrust.tables.role_user'),
+            ['user_id' => $this->user->id]
+        );
+
+        $this->assertDatabaseMissing(
+            $this->app['config']->get('laratrust.tables.permission_user'),
+            ['user_id' => $this->user->id]
+        );
+    }
+
     protected function assertWasAttached($objectName, $result)
     {
         $relationship = \Illuminate\Support\Str::plural($objectName);
