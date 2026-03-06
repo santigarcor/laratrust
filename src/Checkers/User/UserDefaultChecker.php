@@ -156,13 +156,17 @@ class UserDefaultChecker extends UserChecker
     {
         $cacheKey = 'laratrust_roles_for_'.$this->userModelCacheKey().'_'.$this->user->getKey();
 
-        if (! Config::get('laratrust.cache.enabled')) {
-            return $this->user->roles()->get()->toArray();
-        }
+        return Cache::store('array')->rememberForever(
+            $cacheKey,
+            function () use ($cacheKey) {
+                if (! Config::get('laratrust.cache.enabled')) {
+                    return $this->user->roles()->get()->toArray();
+                }
 
-        return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
-            return $this->user->roles()->get()->toArray();
-        });
+                return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
+                    return $this->user->roles()->get()->toArray();
+                });
+            });
     }
 
     /**
@@ -174,13 +178,17 @@ class UserDefaultChecker extends UserChecker
     {
         $cacheKey = 'laratrust_permissions_for_'.$this->userModelCacheKey().'_'.$this->user->getKey();
 
-        if (! Config::get('laratrust.cache.enabled')) {
-            return $this->user->permissions()->get()->toArray();
-        }
+        return Cache::store('array')->rememberForever(
+            $cacheKey,
+            function () use ($cacheKey) {
+                if (! Config::get('laratrust.cache.enabled')) {
+                    return $this->user->permissions()->get()->toArray();
+                }
 
-        return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
-            return $this->user->permissions()->get()->toArray();
-        });
+                return Cache::remember($cacheKey, Config::get('laratrust.cache.expiration_time', 60), function () {
+                    return $this->user->permissions()->get()->toArray();
+                });
+            });
     }
 
     /**
