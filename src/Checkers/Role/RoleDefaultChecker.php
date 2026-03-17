@@ -62,7 +62,15 @@ class RoleDefaultChecker extends RoleChecker
      */
     public function currentRoleCachedPermissions(): array
     {
-        $cacheKey = 'laratrust_permissions_for_role_'.$this->role->getKey();
+        $roleCacheKey = '';
+
+        if(method_exists($this->role, 'roleCacheKey')) {
+            $roleCacheKey = $this->role->roleCacheKey().'_'.$this->role->getKey();
+        }else{
+            $roleCacheKey = $this->role->getKey();
+        }
+
+        $cacheKey = 'laratrust_permissions_for_role_'.$roleCacheKey;
 
         if (! Config::get('laratrust.cache.enabled')) {
             return $this->role->permissions()->get()->toArray();
