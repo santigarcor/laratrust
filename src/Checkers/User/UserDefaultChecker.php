@@ -190,6 +190,10 @@ class UserDefaultChecker extends UserChecker
      */
     public function userModelCacheKey(): string
     {
+        if (method_exists($this->user, 'laratrustCacheKey')) {
+            return $this->user->laratrustCacheKey();
+        }
+
         foreach (Config::get('laratrust.user_models') as $key => $model) {
             if ($this->user instanceof $model) {
                 return $key;
