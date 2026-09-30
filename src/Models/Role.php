@@ -66,7 +66,7 @@ class Role extends Model implements RoleContract
             $role->permissions()->sync([]);
 
             foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
-                $role->$key()->sync([]);
+                $role->getMorphByUserRelation($key)->sync([]);
             }
         });
     }
