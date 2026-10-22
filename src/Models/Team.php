@@ -50,7 +50,7 @@ class Team extends Model implements TeamContract
             }
 
             foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
-                $team->$key()->sync([]);
+                $team->getMorphByUserRelation($key)->detach();
             }
         });
     }

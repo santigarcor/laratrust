@@ -46,27 +46,27 @@ class Role extends Model implements RoleContract
 
     protected static function booted(): void
     {
-        $flushCache = function (Role $role) {
-            $role->flushCache();
+        $flushLaratrustCache = function (Role $role) {
+            $role->flushLaratrustCache();
         };
 
         // If the role doesn't use SoftDeletes.
         if (method_exists(static::class, 'restored')) {
-            static::restored($flushCache);
+            static::restored($flushLaratrustCache);
         }
 
-        static::deleted($flushCache);
-        static::saved($flushCache);
+        static::deleted($flushLaratrustCache);
+        static::saved($flushLaratrustCache);
 
         static::deleting(function ($role) {
             if (method_exists($role, 'bootSoftDeletes') && ! $role->forceDeleting) {
                 return;
             }
 
-            $role->permissions()->sync([]);
+            $role->permissions()->detach();
 
             foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
-                $role->$key()->sync([]);
+                $role->getMorphByUserRelation($key)->detach();
             }
         });
     }
@@ -120,7 +120,7 @@ class Role extends Model implements RoleContract
         }
 
         $changes = $this->permissions()->sync($mappedPermissions);
-        $this->flushCache();
+        $this->flushLaratrustCache();
         $this->fireLaratrustEvent('permission.synced', [$this, $changes]);
 
         return $this;
@@ -131,7 +131,7 @@ class Role extends Model implements RoleContract
         $permission = Helper::getIdFor($permission, 'permission');
 
         $this->permissions()->attach($permission);
-        $this->flushCache();
+        $this->flushLaratrustCache();
         $this->fireLaratrustEvent('permission.added', [$this, $permission]);
 
         return $this;
@@ -142,7 +142,7 @@ class Role extends Model implements RoleContract
         $permission = Helper::getIdFor($permission, 'permission');
 
         $this->permissions()->detach($permission);
-        $this->flushCache();
+        $this->flushLaratrustCache();
         $this->fireLaratrustEvent('permission.removed', [$this, $permission]);
 
         return $this;
@@ -175,8 +175,18 @@ class Role extends Model implements RoleContract
     /**
      * Flush the role's cache.
      */
-    public function flushCache(): void
+    public function flushLaratrustCache(): void
     {
         $this->laratrustRoleChecker()->currentRoleFlushCache();
+    }
+
+    /**
+     * Flush the role's cache.
+     *
+     * @deprecated Use flushLaratrustCache() instead. Will be removed in 9.0.
+     */
+    public function flushCache(): void
+    {
+        $this->flushLaratrustCache();
     }
 }

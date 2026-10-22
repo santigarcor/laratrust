@@ -273,7 +273,7 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->user->hasPermission('some_permission');
         $this->assertTrue(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
         $this->assertTrue(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
-        $this->user->flushCache();
+        $this->user->flushLaratrustCache();
 
         // Without cache
         $this->app['config']->set('laratrust.cache.enabled', false);

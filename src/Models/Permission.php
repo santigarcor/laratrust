@@ -44,10 +44,10 @@ class Permission extends Model implements PermissionContract
                 return;
             }
 
-            $permission->roles()->sync([]);
+            $permission->roles()->detach();
 
             foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
-                $permission->$key()->sync([]);
+                $permission->getMorphByUserRelation($key)->detach();
             }
         });
     }

@@ -8,6 +8,8 @@ use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
+use Laratrust\Tests\Models\RoleWithCustomUsersRelation;
+use Laratrust\Tests\Models\User;
 
 class RoleModelTest extends LaratrustTestCase
 {
@@ -136,5 +138,41 @@ class RoleModelTest extends LaratrustTestCase
         $this->role->syncPermissions([]);
         $this->role->syncPermissions(['permission_a', 'permission_b']);
         $this->assertCount(2, $this->role->permissions()->get()->toArray());
+    }
+
+    public function testDeletingRoleRemovesPivotRecords()
+    {
+        $permission = Permission::create(['name' => 'permission_a']);
+        $user = User::create(['name' => 'test', 'email' => 'test@test.com']);
+
+        $this->role->givePermission($permission);
+        $user->addRole($this->role);
+
+        // force-deleting because the role model has soft-deletes enabled
+        $this->role->forceDelete();
+
+        $this->assertDatabaseMissing(
+            $this->app['config']->get('laratrust.tables.role_user'),
+            ['role_id' => $this->role->id]
+        );
+        $this->assertDatabaseMissing(
+            $this->app['config']->get('laratrust.tables.permission_role'),
+            ['role_id' => $this->role->id]
+        );
+    }
+
+    public function testDeletingRoleWithOverriddenUsersRelationRemovesPivotRecords()
+    {
+        $role = RoleWithCustomUsersRelation::create(['name' => 'custom_role']);
+        $user = User::create(['name' => 'test', 'email' => 'test@test.com']);
+        $user->addRole($role);
+
+        $role->delete();
+
+        $this->assertModelMissing($role);
+        $this->assertDatabaseMissing(
+            $this->app['config']->get('laratrust.tables.role_user'),
+            ['role_id' => $role->id]
+        );
     }
 }

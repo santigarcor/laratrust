@@ -14,7 +14,7 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
      *
      * @var string
      */
-    protected $name = 'laratrust:seeder';
+    protected $signature = 'laratrust:seeder';
 
     /**
      * The console command description.
