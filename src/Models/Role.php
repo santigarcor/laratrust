@@ -63,10 +63,10 @@ class Role extends Model implements RoleContract
                 return;
             }
 
-            $role->permissions()->sync([]);
+            $role->permissions()->detach();
 
             foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
-                $role->$key()->sync([]);
+                $role->getMorphByUserRelation($key)->detach();
             }
         });
     }

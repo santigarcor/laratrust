@@ -46,8 +46,8 @@ trait HasRolesAndPermissions
                 return;
             }
 
-            $user->roles()->sync([]);
-            $user->permissions()->sync([]);
+            $user->roles()->detach();
+            $user->permissions()->detach();
         });
     }
 
