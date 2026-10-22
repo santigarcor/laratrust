@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -11,7 +13,9 @@ use Laratrust\Helper;
 class RolesAssignmentController
 {
     protected $rolesModel;
+
     protected $permissionModel;
+
     protected $assignPermissions;
 
     public function __construct()
@@ -58,7 +62,7 @@ class RolesAssignmentController
         $roles = $this->rolesModel::orderBy('name')->get(['id', 'name', 'display_name'])
             ->map(function ($role) use ($user) {
                 $role->assigned = $user->roles
-                ->pluck('id')
+                    ->pluck('id')
                     ->contains($role->id);
                 $role->isRemovable = Helper::roleIsRemovable($role);
 

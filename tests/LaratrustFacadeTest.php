@@ -22,7 +22,7 @@ class LaratrustFacadeTest extends LaratrustTestCase
         $this->user = m::mock(User::class);
     }
 
-    public function testHasRole()
+    public function test_has_role()
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
         $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
@@ -34,7 +34,7 @@ class LaratrustFacadeTest extends LaratrustTestCase
         $this->assertFalse($this->laratrust->hasRole('AnyRole'));
     }
 
-    public function testHasPermission()
+    public function test_has_permission()
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
         $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
@@ -46,7 +46,7 @@ class LaratrustFacadeTest extends LaratrustTestCase
         $this->assertFalse($this->laratrust->hasPermission('any_permission'));
     }
 
-    public function testDoesntHavePermission()
+    public function test_doesnt_have_permission()
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
         $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
@@ -58,7 +58,7 @@ class LaratrustFacadeTest extends LaratrustTestCase
         $this->assertTrue($this->laratrust->doesntHavePermission('any_permission'));
     }
 
-    public function testIsAbleTo()
+    public function test_is_able_to()
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
         $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
@@ -70,7 +70,7 @@ class LaratrustFacadeTest extends LaratrustTestCase
         $this->assertFalse($this->laratrust->isAbleTo('any_permission'));
     }
 
-    public function testIsNotAbleTo()
+    public function test_is_not_able_to()
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
         $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();
@@ -82,7 +82,7 @@ class LaratrustFacadeTest extends LaratrustTestCase
         $this->assertTrue($this->laratrust->isNotAbleTo('any_permission'));
     }
 
-    public function testAbility()
+    public function test_ability()
     {
         $this->laratrust->shouldReceive('user')->andReturn($this->user)->twice()->ordered();
         $this->laratrust->shouldReceive('user')->andReturn(null)->once()->ordered();

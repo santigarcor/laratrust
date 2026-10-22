@@ -43,7 +43,5 @@ class RoleQueryChecker extends RoleChecker
     /**
      * Flush the role's cache.
      */
-    public function currentRoleFlushCache(): void
-    {
-    }
+    public function currentRoleFlushCache(): void {}
 }

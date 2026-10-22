@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Console;
 
 use Illuminate\Console\Command;
@@ -30,7 +32,6 @@ class SetupCommand extends Command
         'laratrust:migration' => 'Creating migration',
         'laratrust:role' => 'Creating Role model',
         'laratrust:permission' => 'Creating Permission model',
-        // 'laratrust:add-trait' => 'Adding LaratrustUserTrait to User model'
     ];
 
     /**

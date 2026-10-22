@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Laratrust\Test;
 
-use Mockery as m;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Str;
+use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
-use Laratrust\Tests\LaratrustTestCase;
-use Laratrust\Tests\Models\Permission;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Mockery as m;
 
 class UserTest extends LaratrustTestCase
 {
@@ -26,7 +27,7 @@ class UserTest extends LaratrustTestCase
         $this->app['config']->set('laratrust.teams.enabled', true);
     }
 
-    public function testRolesRelationship()
+    public function test_roles_relationship()
     {
         $this->app['config']->set('laratrust.teams.enabled', false);
         $this->assertInstanceOf(MorphToMany::class, $this->user->roles());
@@ -35,7 +36,7 @@ class UserTest extends LaratrustTestCase
         $this->assertInstanceOf(MorphToMany::class, $this->user->roles());
     }
 
-    public function testPermissionsRelationship()
+    public function test_permissions_relationship()
     {
         $this->app['config']->set('laratrust.teams.enabled', false);
         $this->assertInstanceOf(MorphToMany::class, $this->user->permissions());
@@ -44,7 +45,7 @@ class UserTest extends LaratrustTestCase
         $this->assertInstanceOf(MorphToMany::class, $this->user->permissions());
     }
 
-    public function testRolesTeams()
+    public function test_roles_teams()
     {
         $this->app['config']->set('laratrust.teams.enabled', false);
         $this->assertNull($this->user->rolesTeams());
@@ -53,8 +54,7 @@ class UserTest extends LaratrustTestCase
         $this->assertInstanceOf(MorphToMany::class, $this->user->rolesTeams());
     }
 
-
-    public function testPermissionsTeams()
+    public function test_permissions_teams()
     {
         $team = Team::create(['name' => 'team_a']);
 
@@ -62,7 +62,6 @@ class UserTest extends LaratrustTestCase
             Permission::create(['name' => 'permission_a']),
             Permission::create(['name' => 'permission_b']),
         ], $team);
-
 
         /*
         |------------------------------------------------------------
@@ -83,8 +82,7 @@ class UserTest extends LaratrustTestCase
         );
     }
 
-
-    public function testAllTeams()
+    public function test_all_teams()
     {
         /*
         |------------------------------------------------------------
@@ -97,27 +95,25 @@ class UserTest extends LaratrustTestCase
         $this->user->givePermissions([
             Permission::create(['name' => 'permission_a']),
             Permission::create(['name' => 'permission_b']),
-            Permission::create(['name' => 'permission_c'])
+            Permission::create(['name' => 'permission_c']),
         ], $teamA);
 
         $this->user->addRoles([
             Role::create(['name' => 'role_a']),
             Role::create(['name' => 'role_b']),
-            Role::create(['name' => 'role_c'])
+            Role::create(['name' => 'role_c']),
         ], $teamB);
 
         $this->user->addRoles([
             Role::create(['name' => 'role_d']),
         ], $teamA);
 
-
         /*
         |------------------------------------------------------------
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertInstanceOf(  '\Illuminate\Database\Eloquent\Collection', $this->user->allTeams());
-
+        $this->assertInstanceOf('\Illuminate\Database\Eloquent\Collection', $this->user->allTeams());
 
         $this->app['config']->set('laratrust.teams.enabled', false);
         $this->assertEmpty($this->user->allTeams());
@@ -125,7 +121,7 @@ class UserTest extends LaratrustTestCase
         $this->app['config']->set('laratrust.teams.enabled', true);
 
         $this->assertSame(
-            ['team_a', 'team_b',],
+            ['team_a', 'team_b'],
             $this->user->allTeams()->sortBy('name')->pluck('name')->all()
         );
         $onlySomeColumns = $this->user->allTeams(['name'])->first()->toArray();
@@ -135,7 +131,7 @@ class UserTest extends LaratrustTestCase
 
     }
 
-    public function testIsAbleTo()
+    public function test_is_able_to()
     {
         /*
         |------------------------------------------------------------
@@ -160,7 +156,7 @@ class UserTest extends LaratrustTestCase
         $this->assertFalse($user->isNotAbleTo('manage_user'));
     }
 
-    public function testAddRole()
+    public function test_add_role()
     {
         /*
         |------------------------------------------------------------
@@ -202,7 +198,7 @@ class UserTest extends LaratrustTestCase
         $this->user->roles()->sync([]);
     }
 
-    public function testRemoveRole()
+    public function test_remove_role()
     {
         /*
         |------------------------------------------------------------
@@ -244,7 +240,7 @@ class UserTest extends LaratrustTestCase
         $this->assertWasDetached('role', $this->user->removeRole($role, 'TeamA'), $role);
     }
 
-    public function testAddRoles()
+    public function test_add_roles()
     {
         /*
         |------------------------------------------------------------
@@ -269,7 +265,7 @@ class UserTest extends LaratrustTestCase
         $this->assertInstanceOf('Laratrust\Tests\Models\User', $user->addRoles([1, 2, 3], 'TeamA'));
     }
 
-    public function testRemoveRoles()
+    public function test_remove_roles()
     {
         /*
         |------------------------------------------------------------
@@ -302,7 +298,7 @@ class UserTest extends LaratrustTestCase
         $this->assertInstanceOf(User::class, $user->removeRoles([1, 2, 3], 'TeamA'));
     }
 
-    public function testSyncRoles()
+    public function test_sync_roles()
     {
         /*
         |------------------------------------------------------------
@@ -336,7 +332,7 @@ class UserTest extends LaratrustTestCase
         $this->assertEquals(2, $this->user->roles()->count());
     }
 
-    public function testSyncRolesWithoutDetaching()
+    public function test_sync_roles_without_detaching()
     {
         /*
         |------------------------------------------------------------
@@ -368,7 +364,7 @@ class UserTest extends LaratrustTestCase
         $this->assertEquals(4, $this->user->roles()->count());
     }
 
-    public function testgivePermission()
+    public function testgive_permission()
     {
         /*
         |------------------------------------------------------------
@@ -410,7 +406,7 @@ class UserTest extends LaratrustTestCase
         $this->user->permissions()->sync([]);
     }
 
-    public function testRemovePermission()
+    public function test_remove_permission()
     {
         /*
         |------------------------------------------------------------
@@ -452,7 +448,7 @@ class UserTest extends LaratrustTestCase
         $this->assertWasDetached('permission', $this->user->removePermission($permission, 'team_a'), $permission);
     }
 
-    public function testgivePermissions()
+    public function testgive_permissions()
     {
         /*
         |------------------------------------------------------------
@@ -477,7 +473,7 @@ class UserTest extends LaratrustTestCase
         $this->assertInstanceOf('Laratrust\Tests\Models\User', $user->givePermissions([1, 2, 3], 'TeamA'));
     }
 
-    public function testRemovePermissions()
+    public function test_remove_permissions()
     {
         $user = m::mock(User::class)->makePartial();
 
@@ -526,8 +522,7 @@ class UserTest extends LaratrustTestCase
         $this->assertEquals(2, $this->user->permissions()->count());
     }
 
-
-    public function testSyncPermissionsWithoutDetaching()
+    public function test_sync_permissions_without_detaching()
     {
         /*
         |------------------------------------------------------------
@@ -559,7 +554,7 @@ class UserTest extends LaratrustTestCase
         $this->assertEquals(4, $this->user->permissions()->count());
     }
 
-    public function testAllPermissions()
+    public function test_all_permissions()
     {
         /*
         |------------------------------------------------------------
@@ -593,7 +588,7 @@ class UserTest extends LaratrustTestCase
         $this->assertArrayNotHasKey('displayName', $onlySomeColumns);
     }
 
-    public function testAllPermissionsScopedOnTeams()
+    public function test_all_permissions_scoped_on_teams()
     {
         /*
         |------------------------------------------------------------
@@ -640,13 +635,13 @@ class UserTest extends LaratrustTestCase
         );
 
         $this->assertSame(
-            ['permission_d',],
+            ['permission_d'],
             $this->user->allPermissions(null, 'team_b')->sortBy('name')->pluck('name')->all()
         );
 
     }
 
-    public function testManyToManyRecordsAreRemoved()
+    public function test_many_to_many_records_are_removed()
     {
         /*
         |------------------------------------------------------------
@@ -684,7 +679,7 @@ class UserTest extends LaratrustTestCase
 
     protected function assertWasAttached($objectName, $result)
     {
-        $relationship = \Illuminate\Support\Str::plural($objectName);
+        $relationship = Str::plural($objectName);
 
         $this->assertInstanceOf('Laratrust\Tests\Models\User', $result);
         $this->assertEquals(1, $this->user->$relationship()->count());
@@ -693,7 +688,7 @@ class UserTest extends LaratrustTestCase
 
     protected function assertWasDetached($objectName, $result, $toReAttach)
     {
-        $relationship = \Illuminate\Support\Str::plural($objectName);
+        $relationship = Str::plural($objectName);
 
         $this->assertInstanceOf('Laratrust\Tests\Models\User', $result);
         $this->assertEquals(0, $this->user->$relationship()->count());

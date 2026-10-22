@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Console;
 
 use Illuminate\Console\Command;
@@ -101,7 +103,6 @@ class UpgradeCommand extends Command
      * Build a warning regarding possible duplication
      * due to already existing migrations.
      *
-     * @param  array  $existingMigrations
      * @return string
      */
     protected function getExistingMigrationsWarning(array $existingMigrations)

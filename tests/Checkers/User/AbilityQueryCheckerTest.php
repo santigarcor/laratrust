@@ -13,32 +13,32 @@ class AbilityQueryCheckerTest extends AbilityCheckerTestCase
         $this->app['config']->set('laratrust.checker', 'query');
     }
 
-    public function testAbilityShouldReturnBoolean()
+    public function test_ability_should_return_boolean()
     {
         $this->abilityShouldReturnBooleanAssertions();
     }
 
-    public function testAbilityShouldReturnArray()
+    public function test_ability_should_return_array()
     {
         $this->abilityShouldReturnArrayAssertions();
     }
 
-    public function testAbilityShouldReturnBoth()
+    public function test_ability_should_return_both()
     {
         $this->abilityShouldReturnBothAssertions();
     }
 
-    public function testAbilityShouldAcceptStrings()
+    public function test_ability_should_accept_strings()
     {
         $this->abilityShouldAcceptStringsAssertions();
     }
 
-    public function testAbilityDefaultOptions()
+    public function test_ability_default_options()
     {
         $this->abilityDefaultOptionsAssertions();
     }
 
-    public function testAbilityShouldThrowInvalidArgumentException()
+    public function test_ability_should_throw_invalid_argument_exception()
     {
         $this->abilityShouldThrowInvalidArgumentExceptionAssertions();
     }

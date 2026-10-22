@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Laratrust\Checkers\CheckersManager;
 use Laratrust\Checkers\User\UserChecker;
+use Laratrust\Contracts\Permission;
 use Laratrust\Helper;
 use Laratrust\Models\Team;
 use Ramsey\Uuid\UuidInterface;
@@ -233,7 +234,7 @@ trait HasRolesAndPermissions
      *
      * @param  array  $options  validate_all{true|false} or return_type{boolean|array|both}
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function ability(
         string|array|BackedEnum $roles,
@@ -278,9 +279,9 @@ trait HasRolesAndPermissions
 
             if (
                 $this->$relationship()
-                ->wherePivot(Team::modelForeignKey(), $team)
-                ->wherePivot(Config::get("laratrust.foreign_keys.{$objectType}"), $object)
-                ->count()
+                    ->wherePivot(Team::modelForeignKey(), $team)
+                    ->wherePivot(Config::get("laratrust.foreign_keys.{$objectType}"), $object)
+                    ->count()
             ) {
                 return $this;
             }
@@ -518,7 +519,7 @@ trait HasRolesAndPermissions
     /**
      * Return all the user permissions.
      *
-     * @return Collection<\Laratrust\Contracts\Permission>
+     * @return Collection<Permission>
      */
     public function allPermissions(?array $columns = null, mixed $team = false): Collection
     {

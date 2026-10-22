@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests;
 
+use Illuminate\Events\Dispatcher;
+use Illuminate\Support\Str;
 use Mockery as m;
 
 class EventsTestCase extends LaratrustTestCase
@@ -15,8 +17,7 @@ class EventsTestCase extends LaratrustTestCase
         parent::setUp();
 
         $this->migrate();
-        $this->dispatcher = m::mock(\Illuminate\Events\Dispatcher::class)->makePartial();
-
+        $this->dispatcher = m::mock(Dispatcher::class)->makePartial();
 
         $this->app['config']->set('laratrust.teams.enabled', true);
     }
@@ -26,7 +27,7 @@ class EventsTestCase extends LaratrustTestCase
      */
     protected function listenTo(string $event, string $modelClass): void
     {
-        $method = \Illuminate\Support\Str::camel(str_replace('.', ' ', $event));
+        $method = Str::camel(str_replace('.', ' ', $event));
 
         $modelClass::{$method}(function ($user, $roleId) {
             return 'test';

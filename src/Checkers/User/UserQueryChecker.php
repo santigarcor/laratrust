@@ -117,7 +117,5 @@ class UserQueryChecker extends UserChecker
             : $rolesPermissionsCount + $directPermissionsCount > 0;
     }
 
-    public function currentUserFlushCache()
-    {
-    }
+    public function currentUserFlushCache() {}
 }

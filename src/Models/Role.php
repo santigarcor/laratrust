@@ -19,8 +19,8 @@ use Ramsey\Uuid\UuidInterface;
 
 class Role extends Model implements RoleContract
 {
-    use HasLaratrustEvents;
     use DynamicUserRelationshipCalls;
+    use HasLaratrustEvents;
 
     /**
      * The database table used by the model.

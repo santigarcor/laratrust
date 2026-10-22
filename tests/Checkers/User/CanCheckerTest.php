@@ -41,7 +41,7 @@ class CanCheckerTest extends LaratrustTestCase
         $app['config']->set('laratrust.permissions_as_gates', true);
     }
 
-    public function testCanShouldReturnBoolean()
+    public function test_can_should_return_boolean()
     {
         /*
         |------------------------------------------------------------

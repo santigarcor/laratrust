@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests;
 
-use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Permission;
+use Laratrust\Tests\Models\Role;
 
 class RoleEventsTest extends EventsTestCase
 {
@@ -17,28 +17,28 @@ class RoleEventsTest extends EventsTestCase
         $this->role = Role::create(['name' => 'role']);
     }
 
-    public function testListenToThePermissionAddedEvent()
+    public function test_listen_to_the_permission_added_event()
     {
         $this->listenTo('permission.added', Role::class);
 
         $this->assertHasListenersFor('permission.added', Role::class);
     }
 
-    public function testListenToThePermissionRemovedEvent()
+    public function test_listen_to_the_permission_removed_event()
     {
         $this->listenTo('permission.removed', Role::class);
 
         $this->assertHasListenersFor('permission.removed', Role::class);
     }
 
-    public function testListenToThePermissionSyncedEvent()
+    public function test_listen_to_the_permission_synced_event()
     {
         $this->listenTo('permission.synced', Role::class);
 
         $this->assertHasListenersFor('permission.synced', Role::class);
     }
 
-    public function testAnEventIsFiredWhenPermissionIsAddedToRole()
+    public function test_an_event_is_fired_when_permission_is_added_to_role()
     {
         $permission = Permission::create(['name' => 'permission']);
 
@@ -49,7 +49,7 @@ class RoleEventsTest extends EventsTestCase
         $this->role->givePermission($permission);
     }
 
-    public function testAnEventIsFiredWhenPermissionIsRemovedFromRole()
+    public function test_an_event_is_fired_when_permission_is_removed_from_role()
     {
         $permission = Permission::create(['name' => 'permission']);
         $this->role->givePermission($permission);
@@ -61,7 +61,7 @@ class RoleEventsTest extends EventsTestCase
         $this->role->removePermission($permission);
     }
 
-    public function testAnEventIsFiredWhenPermissionsAreSynced()
+    public function test_an_event_is_fired_when_permissions_are_synced()
     {
         $permission = Permission::create(['name' => 'permission']);
         $this->role->givePermission($permission);
@@ -74,7 +74,7 @@ class RoleEventsTest extends EventsTestCase
                 'attached' => [],
                 'detached' => [$permission->id],
                 'updated' => [],
-            ]
+            ],
         ], Role::class);
 
         $this->role->syncPermissions([]);

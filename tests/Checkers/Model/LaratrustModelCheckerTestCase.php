@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Checkers\Model;
 
-use Laratrust\Tests\Models\Role;
-use Laratrust\Tests\Models\User;
-use Laratrust\Tests\Models\Other;
 use Illuminate\Support\Facades\Cache;
 use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Migrations\LaratrustSetupTables;
+use Laratrust\Tests\Migrations\OthersMigration;
+use Laratrust\Tests\Migrations\UsersMigration;
+use Laratrust\Tests\Models\Other;
 use Laratrust\Tests\Models\Permission;
+use Laratrust\Tests\Models\Role;
+use Laratrust\Tests\Models\User;
 
 class LaratrustModelCheckerTestCase extends LaratrustTestCase
 {
@@ -26,7 +29,7 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         $this->app['config']->set('laratrust.use_morph_map', true);
         $this->app['config']->set('laratrust.user_models', [
             'users' => 'Laratrust\Tests\Models\User',
-            'others' => 'Laratrust\Tests\Models\Other'
+            'others' => 'Laratrust\Tests\Models\Other',
         ]);
 
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
@@ -94,9 +97,9 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
     public function migrate()
     {
         $migrations = [
-            \Laratrust\Tests\Migrations\UsersMigration::class,
-            \Laratrust\Tests\Migrations\OthersMigration::class,
-            \Laratrust\Tests\Migrations\LaratrustSetupTables::class,
+            UsersMigration::class,
+            OthersMigration::class,
+            LaratrustSetupTables::class,
         ];
 
         foreach ($migrations as $migration) {

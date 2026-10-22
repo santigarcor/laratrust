@@ -88,7 +88,7 @@ trait HasLaratrustEvents
     /**
      * Register a permission added laratrust event with the dispatcher.
      */
-    public static function permissionAdded(\Closure|string|array $callback): void
+    public static function permissionAdded(Closure|string|array $callback): void
     {
         static::registerLaratrustEvent('permission.added', $callback);
     }
@@ -96,7 +96,7 @@ trait HasLaratrustEvents
     /**
      * Register a permission removed laratrust event with the dispatcher.
      */
-    public static function permissionRemoved(\Closure|string|array $callback): void
+    public static function permissionRemoved(Closure|string|array $callback): void
     {
         static::registerLaratrustEvent('permission.removed', $callback);
     }
@@ -104,7 +104,7 @@ trait HasLaratrustEvents
     /**
      * Register a role synced laratrust event with the dispatcher.
      */
-    public static function roleSynced(\Closure|string|array $callback): void
+    public static function roleSynced(Closure|string|array $callback): void
     {
         static::registerLaratrustEvent('role.synced', $callback);
     }
@@ -112,7 +112,7 @@ trait HasLaratrustEvents
     /**
      * Register a permission synced laratrust event with the dispatcher.
      */
-    public static function permissionSynced(\Closure|string|array $callback): void
+    public static function permissionSynced(Closure|string|array $callback): void
     {
         static::registerLaratrustEvent('permission.synced', $callback);
     }

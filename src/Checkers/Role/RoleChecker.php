@@ -10,9 +10,7 @@ use Laratrust\Contracts\Role;
 
 abstract class RoleChecker
 {
-    public function __construct(protected Role|Model $role)
-    {
-    }
+    public function __construct(protected Role|Model $role) {}
 
     abstract public function currentRoleHasPermission(
         string|array|BackedEnum $permission,

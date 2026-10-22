@@ -12,9 +12,7 @@ use Laratrust\Helper;
 
 abstract class UserChecker
 {
-    public function __construct(protected LaratrustUser|Model $user)
-    {
-    }
+    public function __construct(protected LaratrustUser|Model $user) {}
 
     /**
      * Get the user roles.
@@ -63,7 +61,7 @@ abstract class UserChecker
      *
      * @param  array  $options  validate_all (true|false) or return_type (boolean|array|both)
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function currentUserHasAbility(
         string|array|BackedEnum $roles,
@@ -143,7 +141,7 @@ abstract class UserChecker
                 ! in_array($option, $ignoredOptions)
                 && ! in_array($options[$option], $config['available'], true)
             ) {
-                throw new InvalidArgumentException();
+                throw new InvalidArgumentException;
             }
         }
 

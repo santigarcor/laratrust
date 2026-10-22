@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Laratrust\Tests;
 
 use Laratrust\LaratrustFacade;
+use Laratrust\LaratrustServiceProvider;
+use Laratrust\Tests\Migrations\LaratrustSetupTables;
+use Laratrust\Tests\Migrations\UsersMigration;
 use Orchestra\Testbench\TestCase;
 
 class LaratrustTestCase extends TestCase
 {
     protected function getPackageProviders($app)
     {
-        return [\Laratrust\LaratrustServiceProvider::class];
+        return [LaratrustServiceProvider::class];
     }
 
     protected function getPackageAliases($app)
@@ -40,8 +43,8 @@ class LaratrustTestCase extends TestCase
     public function migrate()
     {
         $migrations = [
-            \Laratrust\Tests\Migrations\UsersMigration::class,
-            \Laratrust\Tests\Migrations\LaratrustSetupTables::class,
+            UsersMigration::class,
+            LaratrustSetupTables::class,
         ];
 
         foreach ($migrations as $migration) {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\MorphToMany;

@@ -148,7 +148,7 @@ interface LaratrustUser
     /**
      * Return all the user permissions.
      *
-     * @return Collection<\Laratrust\Contracts\Permission>
+     * @return Collection<Permission>
      */
     public function allPermissions(?array $columns = null, mixed $team = false): Collection;
 }

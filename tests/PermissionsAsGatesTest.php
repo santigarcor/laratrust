@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests;
 
-use Laratrust\LaratrustServiceProvider;
 use Illuminate\Contracts\Auth\Access\Gate;
+use Laratrust\LaratrustServiceProvider;
 
 class PermissionsAsGatesTest extends LaratrustTestCase
 {
-    public function testRegistersPermissionsAsGates()
+    public function test_registers_permissions_as_gates()
     {
         config()->set('laratrust.permissions_as_gates', true);
 
@@ -19,7 +19,7 @@ class PermissionsAsGatesTest extends LaratrustTestCase
         $provider->boot();
     }
 
-    public function testDoesNotRegisterPermissionsAsGatesIfDisabledInConfig()
+    public function test_does_not_register_permissions_as_gates_if_disabled_in_config()
     {
         config()->set('laratrust.permissions_as_gates', false);
 
@@ -29,7 +29,7 @@ class PermissionsAsGatesTest extends LaratrustTestCase
         $provider->boot();
     }
 
-    public function testDoesNotRegisterPermissionsAsGatesByDefault()
+    public function test_does_not_register_permissions_as_gates_by_default()
     {
         $this->mock(Gate::class)->shouldNotReceive('before');
 

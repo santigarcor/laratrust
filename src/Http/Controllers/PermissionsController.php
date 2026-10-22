@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Http\Controllers;
 
 use Illuminate\Http\Request;

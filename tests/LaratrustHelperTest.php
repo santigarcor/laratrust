@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace Laratrust\Test;
 
-use Laratrust\Helper;
-use Illuminate\Support\Str;
-use Ramsey\Uuid\UuidInterface;
-use Laratrust\Tests\Models\Role;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
+use Laratrust\Helper;
 use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\Role;
+use Ramsey\Uuid\UuidInterface;
 
 class LaratrustHelperTest extends LaratrustTestCase
 {
     protected $superadmin;
+
     protected $admin;
 
     protected function setUp(): void
@@ -25,12 +26,12 @@ class LaratrustHelperTest extends LaratrustTestCase
         $this->admin = Role::create(['name' => 'admin']);
     }
 
-    public function testGetIdFor()
+    public function test_get_id_for()
     {
         $this->assertFalse(Helper::getIdFor(Str::uuid(), 'user') instanceof UuidInterface);
     }
 
-    public function testIfRoleIsEditable()
+    public function test_if_role_is_editable()
     {
         /*
         |------------------------------------------------------------
@@ -50,7 +51,7 @@ class LaratrustHelperTest extends LaratrustTestCase
         $this->assertTrue(Helper::roleIsEditable($this->admin->name));
     }
 
-    public function testRoleIsDeletable()
+    public function test_role_is_deletable()
     {
         /*
         |------------------------------------------------------------
@@ -70,7 +71,7 @@ class LaratrustHelperTest extends LaratrustTestCase
         $this->assertTrue(Helper::roleIsDeletable($this->admin->name));
     }
 
-    public function testRoleIsRemovable()
+    public function test_role_is_removable()
     {
         /*
         |------------------------------------------------------------

@@ -19,25 +19,25 @@ class PermissionModelTest extends LaratrustTestCase
         parent::setUp();
 
         $this->migrate();
-        $this->permission = new Permission();
+        $this->permission = new Permission;
     }
 
-    public function testUsersRelationship()
+    public function test_users_relationship()
     {
         $this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\MorphToMany', $this->permission->users());
     }
 
-    public function testAccessUsersRelationshipAsAttribute()
+    public function test_access_users_relationship_as_attribute()
     {
         $this->assertEmpty($this->permission->users);
     }
 
-    public function testRolesRelationship()
+    public function test_roles_relationship()
     {
         $this->assertInstanceOf('\Illuminate\Database\Eloquent\Relations\BelongsToMany', $this->permission->roles());
     }
 
-    public function testDeletingPermissionRemovesPivotRecords()
+    public function test_deleting_permission_removes_pivot_records()
     {
         $permission = Permission::create(['name' => 'permission_a']);
         $role = Role::create(['name' => 'role_a']);
@@ -59,7 +59,7 @@ class PermissionModelTest extends LaratrustTestCase
         );
     }
 
-    public function testDeletingPermissionWithOverriddenUsersRelationRemovesPivotRecords()
+    public function test_deleting_permission_with_overridden_users_relation_removes_pivot_records()
     {
         $permission = PermissionWithCustomUsersRelation::create(['name' => 'custom_permission']);
         $user = User::create(['name' => 'test', 'email' => 'test@test.com']);

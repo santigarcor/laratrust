@@ -11,6 +11,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laratrust\Middleware\Ability;
+use Laratrust\Middleware\Permission;
+use Laratrust\Middleware\Role;
 
 class LaratrustServiceProvider extends ServiceProvider
 {
@@ -71,9 +74,9 @@ class LaratrustServiceProvider extends ServiceProvider
         }
 
         $middlewares = [
-            'role' => \Laratrust\Middleware\Role::class,
-            'permission' => \Laratrust\Middleware\Permission::class,
-            'ability' => \Laratrust\Middleware\Ability::class,
+            'role' => Role::class,
+            'permission' => Permission::class,
+            'ability' => Ability::class,
         ];
 
         foreach ($middlewares as $key => $class) {
@@ -261,7 +264,6 @@ class LaratrustServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                Console\AddLaratrustUserTraitUseCommand::class,
                 Console\MakePermissionCommand::class,
                 Console\MakeRoleCommand::class,
                 Console\MakeSeederCommand::class,

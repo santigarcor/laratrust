@@ -23,7 +23,7 @@ class QueryCheckerTest extends LaratrustTestCase
         $this->role = Role::create(['name' => 'role']);
     }
 
-    public function testHasPermission()
+    public function test_has_permission()
     {
         $permA = Permission::create(['name' => 'permission_a']);
         $permB = Permission::create(['name' => 'permission_b']);

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -28,7 +30,6 @@ class Team extends Model implements TeamContract
     /**
      * Creates a new instance of the model.
      *
-     * @param  array  $attributes
      * @return void
      */
     public function __construct(array $attributes = [])

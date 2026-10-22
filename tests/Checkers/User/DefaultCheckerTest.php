@@ -16,27 +16,27 @@ class DefaultCheckerTest extends CheckerTestCase
         $this->app['config']->set('laratrust.checker', 'default');
     }
 
-    public function testGetRoles()
+    public function test_get_roles()
     {
         $this->getRolesAssertions();
     }
 
-    public function testHasRole()
+    public function test_has_role()
     {
         $this->hasRoleAssertions();
     }
 
-    public function testHasPermission()
+    public function test_has_permission()
     {
         $this->hasPermissionAssertions();
     }
 
-    public function testHasPermissionWithPlaceholderSupport()
+    public function test_has_permission_with_placeholder_support()
     {
         $this->hasPermissionWithPlaceholderSupportAssertions();
     }
 
-    public function testUserDisableTheRolesAndPermissionsCaching()
+    public function test_user_disable_the_roles_and_permissions_caching()
     {
         $this->userDisableTheRolesAndPermissionsCachingAssertions();
     }

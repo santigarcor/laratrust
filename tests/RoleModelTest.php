@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Laratrust\Test;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
@@ -23,22 +25,22 @@ class RoleModelTest extends LaratrustTestCase
         $this->role = Role::create(['name' => 'role']);
     }
 
-    public function testUsersRelationship()
+    public function test_users_relationship()
     {
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\MorphToMany::class, $this->role->users());
+        $this->assertInstanceOf(MorphToMany::class, $this->role->users());
     }
 
-    public function testAccessUsersRelationshipAsAttribute()
+    public function test_access_users_relationship_as_attribute()
     {
         $this->assertEmpty($this->role->users);
     }
 
-    public function testPermissionsRelationship()
+    public function test_permissions_relationship()
     {
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsToMany::class, $this->role->permissions());
+        $this->assertInstanceOf(BelongsToMany::class, $this->role->permissions());
     }
 
-    public function testgivePermission()
+    public function testgive_permission()
     {
         $permA = Permission::create(['name' => 'permission_a']);
         $permB = Permission::create(['name' => 'permission_b']);
@@ -61,7 +63,7 @@ class RoleModelTest extends LaratrustTestCase
         $this->role->givePermission(true);
     }
 
-    public function testRemovePermission()
+    public function test_remove_permission()
     {
         $permA = Permission::create(['name' => 'permission_a']);
         $permB = Permission::create(['name' => 'permission_b']);
@@ -82,7 +84,7 @@ class RoleModelTest extends LaratrustTestCase
         $this->assertCount(1, $this->role->permissions()->get()->toArray());
     }
 
-    public function testgivePermissions()
+    public function testgive_permissions()
     {
         Permission::create(['name' => 'permission_d']);
         $perms = [
@@ -96,7 +98,7 @@ class RoleModelTest extends LaratrustTestCase
         $this->assertCount(4, $this->role->permissions()->get()->toArray());
     }
 
-    public function testRemovePermissions()
+    public function test_remove_permissions()
     {
         Permission::create(['name' => 'permission_d']);
         $perms = [
@@ -111,7 +113,7 @@ class RoleModelTest extends LaratrustTestCase
         $this->assertCount(0, $this->role->permissions()->get()->toArray());
     }
 
-    public function testDetachAllPermissions()
+    public function test_detach_all_permissions()
     {
         $perms = [
             Permission::create(['name' => 'permission_a']),
@@ -124,7 +126,7 @@ class RoleModelTest extends LaratrustTestCase
         $this->assertCount(0, $this->role->permissions()->get()->toArray());
     }
 
-    public function testSyncPermissions()
+    public function test_sync_permissions()
     {
         $perms = [
             Permission::create(['name' => 'permission_a'])->id,
@@ -140,7 +142,7 @@ class RoleModelTest extends LaratrustTestCase
         $this->assertCount(2, $this->role->permissions()->get()->toArray());
     }
 
-    public function testDeletingRoleRemovesPivotRecords()
+    public function test_deleting_role_removes_pivot_records()
     {
         $permission = Permission::create(['name' => 'permission_a']);
         $user = User::create(['name' => 'test', 'email' => 'test@test.com']);
@@ -161,7 +163,7 @@ class RoleModelTest extends LaratrustTestCase
         );
     }
 
-    public function testDeletingRoleWithOverriddenUsersRelationRemovesPivotRecords()
+    public function test_deleting_role_with_overridden_users_relation_removes_pivot_records()
     {
         $role = RoleWithCustomUsersRelation::create(['name' => 'custom_role']);
         $user = User::create(['name' => 'test', 'email' => 'test@test.com']);

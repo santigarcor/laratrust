@@ -17,9 +17,7 @@ use Laratrust\Contracts\Role;
 
 class CheckersManager
 {
-    public function __construct(protected LaratrustUser|Role|Model $model)
-    {
-    }
+    public function __construct(protected LaratrustUser|Role|Model $model) {}
 
     /**
      * Return the right checker according to the configuration.

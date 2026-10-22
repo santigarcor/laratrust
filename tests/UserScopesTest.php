@@ -6,11 +6,11 @@ namespace Laratrust\Test;
 
 use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\Enums\Role as EnumsRole;
+use Laratrust\Tests\LaratrustTestCase;
+use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
-use Laratrust\Tests\LaratrustTestCase;
-use Laratrust\Tests\Models\Permission;
 
 class UserScopesTest extends LaratrustTestCase
 {
@@ -26,8 +26,7 @@ class UserScopesTest extends LaratrustTestCase
         $this->app['config']->set('laratrust.teams.enabled', true);
     }
 
-
-    public function testScopeWhereRoleIs()
+    public function test_scope_where_role_is()
     {
         $roleA = Role::create(['name' => EnumsRole::ROLE_A]);
         $roleB = Role::create(['name' => 'role_b']);
@@ -52,7 +51,7 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(1, User::whereHasRole(['role_d', 'role_c'])->get());
     }
 
-    public function testScopeOrWhereRoleIs()
+    public function test_scope_or_where_role_is()
     {
         $roleA = Role::create(['name' => 'role_a']);
         $roleC = Role::create(['name' => 'role_c']);
@@ -74,7 +73,7 @@ class UserScopesTest extends LaratrustTestCase
         );
     }
 
-    public function testScopeWherePermissionIs()
+    public function test_scope_where_permission_is()
     {
         $roleA = Role::create(['name' => 'role_a']);
         $roleB = Role::create(['name' => 'role_b']);
@@ -94,7 +93,7 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(0, User::whereHasPermission('permission_d')->get());
     }
 
-    public function testScopeOrWhereHasPermission()
+    public function test_scope_or_where_has_permission()
     {
         $roleA = Role::create(['name' => 'role_a']);
         $roleB = Role::create(['name' => 'role_b']);
@@ -131,7 +130,7 @@ class UserScopesTest extends LaratrustTestCase
         );
     }
 
-    public function testScopeToRetrieveTheUsersThatDontHaveRoles()
+    public function test_scope_to_retrieve_the_users_that_dont_have_roles()
     {
         $roleA = Role::create(['name' => 'role_a']);
         $this->user->addRoles([$roleA]);
@@ -141,7 +140,7 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(1, User::whereDoesntHaveRoles()->get());
     }
 
-    public function testScopeToRetrieveTheUsersThatDontHavePermissions()
+    public function test_scope_to_retrieve_the_users_that_dont_have_permissions()
     {
         $roleA = Role::create(['name' => 'role_a']);
         $roleB = Role::create(['name' => 'role_b']);
@@ -158,7 +157,7 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(1, User::whereDoesntHavePermissions()->get());
     }
 
-    public function testScopeWherePermissionIsForTeam()
+    public function test_scope_where_permission_is_for_team()
     {
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);

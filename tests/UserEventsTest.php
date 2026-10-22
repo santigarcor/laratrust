@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests;
 
+use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\User;
-use Laratrust\Tests\Models\Permission;
+use Laratrust\Tests\Models\UserObserver;
 
 class UserEventsTest extends EventsTestCase
 {
@@ -19,49 +20,49 @@ class UserEventsTest extends EventsTestCase
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
     }
 
-    public function testListenToTheRoleAddedEvent()
+    public function test_listen_to_the_role_added_event()
     {
         $this->listenTo('role.added', User::class);
 
         $this->assertHasListenersFor('role.added', User::class);
     }
 
-    public function testListenToTheRoleRemovedEvent()
+    public function test_listen_to_the_role_removed_event()
     {
         $this->listenTo('role.removed', User::class);
 
         $this->assertHasListenersFor('role.removed', User::class);
     }
 
-    public function testListenToThePermissionAddedEvent()
+    public function test_listen_to_the_permission_added_event()
     {
         $this->listenTo('permission.added', User::class);
 
         $this->assertHasListenersFor('permission.added', User::class);
     }
 
-    public function testListenToThePermissionRemovedEvent()
+    public function test_listen_to_the_permission_removed_event()
     {
         $this->listenTo('permission.removed', User::class);
 
         $this->assertHasListenersFor('permission.removed', User::class);
     }
 
-    public function testListenToTheRoleSyncedEvent()
+    public function test_listen_to_the_role_synced_event()
     {
         $this->listenTo('role.synced', User::class);
 
         $this->assertHasListenersFor('role.synced', User::class);
     }
 
-    public function testListenToThePermissionSyncedEvent()
+    public function test_listen_to_the_permission_synced_event()
     {
         $this->listenTo('permission.synced', User::class);
 
         $this->assertHasListenersFor('permission.synced', User::class);
     }
 
-    public function testAnEventIsFiredWhenRoleIsAddedToUser()
+    public function test_an_event_is_fired_when_role_is_added_to_user()
     {
         User::setEventDispatcher($this->dispatcher);
         $role = Role::create(['name' => 'role']);
@@ -71,7 +72,7 @@ class UserEventsTest extends EventsTestCase
         $this->user->addRole($role);
     }
 
-    public function testAnEventIsFiredWhenRoleIsRemovedFromUser()
+    public function test_an_event_is_fired_when_role_is_removed_from_user()
     {
         $role = Role::create(['name' => 'role']);
         $this->user->addRole($role);
@@ -83,7 +84,7 @@ class UserEventsTest extends EventsTestCase
         $this->user->removeRole($role);
     }
 
-    public function testAnEventIsFiredWhenPermissionIsAddedToUser()
+    public function test_an_event_is_fired_when_permission_is_added_to_user()
     {
         $permission = Permission::create(['name' => 'permission']);
 
@@ -94,7 +95,7 @@ class UserEventsTest extends EventsTestCase
         $this->user->givePermission($permission);
     }
 
-    public function testAnEventIsFiredWhenPermissionIsRemovedFromUser()
+    public function test_an_event_is_fired_when_permission_is_removed_from_user()
     {
         $permission = Permission::create(['name' => 'permission']);
         $this->user->givePermission($permission);
@@ -106,7 +107,7 @@ class UserEventsTest extends EventsTestCase
         $this->user->removePermission($permission);
     }
 
-    public function testAnEventIsFiredWhenRolesAreSynced()
+    public function test_an_event_is_fired_when_roles_are_synced()
     {
         $role = Role::create(['name' => 'role']);
 
@@ -119,13 +120,13 @@ class UserEventsTest extends EventsTestCase
                 'detached' => [],
                 'updated' => [],
             ],
-            null
+            null,
         ], User::class);
 
         $this->user->syncRoles([$role]);
     }
 
-    public function testAnEventIsFiredWhenPermissionsAreSynced()
+    public function test_an_event_is_fired_when_permissions_are_synced()
     {
         $permission = Permission::create(['name' => 'permission']);
         $this->user->givePermission($permission);
@@ -139,13 +140,13 @@ class UserEventsTest extends EventsTestCase
                 'detached' => [$permission->id],
                 'updated' => [],
             ],
-            null
+            null,
         ], User::class);
 
         $this->user->syncPermissions([]);
     }
 
-    public function testAddObservableClasses()
+    public function test_add_observable_classes()
     {
         $events = [
             'role.added',
@@ -156,14 +157,14 @@ class UserEventsTest extends EventsTestCase
             'permission.synced',
         ];
 
-        User::laratrustObserve(\Laratrust\Tests\Models\UserObserver::class);
+        User::laratrustObserve(UserObserver::class);
 
         foreach ($events as $event) {
-            $this->assertTrue(User::getEventDispatcher()->hasListeners("laratrust.{$event}: " . User::class));
+            $this->assertTrue(User::getEventDispatcher()->hasListeners("laratrust.{$event}: ".User::class));
         }
     }
 
-    public function testObserversShouldBeRemovedAfterFlushEvents()
+    public function test_observers_should_be_removed_after_flush_events()
     {
         $events = [
             'role.added',
@@ -174,11 +175,11 @@ class UserEventsTest extends EventsTestCase
             'permission.synced',
         ];
 
-        User::laratrustObserve(\Laratrust\Tests\Models\UserObserver::class);
+        User::laratrustObserve(UserObserver::class);
         User::laratrustFlushObservables();
 
         foreach ($events as $event) {
-            $this->assertFalse(User::getEventDispatcher()->hasListeners("laratrust.{$event}: " . User::class));
+            $this->assertFalse(User::getEventDispatcher()->hasListeners("laratrust.{$event}: ".User::class));
         }
     }
 }

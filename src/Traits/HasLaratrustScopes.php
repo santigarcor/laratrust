@@ -80,30 +80,30 @@ trait HasLaratrustScopes
             $method = is_array($permission) ? 'whereIn' : 'where';
 
             $query
-            ->whereHas(
-                'roles.permissions',
-                fn ($permissionQuery) => $permissionQuery
-                    ->$method('name', $permission)
-                    ->when(
-                        $team || $teamsStrictCheck,
-                        fn ($q) => $q->where(
-                            Team::modelForeignKey(),
-                            Helper::getIdFor($team, 'team')
+                ->whereHas(
+                    'roles.permissions',
+                    fn ($permissionQuery) => $permissionQuery
+                        ->$method('name', $permission)
+                        ->when(
+                            $team || $teamsStrictCheck,
+                            fn ($q) => $q->where(
+                                Team::modelForeignKey(),
+                                Helper::getIdFor($team, 'team')
+                            )
                         )
-                    )
-            )
-            ->orWhereHas(
-                'permissions',
-                fn ($permissionQuery) => $permissionQuery
-                    ->$method('name', $permission)
-                    ->when(
-                        $team || $teamsStrictCheck,
-                        fn ($q) => $q->where(
-                            Team::modelForeignKey(),
-                            Helper::getIdFor($team, 'team')
+                )
+                ->orWhereHas(
+                    'permissions',
+                    fn ($permissionQuery) => $permissionQuery
+                        ->$method('name', $permission)
+                        ->when(
+                            $team || $teamsStrictCheck,
+                            fn ($q) => $q->where(
+                                Team::modelForeignKey(),
+                                Helper::getIdFor($team, 'team')
+                            )
                         )
-                    )
-            );
+                );
         });
     }
 

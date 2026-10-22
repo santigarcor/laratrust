@@ -8,6 +8,7 @@ use BackedEnum;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
+use Laratrust\Models\LaratrustRole;
 use Ramsey\Uuid\UuidInterface;
 
 class Helper
@@ -112,7 +113,7 @@ class Helper
     /**
      * Check if a role is editable in the admin panel.
      *
-     * @param  string|\Laratrust\Models\LaratrustRole  $role
+     * @param  string|LaratrustRole  $role
      * @return bool
      */
     public static function roleIsEditable($role)
@@ -128,7 +129,7 @@ class Helper
     /**
      * Check if a role is deletable in the admin panel.
      *
-     * @param  string|\Laratrust\Models\LaratrustRole  $role
+     * @param  string|LaratrustRole  $role
      * @return bool
      */
     public static function roleIsDeletable($role)
@@ -144,7 +145,7 @@ class Helper
     /**
      * Check if a role is removable in the admin panel.
      *
-     * @param  string|\Laratrust\Models\LaratrustRole  $role
+     * @param  string|LaratrustRole  $role
      * @return bool
      */
     public static function roleIsRemovable($role)

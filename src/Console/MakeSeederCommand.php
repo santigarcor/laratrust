@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Console;
 
 use Exception;
@@ -58,8 +60,6 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
 
     /**
      * Create the seeder.
-     *
-     * @return string
      */
     protected function createSeederClass(): string
     {
@@ -74,8 +74,6 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
 
     /**
      * Replace the namespace of the seeder.
-     *
-     * @param  string  $stub
      */
     protected function replaceSeederNamespace(string &$stub)
     {
@@ -90,8 +88,6 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
 
     /**
      * Replace the models class names in the stub.
-     *
-     * @param  string  $stub
      */
     protected function replaceModelClassNames(string &$stub)
     {
@@ -108,8 +104,6 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
 
     /**
      * Replace the table names in the stub.
-     *
-     * @param  string  $stub
      */
     protected function replaceTableNames(string &$stub)
     {
@@ -131,10 +125,6 @@ class MakeSeederCommand extends LaravelMakeSeederCommand
 
     /**
      * Replace a placeholder parameter in the stub.
-     *
-     * @param  string  $stub
-     * @param  string  $parameter
-     * @param  string  $value
      */
     protected function replaceStubParameter(string &$stub, string $parameter, string $value)
     {

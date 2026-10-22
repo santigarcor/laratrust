@@ -17,9 +17,7 @@ class Laratrust
     /**
      * Create a new confide instance.
      */
-    public function __construct(public Application $app)
-    {
-    }
+    public function __construct(public Application $app) {}
 
     /**
      * Checks if the current user has a role by its name.

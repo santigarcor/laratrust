@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Middleware;
 
-use Mockery as m;
-use Laratrust\Middleware\Role;
-use Laratrust\Tests\Models\User;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
+use Laratrust\Middleware\Role;
+use Laratrust\Tests\Models\User;
+use Mockery as m;
 
 class RoleTest extends MiddlewareTest
 {
-    public function testHandle_IsGuestWithMismatchingRole_ShouldAbort403()
+    public function test_handle_is_guest_with_mismatching_role_should_abort403()
     {
         $middleware = new Role($this->guard);
 
@@ -24,11 +24,10 @@ class RoleTest extends MiddlewareTest
             ->with(403, self::ABORT_MESSAGE)
             ->andReturn(403);
 
-        $this->assertEquals(403, $middleware->handle($this->request, function () {
-        }, 'admin|user'));
+        $this->assertEquals(403, $middleware->handle($this->request, function () {}, 'admin|user'));
     }
 
-    public function testHandle_IsLoggedInWithMismatchRole_ShouldAbort403()
+    public function test_handle_is_logged_in_with_mismatch_role_should_abort403()
     {
         $user = m::mock(User::class)->makePartial();
         $middleware = new Role($this->guard);
@@ -52,26 +51,20 @@ class RoleTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertEquals(403, $middleware->handle($this->request, function () {
-        }, 'admin|user'));
+        $this->assertEquals(403, $middleware->handle($this->request, function () {}, 'admin|user'));
 
-        $this->assertEquals(403, $middleware->handle($this->request, function () {
-        }, 'admin|user', 'guard:api'));
+        $this->assertEquals(403, $middleware->handle($this->request, function () {}, 'admin|user', 'guard:api'));
 
-        $this->assertEquals(403, $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all'));
+        $this->assertEquals(403, $middleware->handle($this->request, function () {}, 'admin|user', 'require_all'));
 
-        $this->assertEquals(403, $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all|guard:api'));
+        $this->assertEquals(403, $middleware->handle($this->request, function () {}, 'admin|user', 'require_all|guard:api'));
 
-        $this->assertEquals(403, $middleware->handle($this->request, function () {
-        }, 'admin|user', 'TeamA', 'require_all'));
+        $this->assertEquals(403, $middleware->handle($this->request, function () {}, 'admin|user', 'TeamA', 'require_all'));
 
-        $this->assertEquals(403, $middleware->handle($this->request, function () {
-        }, 'admin|user', 'TeamA', 'guard:api|require_all'));
+        $this->assertEquals(403, $middleware->handle($this->request, function () {}, 'admin|user', 'TeamA', 'guard:api|require_all'));
     }
 
-    public function testHandle_IsLoggedInWithMatchingRole_ShouldNotAbort()
+    public function test_handle_is_logged_in_with_matching_role_should_not_abort()
     {
         /*
         |------------------------------------------------------------
@@ -102,26 +95,20 @@ class RoleTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertNull($middleware->handle($this->request, function () {
-        }, 'admin|user'));
+        $this->assertNull($middleware->handle($this->request, function () {}, 'admin|user'));
 
-        $this->assertNull($middleware->handle($this->request, function () {
-        }, 'admin|user', 'guard:api'));
+        $this->assertNull($middleware->handle($this->request, function () {}, 'admin|user', 'guard:api'));
 
-        $this->assertNull($middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all'));
+        $this->assertNull($middleware->handle($this->request, function () {}, 'admin|user', 'require_all'));
 
-        $this->assertNull($middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all|guard:api'));
+        $this->assertNull($middleware->handle($this->request, function () {}, 'admin|user', 'require_all|guard:api'));
 
-        $this->assertNull($middleware->handle($this->request, function () {
-        }, 'admin|user', 'TeamA', 'require_all'));
+        $this->assertNull($middleware->handle($this->request, function () {}, 'admin|user', 'TeamA', 'require_all'));
 
-        $this->assertNull($middleware->handle($this->request, function () {
-        }, 'admin|user', 'TeamA', 'require_all|guard:api'));
+        $this->assertNull($middleware->handle($this->request, function () {}, 'admin|user', 'TeamA', 'require_all|guard:api'));
     }
 
-    public function testHandle_IsLoggedInWithMismatchRole_ShouldRedirectWithoutError()
+    public function test_handle_is_logged_in_with_mismatch_role_should_redirect_without_error()
     {
         /*
         |------------------------------------------------------------
@@ -132,7 +119,6 @@ class RoleTest extends MiddlewareTest
         Config::set('laratrust.middleware.handling', 'redirect');
         $user = m::mock(User::class)->makePartial();
         $middleware = new Role($this->guard);
-
 
         /*
         |------------------------------------------------------------
@@ -154,45 +140,31 @@ class RoleTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user')->getContent());
 
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'guard:api'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'guard:api')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user', 'guard:api'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user', 'guard:api')->getContent());
 
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user', 'require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user', 'require_all')->getContent());
 
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all|guard:api'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all|guard:api')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user', 'require_all|guard:api'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user', 'require_all|guard:api')->getContent());
 
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all|guard:api'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all|guard:api')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user', 'require_all|guard:api'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user', 'require_all|guard:api')->getContent());
 
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'TeamA', 'require_all'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'TeamA', 'require_all')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user', 'TeamA', 'require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user', 'TeamA', 'require_all')->getContent());
 
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'TeamA', 'guard:api|require_all'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'TeamA', 'guard:api|require_all')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user', 'TeamA', 'guard:api|require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user', 'TeamA', 'guard:api|require_all')->getContent());
 
         $this->assertArrayNotHasKey('error', session()->all());
     }
 
-    public function testHandle_IsLoggedInWithMismatchRole_ShouldRedirectWithError()
+    public function test_handle_is_logged_in_with_mismatch_role_should_redirect_with_error()
     {
         /*
         |------------------------------------------------------------
@@ -205,7 +177,6 @@ class RoleTest extends MiddlewareTest
         $user = m::mock(User::class)->makePartial();
         $middleware = new Role($this->guard);
 
-
         /*
         |------------------------------------------------------------
         | Expectation
@@ -226,40 +197,26 @@ class RoleTest extends MiddlewareTest
         | Assertion
         |------------------------------------------------------------
         */
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user')->getContent());
 
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'guard:api'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'guard:api')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user', 'guard:api'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user', 'guard:api')->getContent());
 
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user', 'require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user', 'require_all')->getContent());
 
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all|guard:api'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all|guard:api')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user', 'require_all|guard:api'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user', 'require_all|guard:api')->getContent());
 
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all|guard:api'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'require_all|guard:api')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user', 'require_all|guard:api'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user', 'require_all|guard:api')->getContent());
 
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'TeamA', 'require_all'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'TeamA', 'require_all')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user', 'TeamA', 'require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user', 'TeamA', 'require_all')->getContent());
 
-        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'TeamA', 'guard:api|require_all'));
-        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {
-        }, 'admin|user', 'TeamA', 'guard:api|require_all')->getContent());
+        $this->assertObjectHasAttributeFallback('content', $middleware->handle($this->request, function () {}, 'admin|user', 'TeamA', 'guard:api|require_all'));
+        $this->assertStringContainsString('/home', $middleware->handle($this->request, function () {}, 'admin|user', 'TeamA', 'guard:api|require_all')->getContent());
 
         $this->assertArrayHasKey('error', session()->all());
         $this->assertStringContainsString('message', session()->get('error'));

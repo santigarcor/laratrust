@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -12,6 +14,7 @@ use Laratrust\Helper;
 class RolesController
 {
     protected $rolesModel;
+
     protected $permissionModel;
 
     public function __construct()
