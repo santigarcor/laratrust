@@ -15,8 +15,8 @@
     "vuepress": "^0.14.4"
   },
   "scripts": {
-    "docs:dev": "vuepress dev docs",
-    "docs:build": "vuepress build docs",
+    "docs:dev": "NODE_OPTIONS=--openssl-legacy-provider vuepress dev docs",
+    "docs:build": "NODE_OPTIONS=--openssl-legacy-provider vuepress build docs",
     "dev": "npm run development",
     "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "watch": "npm run development -- --watch",
