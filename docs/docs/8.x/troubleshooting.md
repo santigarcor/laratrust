@@ -34,3 +34,16 @@ First of all check that you have the `laratrust.php` file in your `app/config` d
 If you don't, then try `php artisan vendor:publish` and, if it does not appear, manually copy the `/vendor/santigarcor/laratrust/src/config/config.php` file in your config directory and rename it `laratrust.php`.
 
 ---
+
+If another package's trait on your user model also defines a `flushCache()` method (e.g. `watson/rememberable`), PHP will throw a trait method collision error. Laratrust's cache flushing method is `flushLaratrustCache()` (`flushCache()` is kept as a deprecated alias), so you can safely let the other trait's method win:
+
+```php
+class User extends Authenticatable implements LaratrustUser
+{
+    use HasRolesAndPermissions, Rememberable {
+        Rememberable::flushCache insteadof HasRolesAndPermissions;
+    }
+}
+```
+
+---

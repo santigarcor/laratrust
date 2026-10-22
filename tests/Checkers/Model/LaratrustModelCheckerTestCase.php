@@ -73,8 +73,8 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         $this->assertTrue(Cache::has("laratrust_roles_for_others_{$this->other->id}"));
         $this->assertTrue(Cache::has("laratrust_permissions_for_others_{$this->other->id}"));
 
-        $this->user->flushCache();
-        $this->other->flushCache();
+        $this->user->flushLaratrustCache();
+        $this->other->flushLaratrustCache();
 
         // Without cache
         $this->app['config']->set('laratrust.cache.enabled', false);

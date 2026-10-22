@@ -29,17 +29,17 @@ trait HasRolesAndPermissions
      */
     public static function bootHasRolesAndPermissions(): void
     {
-        $flushCache = function ($user) {
-            $user->flushCache();
+        $flushLaratrustCache = function ($user) {
+            $user->flushLaratrustCache();
         };
 
         // If the user doesn't use SoftDeletes.
         if (method_exists(static::class, 'restored')) {
-            static::restored($flushCache);
+            static::restored($flushLaratrustCache);
         }
 
-        static::deleted($flushCache);
-        static::saved($flushCache);
+        static::deleted($flushLaratrustCache);
+        static::saved($flushLaratrustCache);
 
         static::deleting(function ($user) {
             if (method_exists($user, 'bootSoftDeletes') && ! $user->forceDeleting) {
@@ -292,7 +292,7 @@ trait HasRolesAndPermissions
             $object,
             $attributes
         );
-        $this->flushCache();
+        $this->flushLaratrustCache();
         $this->fireLaratrustEvent("{$objectType}.added", [$this, $object, $team]);
 
         return $this;
@@ -323,7 +323,7 @@ trait HasRolesAndPermissions
         $object = Helper::getIdFor($object, $objectType);
         $relationshipQuery->detach($object);
 
-        $this->flushCache();
+        $this->flushLaratrustCache();
         $this->fireLaratrustEvent("{$objectType}.removed", [$this, $object, $team]);
 
         return $this;
@@ -363,7 +363,7 @@ trait HasRolesAndPermissions
 
         $result = $relationshipToSync->sync($mappedObjects, $detaching);
 
-        $this->flushCache();
+        $this->flushLaratrustCache();
         $this->fireLaratrustEvent("{$objectType}.synced", [$this, $result, $team]);
 
         return $this;
@@ -564,8 +564,18 @@ trait HasRolesAndPermissions
     /**
      * Flush the user's cache.
      */
-    public function flushCache(): void
+    public function flushLaratrustCache(): void
     {
         $this->laratrustUserChecker()->currentUserFlushCache();
+    }
+
+    /**
+     * Flush the user's cache.
+     *
+     * @deprecated Use flushLaratrustCache() instead. Will be removed in 9.0.
+     */
+    public function flushCache(): void
+    {
+        $this->flushLaratrustCache();
     }
 }

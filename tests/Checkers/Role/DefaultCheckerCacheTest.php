@@ -31,7 +31,7 @@ class DefaultCheckerCacheTest extends LaratrustTestCase
         $this->app['config']->set('laratrust.cache.enabled', true);
         $role->hasPermission('some_permission');
         $this->assertTrue(Cache::has("laratrust_permissions_for_role_{$role->id}"));
-        $role->flushCache();
+        $role->flushLaratrustCache();
 
         // Without cache
         $this->app['config']->set('laratrust.cache.enabled', false);
