@@ -11,33 +11,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: [8.1, 8.2, 8.3, 8.4]
-        laravel: ['10.*', '11.*', '12.*', '13.*']
+        php: ['8.3', '8.4', '8.5']
+        laravel: ['13.*']
         stability: [prefer-stable]
         include:
-          - laravel: 10.*
-            testbench: ^8.20
-          - laravel: 11.*
-            testbench: ^9.0
-          - laravel: 12.*
-            testbench: ^10.0
           - laravel: 13.*
             testbench: ^11.0
-        exclude:
-          - php: 8.1
-            laravel: 11.*
-          - laravel: 12.*
-            php: 8.1
-          - laravel: 13.*
-            php: 8.1
-          - laravel: 13.*
-            php: 8.2
 
-    name: PHP ${{ matrix.php }} - ${{ matrix.laravel }} - ${{ matrix.stability }}
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.stability }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Cache dependencies
         uses: actions/cache@v4
@@ -53,7 +38,28 @@ jobs:
           coverage: none
 
       - name: Install dependencies
-        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress --with laravel/framework:${{ matrix.laravel }}
+        run: composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-progress --with laravel/framework:${{ matrix.laravel }} --with orchestra/testbench:${{ matrix.testbench }}
 
       - name: Execute tests
         run: vendor/bin/phpunit
+
+  code-style:
+    runs-on: ubuntu-latest
+
+    name: Code style
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Check code style
+        run: vendor/bin/pint --test
