@@ -35,6 +35,18 @@ class RoleModelTest extends LaratrustTestCase
         $this->assertEmpty($this->role->users);
     }
 
+    public function test_users_relationship_can_be_eager_loaded()
+    {
+        $user = User::create(['name' => 'test', 'email' => 'test@test.com']);
+        $user->addRole($this->role);
+
+        $role = Role::with('users')->find($this->role->id);
+
+        $this->assertTrue($role->relationLoaded('users'));
+        $this->assertTrue($role->users->first()->is($user));
+        $this->assertTrue(Role::whereHas('users', fn ($query) => $query->whereKey($user->id))->exists());
+    }
+
     public function test_permissions_relationship()
     {
         $this->assertInstanceOf(BelongsToMany::class, $this->role->permissions());

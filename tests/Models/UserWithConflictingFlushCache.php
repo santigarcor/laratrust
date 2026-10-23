@@ -10,9 +10,9 @@ use Laratrust\Traits\HasRolesAndPermissions;
 
 class UserWithConflictingFlushCache extends Authenticatable implements LaratrustUser
 {
-    use FlushesOwnCache, HasRolesAndPermissions {
-        FlushesOwnCache::flushCache insteadof HasRolesAndPermissions;
-    }
+    // Laratrust no longer defines flushCache(), so both traits can be used without "insteadof" (#706).
+    use FlushesOwnCache;
+    use HasRolesAndPermissions;
 
     protected $table = 'users';
 

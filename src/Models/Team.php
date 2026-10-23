@@ -10,7 +10,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Contracts\Team as TeamContract;
 use Laratrust\Support\PermissionRegistry;
-use Laratrust\Traits\DynamicUserRelationshipCalls;
 
 /**
  * @property int|string $id
@@ -22,8 +21,6 @@ use Laratrust\Traits\DynamicUserRelationshipCalls;
  */
 class Team extends Model implements TeamContract
 {
-    use DynamicUserRelationshipCalls;
-
     /**
      * The database table used by the model.
      *

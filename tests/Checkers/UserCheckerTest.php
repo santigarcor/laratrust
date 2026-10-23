@@ -301,4 +301,19 @@ class UserCheckerTest extends LaratrustTestCase
         $this->assertTrue($this->user->hasRole('test'));
         $this->assertTrue($this->user->hasPermission('test_permission'));
     }
+
+    public function test_the_team_can_be_skipped_or_require_all_given_by_name(): void
+    {
+        $this->user->roles()->attach(Role::create(['name' => 'role_a'])->id);
+
+        foreach ([true, false] as $teamsEnabled) {
+            $this->app['config']->set('laratrust.teams.enabled', $teamsEnabled);
+
+            // A boolean in the team position is requireAll.
+            $this->assertFalse($this->user->hasRole(['role_a', 'role_b'], true));
+            $this->assertTrue($this->user->hasRole(['role_a', 'role_b'], false));
+            $this->assertFalse($this->user->hasRole(['role_a', 'role_b'], requireAll: true));
+            $this->assertFalse($this->user->hasPermission(['permission_a', 'permission_b'], true));
+        }
+    }
 }

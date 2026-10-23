@@ -43,8 +43,7 @@ final readonly class UserChecker
      */
     public function hasRole(string|array|BackedEnum $name, mixed $team = null, bool $requireAll = false): bool
     {
-        ['team' => $team, 'require_all' => $requireAll] = $this->getRealValues($team, $requireAll, is_bool(...));
-
+        [$team, $requireAll] = self::teamOrRequireAll($team, $requireAll);
         $lookup = $this->registry->lookupFor($this->user);
         $teamScope = $this->teamScope($team);
 
@@ -62,8 +61,7 @@ final readonly class UserChecker
      */
     public function hasPermission(string|array|BackedEnum $permission, mixed $team = null, bool $requireAll = false): bool
     {
-        ['team' => $team, 'require_all' => $requireAll] = $this->getRealValues($team, $requireAll, is_bool(...));
-
+        [$team, $requireAll] = self::teamOrRequireAll($team, $requireAll);
         $lookup = $this->registry->lookupFor($this->user);
         $teamScope = $this->teamScope($team);
 
@@ -90,7 +88,7 @@ final readonly class UserChecker
         mixed $team = null,
         array $options = []
     ): array|bool {
-        ['team' => $team, 'options' => $options] = $this->getRealValues($team, $options, is_array(...));
+        [$team, $options] = self::teamOrOptions($team, $options);
         $roles = Helper::standardize($roles, true);
         $permissions = Helper::standardize($permissions, true);
 
@@ -157,6 +155,27 @@ final readonly class UserChecker
     }
 
     /**
+     * The team can be skipped: hasRole(['admin', 'owner'], true) means requireAll.
+     *
+     * @return array{mixed, bool}
+     */
+    private static function teamOrRequireAll(mixed $team, bool $requireAll): array
+    {
+        return is_bool($team) ? [null, $team] : [$team, $requireAll];
+    }
+
+    /**
+     * The team can be skipped: ability($roles, $permissions, ['validate_all' => true]) means the options.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array{mixed, array<string, mixed>}
+     */
+    private static function teamOrOptions(mixed $team, array $options): array
+    {
+        return is_array($team) ? [null, $team] : [$team, $options];
+    }
+
+    /**
      * Run the check against each name and combine the results.
      *
      * With $requireAll every name must pass, otherwise one passing name is
@@ -171,23 +190,6 @@ final readonly class UserChecker
         $names = Collection::make($names);
 
         return $requireAll ? $names->every($check) : $names->isEmpty() || $names->contains($check);
-    }
-
-    /**
-     * Assign the real values to the team and requireAllOrOptions parameters.
-     *
-     * @param  callable(mixed): bool  $methodToEvaluate
-     * @return array{team: mixed, options: mixed, require_all: mixed}
-     */
-    private function getRealValues(mixed $team, mixed $requireAllOrOptions, callable $methodToEvaluate): array
-    {
-        $requireAllOrOptions = ($methodToEvaluate($team) ? $team : $requireAllOrOptions);
-
-        return [
-            'team' => ($methodToEvaluate($team) ? null : $team),
-            'options' => $requireAllOrOptions,
-            'require_all' => $requireAllOrOptions,
-        ];
     }
 
     /**
@@ -206,7 +208,7 @@ final readonly class UserChecker
         $returnType = $options['return_type'] ?? 'boolean';
 
         if (! is_bool($validateAll) || ! in_array($returnType, ['boolean', 'array', 'both'], true)) {
-            throw new InvalidArgumentException();
+            throw new InvalidArgumentException;
         }
 
         return ['validate_all' => $validateAll, 'return_type' => $returnType];

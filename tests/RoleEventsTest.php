@@ -4,79 +4,58 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests;
 
+use Illuminate\Support\Facades\Event;
+use Laratrust\Events\PermissionAdded;
+use Laratrust\Events\PermissionRemoved;
+use Laratrust\Events\PermissionSynced;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 
-class RoleEventsTest extends EventsTestCase
+class RoleEventsTest extends LaratrustTestCase
 {
     protected Role $role;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->migrate();
         $this->role = Role::create(['name' => 'role']);
     }
 
-    public function test_listen_to_the_permission_added_event()
-    {
-        $this->listenTo('permission.added', Role::class);
-
-        $this->assertHasListenersFor('permission.added', Role::class);
-    }
-
-    public function test_listen_to_the_permission_removed_event()
-    {
-        $this->listenTo('permission.removed', Role::class);
-
-        $this->assertHasListenersFor('permission.removed', Role::class);
-    }
-
-    public function test_listen_to_the_permission_synced_event()
-    {
-        $this->listenTo('permission.synced', Role::class);
-
-        $this->assertHasListenersFor('permission.synced', Role::class);
-    }
-
-    public function test_an_event_is_fired_when_permission_is_added_to_role()
+    public function test_an_event_is_dispatched_when_a_permission_is_added()
     {
         $permission = Permission::create(['name' => 'permission']);
-
-        Role::setEventDispatcher($this->dispatcher);
-
-        $this->dispatcherShouldFire('permission.added', [$this->role, $permission->id], Role::class);
+        Event::fake();
 
         $this->role->givePermission($permission);
+
+        Event::assertDispatched(PermissionAdded::class, fn (PermissionAdded $event) => $event->model->is($this->role)
+            && $event->permission === $permission->id
+            && $event->team === null);
     }
 
-    public function test_an_event_is_fired_when_permission_is_removed_from_role()
+    public function test_an_event_is_dispatched_when_a_permission_is_removed()
     {
         $permission = Permission::create(['name' => 'permission']);
         $this->role->givePermission($permission);
-
-        Role::setEventDispatcher($this->dispatcher);
-
-        $this->dispatcherShouldFire('permission.removed', [$this->role, $permission->id], Role::class);
+        Event::fake();
 
         $this->role->removePermission($permission);
+
+        Event::assertDispatched(PermissionRemoved::class, fn (PermissionRemoved $event) => $event->model->is($this->role)
+            && $event->permission === $permission->id);
     }
 
-    public function test_an_event_is_fired_when_permissions_are_synced()
+    public function test_an_event_is_dispatched_when_permissions_are_synced()
     {
         $permission = Permission::create(['name' => 'permission']);
         $this->role->givePermission($permission);
-
-        Role::setEventDispatcher($this->dispatcher);
-
-        $this->dispatcherShouldFire('permission.synced', [
-            $this->role,
-            [
-                'attached' => [],
-                'detached' => [$permission->id],
-                'updated' => [],
-            ],
-        ], Role::class);
+        Event::fake();
 
         $this->role->syncPermissions([]);
+
+        Event::assertDispatched(PermissionSynced::class, fn (PermissionSynced $event) => $event->model->is($this->role)
+            && $event->changes === ['attached' => [], 'detached' => [$permission->id], 'updated' => []]);
     }
 }

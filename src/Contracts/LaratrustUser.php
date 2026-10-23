@@ -152,7 +152,7 @@ interface LaratrustUser
     /**
      * Return all the user permissions.
      *
-     * @return Collection<Permission>
+     * @return Collection<int, Model>
      */
     public function allPermissions(?array $columns = null, mixed $team = false): Collection;
 

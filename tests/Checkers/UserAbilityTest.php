@@ -266,6 +266,15 @@ class UserAbilityTest extends LaratrustTestCase
         );
     }
 
+    public function test_ability_accepts_the_options_by_name()
+    {
+        $this->assertSame(
+            $this->user->ability(['role_a'], ['permission_a'], ['validate_all' => true, 'return_type' => 'both']),
+            $this->user->ability(['role_a'], ['permission_a'], options: ['validate_all' => true, 'return_type' => 'both']),
+        );
+        $this->assertFalse($this->user->ability(['role_a', 'missing'], ['permission_a'], 'team_a', ['validate_all' => true]));
+    }
+
     public function test_ability_should_throw_invalid_argument_exception()
     {
         $this->assertFalse($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['return_type' => 'boolean']));

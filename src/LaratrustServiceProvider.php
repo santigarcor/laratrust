@@ -11,6 +11,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laratrust\Contracts\Permission as PermissionContract;
+use Laratrust\Contracts\Role as RoleContract;
+use Laratrust\Contracts\Team as TeamContract;
 use Laratrust\Middleware\Ability;
 use Laratrust\Middleware\Permission;
 use Laratrust\Middleware\Role;
@@ -33,6 +36,7 @@ class LaratrustServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->useMorphMapForRelationships();
+        $this->registerUserRelationships();
         $this->registerMiddlewares();
         $this->registerBladeDirectives();
         $this->registerRoutes();
@@ -50,6 +54,30 @@ class LaratrustServiceProvider extends ServiceProvider
     {
         if ($this->app['config']->get('laratrust.use_morph_map')) {
             Relation::morphMap($this->app['config']->get('laratrust.user_models'));
+        }
+    }
+
+    /**
+     * Register a relationship to each user model on the role, permission and team models,
+     * named after its key in "laratrust.user_models", e.g. $role->users or Role::with('users').
+     */
+    protected function registerUserRelationships(): void
+    {
+        $relationships = array_keys($this->app['config']->get('laratrust.user_models', []));
+
+        foreach (['role', 'permission', 'team'] as $type) {
+            $model = $this->app['config']->get("laratrust.models.{$type}");
+
+            if (! is_string($model) || ! class_exists($model)) {
+                continue;
+            }
+
+            foreach ($relationships as $relationship) {
+                $model::resolveRelationUsing(
+                    $relationship,
+                    fn (RoleContract|PermissionContract|TeamContract $model) => $model->getMorphByUserRelation($relationship)
+                );
+            }
         }
     }
 
@@ -87,41 +115,13 @@ class LaratrustServiceProvider extends ServiceProvider
 
     /**
      * Register the blade directives.
-     *
-     * @return void
      */
-    private function registerBladeDirectives()
+    protected function registerBladeDirectives(): void
     {
-        if (! class_exists('\Blade')) {
-            return;
-        }
-
-        // Call to Laratrust::hasRole.
-        Blade::directive('role', function ($expression) {
-            return "<?php if (app('laratrust')->hasRole({$expression})) : ?>";
-        });
-
-        // Call to Laratrust::permission.
-        Blade::directive('permission', function ($expression) {
-            return "<?php if (app('laratrust')->hasPermission({$expression})) : ?>";
-        });
-
-        // Call to Laratrust::ability.
-        Blade::directive('ability', function ($expression) {
-            return "<?php if (app('laratrust')->ability({$expression})) : ?>";
-        });
-
-        Blade::directive('endrole', function () {
-            return "<?php endif; // app('laratrust')->hasRole ?>";
-        });
-
-        Blade::directive('endpermission', function () {
-            return "<?php endif; // app('laratrust')->permission ?>";
-        });
-
-        Blade::directive('endability', function () {
-            return "<?php endif; // app('laratrust')->ability ?>";
-        });
+        // Each one also defines @else{name}, @unless{name} and @end{name}, e.g. @elserole and @endrole.
+        Blade::if('role', fn (mixed ...$arguments) => app(Laratrust::class)->hasRole(...$arguments));
+        Blade::if('permission', fn (mixed ...$arguments) => app(Laratrust::class)->hasPermission(...$arguments));
+        Blade::if('ability', fn (mixed ...$arguments) => app(Laratrust::class)->ability(...$arguments));
     }
 
     /**
@@ -274,7 +274,6 @@ class LaratrustServiceProvider extends ServiceProvider
                 Console\MigrationCommand::class,
                 Console\SetupCommand::class,
                 Console\SetupTeamsCommand::class,
-                Console\UpgradeCommand::class,
             ]);
         }
     }

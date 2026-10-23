@@ -12,9 +12,10 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Checkers\RoleChecker;
 use Laratrust\Contracts\Role as RoleContract;
+use Laratrust\Events\PermissionAdded;
+use Laratrust\Events\PermissionRemoved;
+use Laratrust\Events\PermissionSynced;
 use Laratrust\Helper;
-use Laratrust\Traits\DynamicUserRelationshipCalls;
-use Laratrust\Traits\HasLaratrustEvents;
 use Ramsey\Uuid\UuidInterface;
 
 /**
@@ -27,9 +28,6 @@ use Ramsey\Uuid\UuidInterface;
  */
 class Role extends Model implements RoleContract
 {
-    use DynamicUserRelationshipCalls;
-    use HasLaratrustEvents;
-
     /**
      * The database table used by the model.
      *
@@ -135,7 +133,7 @@ class Role extends Model implements RoleContract
 
         $changes = $this->permissions()->sync($mappedPermissions);
         $this->flushLaratrustCache();
-        $this->fireLaratrustEvent('permission.synced', [$this, $changes]);
+        event(new PermissionSynced($this, $changes));
 
         return $this;
     }
@@ -146,7 +144,7 @@ class Role extends Model implements RoleContract
 
         $this->permissions()->attach($permission);
         $this->flushLaratrustCache();
-        $this->fireLaratrustEvent('permission.added', [$this, $permission]);
+        event(new PermissionAdded($this, $permission));
 
         return $this;
     }
@@ -157,7 +155,7 @@ class Role extends Model implements RoleContract
 
         $this->permissions()->detach($permission);
         $this->flushLaratrustCache();
-        $this->fireLaratrustEvent('permission.removed', [$this, $permission]);
+        event(new PermissionRemoved($this, $permission));
 
         return $this;
     }
@@ -202,15 +200,5 @@ class Role extends Model implements RoleContract
     public function laratrustCacheKey(): string
     {
         return "laratrust_role_{$this->getKey()}";
-    }
-
-    /**
-     * Flush the role's cache.
-     *
-     * @deprecated Use flushLaratrustCache() instead. Will be removed in 9.0.
-     */
-    public function flushCache(): void
-    {
-        $this->flushLaratrustCache();
     }
 }

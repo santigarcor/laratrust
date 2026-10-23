@@ -12,6 +12,12 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Laratrust\Checkers\UserChecker;
+use Laratrust\Events\PermissionAdded;
+use Laratrust\Events\PermissionRemoved;
+use Laratrust\Events\PermissionSynced;
+use Laratrust\Events\RoleAdded;
+use Laratrust\Events\RoleRemoved;
+use Laratrust\Events\RoleSynced;
 use Laratrust\Helper;
 use Laratrust\Models\Team;
 use Ramsey\Uuid\UuidInterface;
@@ -19,7 +25,6 @@ use UnexpectedValueException;
 
 trait HasRolesAndPermissions
 {
-    use HasLaratrustEvents;
     use HasLaratrustScopes;
 
     /**
@@ -280,10 +285,10 @@ trait HasRolesAndPermissions
         $attributes = [];
         $objectType = Str::singular($relationship);
         $object = Helper::getIdFor($object, $objectType);
+        // Null when teams are disabled.
+        $team = Helper::getIdFor($team, 'team');
 
         if (Config::get('laratrust.teams.enabled')) {
-            $team = Helper::getIdFor($team, 'team');
-
             if (
                 $this->$relationship()
                     ->wherePivot(Team::modelForeignKey(), $team)
@@ -301,7 +306,9 @@ trait HasRolesAndPermissions
             $attributes
         );
         $this->flushLaratrustCache();
-        $this->fireLaratrustEvent("{$objectType}.added", [$this, $object, $team]);
+        event($objectType === 'role'
+            ? new RoleAdded($this, $object, $team)
+            : new PermissionAdded($this, $object, $team));
 
         return $this;
     }
@@ -320,19 +327,19 @@ trait HasRolesAndPermissions
 
         $objectType = Str::singular($relationship);
         $relationshipQuery = $this->$relationship();
+        $team = Helper::getIdFor($team, 'team');
 
         if (Config::get('laratrust.teams.enabled')) {
-            $relationshipQuery->wherePivot(
-                Team::modelForeignKey(),
-                Helper::getIdFor($team, 'team')
-            );
+            $relationshipQuery->wherePivot(Team::modelForeignKey(), $team);
         }
 
         $object = Helper::getIdFor($object, $objectType);
         $relationshipQuery->detach($object);
 
         $this->flushLaratrustCache();
-        $this->fireLaratrustEvent("{$objectType}.removed", [$this, $object, $team]);
+        event($objectType === 'role'
+            ? new RoleRemoved($this, $object, $team)
+            : new PermissionRemoved($this, $object, $team));
 
         return $this;
     }
@@ -372,7 +379,9 @@ trait HasRolesAndPermissions
         $result = $relationshipToSync->sync($mappedObjects, $detaching);
 
         $this->flushLaratrustCache();
-        $this->fireLaratrustEvent("{$objectType}.synced", [$this, $result, $team]);
+        event($objectType === 'role'
+            ? new RoleSynced($this, $result, $team)
+            : new PermissionSynced($this, $result, $team));
 
         return $this;
     }
@@ -526,7 +535,7 @@ trait HasRolesAndPermissions
     /**
      * Return all the user permissions.
      *
-     * @return Collection<Permission>
+     * @return Collection<int, Model>
      */
     public function allPermissions(?array $columns = null, mixed $team = false): Collection
     {
@@ -591,15 +600,5 @@ trait HasRolesAndPermissions
         }
 
         throw new UnexpectedValueException('Class '.static::class.' is not defined in the laratrust.user_models');
-    }
-
-    /**
-     * Flush the user's cache.
-     *
-     * @deprecated Use flushLaratrustCache() instead. Will be removed in 9.0.
-     */
-    public function flushCache(): void
-    {
-        $this->flushLaratrustCache();
     }
 }

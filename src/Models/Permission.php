@@ -11,7 +11,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Contracts\Permission as PermissionContract;
 use Laratrust\Support\PermissionRegistry;
-use Laratrust\Traits\DynamicUserRelationshipCalls;
 
 /**
  * @property int|string $id
@@ -23,8 +22,6 @@ use Laratrust\Traits\DynamicUserRelationshipCalls;
  */
 class Permission extends Model implements PermissionContract
 {
-    use DynamicUserRelationshipCalls;
-
     /**
      * The database table used by the model.
      *
