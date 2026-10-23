@@ -265,7 +265,7 @@ trait HasRolesAndPermissions
     /**
      * Check if the given relationship is a valid laratrust relationship.
      */
-    private function isValidRelationship(string $relationship): bool
+    private function isValidLaratrustRelationship(string $relationship): bool
     {
         return in_array($relationship, ['roles', 'permissions']);
     }
@@ -273,12 +273,12 @@ trait HasRolesAndPermissions
     /**
      * Alias to eloquent many-to-many relation's attach() method.
      */
-    private function attachModel(
+    private function attachLaratrustModel(
         string $relationship,
         array|string|int|Model|UuidInterface|BackedEnum $object,
         array|string|int|Model|UuidInterface|null $team
     ): static {
-        if (! $this->isValidRelationship($relationship)) {
+        if (! $this->isValidLaratrustRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
@@ -316,12 +316,12 @@ trait HasRolesAndPermissions
     /**
      * Alias to eloquent many-to-many relation's detach() method.
      */
-    private function detachModel(
+    private function detachLaratrustModel(
         string $relationship,
         array|string|int|Model|UuidInterface|BackedEnum $object,
         array|string|int|Model|UuidInterface|null $team
     ): static {
-        if (! $this->isValidRelationship($relationship)) {
+        if (! $this->isValidLaratrustRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
@@ -347,13 +347,13 @@ trait HasRolesAndPermissions
     /**
      * Alias to eloquent many-to-many relation's sync() method.
      */
-    private function syncModels(
+    private function syncLaratrustModels(
         string $relationship,
         array|string|int|Model|UuidInterface|BackedEnum $objects,
         array|string|int|Model|UuidInterface|null $team,
         bool $detaching
     ): static {
-        if (! $this->isValidRelationship($relationship)) {
+        if (! $this->isValidLaratrustRelationship($relationship)) {
             throw new InvalidArgumentException;
         }
 
@@ -393,7 +393,7 @@ trait HasRolesAndPermissions
         array|string|int|Model|UuidInterface|BackedEnum $role,
         mixed $team = null
     ): static {
-        return $this->attachModel('roles', $role, $team);
+        return $this->attachLaratrustModel('roles', $role, $team);
     }
 
     /**
@@ -403,7 +403,7 @@ trait HasRolesAndPermissions
         array|string|int|Model|UuidInterface|BackedEnum $role,
         mixed $team = null
     ): static {
-        return $this->detachModel('roles', $role, $team);
+        return $this->detachLaratrustModel('roles', $role, $team);
     }
 
     /**
@@ -446,7 +446,7 @@ trait HasRolesAndPermissions
         mixed $team = null,
         bool $detaching = true
     ): static {
-        return $this->syncModels('roles', $roles, $team, $detaching);
+        return $this->syncLaratrustModels('roles', $roles, $team, $detaching);
     }
 
     /**
@@ -466,7 +466,7 @@ trait HasRolesAndPermissions
         array|string|int|Model|UuidInterface|BackedEnum $permission,
         mixed $team = null
     ): static {
-        return $this->attachModel('permissions', $permission, $team);
+        return $this->attachLaratrustModel('permissions', $permission, $team);
     }
 
     /**
@@ -476,7 +476,7 @@ trait HasRolesAndPermissions
         array|string|int|Model|UuidInterface|BackedEnum $permission,
         mixed $team = null
     ): static {
-        return $this->detachModel('permissions', $permission, $team);
+        return $this->detachLaratrustModel('permissions', $permission, $team);
     }
 
     /**
@@ -519,7 +519,7 @@ trait HasRolesAndPermissions
         mixed $team = null,
         bool $detaching = true
     ): static {
-        return $this->syncModels('permissions', $permissions, $team, $detaching);
+        return $this->syncLaratrustModels('permissions', $permissions, $team, $detaching);
     }
 
     /**
@@ -539,43 +539,33 @@ trait HasRolesAndPermissions
      */
     public function allPermissions(?array $columns = null, mixed $team = false): Collection
     {
-        $columns = is_array($columns) ? $columns : null;
-        if ($columns) {
-            $columns[] = 'id';
-            $columns = array_unique($columns);
+        $roles = $this->roles();
+        $permissions = $this->permissions();
+        $permission = $permissions->getRelated();
+
+        // false means any team; otherwise only the assignments made in that team (null = without a team).
+        if (Config::get('laratrust.teams.enabled') && $team !== false) {
+            $teamId = Helper::getIdFor($team, 'team');
+            $roles->where($roles->qualifyPivotColumn(Team::modelForeignKey()), $teamId);
+            $permissions->where($permissions->qualifyPivotColumn(Team::modelForeignKey()), $teamId);
         }
-        $withColumns = $columns ? ':'.implode(',', $columns) : '';
 
-        $roles = $this->roles()
-            ->when(
-                Config::get('laratrust.teams.enabled') && $team !== false,
-                fn ($query) => $query->whereHas('permissions', function ($permissionQuery) use ($team) {
-                    $permissionQuery->where(
-                        Config::get('laratrust.foreign_keys.team'),
-                        Helper::getIdFor($team, 'team')
-                    );
-                })
-            )
-            ->with("permissions{$withColumns}")
-            ->get();
+        // Qualified, so they're never ambiguous with the pivot table's columns.
+        $select = $columns === null ? null : collect($columns)
+            ->push($permission->getKeyName())
+            ->unique()
+            ->map(fn (string $column) => $permission->qualifyColumn($column))
+            ->all();
 
-        $rolesPermissions = $roles->flatMap(function ($role) {
-            return $role->permissions;
-        });
+        $rolesPermissions = $roles
+            ->with(['permissions' => fn ($query) => $select ? $query->select($select) : $query])
+            ->get()
+            ->flatMap(fn (Model $role) => $role->getRelation('permissions'));
 
-        $directPermissions = $this->permissions()
-            ->when(
-                Config::get('laratrust.teams.enabled') && $team !== false,
-                fn ($query) => $query->where(
-                    config('laratrust.foreign_keys.team'),
-                    Helper::getIdFor($team, 'team')
-                )
-            );
-
-        return $directPermissions
-            ->get($columns ?? ['*'])
+        return $permissions
+            ->get($select ?? ['*'])
             ->merge($rolesPermissions)
-            ->unique('id');
+            ->unique($permission->getKeyName());
     }
 
     /**

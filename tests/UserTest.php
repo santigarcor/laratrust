@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Laratrust\Test;
 
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
+use Laratrust\Tests\Models\UserWithCommonMethodNames;
 use Mockery as m;
 
 class UserTest extends LaratrustTestCase
@@ -588,6 +590,24 @@ class UserTest extends LaratrustTestCase
         $this->assertArrayNotHasKey('displayName', $onlySomeColumns);
     }
 
+    public function test_all_permissions_selects_qualified_columns()
+    {
+        $role = Role::create(['name' => 'role_a']);
+        $role->givePermission(Permission::create(['name' => 'permission_a']));
+        $this->user->addRole($role);
+        $this->user->givePermission(Permission::create(['name' => 'permission_b']));
+
+        $queries = [];
+        DB::listen(function ($query) use (&$queries) {
+            $queries[] = $query->sql;
+        });
+
+        $this->assertSame(['permission_a', 'permission_b'], $this->user->allPermissions(['name'])->pluck('name')->sort()->values()->all());
+        foreach (array_filter($queries, fn ($sql) => str_contains($sql, 'from "permissions"')) as $sql) {
+            $this->assertStringContainsString('"permissions"."name", "permissions"."id"', $sql);
+        }
+    }
+
     public function test_all_permissions_scoped_on_teams()
     {
         /*
@@ -693,5 +713,22 @@ class UserTest extends LaratrustTestCase
         $this->assertInstanceOf('Laratrust\Tests\Models\User', $result);
         $this->assertEquals(0, $this->user->$relationship()->count());
         $this->user->$relationship()->attach($toReAttach->id);
+    }
+
+    public function test_assigning_doesnt_depend_on_methods_the_user_model_could_define()
+    {
+        $this->app['config']->set('laratrust.teams.enabled', true);
+        $team = Team::create(['name' => 'team_a']);
+        $roleA = Role::create(['name' => 'role_a']);
+        $roleB = Role::create(['name' => 'role_b']);
+        $permission = Permission::create(['name' => 'permission_a']);
+        $this->app['config']->set('laratrust.user_models.users_with_common_method_names', UserWithCommonMethodNames::class);
+        $user = UserWithCommonMethodNames::find($this->user->id);
+
+        $user->addRole($roleA, $team)->addRole($roleB)->removeRole($roleB)->givePermission($permission);
+        $user->syncRoles([$roleA, $roleB], $team);
+
+        $this->assertTrue($user->hasRole(['role_a', 'role_b'], $team, true));
+        $this->assertTrue($user->isAbleTo('permission_a'));
     }
 }
