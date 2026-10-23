@@ -51,7 +51,7 @@ If you used a custom checker, move that logic to a [Gate](https://laravel.com/do
 ## Cache
 
 - The cache keys are now `laratrust_user_{user_models key}_{id}` for the users and `laratrust_role_{id}` for the roles. To change them, e.g. per tenant, override the new `laratrustCacheKey()` method on your user and role models. Refer to <docs-link to="/usage/roles-and-permissions.html#cache">the cache docs</docs-link>.
-- Laratrust flushes the cache when you use its methods (`addRole`, `givePermission`, `syncRoles`, …) and when a role is saved or deleted. If you change the pivot tables directly, e.g. `$user->roles()->attach($id)`, call `$user->flushLaratrustCache()` or `$role->flushLaratrustCache()` after the change. Because of the per-request memoization, this is now necessary also when the cache is disabled.
+- Laratrust flushes the cache when you use its methods (`addRole`, `givePermission`, `syncRoles`, …) and when a role is saved or deleted. It now also flushes the affected roles and users when a permission is renamed, deleted or restored, and when a team is force deleted. In 8.x they kept the old data until the cache expired. If you change the pivot tables directly, e.g. `$user->roles()->attach($id)`, call `$user->flushLaratrustCache()` or `$role->flushLaratrustCache()` after the change. Because of the per-request memoization, this is now necessary also when the cache is disabled.
 - The deprecated `flushCache()` method is removed from the user trait and the `Role` model. Use `flushLaratrustCache()`.
 
 ## Events
@@ -121,6 +121,7 @@ protected function whereHasRole(Builder $query, $role = '', $team = null, string
 - The `Role`, `Permission` and `Team` models now respect a `$table` property set in your models. If you don't set one, they use the table from `config/laratrust.php`, as before.
 - If a class in `laratrust.models` or `laratrust.user_models` isn't an Eloquent model that implements the Laratrust contract (`Laratrust\Contracts\Role`, `Permission`, `Team` or `LaratrustUser`), Laratrust throws an `InvalidArgumentException` that names the configuration key.
 - `$role->hasPermission('a|b')` now splits the pipe-separated names, like the user methods do.
+- Force deleting a team now also removes the direct permissions given within it (the `permission_user` rows), when your database doesn't cascade the deletes. In 8.x only the roles were removed.
 - The `users` relationships on the `Role`, `Permission` and `Team` models are now real Eloquent relationships (named after the keys in `user_models`), so you can eager load them: `Role::with('users')->get()`.
 
 ## Blade directives

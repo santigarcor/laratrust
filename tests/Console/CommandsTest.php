@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Console;
 
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Schema;
 use Laratrust\Tests\LaratrustTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
@@ -133,6 +135,53 @@ class CommandsTest extends LaratrustTestCase
         $this->assertValidPhp(File::get($migrations[0]));
     }
 
+    public function test_the_migration_with_teams_runs_and_rolls_back(): void
+    {
+        $this->app['config']->set('laratrust.teams.enabled', true);
+        File::ensureDirectoryExists($this->directory.'/database/migrations');
+        $this->artisan('laratrust:migration')
+            ->expectsConfirmation('Proceed with the migration creation?', 'yes')
+            ->assertSuccessful();
+
+        $migration = $this->requireMigration('laratrust_setup_tables');
+        $migration->up();
+
+        $this->assertTrue(Schema::hasTable('teams'));
+        $this->assertTrue(Schema::hasColumn('role_user', 'team_id'));
+        $this->assertTrue(Schema::hasColumn('permission_user', 'team_id'));
+
+        $migration->down();
+
+        $this->assertFalse(Schema::hasTable('roles'));
+        $this->assertFalse(Schema::hasTable('teams'));
+    }
+
+    public function test_the_teams_migration_runs_and_rolls_back_after_the_migration(): void
+    {
+        File::ensureDirectoryExists($this->directory.'/database/migrations');
+        $this->artisan('laratrust:migration')
+            ->expectsConfirmation('Proceed with the migration creation?', 'yes')
+            ->assertSuccessful();
+        $this->app['config']->set('laratrust.teams.enabled', true);
+        $this->artisan('laratrust:setup-teams')
+            ->expectsConfirmation('Proceed with the migration creation?', 'yes')
+            ->assertSuccessful();
+
+        $tables = $this->requireMigration('laratrust_setup_tables');
+        $teams = $this->requireMigration('laratrust_setup_teams');
+        $tables->up();
+        $teams->up();
+
+        $this->assertTrue(Schema::hasTable('teams'));
+        $this->assertTrue(Schema::hasColumn('role_user', 'team_id'));
+        $this->assertTrue(Schema::hasColumn('permission_user', 'team_id'));
+
+        $teams->down();
+        $this->assertFalse(Schema::hasTable('teams'));
+        $tables->down();
+        $this->assertFalse(Schema::hasTable('roles'));
+    }
+
     public function test_creating_the_migration_again_warns_about_the_existing_one(): void
     {
         File::ensureDirectoryExists($this->directory.'/database/migrations');
@@ -155,6 +204,20 @@ class CommandsTest extends LaratrustTestCase
             ->expectsOutputToContain('2020_01_01_000000_laratrust_setup_teams.php')
             ->expectsConfirmation('Proceed with the migration creation?', 'no')
             ->assertSuccessful();
+    }
+
+    /**
+     * Load the generated migration with the given suffix, which must return its instance.
+     */
+    protected function requireMigration(string $suffix): Migration
+    {
+        $files = File::glob($this->directory."/database/migrations/*_{$suffix}.php");
+        $this->assertCount(1, $files);
+
+        $migration = require $files[0];
+        $this->assertInstanceOf(Migration::class, $migration);
+
+        return $migration;
     }
 
     protected function assertValidPhp(string $code): void

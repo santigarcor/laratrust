@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Laratrust\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
+use Laratrust\Contracts\LaratrustUser;
 use Laratrust\Contracts\Permission as PermissionContract;
+use Laratrust\Contracts\Role as RoleContract;
 use Laratrust\Support\ModelClasses;
 use Laratrust\Support\PermissionRegistry;
 
@@ -43,7 +46,24 @@ class Permission extends Model implements PermissionContract
         static::saved($forgetIds);
         static::deleted($forgetIds);
 
+        // The roles and users cache the permission by its name.
+        static::saved(function (self $permission): void {
+            if ($permission->wasChanged('name')) {
+                $permission->flushLaratrustCache();
+            }
+        });
+
+        // If the permission uses SoftDeletes.
+        if (method_exists(static::class, 'restored')) {
+            static::restored(function (self $permission): void {
+                $permission->flushLaratrustCache();
+            });
+        }
+
         static::deleting(function (self $permission): void {
+            // Soft deleted permissions are left out too. Flushed first, as the pivot rows tell who has the permission.
+            $permission->flushLaratrustCache();
+
             // Soft deleting keeps the assignments, so the model can be restored with them.
             if (method_exists($permission, 'isForceDeleting') && ! $permission->isForceDeleting()) {
                 return;
@@ -86,5 +106,23 @@ class Permission extends Model implements PermissionContract
             Config::get('laratrust.foreign_keys.permission'),
             Config::get('laratrust.foreign_keys.user')
         );
+    }
+
+    /**
+     * Flush the cache of the roles and users that have the permission.
+     */
+    public function flushLaratrustCache(): void
+    {
+        $withThisPermission = fn (Builder $permissions): Builder => $permissions->whereKey($this->getKey());
+
+        ModelClasses::role()::query()
+            ->whereHas('permissions', $withThisPermission)
+            ->each(fn (Model&RoleContract $role) => $role->flushLaratrustCache());
+
+        foreach (ModelClasses::userRelationships() as $key) {
+            ModelClasses::user($key)::query()
+                ->whereHas('permissions', $withThisPermission)
+                ->each(fn (Model&LaratrustUser $user) => $user->flushLaratrustCache());
+        }
     }
 }

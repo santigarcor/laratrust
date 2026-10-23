@@ -4,6 +4,8 @@
 - Load a user's roles and permissions with at most 4 queries and memoize them per request, queue job and Octane request (#681)
 - Make the checks with many direct permissions fast, also with the cache enabled (#645)
 - Cache each role's permissions once instead of copying them into each user
+- Flush the affected roles and users when a permission is renamed, deleted or restored, and when a team is force deleted
+- Remove the direct permissions within a team when it's force deleted
 - Add `laratrustCacheKey()` to the user and role models to customize the cache keys (#705)
 - Replace the string events and `laratrustObserve()` with the `Laratrust\Events` event classes
 - Register the user relationships on the role, permission and team models with `resolveRelationUsing`, so they can be eager loaded
@@ -20,6 +22,7 @@
 - Throw a clear exception when a configured model class is invalid
 - Split pipe-separated names in `Role::hasPermission()`
 - Always write the seeder to `database/seeders`
+- Generate the migrations as anonymous classes
 - Remove `flushCache()`, `laratrust:add-trait`, `laratrust:upgrade` and `Laratrust\Helper`
 - Rebuild the admin panel with Tailwind CSS v4 and Alpine.js v3, with dark mode, a mobile menu and filters, and no assets to publish
 - Enforce the `panel.create_permissions` option on the panel routes

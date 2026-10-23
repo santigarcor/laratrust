@@ -231,6 +231,90 @@ class PermissionRegistryTest extends LaratrustTestCase
         $this->assertTrue($this->user->hasRole('role_c', 'team_b'));
     }
 
+    public function test_renaming_a_permission_refreshes_its_roles_and_users(): void
+    {
+        $this->app['config']->set('laratrust.cache.enabled', true);
+        $this->assertTrue($this->user->isAbleTo('role_a.permission_a'));
+        $this->assertTrue($this->user->isAbleTo('direct'));
+
+        Permission::where('name', 'role_a.permission_a')->first()->update(['name' => 'renamed']);
+        Permission::where('name', 'direct')->first()->update(['name' => 'renamed_direct']);
+
+        $this->assertTrue($this->user->isAbleTo('renamed'));
+        $this->assertTrue($this->user->isAbleTo('renamed_direct'));
+
+        $this->simulateNewRequest();
+        $this->assertFalse($this->user->isAbleTo('role_a.permission_a'));
+        $this->assertFalse($this->user->isAbleTo('direct'));
+        $this->assertTrue($this->user->isAbleTo('renamed'));
+        $this->assertTrue($this->user->isAbleTo('renamed_direct'));
+    }
+
+    public function test_changing_other_permission_columns_keeps_the_cache(): void
+    {
+        $this->app['config']->set('laratrust.cache.enabled', true);
+        $this->assertTrue($this->user->isAbleTo('role_a.permission_a'));
+        $roleA = Role::where('name', 'role_a')->first();
+
+        Permission::where('name', 'role_a.permission_a')->first()->update(['display_name' => 'Permission A']);
+        Permission::create(['name' => 'new_permission']);
+
+        $this->assertTrue(Cache::has($roleA->laratrustCacheKey()));
+        $this->assertTrue(Cache::has($this->user->laratrustCacheKey()));
+    }
+
+    public function test_soft_deleting_and_restoring_a_permission_refreshes_its_roles_and_users(): void
+    {
+        $this->app['config']->set('laratrust.cache.enabled', true);
+        $this->assertTrue($this->user->isAbleTo('role_a.permission_a'));
+        $this->assertTrue($this->user->isAbleTo('direct'));
+        $roleAPermission = Permission::where('name', 'role_a.permission_a')->first();
+        $direct = Permission::where('name', 'direct')->first();
+
+        $roleAPermission->delete();
+        $direct->delete();
+        $this->simulateNewRequest();
+        $this->assertFalse($this->user->isAbleTo('role_a.permission_a'));
+        $this->assertFalse($this->user->isAbleTo('direct'));
+
+        $roleAPermission->restore();
+        $direct->restore();
+        $this->simulateNewRequest();
+        $this->assertTrue($this->user->isAbleTo('role_a.permission_a'));
+        $this->assertTrue($this->user->isAbleTo('direct'));
+    }
+
+    public function test_force_deleting_a_permission_refreshes_its_roles_and_users(): void
+    {
+        $this->app['config']->set('laratrust.cache.enabled', true);
+        $this->assertTrue($this->user->isAbleTo('role_a.permission_a'));
+        $this->assertTrue($this->user->isAbleTo('direct'));
+
+        Permission::where('name', 'role_a.permission_a')->first()->forceDelete();
+        Permission::where('name', 'direct')->first()->forceDelete();
+        $this->simulateNewRequest();
+
+        $this->assertFalse($this->user->isAbleTo('role_a.permission_a'));
+        $this->assertFalse($this->user->isAbleTo('direct'));
+        $this->assertTrue($this->user->isAbleTo('role_a.permission_b'));
+    }
+
+    public function test_force_deleting_a_team_removes_the_assignments_within_it(): void
+    {
+        $this->app['config']->set('laratrust.cache.enabled', true);
+        $this->assertTrue($this->user->hasRole('role_c'));
+        $this->assertTrue($this->user->isAbleTo('direct'));
+
+        Team::where('name', 'team_a')->first()->forceDelete();
+        $this->simulateNewRequest();
+
+        $this->assertFalse($this->user->hasRole('role_c'));
+        $this->assertFalse($this->user->isAbleTo('direct'));
+        $this->assertTrue($this->user->hasRole('role_a'));
+        $this->assertSame(0, DB::table('role_user')->whereNotNull('team_id')->count());
+        $this->assertSame(0, DB::table('permission_user')->whereNotNull('team_id')->count());
+    }
+
     public function test_the_cache_keys_can_be_customized(): void
     {
         $this->app['config']->set('laratrust.cache.enabled', true);

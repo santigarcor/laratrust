@@ -112,7 +112,7 @@ final readonly class UserChecker
         }
 
         // If validate all, there should not be any false; otherwise there must be at least one true.
-        $validateAll = $options['validate_all']
+        $passes = $options['validate_all']
             ? ! in_array(false, $checkedRoles) && ! in_array(false, $checkedPermissions)
             : in_array(true, $checkedRoles) || in_array(true, $checkedPermissions);
 
@@ -120,7 +120,7 @@ final readonly class UserChecker
             return ['roles' => $checkedRoles, 'permissions' => $checkedPermissions];
         }
 
-        return [$validateAll, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
+        return [$passes, ['roles' => $checkedRoles, 'permissions' => $checkedPermissions]];
     }
 
     /**

@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Laratrust\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
+use Laratrust\Contracts\LaratrustUser;
 use Laratrust\Contracts\Team as TeamContract;
 use Laratrust\Support\ModelClasses;
 use Laratrust\Support\PermissionRegistry;
@@ -38,8 +40,8 @@ class Team extends Model implements TeamContract
 
     /**
      * Boots the team model and adds event listener to
-     * remove the many-to-many records when trying to delete.
-     * It WON'T delete any records if the team model uses soft deletes.
+     * remove the many-to-many records when trying to force delete.
+     * It WON'T delete any records when the team is soft deleted.
      */
     protected static function booted(): void
     {
@@ -53,10 +55,30 @@ class Team extends Model implements TeamContract
                 return;
             }
 
+            // Before the pivot rows are detached, as they tell which users have assignments in the team.
+            $team->flushLaratrustCache();
+
             foreach (ModelClasses::userRelationships() as $key) {
                 $team->getMorphByUserRelation($key)->detach();
+                $team->getMorphByUserPermissionRelation($key)->detach();
             }
         });
+    }
+
+    /**
+     * Flush the cache of the users that have roles or permissions within the team.
+     */
+    public function flushLaratrustCache(): void
+    {
+        $roleUserTeam = Config::get('laratrust.tables.role_user').'.'.static::modelForeignKey();
+        $permissionUserTeam = Config::get('laratrust.tables.permission_user').'.'.static::modelForeignKey();
+
+        foreach (ModelClasses::userRelationships() as $key) {
+            ModelClasses::user($key)::query()
+                ->whereHas('roles', fn (Builder $roles): Builder => $roles->where($roleUserTeam, $this->getKey()))
+                ->orWhereHas('permissions', fn (Builder $permissions): Builder => $permissions->where($permissionUserTeam, $this->getKey()))
+                ->each(fn (Model&LaratrustUser $user) => $user->flushLaratrustCache());
+        }
     }
 
     /**
@@ -68,6 +90,22 @@ class Team extends Model implements TeamContract
             ModelClasses::user($relationship),
             'user',
             Config::get('laratrust.tables.role_user'),
+            Config::get('laratrust.foreign_keys.team'),
+            Config::get('laratrust.foreign_keys.user')
+        );
+    }
+
+    /**
+     * The users with direct permissions within the team, through the permission_user table.
+     *
+     * @return MorphToMany<covariant Model, $this>
+     */
+    protected function getMorphByUserPermissionRelation(string $relationship): MorphToMany
+    {
+        return $this->morphedByMany(
+            ModelClasses::user($relationship),
+            'user',
+            Config::get('laratrust.tables.permission_user'),
             Config::get('laratrust.foreign_keys.team'),
             Config::get('laratrust.foreign_keys.user')
         );

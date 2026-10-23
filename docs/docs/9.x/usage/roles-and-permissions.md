@@ -319,9 +319,11 @@ The permissions of each role are cached once, not copied into each user. When yo
 
 ### Flushing the cache
 
-Laratrust flushes the cache when you use its methods to add, remove or sync roles and permissions, and when a user or a role is saved or deleted.
+Laratrust flushes the cache when you use its methods to add, remove or sync roles and permissions, and when:
 
-Renaming or deleting a permission doesn't flush the cache: the users and roles keep the old names until the cache expires. Run `php artisan cache:clear` after you rename or delete permissions.
+- A user or a role is saved, deleted or restored.
+- A permission is renamed, deleted or restored. This flushes the roles and the users that have it.
+- A team is force deleted. This flushes the users with roles or permissions within it.
 
 If you change the pivot tables in another way, e.g. with the relationships, flush the cache yourself:
 
