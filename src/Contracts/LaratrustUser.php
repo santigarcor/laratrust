@@ -14,11 +14,15 @@ interface LaratrustUser
 {
     /**
      * Many-to-Many relations with Role.
+     *
+     * @return MorphToMany<Model, $this>
      */
     public function roles(): MorphToMany;
 
     /**
      * Many-to-Many relations with Permission.
+     *
+     * @return MorphToMany<Model, $this>
      */
     public function permissions(): MorphToMany;
 
@@ -151,4 +155,14 @@ interface LaratrustUser
      * @return Collection<Permission>
      */
     public function allPermissions(?array $columns = null, mixed $team = false): Collection;
+
+    /**
+     * Flush the user's cached roles and permissions.
+     */
+    public function flushLaratrustCache(): void;
+
+    /**
+     * Get the key used to cache the user's roles and permissions.
+     */
+    public function laratrustCacheKey(): string;
 }

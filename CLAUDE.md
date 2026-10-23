@@ -20,7 +20,9 @@ Before calling a change done, run `composer test`, `composer analyse` and `vendo
 - `src/Traits/HasRolesAndPermissions.php`: the trait users add to their user model (relations, checks, add/remove/sync).
 - `src/Traits/HasLaratrustScopes.php`: query scopes (`whereHasRole`, `whereHasPermission`, …).
 - `src/Models/{Role,Permission,Team}.php`: base models that apps extend; table names and keys come from config.
-- `src/Checkers/`: role/permission resolution and caching.
+- `src/Checkers/{UserChecker,RoleChecker}.php`: evaluate role/permission checks (`@internal`, final, not configurable).
+- `src/Support/PermissionRegistry.php`: the only place that loads roles/permissions. It's a `scoped()` singleton (reset per request, queue job and Octane request) with three tiers: memory → cache (`laratrust.cache.enabled`) → DB. A user costs ≤3 queries: their roles, their direct permissions, and the permissions of all their roles in one `whereIn`. Role permissions are cached per role, so editing a role refreshes every user. Cache keys come from `laratrustCacheKey()` on the user/role models.
+- `src/Support/UserAuthorization.php`: a user's roles/permissions compiled into per-team hash indexes (team "buckets": `null` = any team, `''` = no team). `PermissionSet` does O(1) exact lookups, and only requested names containing `*` are matched with `Str::is()`.
 - `src/Middleware/`: `role`, `permission`, `ability` route middleware.
 - `src/Http/Controllers`, `resources/views/panel`, `routes/web.php`: the optional admin panel.
 - `src/Console/`: `laratrust:setup`, `laratrust:migration`, make commands and the seeder generator.

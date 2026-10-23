@@ -14,52 +14,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Checkers
-    |--------------------------------------------------------------------------
-    |
-    | Manage Laratrust's role and permissions checkers configurations.
-    |
-    */
-    'checkers' => [
-
-        /*
-        |--------------------------------------------------------------------------
-        | Which permissions checker to use.
-        |--------------------------------------------------------------------------
-        |
-        | Defines if you want to use the roles and permissions checker.
-        | Available:
-        | - default: Check for the roles and permissions using the method that Laratrust
-        |            has always used.
-        | - query: Check for the roles and permissions using direct queries to the database.
-        |           This method doesn't support cache yet.
-        | - class that extends Laratrust\Checkers\User\UserChecker
-        */
-        'user' => 'default',
-
-        /*
-        |--------------------------------------------------------------------------
-        | Which role checker to use.
-        |--------------------------------------------------------------------------
-        |
-        | Defines if you want to use the roles and permissions checker.
-        | Available:
-        | - default: Check for the roles and permissions using the method that Laratrust
-                     has always used.
-        | - query: Check for the roles and permissions using direct queries to the database.
-        |          This method doesn't support cache yet.
-        | - class that extends Laratrust\Checkers\Role\RoleChecker
-        */
-        'role' => 'default',
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Cache
     |--------------------------------------------------------------------------
     |
     | Manage Laratrust's cache configurations. It uses the driver defined in the
     | config/cache.php file.
+    |
+    | Roles and permissions are always memoized for the current request (or
+    | queue job), so repeated checks don't hit the database. These options
+    | control the cache shared across requests.
+    |
+    | To customize the cache keys (e.g. per tenant), override the
+    | laratrustCacheKey() method on your user and role models.
     |
     */
     'cache' => [
@@ -69,7 +35,6 @@ return [
         |--------------------------------------------------------------------------
         |
         | Defines if Laratrust will use Laravel's Cache to cache the roles and permissions.
-        | NOTE: Currently the database check does not use cache.
         |
         */
         'enabled' => env('LARATRUST_ENABLE_CACHE', env('APP_ENV') === 'production'),

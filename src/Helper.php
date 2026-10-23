@@ -7,9 +7,8 @@ namespace Laratrust;
 use BackedEnum;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
-use InvalidArgumentException;
 use Laratrust\Models\LaratrustRole;
-use Ramsey\Uuid\UuidInterface;
+use Laratrust\Support\PermissionRegistry;
 
 class Helper
 {
@@ -18,42 +17,7 @@ class Helper
      */
     public static function getIdFor(mixed $object, string $type): int|string|null
     {
-        if (
-            is_null($object)
-            || ($type === 'team' && ! Config::get('laratrust.teams.enabled'))
-        ) {
-            return null;
-        }
-
-        if ($object instanceof BackedEnum) {
-            $object = $object->value;
-        }
-
-        if ($object instanceof UuidInterface) {
-            return (string) $object;
-        }
-
-        if (is_object($object)) {
-            return $object->getKey();
-        }
-
-        if (is_array($object)) {
-            return $object['id'];
-        }
-
-        if (is_numeric($object)) {
-            return $object;
-        }
-
-        if (is_string($object)) {
-            return call_user_func_array([
-                Config::get("laratrust.models.{$type}"), 'where',
-            ], ['name', $object])->firstOrFail()->getKey();
-        }
-
-        throw new InvalidArgumentException(
-            'getIdFor function only supports UuidInterface, Model, BackedEnum, array{id: string}, int, string'
-        );
+        return app(PermissionRegistry::class)->idFor($object, $type);
     }
 
     /**

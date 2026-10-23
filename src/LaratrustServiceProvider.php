@@ -14,6 +14,7 @@ use Illuminate\Support\ServiceProvider;
 use Laratrust\Middleware\Ability;
 use Laratrust\Middleware\Permission;
 use Laratrust\Middleware\Role;
+use Laratrust\Support\PermissionRegistry;
 
 class LaratrustServiceProvider extends ServiceProvider
 {
@@ -248,6 +249,8 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     protected function registerLaratrust()
     {
+        $this->app->scoped(PermissionRegistry::class);
+
         $this->app->bind('laratrust', function ($app) {
             return new Laratrust($app);
         });

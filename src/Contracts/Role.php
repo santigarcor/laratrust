@@ -14,11 +14,15 @@ interface Role
 {
     /**
      * Morph by Many relationship between the role and the one of the possible user models.
+     *
+     * @return MorphToMany<Model, $this>
      */
     public function getMorphByUserRelation(string $relationship): MorphToMany;
 
     /**
      * Many-to-Many relations with the permission model.
+     *
+     * @return BelongsToMany<Model, $this>
      */
     public function permissions(): BelongsToMany;
 
@@ -54,4 +58,14 @@ interface Role
      * Detach multiple permissions from current role.
      */
     public function removePermissions(?iterable $permissions = null): static;
+
+    /**
+     * Flush the role's cached permissions.
+     */
+    public function flushLaratrustCache(): void;
+
+    /**
+     * Get the key used to cache the role's permissions.
+     */
+    public function laratrustCacheKey(): string;
 }
