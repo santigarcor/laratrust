@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests;
 
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Laratrust\Tests\Migrations\LaratrustSetupTables;
@@ -68,7 +69,7 @@ class UserRelationshipsTest extends LaratrustTestCase
     }
 
     #[DataProvider('modelsAndRelationships')]
-    public function test_the_relationship_is_available_as_method_and_attribute(string $class, string $relationship)
+    public function test_the_relationship_is_available_as_method_and_attribute(string $class, string $relationship): void
     {
         $model = new $class;
 
@@ -76,27 +77,27 @@ class UserRelationshipsTest extends LaratrustTestCase
         $this->assertTrue($model->{$relationship}->isEmpty());
     }
 
-    public function test_role_users_can_be_eager_loaded_and_queried()
+    public function test_role_users_can_be_eager_loaded_and_queried(): void
     {
         $role = Role::create(['name' => 'role']);
         $this->user->addRole($role, $this->team);
         $this->other->addRole($role, $this->team);
 
         $this->assertRelated(Role::with(['users', 'others'])->find($role->id));
-        $this->assertTrue(Role::whereHas('others', fn ($query) => $query->whereKey($this->other->id))->exists());
+        $this->assertTrue(Role::whereHas('others', fn (Builder $query) => $query->whereKey($this->other->id))->exists());
     }
 
-    public function test_permission_users_can_be_eager_loaded_and_queried()
+    public function test_permission_users_can_be_eager_loaded_and_queried(): void
     {
         $permission = Permission::create(['name' => 'permission']);
         $this->user->givePermission($permission, $this->team);
         $this->other->givePermission($permission, $this->team);
 
         $this->assertRelated(Permission::with(['users', 'others'])->find($permission->id));
-        $this->assertTrue(Permission::whereHas('others', fn ($query) => $query->whereKey($this->other->id))->exists());
+        $this->assertTrue(Permission::whereHas('others', fn (Builder $query) => $query->whereKey($this->other->id))->exists());
     }
 
-    public function test_team_users_can_be_eager_loaded_and_queried()
+    public function test_team_users_can_be_eager_loaded_and_queried(): void
     {
         // A team's users are the ones with a role in that team.
         $role = Role::create(['name' => 'role']);
@@ -104,8 +105,8 @@ class UserRelationshipsTest extends LaratrustTestCase
         $this->other->addRole($role, $this->team);
 
         $this->assertRelated(Team::with(['users', 'others'])->find($this->team->id));
-        $this->assertTrue(Team::whereHas('others', fn ($query) => $query->whereKey($this->other->id))->exists());
-        $this->assertFalse(Team::whereHas('users', fn ($query) => $query->whereKey($this->user->id + 100))->exists());
+        $this->assertTrue(Team::whereHas('others', fn (Builder $query) => $query->whereKey($this->other->id))->exists());
+        $this->assertFalse(Team::whereHas('users', fn (Builder $query) => $query->whereKey($this->user->id + 100))->exists());
     }
 
     protected function assertRelated(Model $model): void

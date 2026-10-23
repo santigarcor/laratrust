@@ -25,7 +25,7 @@ class UserAbilityTest extends LaratrustTestCase
 
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);
-        $permissionC = Permission::create(['name' => 'permission_c']);
+        Permission::create(['name' => 'permission_c']);
 
         $team = Team::create(['name' => 'team_a']);
         $roleA = Role::create(['name' => 'role_a']);
@@ -38,7 +38,7 @@ class UserAbilityTest extends LaratrustTestCase
         $this->user->addRole($roleA)->addRole($roleB, $team);
     }
 
-    public function test_ability_should_return_boolean()
+    public function test_ability_should_return_boolean(): void
     {
         // Case: User has everything.
         $this->assertTrue(
@@ -108,7 +108,7 @@ class UserAbilityTest extends LaratrustTestCase
         );
     }
 
-    public function test_ability_should_return_array()
+    public function test_ability_should_return_array(): void
     {
         // Case: User has everything.
         $this->assertSame(
@@ -147,7 +147,7 @@ class UserAbilityTest extends LaratrustTestCase
         );
     }
 
-    public function test_ability_should_return_both()
+    public function test_ability_should_return_both(): void
     {
         $this->assertSame(
             [
@@ -194,7 +194,7 @@ class UserAbilityTest extends LaratrustTestCase
         );
     }
 
-    public function test_ability_should_accept_strings()
+    public function test_ability_should_accept_strings(): void
     {
         $this->assertSame(
             $this->user->ability(
@@ -223,7 +223,7 @@ class UserAbilityTest extends LaratrustTestCase
         );
     }
 
-    public function test_ability_default_options()
+    public function test_ability_default_options(): void
     {
         // Case: User has everything.
         $this->assertSame(
@@ -266,7 +266,7 @@ class UserAbilityTest extends LaratrustTestCase
         );
     }
 
-    public function test_ability_accepts_the_options_by_name()
+    public function test_ability_accepts_the_options_by_name(): void
     {
         $this->assertSame(
             $this->user->ability(['role_a'], ['permission_a'], ['validate_all' => true, 'return_type' => 'both']),
@@ -275,7 +275,7 @@ class UserAbilityTest extends LaratrustTestCase
         $this->assertFalse($this->user->ability(['role_a', 'missing'], ['permission_a'], 'team_a', ['validate_all' => true]));
     }
 
-    public function test_ability_should_throw_invalid_argument_exception()
+    public function test_ability_should_throw_invalid_argument_exception(): void
     {
         $this->assertFalse($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['return_type' => 'boolean']));
         $this->assertFalse($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['return_type' => 'array']));
@@ -293,7 +293,7 @@ class UserAbilityTest extends LaratrustTestCase
 
         try {
             $user->ability($roles, $perms, $options);
-        } catch (\InvalidArgumentException $e) {
+        } catch (\InvalidArgumentException) {
             $isExceptionThrown = true;
         }
 

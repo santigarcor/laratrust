@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Laratrust\Console;
 
+use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
+use Laratrust\Console\Concerns\CreatesLaratrustMigrations;
 
+#[Description('Setup the teams feature in case it is not used')]
 class SetupTeamsCommand extends Command
 {
     /**
@@ -16,26 +19,19 @@ class SetupTeamsCommand extends Command
      */
     protected $name = 'laratrust:setup-teams';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Setup the teams feature in case it is not used';
+    use CreatesLaratrustMigrations;
 
-    /**
-     * Suffix of the migration name.
-     *
-     * @var string
-     */
-    protected $migrationSuffix = 'laratrust_setup_teams';
+    protected string $migrationSuffix = 'laratrust_setup_teams';
+
+    /** @var view-string */
+    protected string $migrationView = 'laratrust::setup-teams';
+
+    protected string $migrationName = 'Laratrust setup teams migration';
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         if (! Config::get('laratrust.teams.enabled')) {
             $this->error('Not using teams in your Laratrust configuration file.');
@@ -49,7 +45,7 @@ class SetupTeamsCommand extends Command
 
         $existingMigrations = $this->alreadyExistingMigrations();
 
-        if ($existingMigrations) {
+        if ($existingMigrations !== []) {
             $this->line('');
 
             $this->warn($this->getExistingMigrationsWarning($existingMigrations));
@@ -57,7 +53,7 @@ class SetupTeamsCommand extends Command
 
         $this->line('');
 
-        if (! $this->confirm('Proceed with the migration creation?', 'yes')) {
+        if (! $this->confirm('Proceed with the migration creation?', true)) {
             return;
         }
 
@@ -78,80 +74,5 @@ class SetupTeamsCommand extends Command
         $this->call('laratrust:team');
 
         $this->line('');
-    }
-
-    /**
-     * Create the migration.
-     *
-     * @return bool
-     */
-    protected function createMigration()
-    {
-        $migrationPath = $this->getMigrationPath();
-
-        $this->call('view:clear');
-        $output = $this->laravel->view
-            ->make('laratrust::setup-teams')
-            ->with(['laratrust' => Config::get('laratrust')])
-            ->render();
-
-        if (! file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
-            fwrite($fs, $output);
-            fclose($fs);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Build a warning regarding possible duplication
-     * due to already existing migrations.
-     *
-     * @return string
-     */
-    protected function getExistingMigrationsWarning(array $existingMigrations)
-    {
-        if (count($existingMigrations) > 1) {
-            $base = "Laratrust setup teams migrations already exist.\nFollowing files were found: ";
-        } else {
-            $base = "Laratrust setup teams migration already exists.\nFollowing file was found: ";
-        }
-
-        return $base.array_reduce($existingMigrations, function ($carry, $fileName) {
-            return $carry."\n - ".$fileName;
-        });
-    }
-
-    /**
-     * Check if there is another migration
-     * with the same suffix.
-     *
-     * @return array
-     */
-    protected function alreadyExistingMigrations()
-    {
-        $matchingFiles = glob($this->getMigrationPath('*'));
-
-        return array_map(function ($path) {
-            return basename($path);
-        }, $matchingFiles);
-    }
-
-    /**
-     * Get the migration path.
-     *
-     * The date parameter is optional for ability
-     * to provide a custom value or a wildcard.
-     *
-     * @param  string|null  $date
-     * @return string
-     */
-    protected function getMigrationPath($date = null)
-    {
-        $date = $date ?: date('Y_m_d_His');
-
-        return database_path("migrations/{$date}_{$this->migrationSuffix}.php");
     }
 }

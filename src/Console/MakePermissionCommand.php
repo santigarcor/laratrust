@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Laratrust\Console;
 
+use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Facades\Config;
 
+#[Description('Create Permission model if it does not exist')]
 class MakePermissionCommand extends GeneratorCommand
 {
     /**
@@ -15,13 +17,6 @@ class MakePermissionCommand extends GeneratorCommand
      * @var string
      */
     protected $name = 'laratrust:permission';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Create Permission model if it does not exist';
 
     /**
      * The type of class being generated.
@@ -62,11 +57,11 @@ class MakePermissionCommand extends GeneratorCommand
     }
 
     /**
-     * Get the console command arguments.
+     * The class name comes from the config, so the generator's "name" argument isn't needed.
      *
-     * @return array
+     * @return array<int, mixed>
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [];
     }

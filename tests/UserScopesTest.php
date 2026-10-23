@@ -29,11 +29,11 @@ class UserScopesTest extends LaratrustTestCase
         $this->app['config']->set('laratrust.teams.enabled', true);
     }
 
-    public function test_scope_where_role_is()
+    public function test_scope_where_role_is(): void
     {
         $roleA = Role::create(['name' => EnumsRole::ROLE_A]);
         $roleB = Role::create(['name' => 'role_b']);
-        $roleC = Role::create(['name' => 'role_c']);
+        Role::create(['name' => 'role_c']);
         $roleD = Role::create(['name' => 'role_d']);
         $team = Team::create(['name' => 'team_a']);
         $this->user->addRoles([$roleA, $roleB]);
@@ -54,10 +54,10 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(1, User::whereHasRole(['role_d', 'role_c'])->get());
     }
 
-    public function test_scope_or_where_role_is()
+    public function test_scope_or_where_role_is(): void
     {
         $roleA = Role::create(['name' => 'role_a']);
-        $roleC = Role::create(['name' => 'role_c']);
+        Role::create(['name' => 'role_c']);
         $this->user->addRole($roleA);
 
         $this->assertCount(
@@ -76,14 +76,14 @@ class UserScopesTest extends LaratrustTestCase
         );
     }
 
-    public function test_scope_where_permission_is()
+    public function test_scope_where_permission_is(): void
     {
         $roleA = Role::create(['name' => 'role_a']);
         $roleB = Role::create(['name' => 'role_b']);
         $permissionA = Permission::create(['name' => EnumsPermission::PERM_A]);
         $permissionB = Permission::create(['name' => 'permission_b']);
         $permissionC = Permission::create(['name' => 'permission_c']);
-        $permissionD = Permission::create(['name' => 'permission_d']);
+        Permission::create(['name' => 'permission_d']);
 
         $roleA->givePermissions([$permissionA, $permissionB]);
         $roleB->givePermissions([$permissionB, $permissionC]);
@@ -96,14 +96,14 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(0, User::whereHasPermission('permission_d')->get());
     }
 
-    public function test_scope_or_where_has_permission()
+    public function test_scope_or_where_has_permission(): void
     {
         $roleA = Role::create(['name' => 'role_a']);
         $roleB = Role::create(['name' => 'role_b']);
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);
         $permissionC = Permission::create(['name' => 'permission_c']);
-        $permissionD = Permission::create(['name' => 'permission_d']);
+        Permission::create(['name' => 'permission_d']);
 
         $roleA->givePermissions([$permissionA, $permissionB]);
         $roleB->givePermissions([$permissionB, $permissionC]);
@@ -133,7 +133,7 @@ class UserScopesTest extends LaratrustTestCase
         );
     }
 
-    public function test_scope_to_retrieve_the_users_that_dont_have_roles()
+    public function test_scope_to_retrieve_the_users_that_dont_have_roles(): void
     {
         $roleA = Role::create(['name' => 'role_a']);
         $this->user->addRoles([$roleA]);
@@ -143,7 +143,7 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(1, User::whereDoesntHaveRoles()->get());
     }
 
-    public function test_scope_to_retrieve_the_users_that_dont_have_permissions()
+    public function test_scope_to_retrieve_the_users_that_dont_have_permissions(): void
     {
         $roleA = Role::create(['name' => 'role_a']);
         $roleB = Role::create(['name' => 'role_b']);
@@ -164,11 +164,11 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(1, User::whereDoesntHavePermissions()->get());
     }
 
-    public function test_scope_where_permission_is_for_team()
+    public function test_scope_where_permission_is_for_team(): void
     {
         $permissionA = Permission::create(['name' => 'permission_a']);
         $permissionB = Permission::create(['name' => 'permission_b']);
-        $permissionC = Permission::create(['name' => 'permission_c']);
+        Permission::create(['name' => 'permission_c']);
         $roleB = Role::create(['name' => 'role_b']);
         $teamA = Team::create(['name' => 'team_a']);
         $teamB = Team::create(['name' => 'team_b']);
@@ -190,7 +190,7 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(1, User::whereHasPermission(['permission_b'])->get());
     }
 
-    public function test_scopes_with_teams_when_the_roles_and_permissions_tables_have_a_team_id_column()
+    public function test_scopes_with_teams_when_the_roles_and_permissions_tables_have_a_team_id_column(): void
     {
         // #695: an unqualified team_id was ambiguous, and the role path filtered the wrong table.
         Schema::table('roles', fn (Blueprint $table) => $table->unsignedInteger('team_id')->nullable());
@@ -212,7 +212,7 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(1, User::whereHasRole('missing')->orWhereHasPermission('direct', $teamA)->get());
     }
 
-    public function test_scopes_ignore_the_team_when_teams_are_disabled()
+    public function test_scopes_ignore_the_team_when_teams_are_disabled(): void
     {
         $this->app['config']->set('laratrust.teams.enabled', false);
 
@@ -224,7 +224,7 @@ class UserScopesTest extends LaratrustTestCase
         }
     }
 
-    public function test_scopes_with_strict_check_and_no_team_only_match_assignments_without_a_team()
+    public function test_scopes_with_strict_check_and_no_team_only_match_assignments_without_a_team(): void
     {
         $this->app['config']->set('laratrust.teams.strict_check', true);
         $team = Team::create(['name' => 'team_a']);
@@ -241,7 +241,7 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(1, User::whereHasPermission('permission_a')->get());
     }
 
-    public function test_the_scopes_dont_depend_on_methods_the_user_model_could_define()
+    public function test_the_scopes_dont_depend_on_methods_the_user_model_could_define(): void
     {
         $team = Team::create(['name' => 'team_a']);
         $role = Role::create(['name' => 'role_a']);

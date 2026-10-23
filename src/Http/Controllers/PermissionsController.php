@@ -4,28 +4,24 @@ declare(strict_types=1);
 
 namespace Laratrust\Http\Controllers;
 
+use Illuminate\Contracts\View\View as ViewContract;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
+use Laratrust\Support\ModelClasses;
 
 class PermissionsController
 {
-    protected $permissionModel;
-
-    public function __construct()
-    {
-        $this->permissionModel = Config::get('laratrust.models.permission');
-    }
-
-    public function index()
+    public function index(): ViewContract
     {
         return View::make('laratrust::panel.permissions.index', [
-            'permissions' => $this->permissionModel::simplePaginate(10),
+            'permissions' => ModelClasses::permission()::query()->simplePaginate(10),
         ]);
     }
 
-    public function create()
+    public function create(): ViewContract
     {
         return View::make('laratrust::panel.edit', [
             'model' => null,
@@ -34,44 +30,40 @@ class PermissionsController
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:'.config('laratrust.tables.permissions', 'permissions').',name',
-            'display_name' => 'nullable|string',
-            'description' => 'nullable|string',
+            'name' => ['required', 'string', 'unique:'.Config::get('laratrust.tables.permissions').',name'],
+            'display_name' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
         ]);
 
-        $permission = $this->permissionModel::create($data);
+        ModelClasses::permission()::query()->create($data);
 
         Session::flash('laratrust-success', 'Permission created successfully');
 
-        return redirect(route('laratrust.permissions.index'));
+        return to_route('laratrust.permissions.index');
     }
 
-    public function edit($id)
+    public function edit(string $id): ViewContract
     {
-        $permission = $this->permissionModel::findOrFail($id);
-
         return View::make('laratrust::panel.edit', [
-            'model' => $permission,
+            'model' => ModelClasses::permission()::query()->findOrFail($id),
             'type' => 'permission',
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id): RedirectResponse
     {
-        $permission = $this->permissionModel::findOrFail($id);
+        $permission = ModelClasses::permission()::query()->findOrFail($id);
 
-        $data = $request->validate([
-            'display_name' => 'nullable|string',
-            'description' => 'nullable|string',
-        ]);
-
-        $permission->update($data);
+        $permission->update($request->validate([
+            'display_name' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
+        ]));
 
         Session::flash('laratrust-success', 'Permission updated successfully');
 
-        return redirect(route('laratrust.permissions.index'));
+        return to_route('laratrust.permissions.index');
     }
 }

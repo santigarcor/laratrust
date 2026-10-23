@@ -49,19 +49,19 @@ class MiddlewareRequestsTest extends LaratrustTestCase
         $this->editor->addRole(Role::create(['name' => 'owner']), $team);
         $this->viewer = User::create(['name' => 'viewer', 'email' => 'viewer@test.com']);
 
-        Route::middleware('permission:posts.edit,guard:web|admin')->get('/two-guards', fn () => 'ok');
-        Route::middleware('permission:posts.edit,guard:web,admin')->get('/two-guards-commas', fn () => 'ok');
-        Route::middleware('permission:posts.edit,guard:web|guard:admin')->get('/two-guards-8x', fn () => 'ok');
-        Route::middleware('role:editor')->get('/editor', fn () => 'ok');
+        Route::middleware('permission:posts.edit,guard:web|admin')->get('/two-guards', fn (): string => 'ok');
+        Route::middleware('permission:posts.edit,guard:web,admin')->get('/two-guards-commas', fn (): string => 'ok');
+        Route::middleware('permission:posts.edit,guard:web|guard:admin')->get('/two-guards-8x', fn (): string => 'ok');
+        Route::middleware('role:editor')->get('/editor', fn (): string => 'ok');
     }
 
-    public function test_the_first_authenticated_guard_is_checked()
+    public function test_the_first_authenticated_guard_is_checked(): void
     {
         // Only the second guard is authenticated: its user is checked.
         $this->actingAs($this->editor, 'admin')->get('/two-guards')->assertOk();
     }
 
-    public function test_later_guards_are_ignored_once_one_is_authenticated()
+    public function test_later_guards_are_ignored_once_one_is_authenticated(): void
     {
         // Like Laravel's "auth" middleware: the first authenticated guard wins, even if a later one would pass.
         $this->actingAs($this->viewer, 'web')
@@ -70,18 +70,18 @@ class MiddlewareRequestsTest extends LaratrustTestCase
             ->assertForbidden();
     }
 
-    public function test_the_8x_form_and_commas_also_work()
+    public function test_the_8x_form_and_commas_also_work(): void
     {
         $this->actingAs($this->editor, 'admin')->get('/two-guards-8x')->assertOk();
         $this->actingAs($this->editor, 'admin')->get('/two-guards-commas')->assertOk();
     }
 
-    public function test_no_authenticated_guard_is_unauthorized()
+    public function test_no_authenticated_guard_is_unauthorized(): void
     {
         $this->get('/two-guards')->assertForbidden();
     }
 
-    public function test_the_abort_message_is_translated()
+    public function test_the_abort_message_is_translated(): void
     {
         $this->app['config']->set('laratrust.middleware.handlers.abort.message', 'laratrust.unauthorized');
         $this->app['translator']->addLines(['laratrust.unauthorized' => 'No tienes acceso.'], 'es');
@@ -98,7 +98,7 @@ class MiddlewareRequestsTest extends LaratrustTestCase
         }
     }
 
-    public function test_the_redirect_message_is_translated()
+    public function test_the_redirect_message_is_translated(): void
     {
         $this->app['config']->set('laratrust.middleware.handling', 'redirect');
         $this->app['config']->set('laratrust.middleware.handlers.redirect.message', [
@@ -114,7 +114,7 @@ class MiddlewareRequestsTest extends LaratrustTestCase
             ->assertSessionHas('error', 'No tienes acceso.');
     }
 
-    public function test_untranslated_messages_are_kept_as_they_are()
+    public function test_untranslated_messages_are_kept_as_they_are(): void
     {
         $this->withoutExceptionHandling();
 
@@ -126,7 +126,7 @@ class MiddlewareRequestsTest extends LaratrustTestCase
         }
     }
 
-    public function test_using_builds_the_middleware_strings()
+    public function test_using_builds_the_middleware_strings(): void
     {
         $team = Team::where('name', 'team_a')->first();
 
@@ -146,11 +146,11 @@ class MiddlewareRequestsTest extends LaratrustTestCase
         );
     }
 
-    public function test_the_using_strings_work_as_route_middleware()
+    public function test_the_using_strings_work_as_route_middleware(): void
     {
-        Route::middleware(RoleMiddleware::using('owner', team: 'team_a'))->get('/owner', fn () => 'ok');
-        Route::middleware(PermissionMiddleware::using('posts.edit', guards: ['web', 'admin']))->get('/edit', fn () => 'ok');
-        Route::middleware(Ability::using(['admin', 'editor'], 'posts.edit', validateAll: true))->get('/ability', fn () => 'ok');
+        Route::middleware(RoleMiddleware::using('owner', team: 'team_a'))->get('/owner', fn (): string => 'ok');
+        Route::middleware(PermissionMiddleware::using('posts.edit', guards: ['web', 'admin']))->get('/edit', fn (): string => 'ok');
+        Route::middleware(Ability::using(['admin', 'editor'], 'posts.edit', validateAll: true))->get('/ability', fn (): string => 'ok');
 
         $this->actingAs($this->editor)->get('/owner')->assertOk();
         $this->actingAs($this->editor, 'admin')->get('/edit')->assertOk();
@@ -182,12 +182,12 @@ class MiddlewareRequestsTest extends LaratrustTestCase
      * @param  array{team: string|null, require_all: bool, guards: array<int, string|null>}  $expected
      */
     #[DataProvider('parameters')]
-    public function test_the_parameters_are_parsed(array $parameters, array $expected)
+    public function test_the_parameters_are_parsed(array $parameters, array $expected): void
     {
         $this->assertSame($expected, $this->parse($parameters));
     }
 
-    public function test_parameters_that_dont_fit_throw_instead_of_being_ignored()
+    public function test_parameters_that_dont_fit_throw_instead_of_being_ignored(): void
     {
         foreach ([['team_a', 'team_b'], ['require_all', 'team_a'], ['guard:web', 'require_all', 'admin']] as $parameters) {
             try {

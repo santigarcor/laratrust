@@ -1,0 +1,4 @@
+# Used by Larastan (and `vendor/bin/testbench`) to boot an application with Laratrust,
+# so it knows the package's views and bindings.
+providers:
+  - Laratrust\LaratrustServiceProvider

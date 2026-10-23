@@ -4,87 +4,76 @@ declare(strict_types=1);
 
 namespace Laratrust\Http\Controllers;
 
+use Illuminate\Contracts\View\View as ViewContract;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
-use Laratrust\Helper;
+use Laratrust\Panel\RoleRestrictions;
+use Laratrust\Support\ModelClasses;
 
 class RolesController
 {
-    protected $rolesModel;
-
-    protected $permissionModel;
-
-    public function __construct()
-    {
-        $this->rolesModel = Config::get('laratrust.models.role');
-        $this->permissionModel = Config::get('laratrust.models.permission');
-    }
-
-    public function index()
+    public function index(): ViewContract
     {
         return View::make('laratrust::panel.roles.index', [
-            'roles' => $this->rolesModel::withCount('permissions')
-                ->simplePaginate(10),
+            'roles' => ModelClasses::role()::query()->withCount('permissions')->simplePaginate(10),
         ]);
     }
 
-    public function create()
+    public function create(): ViewContract
     {
+        $permission = new (ModelClasses::permission());
+
         return View::make('laratrust::panel.edit', [
             'model' => null,
-            'permissions' => $this->permissionModel::all(['id', 'display_name']),
+            'permissions' => $permission->newQuery()->get([$permission->getKeyName(), 'display_name']),
             'type' => 'role',
         ]);
     }
 
-    public function show(Request $request, $id)
+    public function show(string $id): ViewContract
     {
-        $role = $this->rolesModel::query()
-            ->with('permissions:id,name,display_name')
+        $role = ModelClasses::role()::query()
+            ->with(['permissions' => fn ($query) => $query->select($query->getRelated()->qualifyColumns(['id', 'name', 'display_name']))])
             ->findOrFail($id);
 
         return View::make('laratrust::panel.roles.show', ['role' => $role]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name' => 'required|string|unique:'.config('laratrust.tables.roles', 'roles').',name',
-            'display_name' => 'nullable|string',
-            'description' => 'nullable|string',
+            'name' => ['required', 'string', 'unique:'.Config::get('laratrust.tables.roles').',name'],
+            'display_name' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
         ]);
 
-        $role = $this->rolesModel::create($data);
-        $role->syncPermissions($request->get('permissions') ?? []);
+        ModelClasses::role()::query()->create($data)->syncPermissions($request->input('permissions', []));
 
         Session::flash('laratrust-success', 'Role created successfully');
 
-        return redirect(route('laratrust.roles.index'));
+        return to_route('laratrust.roles.index');
     }
 
-    public function edit($id)
+    public function edit(string $id): ViewContract|RedirectResponse
     {
-        $role = $this->rolesModel::query()
-            ->with('permissions:id')
-            ->findOrFail($id);
+        $role = ModelClasses::role()::query()->with('permissions')->findOrFail($id);
 
-        if (! Helper::roleIsEditable($role)) {
+        if (! RoleRestrictions::isEditable($role)) {
             Session::flash('laratrust-error', 'The role is not editable');
 
-            return redirect()->back();
+            return back();
         }
 
-        $permissions = $this->permissionModel::all(['id', 'name', 'display_name'])
-            ->map(function ($permission) use ($role) {
-                $permission->assigned = $role->permissions
-                    ->pluck('id')
-                    ->contains($permission->id);
-
-                return $permission;
-            });
+        $assigned = $role->getRelation('permissions')->modelKeys();
+        $permission = new (ModelClasses::permission());
+        $permissions = $permission->newQuery()
+            ->get([$permission->getKeyName(), 'name', 'display_name'])
+            ->each(fn (Model $permission) => $permission->setAttribute('assigned', in_array($permission->getKey(), $assigned, true)));
 
         return View::make('laratrust::panel.edit', [
             'model' => $role,
@@ -93,49 +82,48 @@ class RolesController
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id): RedirectResponse
     {
-        $role = $this->rolesModel::findOrFail($id);
+        $role = ModelClasses::role()::query()->findOrFail($id);
 
-        if (! Helper::roleIsEditable($role)) {
+        if (! RoleRestrictions::isEditable($role)) {
             Session::flash('laratrust-error', 'The role is not editable');
 
-            return redirect()->back();
+            return back();
         }
 
-        $data = $request->validate([
-            'display_name' => 'nullable|string',
-            'description' => 'nullable|string',
-        ]);
-
-        $role->update($data);
-        $role->syncPermissions($request->get('permissions') ?? []);
+        $role->update($request->validate([
+            'display_name' => ['nullable', 'string'],
+            'description' => ['nullable', 'string'],
+        ]));
+        $role->syncPermissions($request->input('permissions', []));
 
         Session::flash('laratrust-success', 'Role updated successfully');
 
-        return redirect(route('laratrust.roles.index'));
+        return to_route('laratrust.roles.index');
     }
 
-    public function destroy($id)
+    public function destroy(string $id): RedirectResponse
     {
-        $usersAssignedToRole = DB::table(Config::get('laratrust.tables.role_user'))
-            ->where(Config::get('laratrust.foreign_keys.role'), $id)
-            ->count();
-        $role = $this->rolesModel::findOrFail($id);
+        $role = ModelClasses::role()::query()->findOrFail($id);
 
-        if (! Helper::roleIsDeletable($role)) {
+        if (! RoleRestrictions::isDeletable($role)) {
             Session::flash('laratrust-error', 'The role is not deletable');
 
-            return redirect()->back();
+            return back();
         }
 
-        if ($usersAssignedToRole > 0) {
+        $isAssigned = DB::table(Config::get('laratrust.tables.role_user'))
+            ->where(Config::get('laratrust.foreign_keys.role'), $role->getKey())
+            ->exists();
+
+        if ($isAssigned) {
             Session::flash('laratrust-warning', 'Role is added to one or more users. It can not be deleted');
         } else {
+            $role->delete();
             Session::flash('laratrust-success', 'Role deleted successfully');
-            $this->rolesModel::destroy($id);
         }
 
-        return redirect(route('laratrust.roles.index'));
+        return to_route('laratrust.roles.index');
     }
 }

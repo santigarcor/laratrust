@@ -5,3 +5,5 @@ parameters:
     level: 7
     paths:
         - src
+        # The traits are only analysed through a class that uses them.
+        - tests/Models

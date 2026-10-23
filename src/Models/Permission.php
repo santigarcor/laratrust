@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Contracts\Permission as PermissionContract;
+use Laratrust\Support\ModelClasses;
 use Laratrust\Support\PermissionRegistry;
 
 /**
@@ -22,13 +23,6 @@ use Laratrust\Support\PermissionRegistry;
  */
 class Permission extends Model implements PermissionContract
 {
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table;
-
     protected $fillable = [
         'name',
         'display_name',
@@ -36,12 +30,11 @@ class Permission extends Model implements PermissionContract
     ];
 
     /**
-     * Creates a new instance of the model.
+     * Get the table from "laratrust.tables.permissions", unless the model sets its own.
      */
-    public function __construct(array $attributes = [])
+    public function getTable(): string
     {
-        parent::__construct($attributes);
-        $this->table = Config::get('laratrust.tables.permissions');
+        return $this->table ?? Config::get('laratrust.tables.permissions');
     }
 
     protected static function booted(): void
@@ -50,14 +43,15 @@ class Permission extends Model implements PermissionContract
         static::saved($forgetIds);
         static::deleted($forgetIds);
 
-        static::deleting(function ($permission) {
-            if (method_exists($permission, 'bootSoftDeletes') && ! $permission->forceDeleting) {
+        static::deleting(function (self $permission): void {
+            // Soft deleting keeps the assignments, so the model can be restored with them.
+            if (method_exists($permission, 'isForceDeleting') && ! $permission->isForceDeleting()) {
                 return;
             }
 
             $permission->roles()->detach();
 
-            foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
+            foreach (ModelClasses::userRelationships() as $key) {
                 $permission->getMorphByUserRelation($key)->detach();
             }
         });
@@ -66,12 +60,12 @@ class Permission extends Model implements PermissionContract
     /**
      * Many-to-Many relations with role model.
      *
-     * @return BelongsToMany<Model, $this>
+     * @return BelongsToMany<covariant Model, $this>
      */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(
-            Config::get('laratrust.models.role'),
+            ModelClasses::role(),
             Config::get('laratrust.tables.permission_role'),
             Config::get('laratrust.foreign_keys.permission'),
             Config::get('laratrust.foreign_keys.role')
@@ -81,12 +75,12 @@ class Permission extends Model implements PermissionContract
     /**
      * Morph by Many relationship between the permission and the one of the possible user models.
      *
-     * @return MorphToMany<Model, $this>
+     * @return MorphToMany<covariant Model, $this>
      */
     public function getMorphByUserRelation(string $relationship): MorphToMany
     {
         return $this->morphedByMany(
-            Config::get('laratrust.user_models')[$relationship],
+            ModelClasses::user($relationship),
             'user',
             Config::get('laratrust.tables.permission_user'),
             Config::get('laratrust.foreign_keys.permission'),

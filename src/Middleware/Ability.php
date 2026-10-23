@@ -7,6 +7,7 @@ namespace Laratrust\Middleware;
 use BackedEnum;
 use Closure;
 use Illuminate\Http\Request;
+use Laratrust\Contracts\LaratrustUser;
 
 class Ability extends LaratrustMiddleware
 {
@@ -45,7 +46,7 @@ class Ability extends LaratrustMiddleware
 
         $user = $this->authenticatedUser($guards);
 
-        if ($user === null || ! $user->ability(explode('|', $roles), explode('|', $permissions), $team, ['validate_all' => $validateAll])) {
+        if (! $user instanceof LaratrustUser || ! $user->ability(explode('|', $roles), explode('|', $permissions), $team, ['validate_all' => $validateAll])) {
             return $this->unauthorized();
         }
 

@@ -12,7 +12,7 @@ interface Team
     /**
      * Morph by Many relationship between the role and the one of the possible user models.
      *
-     * @return MorphToMany<Model, $this>
+     * @return MorphToMany<covariant Model, covariant Model>
      */
     public function getMorphByUserRelation(string $relationship): MorphToMany;
 }

@@ -27,7 +27,7 @@ class UserCheckerTest extends LaratrustTestCase
         $this->app['config']->set('laratrust.teams.enabled', true);
     }
 
-    public function test_get_roles()
+    public function test_get_roles(): void
     {
         /*
         |------------------------------------------------------------
@@ -63,7 +63,7 @@ class UserCheckerTest extends LaratrustTestCase
         $this->assertEquals(['role_c'], $this->user->getRoles('team_a'));
     }
 
-    public function test_has_role()
+    public function test_has_role(): void
     {
         /*
         |------------------------------------------------------------
@@ -112,7 +112,7 @@ class UserCheckerTest extends LaratrustTestCase
         $this->assertTrue($this->user->hasRole('role_c', 'team_a'));
     }
 
-    public function test_has_permission()
+    public function test_has_permission(): void
     {
         /*
         |------------------------------------------------------------
@@ -194,7 +194,7 @@ class UserCheckerTest extends LaratrustTestCase
         $this->assertFalse($this->user->doesntHavePermission('permission_c', 'team_a'));
     }
 
-    public function test_has_permission_with_placeholder_support()
+    public function test_has_permission_with_placeholder_support(): void
     {
         /*
         |------------------------------------------------------------
@@ -245,7 +245,7 @@ class UserCheckerTest extends LaratrustTestCase
         $this->assertTrue($this->user->doesntHavePermission(['site.*']));
     }
 
-    public function test_user_disable_the_roles_and_permissions_caching()
+    public function test_user_disable_the_roles_and_permissions_caching(): void
     {
         /*
         |------------------------------------------------------------

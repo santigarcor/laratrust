@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laratrust\Models\Role as RoleModel;
 
@@ -11,10 +12,12 @@ use Laratrust\Models\Role as RoleModel;
  * Role model that overrides the dynamic users() relation with a
  * non many-to-many relation, see #679.
  */
+#[Unguarded]
 class RoleWithCustomUsersRelation extends RoleModel
 {
-    protected $guarded = [];
-
+    /**
+     * @return HasMany<User, $this>
+     */
     public function users(): HasMany
     {
         return $this->hasMany(User::class, 'id');

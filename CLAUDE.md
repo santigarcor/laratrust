@@ -25,11 +25,20 @@ Before calling a change done, run `composer test`, `composer analyse` and `vendo
 - `src/Support/StoredAssignments.php`: a user's role and direct-permission assignments as loaded from the DB, held as plain arrays. **Only plain arrays go into the cache** (`toArray()`/`fromArray()`). Laravel 13 apps default to `cache.serializable_classes => false`, so cached objects would come back as `__PHP_Incomplete_Class`. `fromArray()` treats invalid data as a cache miss.
 - `src/Support/PermissionLookup.php`: built once per request from the stored assignments. It's grouped per team scope (`null` = any team, which is just one more scope; `''` = no team). Each scope holds role names, role cache keys and the user's direct permissions. **Role permissions are never copied into users**: a scope only references its roles by cache key, and the permission sets are shared with the registry (`$rolePermissions`). That keeps per-user memory independent of role size, and keying by cache key keeps tenants with the same role ids apart. `PermissionLookup::grants()` is the single matching rule, also used by `RoleChecker`: exact names are an `isset()`, and only requested names containing `*` are matched with `Str::is()`.
 - `src/Events/`: `RoleAdded`, `RoleRemoved`, `RoleSynced`, `PermissionAdded`, `PermissionRemoved`, `PermissionSynced`, dispatched with `event()` by the user trait and the Role model. `$model` is the user (or the role, for permission events), and `$team` is always the team key or `null`.
+- `src/Support/ModelClasses.php`: the configured model classes (`laratrust.models.*`, `laratrust.user_models.*`) as checked, typed class-strings. Use it instead of `Config::get('laratrust.models.role')` and the like.
+- `src/Support/QueryConstraints.php` (helpers for the scopes) and `src/Panel/RoleRestrictions.php`. `PermissionRegistry::names()` turns the names given to a check into a list. Helpers live in classes, not in the traits: anything a trait defines ends up on the user's model and can collide with its methods. Non-public trait methods must carry "Laratrust" in their name (`attachLaratrustModel()`).
 - `src/Middleware/`: `role`, `permission`, `ability` route middleware. Commas separate parameters and pipes separate values within one: after the names come an optional team and the options `require_all` and `guard:{name}|{name}`, e.g. `role:admin|editor,my-team,require_all,guard:web|admin`. The 8.x forms (`require_all|guard:web|guard:admin`) are also accepted. A parameter that doesn't fit throws instead of being ignored. With several guards, only the user of the **first authenticated** guard is checked, like Laravel's `auth` middleware. `Role::using()`, `Permission::using()` and `Ability::using()` build these strings. Abort/redirect messages go through `__()`.
 - `src/Http/Controllers`, `resources/views/panel`, `routes/web.php`: the optional admin panel.
 - `src/Console/`: `laratrust:setup`, `laratrust:migration`, make commands and the seeder generator.
 - `config/laratrust.php`: published to apps. Keep FQCNs inline and no `declare(strict_types=1)` (it's excluded from Pint for this reason).
 - `docs/docs/<version>/`: user docs. The upgrade guide for a major is `docs/docs/<version>/upgrade.md`.
+
+## Tooling notes
+
+- PHPStan also analyses `tests/Models`, because PHPStan only analyses traits through a class that uses them. `testbench.yaml` registers the provider so Larastan knows the `laratrust::` views. After changing either file, run `vendor/bin/phpstan clear-result-cache`.
+- `rector.php` skips four rules on purpose (anonymous test migrations, `#[Fillable]` on the base models, `app()` → `resolve()`, typed `array_reduce()` carries). Review Rector's diff before keeping it.
+- `config/` is excluded from Pint and Rector: it's published to apps as-is.
+- PAO compacts PHPUnit/PHPStan output for agents. For the full output, run without the agent env vars: `env -i HOME="$HOME" PATH="$PATH" vendor/bin/phpstan analyse --error-format=raw`.
 
 ## Conventions
 

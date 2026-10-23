@@ -36,10 +36,10 @@ class LaratrustMiddleware
     protected function authorization(string $type, string $rolesPermissions, array $parameters): bool
     {
         ['team' => $team, 'require_all' => $requireAll, 'guards' => $guards] = $this->getValuesFromParameters($parameters);
-        $method = $type == 'roles' ? 'hasRole' : 'hasPermission';
+        $method = $type === 'roles' ? 'hasRole' : 'hasPermission';
         $user = $this->authenticatedUser($guards);
 
-        return $user !== null && $user->$method(explode('|', $rolesPermissions), $team, $requireAll);
+        return $user instanceof LaratrustUser && $user->$method(explode('|', $rolesPermissions), $team, $requireAll);
     }
 
     /**
@@ -154,7 +154,7 @@ class LaratrustMiddleware
 
         return Collection::make($names)
             ->map(fn (string|array|BackedEnum $value) => Collection::make(Arr::wrap($value))
-                ->map(fn (string|BackedEnum $name) => $name instanceof BackedEnum ? $name->value : $name)
+                ->map(fn (string|BackedEnum $name): int|string => $name instanceof BackedEnum ? $name->value : $name)
                 ->implode('|'))
             ->when($team !== null, fn (Collection $parameters) => $parameters->push((string) $team))
             ->when($options !== '', fn (Collection $parameters) => $parameters->push($options))

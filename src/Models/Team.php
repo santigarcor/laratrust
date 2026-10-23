@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Contracts\Team as TeamContract;
+use Laratrust\Support\ModelClasses;
 use Laratrust\Support\PermissionRegistry;
 
 /**
@@ -21,13 +22,6 @@ use Laratrust\Support\PermissionRegistry;
  */
 class Team extends Model implements TeamContract
 {
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table;
-
     protected $fillable = [
         'name',
         'display_name',
@@ -35,14 +29,11 @@ class Team extends Model implements TeamContract
     ];
 
     /**
-     * Creates a new instance of the model.
-     *
-     * @return void
+     * Get the table from "laratrust.tables.teams", unless the model sets its own.
      */
-    public function __construct(array $attributes = [])
+    public function getTable(): string
     {
-        parent::__construct($attributes);
-        $this->table = Config::get('laratrust.tables.teams');
+        return $this->table ?? Config::get('laratrust.tables.teams');
     }
 
     /**
@@ -56,24 +47,25 @@ class Team extends Model implements TeamContract
         static::saved($forgetIds);
         static::deleted($forgetIds);
 
-        static::deleting(function ($team) {
-            if (method_exists($team, 'bootSoftDeletes') && ! $team->forceDeleting) {
+        static::deleting(function (self $team): void {
+            // Soft deleting keeps the assignments, so the model can be restored with them.
+            if (method_exists($team, 'isForceDeleting') && ! $team->isForceDeleting()) {
                 return;
             }
 
-            foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
+            foreach (ModelClasses::userRelationships() as $key) {
                 $team->getMorphByUserRelation($key)->detach();
             }
         });
     }
 
     /**
-     * @return MorphToMany<Model, $this>
+     * @return MorphToMany<covariant Model, $this>
      */
     public function getMorphByUserRelation(string $relationship): MorphToMany
     {
         return $this->morphedByMany(
-            Config::get('laratrust.user_models')[$relationship],
+            ModelClasses::user($relationship),
             'user',
             Config::get('laratrust.tables.role_user'),
             Config::get('laratrust.foreign_keys.team'),

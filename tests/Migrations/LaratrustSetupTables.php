@@ -12,13 +12,11 @@ class LaratrustSetupTables extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         // Create table for storing roles
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('display_name')->nullable();
@@ -28,7 +26,7 @@ class LaratrustSetupTables extends Migration
         });
 
         // Create table for storing permissions
-        Schema::create('permissions', function (Blueprint $table) {
+        Schema::create('permissions', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('display_name')->nullable();
@@ -38,7 +36,7 @@ class LaratrustSetupTables extends Migration
         });
 
         // Create table for storing teams
-        Schema::create('teams', function (Blueprint $table) {
+        Schema::create('teams', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('name')->unique();
             $table->string('display_name')->nullable();
@@ -48,7 +46,7 @@ class LaratrustSetupTables extends Migration
         });
 
         // Create table for associating roles to users and teams (Many To Many Polymorphic)
-        Schema::create('role_user', function (Blueprint $table) {
+        Schema::create('role_user', function (Blueprint $table): void {
             $table->unsignedInteger('role_id');
             $table->unsignedInteger('user_id');
             $table->string('user_type');
@@ -63,7 +61,7 @@ class LaratrustSetupTables extends Migration
         });
 
         // Create table for associating permissions to users (Many To Many Polymorphic)
-        Schema::create('permission_user', function (Blueprint $table) {
+        Schema::create('permission_user', function (Blueprint $table): void {
             $table->unsignedInteger('permission_id');
             $table->unsignedInteger('user_id');
             $table->string('user_type');
@@ -78,7 +76,7 @@ class LaratrustSetupTables extends Migration
         });
 
         // Create table for associating permissions to roles (Many-to-Many)
-        Schema::create('permission_role', function (Blueprint $table) {
+        Schema::create('permission_role', function (Blueprint $table): void {
             $table->unsignedInteger('permission_id');
             $table->unsignedInteger('role_id');
 
@@ -93,10 +91,8 @@ class LaratrustSetupTables extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('permission_user');
         Schema::dropIfExists('permission_role');

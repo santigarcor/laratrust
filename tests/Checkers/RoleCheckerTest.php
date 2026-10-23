@@ -23,7 +23,7 @@ class RoleCheckerTest extends LaratrustTestCase
         $this->role = Role::create(['name' => 'role']);
     }
 
-    public function test_has_permission()
+    public function test_has_permission(): void
     {
         $permA = Permission::create(['name' => 'permission_a']);
         $permB = Permission::create(['name' => 'permission_b']);
@@ -49,7 +49,7 @@ class RoleCheckerTest extends LaratrustTestCase
         $this->assertTrue($this->role->doesntHavePermission(['permission_c', 'permission_d']));
     }
 
-    public function test_role_disable_the_permissions_caching()
+    public function test_role_disable_the_permissions_caching(): void
     {
         $role = Role::create(['name' => 'role_a'])
             ->givePermissions([

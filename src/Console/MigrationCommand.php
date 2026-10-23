@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Laratrust\Console;
 
+use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
+use Laratrust\Console\Concerns\CreatesLaratrustMigrations;
 
+#[Description('Creates a migration following the Laratrust specifications.')]
 class MigrationCommand extends Command
 {
     /**
@@ -17,26 +20,19 @@ class MigrationCommand extends Command
      */
     protected $name = 'laratrust:migration';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Creates a migration following the Laratrust specifications.';
+    use CreatesLaratrustMigrations;
 
-    /**
-     * Suffix of the migration name.
-     *
-     * @var string
-     */
-    protected $migrationSuffix = 'laratrust_setup_tables';
+    protected string $migrationSuffix = 'laratrust_setup_tables';
+
+    /** @var view-string */
+    protected string $migrationView = 'laratrust::migration';
+
+    protected string $migrationName = 'Laratrust migration';
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->line('');
         $this->info('Laratrust Migration Creation.');
@@ -49,7 +45,7 @@ class MigrationCommand extends Command
         $existingMigrations = $this->alreadyExistingMigrations();
         $defaultAnswer = true;
 
-        if ($existingMigrations) {
+        if ($existingMigrations !== []) {
             $this->line('');
 
             $this->warn($this->getExistingMigrationsWarning($existingMigrations));
@@ -80,95 +76,17 @@ class MigrationCommand extends Command
     }
 
     /**
-     * Create the migration.
-     *
-     * @return bool
-     */
-    protected function createMigration()
-    {
-        $migrationPath = $this->getMigrationPath();
-
-        $output = $this->laravel->view
-            ->make('laratrust::migration')
-            ->with(['laratrust' => Config::get('laratrust')])
-            ->render();
-
-        if (! file_exists($migrationPath) && $fs = fopen($migrationPath, 'x')) {
-            fwrite($fs, $output);
-            fclose($fs);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
      * Generate the message to display when running the
      * console command showing what tables are going
      * to be created.
-     *
-     * @return string
      */
-    protected function generateMigrationMessage()
+    protected function generateMigrationMessage(): string
     {
-        $tables = Collection::make(Config::get('laratrust.tables'))
-            ->reject(function ($value, $key) {
-                return $key == 'teams' && ! Config::get('laratrust.teams.enabled');
-            })
+        $tables = Collection::make(Config::array('laratrust.tables'))
+            ->reject(fn (string $table, string $key): bool => $key === 'teams' && ! Config::get('laratrust.teams.enabled'))
             ->sort();
 
         return "A migration that creates {$tables->implode(', ')} "
             .'tables will be created in database/migrations directory';
-    }
-
-    /**
-     * Build a warning regarding possible duplication
-     * due to already existing migrations.
-     *
-     * @return string
-     */
-    protected function getExistingMigrationsWarning(array $existingMigrations)
-    {
-        if (count($existingMigrations) > 1) {
-            $base = "Laratrust migrations already exist.\nFollowing files were found: ";
-        } else {
-            $base = "Laratrust migration already exists.\nFollowing file was found: ";
-        }
-
-        return $base.array_reduce($existingMigrations, function ($carry, $fileName) {
-            return $carry."\n - ".$fileName;
-        });
-    }
-
-    /**
-     * Check if there is another migration
-     * with the same suffix.
-     *
-     * @return array
-     */
-    protected function alreadyExistingMigrations()
-    {
-        $matchingFiles = glob($this->getMigrationPath('*'));
-
-        return array_map(function ($path) {
-            return basename($path);
-        }, $matchingFiles);
-    }
-
-    /**
-     * Get the migration path.
-     *
-     * The date parameter is optional for ability
-     * to provide a custom value or a wildcard.
-     *
-     * @param  string|null  $date
-     * @return string
-     */
-    protected function getMigrationPath($date = null)
-    {
-        $date = $date ?: date('Y_m_d_His');
-
-        return database_path("migrations/{$date}_{$this->migrationSuffix}.php");
     }
 }

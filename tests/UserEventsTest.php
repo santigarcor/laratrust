@@ -29,19 +29,19 @@ class UserEventsTest extends LaratrustTestCase
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
     }
 
-    public function test_an_event_is_dispatched_when_a_role_is_added()
+    public function test_an_event_is_dispatched_when_a_role_is_added(): void
     {
         $role = Role::create(['name' => 'role']);
         Event::fake();
 
         $this->user->addRole($role);
 
-        Event::assertDispatched(RoleAdded::class, fn (RoleAdded $event) => $event->model->is($this->user)
+        Event::assertDispatched(RoleAdded::class, fn (RoleAdded $event): bool => $event->model->is($this->user)
             && $event->role === $role->id
             && $event->team === null);
     }
 
-    public function test_an_event_is_dispatched_when_a_role_is_removed()
+    public function test_an_event_is_dispatched_when_a_role_is_removed(): void
     {
         $role = Role::create(['name' => 'role']);
         $this->user->addRole($role);
@@ -49,24 +49,24 @@ class UserEventsTest extends LaratrustTestCase
 
         $this->user->removeRole($role);
 
-        Event::assertDispatched(RoleRemoved::class, fn (RoleRemoved $event) => $event->model->is($this->user)
+        Event::assertDispatched(RoleRemoved::class, fn (RoleRemoved $event): bool => $event->model->is($this->user)
             && $event->role === $role->id
             && $event->team === null);
     }
 
-    public function test_an_event_is_dispatched_when_a_permission_is_added()
+    public function test_an_event_is_dispatched_when_a_permission_is_added(): void
     {
         $permission = Permission::create(['name' => 'permission']);
         Event::fake();
 
         $this->user->givePermission($permission);
 
-        Event::assertDispatched(PermissionAdded::class, fn (PermissionAdded $event) => $event->model->is($this->user)
+        Event::assertDispatched(PermissionAdded::class, fn (PermissionAdded $event): bool => $event->model->is($this->user)
             && $event->permission === $permission->id
             && $event->team === null);
     }
 
-    public function test_an_event_is_dispatched_when_a_permission_is_removed()
+    public function test_an_event_is_dispatched_when_a_permission_is_removed(): void
     {
         $permission = Permission::create(['name' => 'permission']);
         $this->user->givePermission($permission);
@@ -74,24 +74,24 @@ class UserEventsTest extends LaratrustTestCase
 
         $this->user->removePermission($permission);
 
-        Event::assertDispatched(PermissionRemoved::class, fn (PermissionRemoved $event) => $event->model->is($this->user)
+        Event::assertDispatched(PermissionRemoved::class, fn (PermissionRemoved $event): bool => $event->model->is($this->user)
             && $event->permission === $permission->id
             && $event->team === null);
     }
 
-    public function test_an_event_is_dispatched_when_roles_are_synced()
+    public function test_an_event_is_dispatched_when_roles_are_synced(): void
     {
         $role = Role::create(['name' => 'role']);
         Event::fake();
 
         $this->user->syncRoles([$role]);
 
-        Event::assertDispatched(RoleSynced::class, fn (RoleSynced $event) => $event->model->is($this->user)
+        Event::assertDispatched(RoleSynced::class, fn (RoleSynced $event): bool => $event->model->is($this->user)
             && $event->changes === ['attached' => [$role->id], 'detached' => [], 'updated' => []]
             && $event->team === null);
     }
 
-    public function test_an_event_is_dispatched_when_permissions_are_synced()
+    public function test_an_event_is_dispatched_when_permissions_are_synced(): void
     {
         $permission = Permission::create(['name' => 'permission']);
         $this->user->givePermission($permission);
@@ -99,12 +99,12 @@ class UserEventsTest extends LaratrustTestCase
 
         $this->user->syncPermissions([]);
 
-        Event::assertDispatched(PermissionSynced::class, fn (PermissionSynced $event) => $event->model->is($this->user)
+        Event::assertDispatched(PermissionSynced::class, fn (PermissionSynced $event): bool => $event->model->is($this->user)
             && $event->changes === ['attached' => [], 'detached' => [$permission->id], 'updated' => []]
             && $event->team === null);
     }
 
-    public function test_the_events_always_carry_the_team_key()
+    public function test_the_events_always_carry_the_team_key(): void
     {
         $team = Team::create(['name' => 'team_a']);
         $role = Role::create(['name' => 'role']);
@@ -115,12 +115,12 @@ class UserEventsTest extends LaratrustTestCase
         $this->user->removeRole($role, $team);
         $this->user->syncRoles([$role], 'team_a');
 
-        Event::assertDispatched(RoleAdded::class, fn (RoleAdded $event) => $event->team === $team->id);
-        Event::assertDispatched(RoleRemoved::class, fn (RoleRemoved $event) => $event->team === $team->id);
-        Event::assertDispatched(RoleSynced::class, fn (RoleSynced $event) => $event->team === $team->id);
+        Event::assertDispatched(RoleAdded::class, fn (RoleAdded $event): bool => $event->team === $team->id);
+        Event::assertDispatched(RoleRemoved::class, fn (RoleRemoved $event): bool => $event->team === $team->id);
+        Event::assertDispatched(RoleSynced::class, fn (RoleSynced $event): bool => $event->team === $team->id);
     }
 
-    public function test_the_team_is_null_when_teams_are_disabled()
+    public function test_the_team_is_null_when_teams_are_disabled(): void
     {
         $this->app['config']->set('laratrust.teams.enabled', false);
         $role = Role::create(['name' => 'role']);
@@ -129,11 +129,11 @@ class UserEventsTest extends LaratrustTestCase
         $this->user->addRole($role, 'a_team_that_is_ignored');
         $this->user->removeRole($role, 'a_team_that_is_ignored');
 
-        Event::assertDispatched(RoleAdded::class, fn (RoleAdded $event) => $event->team === null);
-        Event::assertDispatched(RoleRemoved::class, fn (RoleRemoved $event) => $event->team === null);
+        Event::assertDispatched(RoleAdded::class, fn (RoleAdded $event): bool => $event->team === null);
+        Event::assertDispatched(RoleRemoved::class, fn (RoleRemoved $event): bool => $event->team === null);
     }
 
-    public function test_no_event_is_dispatched_when_the_role_was_already_added()
+    public function test_no_event_is_dispatched_when_the_role_was_already_added(): void
     {
         $role = Role::create(['name' => 'role']);
         $this->user->addRole($role);

@@ -13,14 +13,14 @@ interface Permission
     /**
      * Many-to-Many relations with role model.
      *
-     * @return BelongsToMany<Model, $this>
+     * @return BelongsToMany<covariant Model, covariant Model>
      */
     public function roles(): BelongsToMany;
 
     /**
      * Morph by Many relationship between the permission and the one of the possible user models.
      *
-     * @return MorphToMany<Model, $this>
+     * @return MorphToMany<covariant Model, covariant Model>
      */
     public function getMorphByUserRelation(string $relationship): MorphToMany;
 }

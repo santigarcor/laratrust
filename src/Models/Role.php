@@ -11,11 +11,13 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Checkers\RoleChecker;
+use Laratrust\Contracts\LaratrustUser;
 use Laratrust\Contracts\Role as RoleContract;
 use Laratrust\Events\PermissionAdded;
 use Laratrust\Events\PermissionRemoved;
 use Laratrust\Events\PermissionSynced;
-use Laratrust\Helper;
+use Laratrust\Support\ModelClasses;
+use Laratrust\Support\PermissionRegistry;
 use Ramsey\Uuid\UuidInterface;
 
 /**
@@ -25,16 +27,11 @@ use Ramsey\Uuid\UuidInterface;
  * @property string|null $description
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
+ * @phpstan-import-type Assignable from LaratrustUser
  */
 class Role extends Model implements RoleContract
 {
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table;
-
     protected $fillable = [
         'name',
         'display_name',
@@ -42,17 +39,16 @@ class Role extends Model implements RoleContract
     ];
 
     /**
-     * Creates a new instance of the model.
+     * Get the table from "laratrust.tables.roles", unless the model sets its own.
      */
-    public function __construct(array $attributes = [])
+    public function getTable(): string
     {
-        parent::__construct($attributes);
-        $this->table = Config::get('laratrust.tables.roles');
+        return $this->table ?? Config::get('laratrust.tables.roles');
     }
 
     protected static function booted(): void
     {
-        $flushLaratrustCache = function (Role $role) {
+        $flushLaratrustCache = function (Role $role): void {
             $role->flushLaratrustCache();
         };
 
@@ -64,14 +60,15 @@ class Role extends Model implements RoleContract
         static::deleted($flushLaratrustCache);
         static::saved($flushLaratrustCache);
 
-        static::deleting(function ($role) {
-            if (method_exists($role, 'bootSoftDeletes') && ! $role->forceDeleting) {
+        static::deleting(function (self $role): void {
+            // Soft deleting keeps the assignments, so the model can be restored with them.
+            if (method_exists($role, 'isForceDeleting') && ! $role->isForceDeleting()) {
                 return;
             }
 
             $role->permissions()->detach();
 
-            foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
+            foreach (ModelClasses::userRelationships() as $key) {
                 $role->getMorphByUserRelation($key)->detach();
             }
         });
@@ -86,12 +83,12 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @return MorphToMany<Model, $this>
+     * @return MorphToMany<covariant Model, $this>
      */
     public function getMorphByUserRelation(string $relationship): MorphToMany
     {
         return $this->morphedByMany(
-            Config::get('laratrust.user_models')[$relationship],
+            ModelClasses::user($relationship),
             'user',
             Config::get('laratrust.tables.role_user'),
             Config::get('laratrust.foreign_keys.role'),
@@ -100,35 +97,44 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @return BelongsToMany<Model, $this>
+     * @return BelongsToMany<covariant Model, $this>
      */
     public function permissions(): BelongsToMany
     {
         return $this->belongsToMany(
-            Config::get('laratrust.models.permission'),
+            ModelClasses::permission(),
             Config::get('laratrust.tables.permission_role'),
             Config::get('laratrust.foreign_keys.role'),
             Config::get('laratrust.foreign_keys.permission')
         );
     }
 
+    /**
+     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     */
     public function hasPermission(string|array|BackedEnum $permission, bool $requireAll = false): bool
     {
         return $this->laratrustRoleChecker()
             ->hasPermission($permission, $requireAll);
     }
 
+    /**
+     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     */
     public function doesntHavePermission(string|array|BackedEnum $permission, bool $requireAll = false): bool
     {
         return ! $this->hasPermission($permission, $requireAll);
     }
 
+    /**
+     * @param  iterable<Assignable>  $permissions
+     */
     public function syncPermissions(iterable $permissions): static
     {
         $mappedPermissions = [];
 
         foreach ($permissions as $permission) {
-            $mappedPermissions[] = Helper::getIdFor($permission, 'permission');
+            $mappedPermissions[] = app(PermissionRegistry::class)->idFor($permission, 'permission');
         }
 
         $changes = $this->permissions()->sync($mappedPermissions);
@@ -138,9 +144,12 @@ class Role extends Model implements RoleContract
         return $this;
     }
 
+    /**
+     * @param  Assignable  $permission
+     */
     public function givePermission(array|string|int|Model|UuidInterface|BackedEnum $permission): static
     {
-        $permission = Helper::getIdFor($permission, 'permission');
+        $permission = app(PermissionRegistry::class)->idFor($permission, 'permission');
 
         $this->permissions()->attach($permission);
         $this->flushLaratrustCache();
@@ -149,9 +158,12 @@ class Role extends Model implements RoleContract
         return $this;
     }
 
+    /**
+     * @param  Assignable  $permission
+     */
     public function removePermission(array|string|int|Model|UuidInterface|BackedEnum $permission): static
     {
-        $permission = Helper::getIdFor($permission, 'permission');
+        $permission = app(PermissionRegistry::class)->idFor($permission, 'permission');
 
         $this->permissions()->detach($permission);
         $this->flushLaratrustCache();
@@ -160,6 +172,9 @@ class Role extends Model implements RoleContract
         return $this;
     }
 
+    /**
+     * @param  iterable<Assignable>  $permissions
+     */
     public function givePermissions(iterable $permissions): static
     {
         foreach ($permissions as $permission) {
@@ -169,6 +184,9 @@ class Role extends Model implements RoleContract
         return $this;
     }
 
+    /**
+     * @param  iterable<Assignable>|null  $permissions
+     */
     public function removePermissions(?iterable $permissions = null): static
     {
         if (! $permissions) {

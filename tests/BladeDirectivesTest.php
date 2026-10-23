@@ -28,7 +28,7 @@ class BladeDirectivesTest extends LaratrustTestCase
         $this->actingAs($user);
     }
 
-    public function test_role_directive()
+    public function test_role_directive(): void
     {
         $this->assertSame('yes', $this->render("@role('editor') yes @endrole"));
         $this->assertSame('', $this->render("@role('admin') yes @endrole"));
@@ -36,7 +36,7 @@ class BladeDirectivesTest extends LaratrustTestCase
         $this->assertSame('', $this->render("@role(['editor', 'admin'], requireAll: true) yes @endrole"));
     }
 
-    public function test_role_directive_supports_else_elserole_and_unless()
+    public function test_role_directive_supports_else_elserole_and_unless(): void
     {
         $template = "@role('admin') admin @elserole('editor') editor @else nobody @endrole";
 
@@ -44,20 +44,20 @@ class BladeDirectivesTest extends LaratrustTestCase
         $this->assertSame('not admin', $this->render("@unlessrole('admin') not admin @endrole"));
     }
 
-    public function test_permission_directive()
+    public function test_permission_directive(): void
     {
         $this->assertSame('yes', $this->render("@permission('posts.edit') yes @endpermission"));
         $this->assertSame('yes', $this->render("@permission('posts.*') yes @endpermission"));
         $this->assertSame('no', $this->render("@permission('posts.delete') yes @else no @endpermission"));
     }
 
-    public function test_ability_directive()
+    public function test_ability_directive(): void
     {
         $this->assertSame('yes', $this->render("@ability('admin', 'posts.edit') yes @endability"));
         $this->assertSame('', $this->render("@ability('admin', 'posts.edit', options: ['validate_all' => true]) yes @endability"));
     }
 
-    public function test_directives_are_false_for_guests()
+    public function test_directives_are_false_for_guests(): void
     {
         $this->app['auth']->logout();
 

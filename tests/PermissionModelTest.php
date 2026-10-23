@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Laratrust\Test;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\PermissionWithCustomUsersRelation;
@@ -22,22 +24,22 @@ class PermissionModelTest extends LaratrustTestCase
         $this->permission = new Permission;
     }
 
-    public function test_users_relationship()
+    public function test_users_relationship(): void
     {
-        $this->assertInstanceOf('Illuminate\Database\Eloquent\Relations\MorphToMany', $this->permission->users());
+        $this->assertInstanceOf(MorphToMany::class, $this->permission->users());
     }
 
-    public function test_access_users_relationship_as_attribute()
+    public function test_access_users_relationship_as_attribute(): void
     {
         $this->assertEmpty($this->permission->users);
     }
 
-    public function test_roles_relationship()
+    public function test_roles_relationship(): void
     {
-        $this->assertInstanceOf('\Illuminate\Database\Eloquent\Relations\BelongsToMany', $this->permission->roles());
+        $this->assertInstanceOf(BelongsToMany::class, $this->permission->roles());
     }
 
-    public function test_deleting_permission_removes_pivot_records()
+    public function test_deleting_permission_removes_pivot_records(): void
     {
         $permission = Permission::create(['name' => 'permission_a']);
         $role = Role::create(['name' => 'role_a']);
@@ -59,7 +61,7 @@ class PermissionModelTest extends LaratrustTestCase
         );
     }
 
-    public function test_deleting_permission_with_overridden_users_relation_removes_pivot_records()
+    public function test_deleting_permission_with_overridden_users_relation_removes_pivot_records(): void
     {
         $permission = PermissionWithCustomUsersRelation::create(['name' => 'custom_permission']);
         $user = User::create(['name' => 'test', 'email' => 'test@test.com']);

@@ -9,7 +9,7 @@ use Laratrust\LaratrustServiceProvider;
 
 class PermissionsAsGatesTest extends LaratrustTestCase
 {
-    public function test_registers_permissions_as_gates()
+    public function test_registers_permissions_as_gates(): void
     {
         config()->set('laratrust.permissions_as_gates', true);
 
@@ -19,7 +19,7 @@ class PermissionsAsGatesTest extends LaratrustTestCase
         $provider->boot();
     }
 
-    public function test_does_not_register_permissions_as_gates_if_disabled_in_config()
+    public function test_does_not_register_permissions_as_gates_if_disabled_in_config(): void
     {
         config()->set('laratrust.permissions_as_gates', false);
 
@@ -29,7 +29,7 @@ class PermissionsAsGatesTest extends LaratrustTestCase
         $provider->boot();
     }
 
-    public function test_does_not_register_permissions_as_gates_by_default()
+    public function test_does_not_register_permissions_as_gates_by_default(): void
     {
         $this->mock(Gate::class)->shouldNotReceive('before');
 

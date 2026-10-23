@@ -86,6 +86,26 @@ final class PermissionRegistry
     }
 
     /**
+     * Turn the role or permission names given to a check into a list.
+     *
+     * A string is split by "|" ("admin|editor"), enums are turned into their values.
+     *
+     * @param  string|array<string|BackedEnum>|BackedEnum  $names
+     * @return list<string>
+     */
+    public function names(string|array|BackedEnum $names): array
+    {
+        if (is_string($names)) {
+            return explode('|', $names);
+        }
+
+        return array_map(
+            fn (string|BackedEnum $name): string => (string) ($name instanceof BackedEnum ? $name->value : $name),
+            array_values(is_array($names) ? $names : [$names]),
+        );
+    }
+
+    /**
      * Get the key for a role, permission or team given as a model, enum, uuid, array, key or name.
      */
     public function idFor(mixed $object, string $type): int|string|null
@@ -121,7 +141,7 @@ final class PermissionRegistry
         }
 
         // An invalid or outdated cached value is treated as a cache miss.
-        if ($assignments = StoredAssignments::fromArray($this->cache->get($key))) {
+        if (($assignments = StoredAssignments::fromArray($this->cache->get($key))) instanceof StoredAssignments) {
             return $this->stored[$key] = $assignments;
         }
 
@@ -150,7 +170,7 @@ final class PermissionRegistry
         $this->loadRolePermissions($uniqueRoles);
 
         $roleCacheKeys = collect($uniqueRoles)
-            ->mapWithKeys(fn (Model&Role $role) => [(string) $role->getKey() => $role->laratrustCacheKey()])
+            ->mapWithKeys(fn (Model&Role $role): array => [(string) $role->getKey() => $role->laratrustCacheKey()])
             ->all();
 
         // The lookup references the shared permission sets, it doesn't copy them.
@@ -186,8 +206,8 @@ final class PermissionRegistry
     private function rolesNotInMemory(array $roles): array
     {
         return collect($roles)
-            ->keyBy(fn (Model&Role $role) => $role->laratrustCacheKey())
-            ->reject(fn (Model&Role $role, string $key) => isset($this->rolePermissions[$key]))
+            ->keyBy(fn (Model&Role $role): string => $role->laratrustCacheKey())
+            ->reject(fn (Model&Role $role, string $key): bool => isset($this->rolePermissions[$key]))
             ->all();
     }
 
@@ -201,12 +221,12 @@ final class PermissionRegistry
     {
         $cached = collect($this->cache->many(array_keys($rolesByCacheKey)))
             ->filter(
-                fn (mixed $names) => is_array($names)
+                fn (mixed $names): bool => is_array($names)
                 && array_is_list($names)
-                && Arr::every($names, fn ($name) => is_string($name))
+                && Arr::every($names, fn ($name): bool => is_string($name))
             );
 
-        $this->rolePermissions = $cached->map(fn (array $names) => array_fill_keys($names, true))->all()
+        $this->rolePermissions = $cached->map(fn (array $names): array => array_fill_keys($names, true))->all()
             + $this->rolePermissions;
 
         return collect($rolesByCacheKey)->diffKeys($cached)->all();
@@ -221,7 +241,7 @@ final class PermissionRegistry
     private function recoverFromDatabase(array $rolesByCacheKey): void
     {
         $roles = collect($rolesByCacheKey);
-        $cacheKeys = $roles->mapWithKeys(fn (Model&Role $role, string $cacheKey) => [$role->getKey() => $cacheKey]);
+        $cacheKeys = $roles->mapWithKeys(fn (Model&Role $role, string $cacheKey): array => [$role->getKey() => $cacheKey]);
 
         $prototype = reset($rolesByCacheKey);
 
@@ -233,15 +253,15 @@ final class PermissionRegistry
                 $permissions->getRelated()->qualifyColumn('name'),
             ])])
             ->get([$prototype->getQualifiedKeyName()])
-            ->mapWithKeys(fn (Model $role) => [
+            ->mapWithKeys(fn (Model $role): array => [
                 $cacheKeys[$role->getKey()] => $role->getRelation('permissions')->pluck('name')->all(),
             ]);
 
         // Roles the query doesn't return (deleted, or hidden by a global scope like SoftDeletes)
         // are remembered as having no permissions, so they aren't queried again.
-        $loaded = $loaded->union($roles->map(fn () => []))->all();
+        $loaded = $loaded->union($roles->map(fn (): array => []))->all();
 
-        $this->rolePermissions = array_map(fn (array $names) => array_fill_keys($names, true), $loaded)
+        $this->rolePermissions = array_map(fn (array $names): array => array_fill_keys($names, true), $loaded)
             + $this->rolePermissions;
 
         // The cache stores plain lists of names.
@@ -260,7 +280,7 @@ final class PermissionRegistry
         return new StoredAssignments(
             roles: $roles
                 ->get([$roles->getRelated()->getQualifiedKeyName(), $roles->getRelated()->qualifyColumn('name')])
-                ->map(fn (Model $role) => [
+                ->map(fn (Model $role): array => [
                     'id' => $this->keyOf($role),
                     'name' => (string) $role->getAttribute('name'),
                     'team' => $teamOf($role),
@@ -268,7 +288,7 @@ final class PermissionRegistry
                 ->all(),
             permissions: $permissions
                 ->get([$permissions->getRelated()->qualifyColumn('name')])
-                ->map(fn (Model $permission) => [
+                ->map(fn (Model $permission): array => [
                     'name' => (string) $permission->getAttribute('name'),
                     'team' => $teamOf($permission),
                 ])

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Attributes\Unguarded;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laratrust\Contracts\LaratrustUser;
 use Laratrust\Traits\HasRolesAndPermissions;
@@ -14,13 +16,11 @@ use LogicException;
  * applications do, so its own methods would replace the trait's ones with the same name.
  * Laratrust must never depend on them.
  */
+#[Unguarded]
+#[Table(name: 'users')]
 class UserWithCommonMethodNames extends Authenticatable implements LaratrustUser
 {
     use HasRolesAndPermissions;
-
-    protected $table = 'users';
-
-    protected $guarded = [];
 
     public function getMorphClass(): string
     {

@@ -8,7 +8,6 @@ use BackedEnum;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Laratrust\Contracts\Role;
-use Laratrust\Helper;
 use Laratrust\Support\PermissionLookup;
 use Laratrust\Support\PermissionRegistry;
 
@@ -31,7 +30,7 @@ final readonly class RoleChecker
      */
     public function hasPermission(string|array|BackedEnum $permission, bool $requireAll = false): bool
     {
-        $names = Collection::make(Helper::standardize($permission, true));
+        $names = Collection::make($this->registry->names($permission));
 
         if ($names->isEmpty()) {
             return true;

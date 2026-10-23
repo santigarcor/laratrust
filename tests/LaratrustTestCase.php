@@ -8,6 +8,10 @@ use Laratrust\LaratrustFacade;
 use Laratrust\LaratrustServiceProvider;
 use Laratrust\Tests\Migrations\LaratrustSetupTables;
 use Laratrust\Tests\Migrations\UsersMigration;
+use Laratrust\Tests\Models\Permission;
+use Laratrust\Tests\Models\Role;
+use Laratrust\Tests\Models\Team;
+use Laratrust\Tests\Models\User;
 use Orchestra\Testbench\TestCase;
 
 class LaratrustTestCase extends TestCase
@@ -31,16 +35,16 @@ class LaratrustTestCase extends TestCase
             'database' => ':memory:',
             'prefix' => '',
         ]);
-        $app['config']->set('laratrust.user_models.users', 'Laratrust\Tests\Models\User');
+        $app['config']->set('laratrust.user_models.users', User::class);
         $app['config']->set('laratrust.panel.register', true);
         $app['config']->set('laratrust.models', [
-            'role' => 'Laratrust\Tests\Models\Role',
-            'permission' => 'Laratrust\Tests\Models\Permission',
-            'team' => 'Laratrust\Tests\Models\Team',
+            'role' => Role::class,
+            'permission' => Permission::class,
+            'team' => Team::class,
         ]);
     }
 
-    public function migrate()
+    public function migrate(): void
     {
         $migrations = [
             UsersMigration::class,

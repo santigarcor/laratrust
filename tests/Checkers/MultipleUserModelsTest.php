@@ -28,15 +28,15 @@ class MultipleUserModelsTest extends LaratrustTestCase
 
         $this->app['config']->set('laratrust.use_morph_map', true);
         $this->app['config']->set('laratrust.user_models', [
-            'users' => 'Laratrust\Tests\Models\User',
-            'others' => 'Laratrust\Tests\Models\Other',
+            'users' => User::class,
+            'others' => Other::class,
         ]);
 
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
         $this->other = Other::create(['name' => 'test', 'email' => 'test@test.com']);
     }
 
-    public function test_model_disable_the_roles_and_permissions_caching()
+    public function test_model_disable_the_roles_and_permissions_caching(): void
     {
         /*
         |------------------------------------------------------------
@@ -90,7 +90,7 @@ class MultipleUserModelsTest extends LaratrustTestCase
         $this->assertFalse(Cache::has("laratrust_user_others_{$this->other->id}"));
     }
 
-    public function migrate()
+    public function migrate(): void
     {
         $migrations = [
             UsersMigration::class,

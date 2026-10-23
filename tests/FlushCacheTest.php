@@ -20,7 +20,7 @@ class FlushCacheTest extends LaratrustTestCase
         $this->app['config']->set('laratrust.user_models.conflicting_users', UserWithConflictingFlushCache::class);
     }
 
-    public function test_laratrust_cache_is_flushed_when_another_trait_owns_flush_cache()
+    public function test_laratrust_cache_is_flushed_when_another_trait_owns_flush_cache(): void
     {
         $user = UserWithConflictingFlushCache::create(['name' => 'test', 'email' => 'test@test.com']);
         Role::create(['name' => 'role_a']);
@@ -35,7 +35,7 @@ class FlushCacheTest extends LaratrustTestCase
         $this->assertFalse($user->ownCacheFlushed);
     }
 
-    public function test_laratrust_models_no_longer_define_flush_cache()
+    public function test_laratrust_models_no_longer_define_flush_cache(): void
     {
         // Only flushLaratrustCache() exists, so third party flushCache() methods never collide (#706).
         $this->assertFalse(method_exists(User::class, 'flushCache'));

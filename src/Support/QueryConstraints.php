@@ -8,7 +8,6 @@ use BackedEnum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Config;
-use Laratrust\Helper;
 use Laratrust\Models\Team;
 
 /**
@@ -51,6 +50,6 @@ final class QueryConstraints
             return $query;
         }
 
-        return $query->where($relation->qualifyPivotColumn(Team::modelForeignKey()), Helper::getIdFor($team, 'team'));
+        return $query->where($relation->qualifyPivotColumn(Team::modelForeignKey()), app(PermissionRegistry::class)->idFor($team, 'team'));
     }
 }

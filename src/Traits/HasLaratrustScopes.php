@@ -22,7 +22,9 @@ trait HasLaratrustScopes
     /**
      * Get the users with the given role(s).
      *
+     * @param  Builder<static>  $query
      * @param  string|array<string|BackedEnum>|BackedEnum  $role
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereHasRole(
@@ -36,7 +38,7 @@ trait HasLaratrustScopes
         return $query->has(
             'roles',
             boolean: $boolean,
-            callback: fn (Builder $roleQuery) => QueryConstraints::constrainToTeam(
+            callback: fn (Builder $roleQuery): Builder => QueryConstraints::constrainToTeam(
                 QueryConstraints::whereNameIs($roleQuery, $role),
                 $roles,
                 $team,
@@ -47,7 +49,9 @@ trait HasLaratrustScopes
     /**
      * Get the users with the given role(s), as an "or" condition.
      *
+     * @param  Builder<static>  $query
      * @param  string|array<string|BackedEnum>|BackedEnum  $role
+     * @return Builder<static>
      */
     #[Scope]
     protected function orWhereHasRole(
@@ -55,13 +59,15 @@ trait HasLaratrustScopes
         string|array|BackedEnum $role = '',
         mixed $team = null
     ): Builder {
-        return $this->whereHasRole($query, $role, $team, 'or');
+        return $query->whereHasRole($role, $team, 'or');
     }
 
     /**
      * Get the users with the given permission(s), given directly or through their roles.
      *
+     * @param  Builder<static>  $query
      * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereHasPermission(
@@ -78,12 +84,12 @@ trait HasLaratrustScopes
             ->whereHas(
                 'roles',
                 fn (Builder $roleQuery) => QueryConstraints::constrainToTeam($roleQuery, $roles, $team)
-                    ->whereHas('permissions', fn (Builder $permissionQuery) => QueryConstraints::whereNameIs($permissionQuery, $permission))
+                    ->whereHas('permissions', fn (Builder $permissionQuery): Builder => QueryConstraints::whereNameIs($permissionQuery, $permission))
             )
             // Directly: the team is the one the permission was given in.
             ->orWhereHas(
                 'permissions',
-                fn (Builder $permissionQuery) => QueryConstraints::constrainToTeam(
+                fn (Builder $permissionQuery): Builder => QueryConstraints::constrainToTeam(
                     QueryConstraints::whereNameIs($permissionQuery, $permission),
                     $permissions,
                     $team,
@@ -94,7 +100,9 @@ trait HasLaratrustScopes
     /**
      * Get the users with the given permission(s), as an "or" condition.
      *
+     * @param  Builder<static>  $query
      * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @return Builder<static>
      */
     #[Scope]
     protected function orWhereHasPermission(
@@ -102,11 +110,14 @@ trait HasLaratrustScopes
         string|array|BackedEnum $permission = '',
         mixed $team = null
     ): Builder {
-        return $this->whereHasPermission($query, $permission, $team, 'or');
+        return $query->whereHasPermission($permission, $team, 'or');
     }
 
     /**
      * Get the users without any role.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereDoesntHaveRoles(Builder $query): Builder
@@ -116,6 +127,9 @@ trait HasLaratrustScopes
 
     /**
      * Get the users without any permission: neither given directly nor through their roles.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
     #[Scope]
     protected function whereDoesntHavePermissions(Builder $query): Builder

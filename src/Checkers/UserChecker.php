@@ -10,7 +10,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use InvalidArgumentException;
 use Laratrust\Contracts\LaratrustUser;
-use Laratrust\Helper;
 use Laratrust\Support\PermissionLookup;
 use Laratrust\Support\PermissionRegistry;
 
@@ -43,12 +42,12 @@ final readonly class UserChecker
      */
     public function hasRole(string|array|BackedEnum $name, mixed $team = null, bool $requireAll = false): bool
     {
-        [$team, $requireAll] = self::teamOrRequireAll($team, $requireAll);
+        [$team, $requireAll] = $this->teamOrRequireAll($team, $requireAll);
         $lookup = $this->registry->lookupFor($this->user);
         $teamScope = $this->teamScope($team);
 
         return $this->checkAnyOrAll(
-            Helper::standardize($name, true),
+            $this->registry->names($name),
             $requireAll,
             fn (string $role): bool => $lookup->hasRole($role, $teamScope),
         );
@@ -61,12 +60,12 @@ final readonly class UserChecker
      */
     public function hasPermission(string|array|BackedEnum $permission, mixed $team = null, bool $requireAll = false): bool
     {
-        [$team, $requireAll] = self::teamOrRequireAll($team, $requireAll);
+        [$team, $requireAll] = $this->teamOrRequireAll($team, $requireAll);
         $lookup = $this->registry->lookupFor($this->user);
         $teamScope = $this->teamScope($team);
 
         return $this->checkAnyOrAll(
-            Helper::standardize($permission, true),
+            $this->registry->names($permission),
             $requireAll,
             fn (string $name): bool => $lookup->hasPermission($name, $teamScope),
         );
@@ -88,9 +87,9 @@ final readonly class UserChecker
         mixed $team = null,
         array $options = []
     ): array|bool {
-        [$team, $options] = self::teamOrOptions($team, $options);
-        $roles = Helper::standardize($roles, true);
-        $permissions = Helper::standardize($permissions, true);
+        [$team, $options] = $this->teamOrOptions($team, $options);
+        $roles = $this->registry->names($roles);
+        $permissions = $this->registry->names($permissions);
 
         $options = $this->validateAndSetDefaults($options);
 
@@ -114,7 +113,7 @@ final readonly class UserChecker
 
         // If validate all, there should not be any false; otherwise there must be at least one true.
         $validateAll = $options['validate_all']
-            ? ! (in_array(false, $checkedRoles) || in_array(false, $checkedPermissions))
+            ? ! in_array(false, $checkedRoles) && ! in_array(false, $checkedPermissions)
             : in_array(true, $checkedRoles) || in_array(true, $checkedPermissions);
 
         if ($options['return_type'] == 'array') {
@@ -159,7 +158,7 @@ final readonly class UserChecker
      *
      * @return array{mixed, bool}
      */
-    private static function teamOrRequireAll(mixed $team, bool $requireAll): array
+    private function teamOrRequireAll(mixed $team, bool $requireAll): array
     {
         return is_bool($team) ? [null, $team] : [$team, $requireAll];
     }
@@ -170,7 +169,7 @@ final readonly class UserChecker
      * @param  array<string, mixed>  $options
      * @return array{mixed, array<string, mixed>}
      */
-    private static function teamOrOptions(mixed $team, array $options): array
+    private function teamOrOptions(mixed $team, array $options): array
     {
         return is_array($team) ? [null, $team] : [$team, $options];
     }

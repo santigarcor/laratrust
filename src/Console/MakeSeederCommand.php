@@ -4,171 +4,62 @@ declare(strict_types=1);
 
 namespace Laratrust\Console;
 
-use Exception;
-use Illuminate\Database\Console\Seeds\SeederMakeCommand as LaravelMakeSeederCommand;
-use Illuminate\Support\Collection;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
+use Illuminate\Console\Command;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
+use Throwable;
 
-class MakeSeederCommand extends LaravelMakeSeederCommand
+#[Description('Creates the seeder following the Laratrust specifications.')]
+#[Signature('laratrust:seeder')]
+class MakeSeederCommand extends Command
 {
     /**
-     * The console command name.
-     *
-     * @var string
+     * Create database/seeders/LaratrustSeeder.php from the stub, using the configured models and tables.
      */
-    protected $signature = 'laratrust:seeder';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Creates the seeder following the Laratrust specifications.';
-
-    /**
-     * Execute the console command.
-     *
-     * @return void
-     */
-    public function handle()
+    public function handle(Filesystem $files): int
     {
-        if (file_exists($this->seederPath())) {
-            $this->line('');
+        $path = $this->laravel->databasePath('seeders/LaratrustSeeder.php');
 
-            $this->warn('The LaratrustSeeder file already exists. Delete the existing one if you want to create a new one.');
-            $this->line('');
+        if ($files->exists($path)) {
+            $this->components->warn('The LaratrustSeeder file already exists. Delete the existing one if you want to create a new one.');
 
-            return;
+            return self::SUCCESS;
         }
 
         try {
-            $seederClass = $this->createSeederClass();
-            $this->files->put($this->seederPath(), $seederClass);
-            $this->info('Seeder successfully created!');
-        } catch (Exception $exception) {
-            $folder = $this->files->dirname($this->seederPath());
-            $where = substr($folder, strpos($folder, 'database'));
+            $files->ensureDirectoryExists(dirname($path));
+            $files->put($path, $this->buildSeeder($files->get(__DIR__.'/../../stubs/seeder.stub')));
+        } catch (Throwable) {
+            $this->components->error("Couldn't create the seeder. Check the write permissions within the ".dirname($path).' directory.');
 
-            $this->error(
-                "Couldn't create seeder.\n".
-                "Check the write permissions within the $where directory."
-            );
+            return self::FAILURE;
         }
 
-        $this->line('');
+        $this->components->info('Seeder successfully created!');
+
+        return self::SUCCESS;
     }
 
-    /**
-     * Create the seeder.
-     */
-    protected function createSeederClass(): string
+    private function buildSeeder(string $stub): string
     {
-        $stub = $this->files->get($this->getStub());
+        $userModels = Config::get('laratrust.user_models');
 
-        $this->replaceSeederNamespace($stub);
-        $this->replaceModelClassNames($stub);
-        $this->replaceTableNames($stub);
-
-        return $stub;
+        return strtr($stub, [
+            '{{roleConfiguredModelClass}}' => $this->fullyQualified(Config::get('laratrust.models.role')),
+            '{{permissionConfiguredModelClass}}' => $this->fullyQualified(Config::get('laratrust.models.permission')),
+            '{{userConfiguredModelClass}}' => $this->fullyQualified(reset($userModels)),
+            '{{permission_roleConfiguredTableName}}' => Config::get('laratrust.tables.permission_role'),
+            '{{permission_userConfiguredTableName}}' => Config::get('laratrust.tables.permission_user'),
+            '{{role_userConfiguredTableName}}' => Config::get('laratrust.tables.role_user'),
+            '{{rolesTableName}}' => Config::get('laratrust.tables.roles'),
+            '{{permissionsTableName}}' => Config::get('laratrust.tables.permissions'),
+        ]);
     }
 
-    /**
-     * Replace the namespace of the seeder.
-     */
-    protected function replaceSeederNamespace(string &$stub)
+    private function fullyQualified(string $class): string
     {
-        $namespace = '';
-
-        if (version_compare($this->getLaravel()->version(), '8.0') >= 0) {
-            $namespace = "\nnamespace Database\Seeders;\n";
-        }
-
-        $this->replaceStubParameter($stub, 'namespace', $namespace);
-    }
-
-    /**
-     * Replace the models class names in the stub.
-     */
-    protected function replaceModelClassNames(string &$stub)
-    {
-        $role = Config::get('laratrust.models.role', 'App\Role');
-        $this->replaceStubParameter($stub, 'roleConfiguredModelClass', '\\'.ltrim($role, '\\'));
-
-        $permission = Config::get('laratrust.models.permission', 'App\Permission');
-        $this->replaceStubParameter($stub, 'permissionConfiguredModelClass', '\\'.ltrim($permission, '\\'));
-
-        $user = new Collection(Config::get('laratrust.user_models', ['App\User']));
-        $user = $user->first();
-        $this->replaceStubParameter($stub, 'userConfiguredModelClass', '\\'.ltrim($user, '\\'));
-    }
-
-    /**
-     * Replace the table names in the stub.
-     */
-    protected function replaceTableNames(string &$stub)
-    {
-        $rolePermission = Config::get('laratrust.tables.permission_role');
-        $this->replaceStubParameter($stub, 'permission_roleConfiguredTableName', $rolePermission);
-
-        $permissionUser = Config::get('laratrust.tables.permission_user');
-        $this->replaceStubParameter($stub, 'permission_userConfiguredTableName', $permissionUser);
-
-        $roleUser = Config::get('laratrust.tables.role_user');
-        $this->replaceStubParameter($stub, 'role_userConfiguredTableName', $roleUser);
-
-        $rolesTable = Config::get('laratrust.tables.roles');
-        $this->replaceStubParameter($stub, 'rolesTableName', $rolesTable);
-
-        $permissionsTable = Config::get('laratrust.tables.permissions');
-        $this->replaceStubParameter($stub, 'permissionsTableName', $permissionsTable);
-    }
-
-    /**
-     * Replace a placeholder parameter in the stub.
-     */
-    protected function replaceStubParameter(string &$stub, string $parameter, string $value)
-    {
-        $stub = str_replace('{{'.$parameter.'}}', $value, $stub);
-    }
-
-    /**
-     * Get the seeder stub file.
-     *
-     * @return string
-     */
-    protected function getStub()
-    {
-        return $this->resolveStubPath('/stubs/seeder.stub');
-    }
-
-    /**
-     * Resolve the fully-qualified path to the stub.
-     *
-     * @param  string  $stub
-     * @return string
-     */
-    protected function resolveStubPath($stub)
-    {
-        return __DIR__."/../../$stub";
-    }
-
-    /**
-     * Get the seeder path.
-     *
-     * @return string
-     */
-    protected function seederPath()
-    {
-        return $this->getPath('LaratrustSeeder');
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [];
+        return '\\'.ltrim($class, '\\');
     }
 }
