@@ -1,28 +1,27 @@
 {
   "name": "laratrust",
   "version": "5.1.0",
-  "description": "Laratrust Docs",
+  "description": "Laratrust docs and admin panel assets",
   "directories": {
     "doc": "docs",
     "test": "tests"
   },
   "dependencies": {},
   "devDependencies": {
-    "@tailwindcss/custom-forms": "^0.2.1",
-    "cross-env": "^7.0.2",
-    "laravel-mix": "^5.0.4",
-    "tailwindcss": "^1.4.2",
+    "@tailwindcss/cli": "4.3.3",
+    "@tailwindcss/forms": "0.5.11",
+    "alpinejs": "3.17.4",
+    "esbuild": "0.28.2",
+    "tailwindcss": "4.3.3",
     "vuepress": "^0.14.4"
   },
   "scripts": {
     "docs:dev": "NODE_OPTIONS=--openssl-legacy-provider vuepress dev docs",
     "docs:build": "NODE_OPTIONS=--openssl-legacy-provider vuepress build docs",
-    "dev": "npm run development",
-    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "watch": "npm run development -- --watch",
-    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
-    "prod": "npm run production",
-    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+    "panel:css": "tailwindcss --input resources/css/laratrust.css --output dist/laratrust.css --minify",
+    "panel:js": "esbuild resources/js/laratrust.js --bundle --minify --format=iife --target=es2020 --outfile=dist/laratrust.js",
+    "panel:build": "npm run panel:css && npm run panel:js",
+    "panel:watch": "npm run panel:css -- --watch & npm run panel:js -- --watch"
   },
   "author": "Santiago Garcia C",
   "license": "MIT",

@@ -1,4 +1,29 @@
-# Used by Larastan (and `vendor/bin/testbench`) to boot an application with Laratrust,
-# so it knows the package's views and bindings.
+# Used by Larastan and by Workbench: "composer serve" runs the admin panel with demo data,
+# without an application. Nothing here (nor workbench/) is part of the distributed package.
+laravel: '@testbench'
+
 providers:
   - Laratrust\LaratrustServiceProvider
+
+migrations:
+  - workbench/database/migrations
+
+seeders:
+  - Workbench\Database\Seeders\DatabaseSeeder
+
+env:
+  - APP_KEY="base64:R3Lx2Zl4X0W2m7v8b8cQ1p0yQ9mYb0b8j5mZ2n1e3gA="
+  - DB_CONNECTION=sqlite
+  - SESSION_DRIVER=file
+  - CACHE_STORE=array
+
+workbench:
+  start: /laratrust
+  install: false
+  health: false
+  discovers:
+    config: true
+  build:
+    - create-sqlite-db
+    - db-wipe
+    - migrate-fresh

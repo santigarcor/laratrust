@@ -1,104 +1,64 @@
 @extends('laratrust::panel.layout')
 
-@section('title', $model ? "Edit {$type}" : "New {$type}")
+@section('title', ($model ? 'Edit ' : 'New ').$type)
 
 @section('content')
-  <div>
-  </div>
-  <div class="flex flex-col">
-    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-32">
-      <form
-        x-data="laratrustForm()"
-        x-init="{!! $model ? '' : '$watch(\'displayName\', value => onChangeDisplayName(value))'!!}"
-        method="POST"
-        action="{{$model ? route("laratrust.{$type}s.update", $model->getKey()) : route("laratrust.{$type}s.store")}}"
-        class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200 p-8"
-      >
-        @csrf
-        @if ($model)
-          @method('PUT')
-        @endif
-        <label class="block">
-          <span class="text-gray-700">Name/Code</span>
-          <input
-            class="form-input mt-1 block w-full bg-gray-200 text-gray-600 @error('name') border-red-500 @enderror"
-            name="name"
-            placeholder="this-will-be-the-code-name"
-            :value="name"
-            readonly
-            autocomplete="off"
-          >
-          @error('name')
-              <div class="text-red-500 text-sm mt-1">{{ $message}} </div>
-          @enderror
-        </label>
+    <x-laratrust::card>
+        <form
+            method="POST"
+            action="{{ $model ? route("laratrust.{$type}s.update", $model->getKey()) : route("laratrust.{$type}s.store") }}"
+            x-data="laratrustNameFromDisplayName(@js(old('name', $model?->name ?? '')), @js(old('display_name', $model?->display_name ?? '')), @js($model === null))"
+            class="space-y-6 p-4 sm:p-6"
+        >
+            @csrf
+            @if ($model)
+                @method('PUT')
+            @endif
 
-        <label class="block my-4">
-          <span class="text-gray-700">Display Name</span>
-          <input
-            class="form-input mt-1 block w-full"
-            name="display_name"
-            placeholder="Edit user profile"
-            x-model="displayName"
-            autocomplete="off"
-          >
-        </label>
+            <div class="grid gap-6 sm:grid-cols-2">
+                <div>
+                    <label for="display_name" class="lt-label">Display name</label>
+                    <input id="display_name" name="display_name" x-model="displayName" placeholder="Edit user profile" autocomplete="off" class="lt-input mt-2">
+                    @error('display_name') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
 
-        <label class="block my-4">
-          <span class="text-gray-700">Description</span>
-          <textarea
-            class="form-textarea mt-1 block w-full"
-            rows="3"
-            name="description"
-            placeholder="Some description for the {{$type}}"
-          >{{ $model->description ?? old('description') }}</textarea>
-        </label>
-        @if($type == 'role')
-          <span class="block text-gray-700">Permissions</span>
-          <div class="flex flex-wrap justify-start mb-4">
-            @foreach ($permissions as $permission)
-              <label class="inline-flex items-center mr-6 my-2 text-sm" style="flex: 1 0 20%;">
-                <input
-                  type="checkbox"
-                  class="form-checkbox h-4 w-4"
-                  name="permissions[]"
-                  value="{{$permission->getKey()}}"
-                  {!! ($model && $permission->assigned) ? 'checked' : '' !!}
-                >
-                <span class="ml-2">{{$permission->display_name ?? $permission->name}}</span>
-              </label>
-            @endforeach
-          </div>
-        @endif
-        <div class="flex justify-end">
-          <a
-            href="{{route("laratrust.{$type}s.index")}}"
-            class="btn btn-red mr-4"
-          >
-            Cancel
-          </a>
-          <button class="btn btn-blue" type="submit">Save</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  <script>
-    window.laratrustForm =  function() {
-      return {
-        displayName: '{{ $model->display_name ?? old('display_name') }}',
-        name: '{{ $model->name ?? old('name') }}',
-        toKebabCase(str) {
-          return str &&
-            str
-              .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
-              .map(x => x.toLowerCase())
-              .join('-')
-              .trim();
-        },
-        onChangeDisplayName(value) {
-          this.name = this.toKebabCase(value);
-        }
-      }
-    }
-  </script>
+                <div>
+                    <label for="name" class="lt-label">Name</label>
+                    <input id="name" name="name" x-model="name" readonly placeholder="edit-user-profile" autocomplete="off" aria-describedby="name-help" class="lt-input mt-2 bg-gray-50 font-mono text-gray-600 dark:bg-white/10 dark:text-gray-300">
+                    <p id="name-help" class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                        {{ $model ? "The name can't be changed." : 'Generated from the display name. Use it in your code.' }}
+                    </p>
+                    @error('name') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                </div>
+            </div>
+
+            <div>
+                <label for="description" class="lt-label">Description</label>
+                <textarea id="description" name="description" rows="3" placeholder="What this {{ $type }} is for" class="lt-input mt-2">{{ old('description', $model?->description) }}</textarea>
+                @error('description') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+            </div>
+
+            @if ($type === 'role')
+                @php
+                    $selected = collect(old('permissions', $permissions->filter->assigned->modelKeys()))->map(fn ($key) => (string) $key)->all();
+                @endphp
+                <x-laratrust::checklist
+                    name="permissions"
+                    title="Permissions"
+                    :options="$permissions->map(fn ($permission) => [
+                        'value' => $permission->getKey(),
+                        'label' => $permission->display_name ?? $permission->name,
+                        'hint' => $permission->name,
+                        'checked' => in_array((string) $permission->getKey(), $selected, true),
+                        'locked' => false,
+                    ])->all()"
+                />
+            @endif
+
+            <div class="flex justify-end gap-3 border-t border-gray-200 pt-6 dark:border-white/10">
+                <x-laratrust::button variant="secondary" :href="route('laratrust.'.$type.'s.index')">Cancel</x-laratrust::button>
+                <x-laratrust::button type="submit">Save</x-laratrust::button>
+            </div>
+        </form>
+    </x-laratrust::card>
 @endsection

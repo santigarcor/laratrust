@@ -56,7 +56,6 @@ class LaratrustServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->registerResources();
         $this->registerPermissionsToGate();
-        $this->defineAssetPublishing();
     }
 
     /**
@@ -218,19 +217,5 @@ class LaratrustServiceProvider extends ServiceProvider
             // Null lets the policies and the other gates decide.
             return $user->hasPermission($ability, $team, $requireAll) ?: null;
         });
-    }
-
-    /**
-     * Register the assets that are publishable for the admin panel to work.
-     */
-    protected function defineAssetPublishing(): void
-    {
-        if (! Config::get('laratrust.panel.register')) {
-            return;
-        }
-
-        $this->publishes([
-            __DIR__.'/../public' => public_path('vendor/laratrust'),
-        ], 'laratrust-assets');
     }
 }

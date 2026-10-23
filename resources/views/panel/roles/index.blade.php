@@ -2,67 +2,75 @@
 
 @section('title', 'Roles')
 
+@section('actions')
+    <x-laratrust::button :href="route('laratrust.roles.create')">New role</x-laratrust::button>
+@endsection
+
 @section('content')
-  <div class="flex flex-col">
-    <a
-      href="{{route('laratrust.roles.create')}}"
-      class="self-end bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded"
-    >
-      + New Role
-    </a>
-    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-      <div class="mt-4 align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200">
-        <table class="min-w-full">
-          <thead>
-            <tr>
-              <th class="th">Id</th>
-              <th class="th">Display Name</th>
-              <th class="th">Name</th>
-              <th class="th"># Permissions</th>
-              <th class="th"></th>
-            </tr>
-          </thead>
-          <tbody class="bg-white">
-            @foreach ($roles as $role)
-            <tr>
-              <td class="td text-sm leading-5 text-gray-900">
-                {{$role->getKey()}}
-              </td>
-              <td class="td text-sm leading-5 text-gray-900">
-                {{$role->display_name}}
-              </td>
-              <td class="td text-sm leading-5 text-gray-900">
-                {{$role->name}}
-              </td>
-              <td class="td text-sm leading-5 text-gray-900">
-                {{$role->permissions_count}}
-              </td>
-              <td class="flex justify-end px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
-                @if (\Laratrust\Panel\RoleRestrictions::isEditable($role))
-                <a href="{{route('laratrust.roles.edit', $role->getKey())}}" class="text-blue-600 hover:text-blue-900">Edit</a>
-                @else
-                <a href="{{route('laratrust.roles.show', $role->getKey())}}" class="text-blue-600 hover:text-blue-900">Details</a>
-                @endif
-                <form
-                  action="{{route('laratrust.roles.destroy', $role->getKey())}}"
-                  method="POST"
-                  onsubmit="return confirm('Are you sure you want to delete the record?');"
-                >
-                  @method('DELETE')
-                  @csrf
-                  <button
-                    type="submit"
-                    class="{{\Laratrust\Panel\RoleRestrictions::isDeletable($role) ? 'text-red-600 hover:text-red-900' : 'text-gray-600 hover:text-gray-700 cursor-not-allowed'}} ml-4"
-                    @if(!\Laratrust\Panel\RoleRestrictions::isDeletable($role)) disabled @endif
-                  >Delete</button>
-                </form>
-              </td>
-            </tr>
-            @endforeach
-          </tbody>
-        </table>
-      </div>
+    <div x-data="laratrustConfirm">
+        <x-laratrust::card>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-white/10">
+                    <thead class="bg-gray-50 dark:bg-white/5">
+                        <tr>
+                            <th class="lt-th">Display name</th>
+                            <th class="lt-th hidden sm:table-cell">Name</th>
+                            <th class="lt-th">Permissions</th>
+                            <th class="lt-th"><span class="sr-only">Actions</span></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 dark:divide-white/5">
+                        @forelse ($roles as $role)
+                            <tr class="hover:bg-gray-50 dark:hover:bg-white/5">
+                                <td class="lt-td font-medium text-gray-900 dark:text-white">{{ $role->display_name ?? '—' }}</td>
+                                <td class="lt-td hidden font-mono text-xs sm:table-cell">{{ $role->name }}</td>
+                                <td class="lt-td">
+                                    <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700 dark:bg-white/10 dark:text-gray-300">{{ $role->permissions_count }}</span>
+                                </td>
+                                <td class="lt-td">
+                                    <div class="flex items-center justify-end gap-4">
+                                        @if ($role->isEditable)
+                                            <a href="{{ route('laratrust.roles.edit', $role->getKey()) }}" class="lt-link">Edit</a>
+                                        @else
+                                            <a href="{{ route('laratrust.roles.show', $role->getKey()) }}" class="lt-link">Details</a>
+                                        @endif
+
+                                        @if ($role->isDeletable)
+                                            <button
+                                                type="button"
+                                                class="font-medium text-red-600 hover:text-red-500 dark:text-red-400"
+                                                x-on:click="open(@js(route('laratrust.roles.destroy', $role->getKey())), @js($role->display_name ?? $role->name))"
+                                            >Delete</button>
+                                        @else
+                                            <span class="cursor-not-allowed font-medium text-gray-400 dark:text-gray-600" title="This role can't be deleted">Delete</span>
+                                        @endif
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" class="lt-td py-10 text-center text-gray-500">There are no roles yet.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            <x-laratrust::pagination :paginator="$roles" />
+        </x-laratrust::card>
+
+        <dialog x-ref="dialog" class="m-auto w-full max-w-md rounded-xl bg-white p-6 text-gray-900 shadow-xl backdrop:bg-gray-950/50 dark:bg-gray-900 dark:text-gray-100">
+            <form method="POST" :action="action">
+                @csrf
+                @method('DELETE')
+                <h2 class="text-lg font-semibold">Delete role</h2>
+                <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    Delete <strong class="text-gray-900 dark:text-white" x-text="label"></strong>? This can't be undone.
+                </p>
+                <div class="mt-6 flex justify-end gap-3">
+                    <x-laratrust::button variant="secondary" x-on:click="close">Cancel</x-laratrust::button>
+                    <x-laratrust::button variant="danger" type="submit">Delete</x-laratrust::button>
+                </div>
+            </form>
+        </dialog>
     </div>
-  </div>
-  {{ $roles->links('laratrust::panel.pagination') }}
 @endsection

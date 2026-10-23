@@ -87,3 +87,27 @@ jobs:
 
       - name: Check Rector has nothing to change
         run: vendor/bin/rector process --dry-run --no-progress-bar
+
+  panel-assets:
+    runs-on: ubuntu-latest
+
+    name: Panel assets
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build the panel assets
+        run: npm run panel:build
+
+      - name: Check the committed assets are up to date
+        run: git diff --exit-code dist/

@@ -20,7 +20,12 @@ class RolesController
     public function index(): ViewContract
     {
         return View::make('laratrust::panel.roles.index', [
-            'roles' => ModelClasses::role()::query()->withCount('permissions')->simplePaginate(10),
+            'roles' => ModelClasses::role()::query()
+                ->withCount('permissions')
+                ->simplePaginate(10)
+                ->through(fn (Model $role) => $role
+                    ->setAttribute('isEditable', RoleRestrictions::isEditable((string) $role->getAttribute('name')))
+                    ->setAttribute('isDeletable', RoleRestrictions::isDeletable((string) $role->getAttribute('name')))),
         ]);
     }
 
@@ -30,7 +35,7 @@ class RolesController
 
         return View::make('laratrust::panel.edit', [
             'model' => null,
-            'permissions' => $permission->newQuery()->get([$permission->getKeyName(), 'display_name']),
+            'permissions' => $permission->newQuery()->orderBy('name')->get([$permission->getKeyName(), 'name', 'display_name']),
             'type' => 'role',
         ]);
     }
@@ -72,6 +77,7 @@ class RolesController
         $assigned = $role->getRelation('permissions')->modelKeys();
         $permission = new (ModelClasses::permission());
         $permissions = $permission->newQuery()
+            ->orderBy('name')
             ->get([$permission->getKeyName(), 'name', 'display_name'])
             ->each(fn (Model $permission) => $permission->setAttribute('assigned', in_array($permission->getKey(), $assigned, true)));
 

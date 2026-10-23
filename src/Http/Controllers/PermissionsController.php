@@ -23,6 +23,8 @@ class PermissionsController
 
     public function create(): ViewContract
     {
+        $this->ensurePermissionsCanBeCreated();
+
         return View::make('laratrust::panel.edit', [
             'model' => null,
             'permissions' => null,
@@ -32,6 +34,8 @@ class PermissionsController
 
     public function store(Request $request): RedirectResponse
     {
+        $this->ensurePermissionsCanBeCreated();
+
         $data = $request->validate([
             'name' => ['required', 'string', 'unique:'.Config::get('laratrust.tables.permissions').',name'],
             'display_name' => ['nullable', 'string'],
@@ -65,5 +69,13 @@ class PermissionsController
         Session::flash('laratrust-success', 'Permission updated successfully');
 
         return to_route('laratrust.permissions.index');
+    }
+
+    /**
+     * "laratrust.panel.create_permissions" disables creating permissions, not only the button.
+     */
+    private function ensurePermissionsCanBeCreated(): void
+    {
+        abort_unless(Config::get('laratrust.panel.create_permissions'), 404);
     }
 }

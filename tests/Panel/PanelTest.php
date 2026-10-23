@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Panel;
 
+use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Js;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
@@ -26,7 +28,6 @@ class PanelTest extends LaratrustTestCase
         parent::setUp();
 
         $this->migrate();
-        $this->withoutMix();
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
     }
 
@@ -122,5 +123,74 @@ class PanelTest extends LaratrustTestCase
         $this->get('/laratrust/roles-assignment/'.$this->user->id.'/edit?model=unknown')
             ->assertRedirect('/laratrust/roles-assignment')
             ->assertSessionHas('laratrust-error');
+    }
+
+    public function test_the_assets_are_inlined_without_anything_to_publish(): void
+    {
+        $page = $this->get('/laratrust/roles')->assertOk()->getContent();
+
+        $this->assertStringContainsString('<style>', $page);
+        $this->assertStringContainsString('window.Alpine', $page);
+        $this->assertStringNotContainsString('vendor/laratrust', $page);
+    }
+
+    public function test_the_inlined_assets_use_the_csp_nonce(): void
+    {
+        Vite::useCspNonce('the-nonce');
+
+        $this->get('/laratrust/roles')->assertOk()->assertSeeHtml('<style nonce="the-nonce">')->assertSeeHtml('<script nonce="the-nonce">');
+    }
+
+    public function test_permissions_cant_be_created_when_disabled(): void
+    {
+        $this->app['config']->set('laratrust.panel.create_permissions', false);
+
+        $this->get('/laratrust/permissions')->assertOk()->assertDontSee('New permission');
+        $this->get('/laratrust/permissions/create')->assertNotFound();
+        $this->post('/laratrust/permissions', ['name' => 'sneaky'])->assertNotFound();
+        $this->assertFalse(Permission::where('name', 'sneaky')->exists());
+    }
+
+    public function test_a_role_that_cant_be_removed_is_kept_when_saving(): void
+    {
+        $this->app['config']->set('laratrust.panel.roles_restrictions.not_removable', ['locked']);
+        $locked = Role::create(['name' => 'locked']);
+        $other = Role::create(['name' => 'other']);
+        $this->user->addRole($locked)->addRole($other);
+
+        // The form submits the locked role through a hidden input, as its checkbox is disabled.
+        $this->get('/laratrust/roles-assignment/'.$this->user->id.'/edit?model=users')->assertOk()->assertSeeHtml('<input type="hidden" name="roles[]" value="'.$locked->id.'">');
+
+        $this->put('/laratrust/roles-assignment/'.$this->user->id.'?model=users', ['roles' => [$locked->id]]);
+
+        $this->assertTrue($this->user->hasRole('locked'));
+        $this->assertFalse($this->user->hasRole('other'));
+    }
+
+    public function test_values_reach_alpine_without_html_escaping(): void
+    {
+        $role = Role::create(['name' => 'owner', 'display_name' => "Owner's role"]);
+
+        // @js() escapes for JavaScript ('), not for HTML (&#039;), which would show up in the input.
+        $this->get("/laratrust/roles/{$role->id}/edit")->assertOk()->assertSeeHtml("laratrustNameFromDisplayName('owner', ".Js::from("Owner's role").', false)');
+    }
+
+    public function test_roles_that_cant_be_deleted_have_no_delete_action(): void
+    {
+        $this->app['config']->set('laratrust.panel.roles_restrictions.not_deletable', ['locked']);
+        Role::create(['name' => 'locked']);
+
+        $this->get('/laratrust/roles')
+            ->assertOk()
+            ->assertSeeHtml('title="This role can\'t be deleted"')
+            ->assertDontSeeHtml('x-on:click="open(');
+    }
+
+    public function test_flash_messages_are_shown(): void
+    {
+        $this->post('/laratrust/permissions', ['name' => 'permission_a'])
+            ->assertRedirect('/laratrust/permissions');
+
+        $this->get('/laratrust/permissions')->assertSee('Permission created successfully');
     }
 }

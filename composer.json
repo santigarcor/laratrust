@@ -41,14 +41,22 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Laratrust\\Tests\\": "tests/"
+            "Laratrust\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
         }
     },
     "scripts": {
         "test": "phpunit",
         "analyse": "phpstan analyse --memory-limit=1G",
         "format": "pint",
-        "refactor": "rector process"
+        "refactor": "rector process",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ]
     },
     "config": {
         "sort-packages": true

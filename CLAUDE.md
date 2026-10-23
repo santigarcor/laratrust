@@ -11,7 +11,11 @@ composer format      # pint (laravel preset)
 composer refactor    # rector (php 8.3 + laravel 13 sets)
 vendor/bin/pint --test && vendor/bin/rector --dry-run   # what CI checks
 npm run docs:dev     # VuePress docs (docs/), docs:build for a static build
+npm run panel:build  # build dist/laratrust.{css,js} (panel:watch rebuilds on save); commit dist/
+composer serve       # the admin panel with demo data at http://127.0.0.1:8000/laratrust (Workbench, no app needed)
 ```
+
+Node comes from `.nvmrc` (24.12.0), which CI uses too: run `nvm use` first. With Herd, nvm lives in `~/Library/Application Support/Herd/config/nvm`.
 
 Before calling a change done, run `composer test`, `composer analyse` and `vendor/bin/pint --test`.
 
@@ -28,8 +32,9 @@ Before calling a change done, run `composer test`, `composer analyse` and `vendo
 - `src/Support/ModelClasses.php`: the configured model classes (`laratrust.models.*`, `laratrust.user_models.*`) as checked, typed class-strings. Use it instead of `Config::get('laratrust.models.role')` and the like.
 - `src/Support/QueryConstraints.php` (helpers for the scopes) and `src/Panel/RoleRestrictions.php`. `PermissionRegistry::names()` turns the names given to a check into a list. Helpers live in classes, not in the traits: anything a trait defines ends up on the user's model and can collide with its methods. Non-public trait methods must carry "Laratrust" in their name (`attachLaratrustModel()`).
 - `src/Middleware/`: `role`, `permission`, `ability` route middleware. Commas separate parameters and pipes separate values within one: after the names come an optional team and the options `require_all` and `guard:{name}|{name}`, e.g. `role:admin|editor,my-team,require_all,guard:web|admin`. The 8.x forms (`require_all|guard:web|guard:admin`) are also accepted. A parameter that doesn't fit throws instead of being ignored. With several guards, only the user of the **first authenticated** guard is checked, like Laravel's `auth` middleware. `Role::using()`, `Permission::using()` and `Ability::using()` build these strings. Abort/redirect messages go through `__()`.
-- `src/Http/Controllers`, `resources/views/panel`, `routes/web.php`: the optional admin panel.
+- `src/Http/Controllers`, `resources/views/panel`, `resources/views/components`, `routes/web.php`: the optional admin panel. Tailwind v4 (`resources/css/laratrust.css`, CSS-first config) and Alpine v3 (`resources/js/laratrust.js`, components registered with `Alpine.data()`), built with the Tailwind CLI and esbuild into the committed `dist/`. `src/Panel/Assets.php` inlines them in the layout (with the CSP nonce), so there's nothing to publish. Components are anonymous: `<x-laratrust::button>`, `card`, `checklist`, `flash`, `logo`, `pagination`. Put values into Alpine expressions with `@js()`, never `'{{ }}'`.
 - `src/Console/`: `laratrust:setup`, `laratrust:migration`, make commands and the seeder generator.
+- `workbench/` + `testbench.yaml`: a demo app for `composer serve` (Orchestra Workbench). `workbench/config/laratrust.php` overrides the package config, the Laratrust migration is generated from `resources/views/migration.blade.php`, and `DatabaseSeeder` creates the demo data. It's dev-only: `autoload-dev` plus `export-ignore`, so it's never installed or distributed.
 - `config/laratrust.php`: published to apps. Keep FQCNs inline and no `declare(strict_types=1)` (it's excluded from Pint for this reason).
 - `docs/docs/<version>/`: user docs. The upgrade guide for a major is `docs/docs/<version>/upgrade.md`.
 

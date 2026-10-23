@@ -1,0 +1,40 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* Only the panel's views are scanned, so the inlined CSS stays small. */
+@source "../views";
+
+@theme {
+    --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    /* The logo's gradient. */
+    --color-brand-from: #36d1dc;
+    --color-brand-to: #5b86e5;
+}
+
+@layer base {
+    [x-cloak] {
+        display: none !important;
+    }
+}
+
+@layer components {
+    .lt-th {
+        @apply px-4 py-3 text-left text-xs font-semibold tracking-wide text-gray-500 uppercase dark:text-gray-400;
+    }
+
+    .lt-td {
+        @apply px-4 py-3 text-sm whitespace-nowrap text-gray-700 dark:text-gray-300;
+    }
+
+    .lt-input {
+        @apply block w-full rounded-lg border-0 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs ring-1 ring-gray-300 ring-inset placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-600 focus:ring-inset dark:bg-white/5 dark:text-white dark:ring-white/10 dark:focus:ring-indigo-500;
+    }
+
+    .lt-label {
+        @apply block text-sm font-medium text-gray-900 dark:text-gray-100;
+    }
+
+    .lt-link {
+        @apply font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300;
+    }
+}
