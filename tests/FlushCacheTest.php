@@ -26,11 +26,11 @@ class FlushCacheTest extends LaratrustTestCase
         Role::create(['name' => 'role_a']);
 
         $this->assertFalse($user->hasRole('role_a'));
-        $this->assertTrue(Cache::has("laratrust_roles_for_conflicting_users_{$user->id}"));
+        $this->assertTrue(Cache::has("laratrust_user_conflicting_users_{$user->id}"));
 
         $user->addRole('role_a');
 
-        $this->assertFalse(Cache::has("laratrust_roles_for_conflicting_users_{$user->id}"));
+        $this->assertFalse(Cache::has("laratrust_user_conflicting_users_{$user->id}"));
         $this->assertTrue($user->hasRole('role_a'));
         $this->assertFalse($user->ownCacheFlushed);
     }
@@ -42,13 +42,13 @@ class FlushCacheTest extends LaratrustTestCase
 
         $user->hasRole('role_a');
         $role->hasPermission('permission_a');
-        $this->assertTrue(Cache::has("laratrust_roles_for_users_{$user->id}"));
-        $this->assertTrue(Cache::has("laratrust_permissions_for_role_{$role->id}"));
+        $this->assertTrue(Cache::has("laratrust_user_users_{$user->id}"));
+        $this->assertTrue(Cache::has("laratrust_role_{$role->id}"));
 
         $user->flushCache();
         $role->flushCache();
 
-        $this->assertFalse(Cache::has("laratrust_roles_for_users_{$user->id}"));
-        $this->assertFalse(Cache::has("laratrust_permissions_for_role_{$role->id}"));
+        $this->assertFalse(Cache::has("laratrust_user_users_{$user->id}"));
+        $this->assertFalse(Cache::has("laratrust_role_{$role->id}"));
     }
 }

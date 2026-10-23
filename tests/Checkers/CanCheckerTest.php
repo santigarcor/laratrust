@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Laratrust\Tests\Checkers\User;
+namespace Laratrust\Tests\Checkers;
 
 use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\LaratrustTestCase;
@@ -37,7 +37,6 @@ class CanCheckerTest extends LaratrustTestCase
         parent::getEnvironmentSetUp($app);
 
         $app['config']->set('laratrust.teams.enabled', true);
-        $app['config']->set('laratrust.checker', 'default');
         $app['config']->set('laratrust.permissions_as_gates', true);
     }
 

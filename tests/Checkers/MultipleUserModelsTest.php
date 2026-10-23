@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Laratrust\Tests\Checkers\Model;
+namespace Laratrust\Tests\Checkers;
 
 use Illuminate\Support\Facades\Cache;
 use Laratrust\Tests\LaratrustTestCase;
@@ -14,7 +14,7 @@ use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\User;
 
-class LaratrustModelCheckerTestCase extends LaratrustTestCase
+class MultipleUserModelsTest extends LaratrustTestCase
 {
     protected $user;
 
@@ -36,7 +36,7 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         $this->other = Other::create(['name' => 'test', 'email' => 'test@test.com']);
     }
 
-    public function modelDisableTheRolesAndPermissionsCachingAssertions()
+    public function test_model_disable_the_roles_and_permissions_caching()
     {
         /*
         |------------------------------------------------------------
@@ -70,11 +70,9 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         $this->other->hasRole('some_role');
         $this->other->hasPermission('some_permission');
 
-        $this->assertTrue(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
-        $this->assertTrue(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
+        $this->assertTrue(Cache::has("laratrust_user_users_{$this->user->id}"));
 
-        $this->assertTrue(Cache::has("laratrust_roles_for_others_{$this->other->id}"));
-        $this->assertTrue(Cache::has("laratrust_permissions_for_others_{$this->other->id}"));
+        $this->assertTrue(Cache::has("laratrust_user_others_{$this->other->id}"));
 
         $this->user->flushLaratrustCache();
         $this->other->flushLaratrustCache();
@@ -87,11 +85,9 @@ class LaratrustModelCheckerTestCase extends LaratrustTestCase
         $this->other->hasRole('some_role');
         $this->other->hasPermission('some_permission');
 
-        $this->assertFalse(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
-        $this->assertFalse(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
+        $this->assertFalse(Cache::has("laratrust_user_users_{$this->user->id}"));
 
-        $this->assertFalse(Cache::has("laratrust_roles_for_others_{$this->other->id}"));
-        $this->assertFalse(Cache::has("laratrust_permissions_for_others_{$this->other->id}"));
+        $this->assertFalse(Cache::has("laratrust_user_others_{$this->other->id}"));
     }
 
     public function migrate()

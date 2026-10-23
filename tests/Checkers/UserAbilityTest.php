@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Laratrust\Tests\Checkers\User;
+namespace Laratrust\Tests\Checkers;
 
 use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\Enums\Role as EnumsRole;
@@ -12,7 +12,7 @@ use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
 
-abstract class AbilityCheckerTestCase extends LaratrustTestCase
+class UserAbilityTest extends LaratrustTestCase
 {
     protected User $user;
 
@@ -38,7 +38,7 @@ abstract class AbilityCheckerTestCase extends LaratrustTestCase
         $this->user->addRole($roleA)->addRole($roleB, $team);
     }
 
-    protected function abilityShouldReturnBooleanAssertions()
+    public function test_ability_should_return_boolean()
     {
         // Case: User has everything.
         $this->assertTrue(
@@ -108,7 +108,7 @@ abstract class AbilityCheckerTestCase extends LaratrustTestCase
         );
     }
 
-    protected function abilityShouldReturnArrayAssertions()
+    public function test_ability_should_return_array()
     {
         // Case: User has everything.
         $this->assertSame(
@@ -147,7 +147,7 @@ abstract class AbilityCheckerTestCase extends LaratrustTestCase
         );
     }
 
-    protected function abilityShouldReturnBothAssertions()
+    public function test_ability_should_return_both()
     {
         $this->assertSame(
             [
@@ -194,7 +194,7 @@ abstract class AbilityCheckerTestCase extends LaratrustTestCase
         );
     }
 
-    protected function abilityShouldAcceptStringsAssertions()
+    public function test_ability_should_accept_strings()
     {
         $this->assertSame(
             $this->user->ability(
@@ -223,7 +223,7 @@ abstract class AbilityCheckerTestCase extends LaratrustTestCase
         );
     }
 
-    protected function abilityDefaultOptionsAssertions()
+    public function test_ability_default_options()
     {
         // Case: User has everything.
         $this->assertSame(
@@ -266,7 +266,7 @@ abstract class AbilityCheckerTestCase extends LaratrustTestCase
         );
     }
 
-    protected function abilityShouldThrowInvalidArgumentExceptionAssertions()
+    public function test_ability_should_throw_invalid_argument_exception()
     {
         $this->assertFalse($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['return_type' => 'boolean']));
         $this->assertFalse($this->isExceptionThrown($this->user, ['RoleA'], ['manage_a'], ['return_type' => 'array']));

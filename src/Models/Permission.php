@@ -7,10 +7,20 @@ namespace Laratrust\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Contracts\Permission as PermissionContract;
+use Laratrust\Support\PermissionRegistry;
 use Laratrust\Traits\DynamicUserRelationshipCalls;
 
+/**
+ * @property int|string $id
+ * @property string $name
+ * @property string|null $display_name
+ * @property string|null $description
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class Permission extends Model implements PermissionContract
 {
     use DynamicUserRelationshipCalls;
@@ -39,6 +49,10 @@ class Permission extends Model implements PermissionContract
 
     protected static function booted(): void
     {
+        $forgetIds = fn () => app(PermissionRegistry::class)->forgetIds('permission');
+        static::saved($forgetIds);
+        static::deleted($forgetIds);
+
         static::deleting(function ($permission) {
             if (method_exists($permission, 'bootSoftDeletes') && ! $permission->forceDeleting) {
                 return;
@@ -54,6 +68,8 @@ class Permission extends Model implements PermissionContract
 
     /**
      * Many-to-Many relations with role model.
+     *
+     * @return BelongsToMany<Model, $this>
      */
     public function roles(): BelongsToMany
     {
@@ -67,6 +83,8 @@ class Permission extends Model implements PermissionContract
 
     /**
      * Morph by Many relationship between the permission and the one of the possible user models.
+     *
+     * @return MorphToMany<Model, $this>
      */
     public function getMorphByUserRelation(string $relationship): MorphToMany
     {

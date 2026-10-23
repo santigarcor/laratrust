@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Laratrust\Tests\Checkers\User;
+namespace Laratrust\Tests\Checkers;
 
 use Illuminate\Support\Facades\Cache;
 use Laratrust\Tests\Enums\Permission as EnumsPermission;
@@ -13,7 +13,7 @@ use Laratrust\Tests\Models\Role;
 use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
 
-abstract class CheckerTestCase extends LaratrustTestCase
+class UserCheckerTest extends LaratrustTestCase
 {
     protected User $user;
 
@@ -27,7 +27,7 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->app['config']->set('laratrust.teams.enabled', true);
     }
 
-    protected function getRolesAssertions()
+    public function test_get_roles()
     {
         /*
         |------------------------------------------------------------
@@ -63,7 +63,7 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->assertEquals(['role_c'], $this->user->getRoles('team_a'));
     }
 
-    protected function hasRoleAssertions()
+    public function test_has_role()
     {
         /*
         |------------------------------------------------------------
@@ -112,7 +112,7 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->assertTrue($this->user->hasRole('role_c', 'team_a'));
     }
 
-    protected function hasPermissionAssertions()
+    public function test_has_permission()
     {
         /*
         |------------------------------------------------------------
@@ -194,7 +194,7 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->assertFalse($this->user->doesntHavePermission('permission_c', 'team_a'));
     }
 
-    protected function hasPermissionWithPlaceholderSupportAssertions()
+    public function test_has_permission_with_placeholder_support()
     {
         /*
         |------------------------------------------------------------
@@ -245,7 +245,7 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->assertTrue($this->user->doesntHavePermission(['site.*']));
     }
 
-    public function userDisableTheRolesAndPermissionsCachingAssertions()
+    public function test_user_disable_the_roles_and_permissions_caching()
     {
         /*
         |------------------------------------------------------------
@@ -271,15 +271,34 @@ abstract class CheckerTestCase extends LaratrustTestCase
         $this->app['config']->set('laratrust.cache.enabled', true);
         $this->user->hasRole('some_role');
         $this->user->hasPermission('some_permission');
-        $this->assertTrue(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
-        $this->assertTrue(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
+        $this->assertTrue(Cache::has("laratrust_user_users_{$this->user->id}"));
         $this->user->flushLaratrustCache();
 
         // Without cache
         $this->app['config']->set('laratrust.cache.enabled', false);
         $this->user->hasRole('some_role');
         $this->user->hasPermission('some_permission');
-        $this->assertFalse(Cache::has("laratrust_roles_for_users_{$this->user->id}"));
-        $this->assertFalse(Cache::has("laratrust_permissions_for_users_{$this->user->id}"));
+        $this->assertFalse(Cache::has("laratrust_user_users_{$this->user->id}"));
+    }
+
+    public function test_relationship_is_unset_when_a_role_or_permission_is_modified(): void
+    {
+        Role::query()->create([
+            'name' => 'test',
+            'display_name' => 'test',
+            'description' => 'test',
+        ]);
+        Permission::query()->create([
+            'name' => 'test_permission',
+            'display_name' => 'test_permission',
+            'description' => 'test_permission',
+        ]);
+
+        $this->user->roles;
+        $this->user->permissions;
+        $this->user->syncRoles(['test']);
+        $this->user->syncPermissions(['test_permission']);
+        $this->assertTrue($this->user->hasRole('test'));
+        $this->assertTrue($this->user->hasPermission('test_permission'));
     }
 }

@@ -6,10 +6,20 @@ namespace Laratrust\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
 use Laratrust\Contracts\Team as TeamContract;
+use Laratrust\Support\PermissionRegistry;
 use Laratrust\Traits\DynamicUserRelationshipCalls;
 
+/**
+ * @property int|string $id
+ * @property string $name
+ * @property string|null $display_name
+ * @property string|null $description
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class Team extends Model implements TeamContract
 {
     use DynamicUserRelationshipCalls;
@@ -45,6 +55,10 @@ class Team extends Model implements TeamContract
      */
     protected static function booted(): void
     {
+        $forgetIds = fn () => app(PermissionRegistry::class)->forgetIds('team');
+        static::saved($forgetIds);
+        static::deleted($forgetIds);
+
         static::deleting(function ($team) {
             if (method_exists($team, 'bootSoftDeletes') && ! $team->forceDeleting) {
                 return;
@@ -56,6 +70,9 @@ class Team extends Model implements TeamContract
         });
     }
 
+    /**
+     * @return MorphToMany<Model, $this>
+     */
     public function getMorphByUserRelation(string $relationship): MorphToMany
     {
         return $this->morphedByMany(

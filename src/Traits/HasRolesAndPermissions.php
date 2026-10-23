@@ -11,12 +11,11 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Laratrust\Checkers\CheckersManager;
-use Laratrust\Checkers\User\UserChecker;
-use Laratrust\Contracts\Permission;
+use Laratrust\Checkers\UserChecker;
 use Laratrust\Helper;
 use Laratrust\Models\Team;
 use Ramsey\Uuid\UuidInterface;
+use UnexpectedValueException;
 
 trait HasRolesAndPermissions
 {
@@ -54,6 +53,8 @@ trait HasRolesAndPermissions
 
     /**
      * Many-to-Many relations with Role.
+     *
+     * @return MorphToMany<Model, $this>
      */
     public function roles(): MorphToMany
     {
@@ -74,6 +75,8 @@ trait HasRolesAndPermissions
 
     /**
      * Many-to-Many relations with Team associated through the roles.
+     *
+     * @return MorphToMany<Model, $this>|null
      */
     public function rolesTeams(): ?MorphToMany
     {
@@ -93,6 +96,8 @@ trait HasRolesAndPermissions
 
     /**
      * Many-to-Many relations with Team associated through the permissions user is given.
+     *
+     * @return MorphToMany<Model, $this>|null
      */
     public function permissionsTeams(): ?MorphToMany
     {
@@ -132,6 +137,8 @@ trait HasRolesAndPermissions
 
     /**
      * Many-to-Many relations with Permission.
+     *
+     * @return MorphToMany<Model, $this>
      */
     public function permissions(): MorphToMany
     {
@@ -155,7 +162,7 @@ trait HasRolesAndPermissions
      */
     protected function laratrustUserChecker(): UserChecker
     {
-        return (new CheckersManager($this))->getUserChecker();
+        return new UserChecker($this);
     }
 
     /**
@@ -163,7 +170,7 @@ trait HasRolesAndPermissions
      */
     public function getRoles(mixed $team = null): array
     {
-        return $this->laratrustUserChecker()->getCurrentUserRoles($team);
+        return $this->laratrustUserChecker()->roles($team);
     }
 
     /**
@@ -174,7 +181,7 @@ trait HasRolesAndPermissions
         mixed $team = null,
         bool $requireAll = false
     ): bool {
-        return $this->laratrustUserChecker()->currentUserHasRole(
+        return $this->laratrustUserChecker()->hasRole(
             $name,
             $team,
             $requireAll
@@ -189,7 +196,7 @@ trait HasRolesAndPermissions
         mixed $team = null,
         bool $requireAll = false
     ): bool {
-        return $this->laratrustUserChecker()->currentUserHasPermission(
+        return $this->laratrustUserChecker()->hasPermission(
             $permission,
             $team,
             $requireAll
@@ -242,7 +249,7 @@ trait HasRolesAndPermissions
         mixed $team = null,
         array $options = []
     ): array|bool {
-        return $this->laratrustUserChecker()->currentUserHasAbility(
+        return $this->laratrustUserChecker()->ability(
             $roles,
             $permissions,
             $team,
@@ -567,7 +574,23 @@ trait HasRolesAndPermissions
      */
     public function flushLaratrustCache(): void
     {
-        $this->laratrustUserChecker()->currentUserFlushCache();
+        $this->laratrustUserChecker()->flush();
+    }
+
+    /**
+     * Get the key used to cache the user's roles and permissions.
+     *
+     * Override it to scope the cache, e.g. per tenant in multi-tenant applications.
+     */
+    public function laratrustCacheKey(): string
+    {
+        foreach (Config::get('laratrust.user_models') as $key => $model) {
+            if ($this instanceof $model) {
+                return "laratrust_user_{$key}_{$this->getKey()}";
+            }
+        }
+
+        throw new UnexpectedValueException('Class '.static::class.' is not defined in the laratrust.user_models');
     }
 
     /**
