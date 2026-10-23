@@ -1,3 +1,30 @@
+## 9.0.0 (unreleased)
+- Require Laravel 13 and PHP 8.3 or higher
+- Remove the `query` checkers, the custom checkers and the `checkers` configuration
+- Load a user's roles and permissions with at most 4 queries and memoize them per request, queue job and Octane request (#681)
+- Make the checks with many direct permissions fast, also with the cache enabled (#645)
+- Cache each role's permissions once instead of copying them into each user
+- Add `laratrustCacheKey()` to the user and role models to customize the cache keys (#705)
+- Replace the string events and `laratrustObserve()` with the `Laratrust\Events` event classes
+- Register the user relationships on the role, permission and team models with `resolveRelationUsing`, so they can be eager loaded
+- Register the Blade directives with `Blade::if`, adding `@elserole`, `@unlessrole` and the like
+- Use the `#[Scope]` attribute for the query scopes
+- Fix the ambiguous team column in `whereHasRole` and `whereHasPermission` (#695)
+- Fix `allPermissions($team)` and `whereHasPermission` to apply the team to the pivot tables
+- Fix `whereDoesntHavePermissions` to return only the users without any permission
+- Translate the middleware abort and redirect messages (#650)
+- Support many guards in the middleware with `guard:web|admin` (#488)
+- Throw when a middleware parameter is in the wrong place
+- Add the `Role::using()`, `Permission::using()` and `Ability::using()` middleware helpers
+- Respect the `$table` property of the role, permission and team models
+- Throw a clear exception when a configured model class is invalid
+- Split pipe-separated names in `Role::hasPermission()`
+- Always write the seeder to `database/seeders`
+- Remove `flushCache()`, `laratrust:add-trait`, `laratrust:upgrade` and `Laratrust\Helper`
+- Rebuild the admin panel with Tailwind CSS v4 and Alpine.js v3, with dark mode, a mobile menu and filters, and no assets to publish
+- Enforce the `panel.create_permissions` option on the panel routes
+- Add PHPStan (level 7), Pint and Rector
+
 ## 6.1.0 (mayo 29, 2020)
   - Merge branch 'limit-roles-in-panel' into 6.x
   - Update docs

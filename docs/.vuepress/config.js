@@ -85,6 +85,7 @@ module.exports = {
       "/docs/6.x/": getDocsNavBar("6.x"),
       "/docs/7.x/": getDocsNavBar("7.x"),
       "/docs/8.x/": getDocsNavBar("8.x"),
+      "/docs/9.x/": getDocsNavBar("9.x"),
     },
     nav: [
       { text: "Docs", link: getActiveVersion().link },

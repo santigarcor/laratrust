@@ -1,4 +1,4 @@
-const ACTIVE_VERSION = "8.x";
+const ACTIVE_VERSION = "9.x";
 
 function getDocsNavBar(version) {
   switch (version) {
@@ -74,6 +74,7 @@ function getDocsNavBar(version) {
         "contributing",
       ];
     case "8.x":
+    case "9.x":
       return [
         "upgrade",
         "",
@@ -113,6 +114,7 @@ function getDocsNavBar(version) {
 
 function getVersionsLinks(preLink = "docs") {
   let links = [
+    { text: "9.x", link: `/${preLink}/9.x/` },
     { text: "8.x", link: `/${preLink}/8.x/` },
     { text: "7.x", link: `/${preLink}/7.x/` },
     { text: "6.x", link: `/${preLink}/6.x/` },
