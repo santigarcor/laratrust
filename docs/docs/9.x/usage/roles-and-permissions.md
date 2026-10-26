@@ -331,6 +331,7 @@ The name and the permissions of each role are cached once, not copied into each 
 Laratrust flushes the cache when you use its methods to add, remove or sync roles and permissions, and when:
 
 - A user or a role is saved, deleted or restored.
+- A role is force deleted. This flushes also the users that had it, so a role created later with the same key isn't theirs.
 - A permission is renamed, deleted or restored. This flushes the roles and the users that have it.
 - A team is force deleted. This flushes the users with roles or permissions within it.
 

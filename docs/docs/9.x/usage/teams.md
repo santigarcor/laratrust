@@ -21,6 +21,12 @@ $user->addRole($admin, $team); // parameter can be an object, array, id or the s
 
 This will add the `admin` role to the user but only within the `my-awesome-team` team.
 
+In every method that adds, removes or syncs, the team can be a `Team` model, an array with its `id`, its key, its name, or a backed enum whose value is the name or the key:
+
+```php
+$user->addRole('admin', TeamEnum::MyAwesomeTeam);
+```
+
 You can also add multiple roles to the user within a team:
 
 ```php

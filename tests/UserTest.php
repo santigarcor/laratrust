@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Laratrust\Events\PermissionAdded;
 use Laratrust\Events\RoleAdded;
+use Laratrust\Tests\Enums\Team as TeamEnum;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
@@ -189,6 +190,32 @@ class UserTest extends LaratrustTestCase
 
         Event::assertDispatchedTimes(RoleAdded::class, 4);
         Event::assertDispatchedTimes(PermissionAdded::class, 3);
+    }
+
+    public function test_the_team_can_be_a_backed_enum_when_assigning(): void
+    {
+        $teamA = Team::create(['name' => 'team_a']);
+        $teamB = Team::create(['name' => 'team_b']);
+        $roleA = Role::create(['name' => 'role_a']);
+        $roleB = Role::create(['name' => 'role_b']);
+        $permissionA = Permission::create(['name' => 'permission_a']);
+        $permissionB = Permission::create(['name' => 'permission_b']);
+        $teamOf = fn (MorphToMany $relation): array => $relation->get()->pluck('pivot.team_id')->all();
+
+        $this->user->addRole('role_a', TeamEnum::TEAM_A)->givePermission('permission_a', TeamEnum::TEAM_A);
+        $this->assertSame([$teamA->id], $teamOf($this->user->roles()));
+        $this->assertSame([$teamA->id], $teamOf($this->user->permissions()));
+        $this->assertTrue($this->user->hasRole('role_a', TeamEnum::TEAM_A));
+        $this->assertFalse($this->user->hasRole('role_a', TeamEnum::TEAM_B));
+
+        $this->user->syncRoles([$roleB], TeamEnum::TEAM_B)->syncPermissions([$permissionB], TeamEnum::TEAM_B);
+        $this->assertEqualsCanonicalizing([$teamA->id, $teamB->id], $teamOf($this->user->roles()));
+        $this->assertEqualsCanonicalizing([$teamA->id, $teamB->id], $teamOf($this->user->permissions()));
+
+        $this->user->removeRole($roleA, TeamEnum::TEAM_A)->removePermission($permissionA, TeamEnum::TEAM_A);
+        $this->assertSame([$teamB->id], $teamOf($this->user->roles()));
+        $this->assertSame([$teamB->id], $teamOf($this->user->permissions()));
+        $this->assertSame(['role_b'], $this->user->getRoles());
     }
 
     public function test_add_role(): void

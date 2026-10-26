@@ -5,6 +5,8 @@
 - Make the checks with many direct permissions fast, also with the cache enabled (#645)
 - Cache each role's permissions once instead of copying them into each user
 - Flush the affected roles and users when a permission is renamed, deleted or restored, and when a team is force deleted
+- Flush the users of a role when it's force deleted, so a role created later with the same key isn't theirs
+- Accept backed enums as the team when adding, removing and syncing roles and permissions
 - Remove the direct permissions within a team when it's force deleted
 - Add `laratrustCacheKey()` to the user and role models to customize the cache keys (#705)
 - Replace the string events and `laratrustObserve()` with the `Laratrust\Events` event classes

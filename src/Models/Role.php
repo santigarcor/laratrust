@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Laratrust\Models;
 
 use BackedEnum;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -66,6 +67,8 @@ class Role extends Model implements RoleContract
                 return;
             }
 
+            // Before the pivot rows are detached, as they tell which users have the role.
+            $role->flushLaratrustUsersCache();
             $role->permissions()->detach();
 
             foreach (ModelClasses::userRelationships() as $key) {
@@ -210,6 +213,24 @@ class Role extends Model implements RoleContract
     public function flushLaratrustCache(): void
     {
         $this->laratrustRoleChecker()->flush();
+    }
+
+    /**
+     * Flush the cache of the users that have the role, as theirs keeps the role's key.
+     * Otherwise a role created later with the same key would be theirs.
+     *
+     * They're loaded with only their key, which is all laratrustCacheKey() uses by default.
+     */
+    protected function flushLaratrustUsersCache(): void
+    {
+        foreach (ModelClasses::userRelationships() as $key) {
+            $user = new (ModelClasses::user($key));
+
+            $user->newQuery()
+                ->select($user->getQualifiedKeyName())
+                ->whereHas('roles', fn (Builder $roles): Builder => $roles->whereKey($this->getKey()))
+                ->each(fn (Model&LaratrustUser $user) => $user->flushLaratrustCache());
+        }
     }
 
     /**

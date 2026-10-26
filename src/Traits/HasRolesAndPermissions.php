@@ -294,12 +294,12 @@ trait HasRolesAndPermissions
      * Alias to eloquent many-to-many relation's attach() method.
      *
      * @param  Assignable  $object
-     * @param  array{id: int|string}|string|int|Model|UuidInterface|null  $team
+     * @param  Assignable|null  $team
      */
     private function attachLaratrustModel(
         string $relationship,
         array|string|int|Model|UuidInterface|BackedEnum $object,
-        array|string|int|Model|UuidInterface|null $team
+        array|string|int|Model|UuidInterface|BackedEnum|null $team
     ): static {
         $registry = app(PermissionRegistry::class);
         $objectType = Str::singular($relationship);
@@ -332,12 +332,12 @@ trait HasRolesAndPermissions
      * Alias to eloquent many-to-many relation's detach() method.
      *
      * @param  Assignable  $object
-     * @param  array{id: int|string}|string|int|Model|UuidInterface|null  $team
+     * @param  Assignable|null  $team
      */
     private function detachLaratrustModel(
         string $relationship,
         array|string|int|Model|UuidInterface|BackedEnum $object,
-        array|string|int|Model|UuidInterface|null $team
+        array|string|int|Model|UuidInterface|BackedEnum|null $team
     ): static {
         $registry = app(PermissionRegistry::class);
         $objectType = Str::singular($relationship);
@@ -363,12 +363,12 @@ trait HasRolesAndPermissions
      * Alias to eloquent many-to-many relation's sync() method.
      *
      * @param  array<array-key, Assignable>  $objects
-     * @param  array{id: int|string}|string|int|Model|UuidInterface|null  $team
+     * @param  Assignable|null  $team
      */
     private function syncLaratrustModels(
         string $relationship,
         array $objects,
-        array|string|int|Model|UuidInterface|null $team,
+        array|string|int|Model|UuidInterface|BackedEnum|null $team,
         bool $detaching
     ): static {
         $registry = app(PermissionRegistry::class);

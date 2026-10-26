@@ -189,6 +189,20 @@ class PermissionRegistryTest extends LaratrustTestCase
         $this->assertTrue($this->user->hasRole('role_a'));
     }
 
+    public function test_a_role_created_with_the_key_of_a_force_deleted_one_is_not_given_to_its_users(): void
+    {
+        $this->app['config']->set('laratrust.cache.enabled', true);
+        $role = Role::where('name', 'role_a')->first();
+        $this->assertTrue($this->user->hasRole('role_a'));
+
+        $role->forceDelete();
+        Role::forceCreate(['id' => $role->id, 'name' => 'superadmin']);
+        $this->simulateNewRequest();
+
+        $this->assertFalse($this->user->hasRole('superadmin'));
+        $this->assertSame(['role_b', 'role_c'], $this->user->getRoles());
+    }
+
     public function test_the_memoized_data_can_be_reset(): void
     {
         $this->assertFalse($this->user->hasRole('role_d'));

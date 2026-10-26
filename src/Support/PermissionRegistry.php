@@ -294,7 +294,10 @@ final class PermissionRegistry
         $teamOf = fn (Model $model): int|string|null => $model->getRelation($roles->getPivotAccessor())->getAttribute($teamKey);
 
         return new StoredAssignments(
+            // Without the role's global scopes (like SoftDeletes): a hidden role is kept by key and
+            // loaded as missing, so restoring it gives it back to its users without flushing them.
             roles: $roles
+                ->withoutGlobalScopes()
                 ->get([$roles->getRelated()->getQualifiedKeyName()])
                 ->map(fn (Model $role): array => [
                     'id' => $this->keyOf($role),
