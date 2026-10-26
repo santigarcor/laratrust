@@ -69,7 +69,7 @@ $owner->removePermissions([$createPost, $editUser]); // parameter can be a Permi
 // equivalent to $owner->permissions()->detach([$createPost->id, $editUser->id]);
 ```
 
-Giving a role a permission it already has does nothing. `removePermissions([])` removes nothing: to remove all the permissions, use `$owner->syncPermissions([])`.
+Giving a role a permission it already has, or removing one it doesn't have, does nothing. `removePermissions([])` removes nothing: to remove all the permissions, use `$owner->syncPermissions([])`.
 
 ## User Roles Assignment & Removal
 
@@ -101,7 +101,7 @@ $user->removeRoles([$admin, $owner]); // parameter can be a Role object, BackedE
 // equivalent to $user->roles()->detach([$admin->id, $owner->id]);
 ```
 
-Adding a role the user already has does nothing, and dispatches no event. `removeRoles([])` removes nothing: to remove all the roles, use `$user->syncRoles([])`.
+Adding a role the user already has, or removing one they don't have, does nothing, and dispatches no event. `removeRoles([])` removes nothing: to remove all the roles, use `$user->syncRoles([])`.
 
 ## User Permissions Assignment & Removal
 
@@ -133,7 +133,7 @@ $user->removePermissions([$createPost, $editUser]); // parameter can be a Permis
 // equivalent to $user->permissions()->detach([$createPost->id, $editUser->id]);
 ```
 
-Like with the roles, giving a permission the user already has does nothing, and `removePermissions([])` removes nothing: to remove them all, use `$user->syncPermissions([])`.
+Like with the roles, giving a permission the user already has, or removing one they don't have, does nothing, and `removePermissions([])` removes nothing: to remove them all, use `$user->syncPermissions([])`.
 
 ## Checking for Roles & Permissions
 
@@ -239,7 +239,7 @@ $user->can('edit-user', [$team, true]); // With a team and requireAll.
 
 When the user doesn't have the permission, Laravel goes on with your gates and policies, so they keep working.
 
-The team is the first argument that is a team model, a backed enum, a uuid, an id or a name. Other models are what your policies check, so they're never taken for the team: `$user->can('edit-post', $post)` checks the `edit-post` permission without a team, never in the team whose id is `$post->id`.
+The team is the first argument that is a team model, a backed enum, a uuid, an id or a name. Other models and class names are what your policies check, so they're never taken for the team: `$user->can('edit-post', $post)` checks the `edit-post` permission without a team, never in the team whose id is `$post->id`, and `$user->can('create', Post::class)` checks `create` without a team. A team name that doesn't exist has no permissions, so your gates and policies decide.
 
 ## User ability
 

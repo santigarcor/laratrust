@@ -349,7 +349,11 @@ trait HasRolesAndPermissions
         }
 
         $object = $registry->idFor($object, $objectType);
-        $relationshipQuery->detach($object);
+
+        // Removing an assignment the user doesn't have (in that team) does nothing.
+        if ($relationshipQuery->detach($object) === 0) {
+            return $this;
+        }
 
         $this->flushLaratrustCache();
         event($objectType === 'role'
@@ -578,7 +582,13 @@ trait HasRolesAndPermissions
 
         // false means any team; otherwise only the assignments made in that team (null = without a team).
         if (Config::get('laratrust.teams.enabled') && $team !== false) {
-            $teamId = app(PermissionRegistry::class)->idFor($team, 'team');
+            $teamId = app(PermissionRegistry::class)->findIdFor($team, 'team');
+
+            // A team name that doesn't exist has no permissions.
+            if ($teamId === false) {
+                return $permission->newCollection();
+            }
+
             $roles->where($roles->qualifyPivotColumn(Team::modelForeignKey()), $teamId);
             $permissions->where($permissions->qualifyPivotColumn(Team::modelForeignKey()), $teamId);
         }

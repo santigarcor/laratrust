@@ -174,7 +174,11 @@ class Role extends Model implements RoleContract
     {
         $permission = app(PermissionRegistry::class)->idFor($permission, 'permission');
 
-        $this->permissions()->detach($permission);
+        // Removing a permission the role doesn't have does nothing.
+        if ($this->permissions()->detach($permission) === 0) {
+            return $this;
+        }
+
         $this->flushLaratrustCache();
         event(new PermissionRemoved($this, $permission));
 
@@ -226,9 +230,10 @@ class Role extends Model implements RoleContract
         foreach (ModelClasses::userRelationships() as $key) {
             $user = new (ModelClasses::user($key));
 
+            // Without the role's global scopes: a soft-deleted role being force deleted is still in their cache.
             $user->newQuery()
                 ->select($user->getQualifiedKeyName())
-                ->whereHas('roles', fn (Builder $roles): Builder => $roles->whereKey($this->getKey()))
+                ->whereHas('roles', fn (Builder $roles): Builder => $roles->withoutGlobalScopes()->whereKey($this->getKey()))
                 ->each(fn (Model&LaratrustUser $user) => $user->flushLaratrustCache());
         }
     }

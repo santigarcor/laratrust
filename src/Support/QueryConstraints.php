@@ -36,7 +36,8 @@ final class QueryConstraints
 
     /**
      * Only keep the assignments made in the given team, following the same rules as the checks:
-     * no constraint when teams are disabled, or when no team is given and the check isn't strict.
+     * no constraint when teams are disabled, or when no team is given and the check isn't strict,
+     * and no match when the team name doesn't exist.
      *
      * @template TBuilder of Builder<*>
      *
@@ -50,6 +51,9 @@ final class QueryConstraints
             return $query;
         }
 
-        return $query->where($relation->qualifyPivotColumn(Team::modelForeignKey()), app(PermissionRegistry::class)->idFor($team, 'team'));
+        $teamId = app(PermissionRegistry::class)->findIdFor($team, 'team');
+        $column = $relation->qualifyPivotColumn(Team::modelForeignKey());
+
+        return $teamId === false ? $query->whereIn($column, []) : $query->where($column, $teamId);
     }
 }

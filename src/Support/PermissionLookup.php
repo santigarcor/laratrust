@@ -31,6 +31,9 @@ final readonly class PermissionLookup
 {
     public const string NO_TEAM = '';
 
+    /** The scope of a team that doesn't exist, so nothing is assigned in it; it can't collide with a team key. */
+    public const string UNKNOWN_TEAM = "\0unknown";
+
     /** The scope used when teams are ignored; it can't collide with a team key. */
     private const string ANY_TEAM = "\0any";
 

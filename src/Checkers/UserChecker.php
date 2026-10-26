@@ -137,6 +137,7 @@ final readonly class UserChecker
 
     /**
      * Resolve which team scope a check should look into: null means any team.
+     * A team name that doesn't exist matches nothing, never more.
      */
     private function teamScope(mixed $team): ?string
     {
@@ -144,7 +145,11 @@ final readonly class UserChecker
             return null;
         }
 
-        $teamId = $this->registry->idFor($team, 'team');
+        $teamId = $this->registry->findIdFor($team, 'team');
+
+        if ($teamId === false) {
+            return PermissionLookup::UNKNOWN_TEAM;
+        }
 
         if ($teamId === null) {
             return Config::get('laratrust.teams.strict_check') ? PermissionLookup::NO_TEAM : null;

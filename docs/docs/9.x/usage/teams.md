@@ -126,6 +126,8 @@ $user->isAbleTo(['edit-user', 'manage-users'], 'my-awesome-team', true);
 
 The team can be a `Team` model, its key, its name, or a backed enum whose value is the name or the key.
 
+A team name that doesn't exist matches nothing: the checks are false, `getRoles()` and `allPermissions()` are empty, and the scopes find no users. It never falls back to the assignments without a team. Adding, removing or syncing in a team that doesn't exist throws a `ModelNotFoundException`.
+
 Get the names of the user's roles within a team:
 
 ```php

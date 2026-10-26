@@ -7,6 +7,7 @@ namespace Laratrust\Support;
 use BackedEnum;
 use Illuminate\Contracts\Cache\Repository as Cache;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
@@ -37,7 +38,7 @@ final class PermissionRegistry
     /** @var array<array-key, RoleData> The roles' names and permission sets, keyed by role cache key. */
     private array $roles = [];
 
-    /** @var array<string, array<string, int|string>> */
+    /** @var array<string, array<string, int|string|false>> Keys by name, false for the names no model has. */
     private array $ids = [];
 
     public function __construct(private readonly Cache $cache) {}
@@ -120,8 +121,24 @@ final class PermissionRegistry
 
     /**
      * Get the key for a role, permission or team given as a model, enum, uuid, array, key or name.
+     *
+     * @throws ModelNotFoundException When no model has the given name.
      */
     public function idFor(mixed $object, string $type): int|string|null
+    {
+        $id = $this->findIdFor($object, $type);
+
+        if ($id === false) {
+            throw (new ModelNotFoundException)->setModel($this->modelClass($type));
+        }
+
+        return $id;
+    }
+
+    /**
+     * Like idFor(), but a name that no model has gives false instead of throwing, so a check can match nothing.
+     */
+    public function findIdFor(mixed $object, string $type): int|string|false|null
     {
         if ($object === null || ($type === 'team' && ! Config::get('laratrust.teams.enabled'))) {
             return null;
@@ -136,7 +153,7 @@ final class PermissionRegistry
             $object instanceof Model => $object->getKey(),
             is_array($object) => $this->idFromArray($object, $type),
             is_int($object), is_numeric($object) => $object,
-            is_string($object) => $this->ids[$type][$object] ??= $this->findIdByName($object, $type),
+            is_string($object) => $this->idForName($object, $type),
             default => throw new InvalidArgumentException(
                 "The {$type} must be a Model, BackedEnum, UuidInterface, array{id: int|string}, int or string."
             ),
@@ -359,16 +376,30 @@ final class PermissionRegistry
         return $id;
     }
 
-    private function findIdByName(string $name, string $type): int|string
+    /**
+     * The key of the model with the given name, or false if there's none. Both are remembered for the request.
+     */
+    private function idForName(string $name, string $type): int|string|false
     {
-        $class = match ($type) {
+        if (! array_key_exists($name, $this->ids[$type] ?? [])) {
+            $model = $this->modelClass($type)::query()->where('name', $name)->first();
+            $this->ids[$type][$name] = $model === null ? false : $this->keyOf($model);
+        }
+
+        return $this->ids[$type][$name];
+    }
+
+    /**
+     * @return class-string<Model>
+     */
+    private function modelClass(string $type): string
+    {
+        return match ($type) {
             'role' => ModelClasses::role(),
             'permission' => ModelClasses::permission(),
             'team' => ModelClasses::team(),
             default => throw new InvalidArgumentException("Unknown Laratrust model type [{$type}]."),
         };
-
-        return $this->keyOf($class::query()->where('name', $name)->firstOrFail());
     }
 
     private function cacheEnabled(): bool

@@ -77,10 +77,11 @@ class Team extends Model implements TeamContract
             $roleUserTeam = $user->roles()->qualifyPivotColumn(static::modelForeignKey());
             $permissionUserTeam = $user->permissions()->qualifyPivotColumn(static::modelForeignKey());
 
+            // Without the role's global scopes: the users' cache keeps their soft-deleted roles too.
             $user->newQuery()
                 ->select($user->getQualifiedKeyName())
                 ->where(fn (Builder $users): Builder => $users
-                    ->whereHas('roles', fn (Builder $roles): Builder => $roles->where($roleUserTeam, $this->getKey()))
+                    ->whereHas('roles', fn (Builder $roles): Builder => $roles->withoutGlobalScopes()->where($roleUserTeam, $this->getKey()))
                     ->orWhereHas('permissions', fn (Builder $permissions): Builder => $permissions->where($permissionUserTeam, $this->getKey())))
                 ->each(fn (Model&LaratrustUser $user) => $user->flushLaratrustCache());
         }

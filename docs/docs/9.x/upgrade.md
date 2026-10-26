@@ -42,7 +42,8 @@ The `checkers` configuration and the `query` checkers are removed. Laratrust has
 
 ## Checks
 
-- With `permissions_as_gates`, only a team model, a backed enum, a uuid, an id or a name given to `can()` is the team. In 8.x any argument was taken for the team, so `$user->can('edit-post', $post)` checked the permission in the team whose id was `$post->id`. Now other models are left to your policies, and the permission is checked without a team.
+- With `permissions_as_gates`, only a team model, a backed enum, a uuid, an id or a name given to `can()` is the team. In 8.x any argument was taken for the team, so `$user->can('edit-post', $post)` checked the permission in the team whose id was `$post->id`. Now other models are left to your policies, and the permission is checked without a team. Class names are never the team either, so `$user->can('create', Post::class)` doesn't look for a team named `App\Models\Post`.
+- A team name that doesn't exist now matches nothing in the checks, `getRoles()`, `allPermissions()` and the scopes. In 8.x they threw a `ModelNotFoundException`, so a middleware like `role:admin,missing-team` answered with a 404. Now it handles the request as unauthorized, like any failed check. Assigning in a team that doesn't exist still throws.
 
 The checks are also faster:
 
@@ -129,6 +130,7 @@ protected function whereHasRole(Builder $query, $role = '', $team = null, string
 - If a class in `laratrust.models` or `laratrust.user_models` isn't an Eloquent model that implements the Laratrust contract (`Laratrust\Contracts\Role`, `Permission`, `Team` or `LaratrustUser`), Laratrust throws an `InvalidArgumentException` that names the configuration key.
 - The `LaratrustUser` and `Role` contracts now require `laratrustCacheKey(): string` and `flushLaratrustCache(): void`. The `HasRolesAndPermissions` trait and the `Role` model implement them. If you implement a contract without them, add both methods.
 - `addRole()`, `givePermission()` and `$role->givePermission()` do nothing when the role or permission is already assigned (in that team), and dispatch no event. In 8.x, without teams, they inserted the pivot row again, which failed on the primary key.
+- Removing a role or a permission that isn't assigned (in that team) now does nothing: it doesn't flush the cache nor dispatch `RoleRemoved` or `PermissionRemoved`. In 8.x the event was dispatched anyway.
 - `removeRoles()` and `removePermissions()` on the user, and `removePermissions()` on the role, now require the list, and an empty list removes nothing. In 8.x an empty list (or no argument) removed everything. To remove them all, use `syncRoles([])` or `syncPermissions([])`.
 - When a configured user model extends another configured one, its cache key now uses its own `user_models` key.
 - `$role->hasPermission('a|b')` now splits the pipe-separated names, like the user methods do.

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Checkers;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Cache;
 use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\Enums\Role as EnumsRole;
@@ -25,6 +26,27 @@ class UserCheckerTest extends LaratrustTestCase
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
 
         $this->app['config']->set('laratrust.teams.enabled', true);
+    }
+
+    public function test_a_team_name_that_does_not_exist_matches_nothing(): void
+    {
+        $team = Team::create(['name' => 'team_a']);
+        Role::create(['name' => 'role_a'])->givePermission(Permission::create(['name' => 'permission_a']));
+        $this->user->addRole('role_a')->addRole('role_a', $team)->givePermission('permission_a');
+
+        foreach ([false, true] as $strictCheck) {
+            $this->app['config']->set('laratrust.teams.strict_check', $strictCheck);
+
+            $this->assertFalse($this->user->hasRole('role_a', 'missing_team'));
+            $this->assertFalse($this->user->hasPermission('permission_a', 'missing_team'));
+            $this->assertFalse($this->user->ability('role_a', 'permission_a', 'missing_team'));
+            $this->assertSame([], $this->user->getRoles('missing_team'));
+            $this->assertCount(0, $this->user->allPermissions(team: 'missing_team'));
+        }
+
+        // Assigning in a team that doesn't exist still fails.
+        $this->expectException(ModelNotFoundException::class);
+        $this->user->addRole('role_a', 'missing_team');
     }
 
     public function test_get_roles(): void

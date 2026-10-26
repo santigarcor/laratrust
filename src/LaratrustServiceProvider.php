@@ -219,12 +219,13 @@ class LaratrustServiceProvider extends ServiceProvider
             }
 
             // A boolean argument is requireAll. The team is a Team model, an enum, a uuid or a key/name:
-            // other models are what the check is about (e.g. a policy's model), never the team.
+            // other models and class names, like can('create', Post::class), are what the check is about
+            // (e.g. a policy's model), never the team.
             $team = Arr::first($arguments, fn (mixed $argument): bool => $argument instanceof TeamContract
                 || $argument instanceof BackedEnum
                 || $argument instanceof UuidInterface
                 || is_int($argument)
-                || is_string($argument));
+                || (is_string($argument) && ! class_exists($argument)));
             $requireAll = Arr::first($arguments, fn (mixed $argument): bool => is_bool($argument)) ?? false;
 
             // Null lets the policies and the other gates decide.

@@ -382,6 +382,45 @@ class PermissionRegistryTest extends LaratrustTestCase
         $this->assertSame(0, DB::table('permission_user')->whereNotNull('team_id')->count());
     }
 
+    public function test_a_role_created_with_the_key_of_a_soft_deleted_then_force_deleted_one_is_not_given_to_its_users(): void
+    {
+        $this->app['config']->set('laratrust.cache.enabled', true);
+        $role = Role::where('name', 'role_a')->first();
+
+        $role->delete();
+        $this->simulateNewRequest();
+        // The user's cache keeps the soft-deleted role's key.
+        $this->assertFalse($this->user->hasRole('role_a'));
+
+        $role->forceDelete();
+        Role::forceCreate(['id' => $role->id, 'name' => 'superadmin']);
+        $this->simulateNewRequest();
+
+        $this->assertFalse($this->user->hasRole('superadmin'));
+        $this->assertSame(['role_b', 'role_c'], $this->user->getRoles());
+    }
+
+    public function test_force_deleting_a_team_refreshes_the_users_whose_role_in_it_is_soft_deleted(): void
+    {
+        $this->app['config']->set('laratrust.cache.enabled', true);
+        $team = Team::where('name', 'team_a')->first();
+        $role = Role::where('name', 'role_c')->first();
+        $this->user->removePermission('direct', $team);
+
+        $role->delete();
+        $this->simulateNewRequest();
+        // The user's cache keeps the soft-deleted role's key and team.
+        $this->assertFalse($this->user->hasRole('role_c'));
+
+        $team->forceDelete();
+        Team::forceCreate(['id' => $team->id, 'name' => 'team_b']);
+        $role->restore();
+        $this->simulateNewRequest();
+
+        $this->assertFalse($this->user->hasRole('role_c', 'team_b'));
+        $this->assertSame(['role_a', 'role_b'], $this->user->getRoles());
+    }
+
     public function test_a_user_model_extending_another_one_has_its_own_cache_key(): void
     {
         $this->app['config']->set('laratrust.user_models', ['users' => User::class, 'admins' => AdminUser::class]);

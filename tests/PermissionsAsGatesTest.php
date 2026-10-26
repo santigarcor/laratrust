@@ -75,4 +75,24 @@ class PermissionsAsGatesTest extends LaratrustTestCase
         config()->set('laratrust.teams.strict_check', true);
         $this->assertFalse($user->can('edit', $user));
     }
+
+    public function test_class_names_and_missing_teams_are_left_to_the_gates_and_policies(): void
+    {
+        config()->set('laratrust.permissions_as_gates', true);
+        config()->set('laratrust.teams.enabled', true);
+        config()->set('laratrust.teams.strict_check', true);
+        (new LaratrustServiceProvider($this->app))->boot();
+        $this->migrate();
+
+        $user = User::create(['name' => 'test', 'email' => 'test@test.com']);
+        $user->givePermission(Permission::create(['name' => 'create']));
+        GateFacade::define('create', fn (): bool => false);
+        GateFacade::define('view', fn (): bool => true);
+
+        // A class name, like a policy call without a model, is never the team.
+        $this->assertTrue($user->can('create', User::class));
+        // A team that doesn't exist has no permissions, so the gate decides.
+        $this->assertFalse($user->can('create', 'missing_team'));
+        $this->assertTrue($user->can('view', 'missing_team'));
+    }
 }

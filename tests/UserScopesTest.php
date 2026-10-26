@@ -228,6 +228,17 @@ class UserScopesTest extends LaratrustTestCase
         }
     }
 
+    public function test_scopes_with_a_team_name_that_does_not_exist_match_nothing(): void
+    {
+        $role = Role::create(['name' => 'role_a']);
+        $role->givePermission(Permission::create(['name' => 'permission_a']));
+        $this->user->addRole($role)->givePermission('permission_a');
+
+        $this->assertCount(0, User::whereHasRole('role_a', 'missing_team')->get());
+        $this->assertCount(0, User::whereHasPermission('permission_a', 'missing_team')->get());
+        $this->assertCount(1, User::whereHasRole('role_a', 'missing_team')->orWhereHasRole('role_a')->get());
+    }
+
     public function test_scopes_with_strict_check_and_no_team_only_match_assignments_without_a_team(): void
     {
         $this->app['config']->set('laratrust.teams.strict_check', true);

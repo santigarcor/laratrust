@@ -47,6 +47,16 @@ class RoleEventsTest extends LaratrustTestCase
             && $event->permission === $permission->id);
     }
 
+    public function test_no_event_is_dispatched_when_the_removed_permission_was_not_given(): void
+    {
+        $permission = Permission::create(['name' => 'permission']);
+        Event::fake();
+
+        $this->role->removePermission($permission);
+
+        Event::assertNotDispatched(PermissionRemoved::class);
+    }
+
     public function test_an_event_is_dispatched_when_permissions_are_synced(): void
     {
         $permission = Permission::create(['name' => 'permission']);

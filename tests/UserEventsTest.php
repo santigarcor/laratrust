@@ -143,4 +143,21 @@ class UserEventsTest extends LaratrustTestCase
 
         Event::assertNotDispatched(RoleAdded::class);
     }
+
+    public function test_no_event_is_dispatched_when_the_removed_assignment_did_not_exist(): void
+    {
+        $team = Team::create(['name' => 'team']);
+        $role = Role::create(['name' => 'role']);
+        $permission = Permission::create(['name' => 'permission']);
+        // Assigned without a team, so removing them within the team removes nothing.
+        $this->user->addRole($role)->givePermission($permission);
+        Event::fake();
+
+        $this->user->removeRole($role, $team)->removePermission($permission, $team);
+        $this->user->removeRoles([$role], $team)->removePermissions([$permission], $team);
+
+        Event::assertNotDispatched(RoleRemoved::class);
+        Event::assertNotDispatched(PermissionRemoved::class);
+        $this->assertTrue($this->user->hasRole('role') && $this->user->hasPermission('permission'));
+    }
 }

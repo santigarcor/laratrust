@@ -20,6 +20,9 @@
 - Add `Laratrust::reset()` to forget the loaded roles and permissions in long-running processes
 - Only take team models, enums, uuids, ids and names as the team in the permissions-as-gates checks
 - Make `addRole()` and `givePermission()` idempotent
+- Make `removeRole()` and `removePermission()` do nothing, and dispatch no event, when the assignment doesn't exist
+- Match nothing, instead of throwing, when a check or scope gets a team name that doesn't exist
+- Never take class names given to `can()`, like `Post::class`, for the team in the permissions-as-gates checks
 - Make `removeRoles()` and `removePermissions()` require the list, and remove nothing when it's empty
 - Split pipe-separated names in `whereHasRole()` and `whereHasPermission()`
 - Use the exact class first for the user cache key, when a configured user model extends another

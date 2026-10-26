@@ -101,6 +101,8 @@ If you are using the teams feature and want to use the middleware checking for y
 The team and the `require_all` and `guard` options are optional.
 :::
 
+A team that doesn't exist matches nothing, so the request is handled as unauthorized.
+
 ## Building the middleware string
 
 Instead of writing the strings, you can build them with the `using()` method of each middleware. Its arguments are the same as the checks:
