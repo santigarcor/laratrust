@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laratrust;
 
+use BackedEnum;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -25,11 +26,13 @@ use Laratrust\Contracts\LaratrustUser;
 use Laratrust\Contracts\Permission as PermissionContract;
 use Laratrust\Contracts\Role as RoleContract;
 use Laratrust\Contracts\Team as TeamContract;
+use Laratrust\Http\Middleware\AuthorizePanel;
 use Laratrust\Middleware\Ability;
 use Laratrust\Middleware\Permission;
 use Laratrust\Middleware\Role;
 use Laratrust\Support\ModelClasses;
 use Laratrust\Support\PermissionRegistry;
+use Ramsey\Uuid\UuidInterface;
 
 class LaratrustServiceProvider extends ServiceProvider
 {
@@ -169,7 +172,7 @@ class LaratrustServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the routes used by the Laratrust admin panel, when enabled.
+     * Register the routes used by the Laratrust admin panel and its "viewLaratrust" gate, when enabled.
      */
     protected function registerRoutes(): void
     {
@@ -177,11 +180,16 @@ class LaratrustServiceProvider extends ServiceProvider
             return;
         }
 
+        // Only local by default: the application defines the gate to open the panel elsewhere.
+        if (! Gate::has('viewLaratrust')) {
+            Gate::define('viewLaratrust', fn (?Authorizable $user = null): bool => $this->app->environment('local'));
+        }
+
         Route::group([
             // Null means any domain.
             'domain' => Config::get('laratrust.panel.domain'),
             'prefix' => Config::get('laratrust.panel.path'),
-            'middleware' => Config::get('laratrust.panel.middleware', 'web'),
+            'middleware' => [...Arr::wrap(Config::get('laratrust.panel.middleware', 'web')), AuthorizePanel::class],
         ], function (): void {
             Route::redirect('/', '/'.Config::get('laratrust.panel.path').'/roles-assignment');
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
@@ -210,8 +218,13 @@ class LaratrustServiceProvider extends ServiceProvider
                 return null;
             }
 
-            // A boolean argument is requireAll, anything else is the team.
-            $team = Arr::first($arguments, fn (mixed $argument): bool => ! is_bool($argument));
+            // A boolean argument is requireAll. The team is a Team model, an enum, a uuid or a key/name:
+            // other models are what the check is about (e.g. a policy's model), never the team.
+            $team = Arr::first($arguments, fn (mixed $argument): bool => $argument instanceof TeamContract
+                || $argument instanceof BackedEnum
+                || $argument instanceof UuidInterface
+                || is_int($argument)
+                || is_string($argument));
             $requireAll = Arr::first($arguments, fn (mixed $argument): bool => is_bool($argument)) ?? false;
 
             // Null lets the policies and the other gates decide.

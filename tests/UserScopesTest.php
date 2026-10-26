@@ -43,6 +43,10 @@ class UserScopesTest extends LaratrustTestCase
         $this->assertCount(1, User::whereHasRole([EnumsRole::ROLE_A, 'role_c'])->get());
         $this->assertCount(0, User::whereHasRole(EnumsRole::ROLE_C)->get());
         $this->assertCount(0, User::whereHasRole(['role_c', 'role_x'])->get());
+        // Pipes separate the names, like in the checks.
+        $this->assertCount(1, User::whereHasRole('role_c|role_b')->get());
+        $this->assertCount(0, User::whereHasRole('role_c|role_x')->get());
+        $this->assertCount(0, User::whereHasRole([])->get());
 
         $this->assertCount(1, User::whereHasRole('role_d', 'team_a')->get());
 

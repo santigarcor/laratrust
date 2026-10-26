@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
+use Illuminate\Validation\Rule;
 use Laratrust\Support\ModelClasses;
 
 class PermissionsController
@@ -37,7 +38,7 @@ class PermissionsController
         $this->ensurePermissionsCanBeCreated();
 
         $data = $request->validate([
-            'name' => ['required', 'string', 'unique:'.Config::get('laratrust.tables.permissions').',name'],
+            'name' => ['required', 'string', Rule::unique(ModelClasses::permission(), 'name')],
             'display_name' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
         ]);

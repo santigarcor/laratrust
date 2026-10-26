@@ -16,7 +16,7 @@ Laratrust dispatches an event each time roles or permissions are added, removed 
 | `PermissionSynced`  | The permissions of a user or a role are synced.      |
 
 ::: tip NOTE
-`addRoles()`, `givePermissions()` and the other methods that take many items dispatch one event for each item. `removeRoles()` and `removePermissions()` without arguments sync to an empty list, so they dispatch a single `RoleSynced` or `PermissionSynced` event.
+`addRoles()`, `givePermissions()` and the other methods that take many items dispatch one event for each item. Adding a role or a permission that is already assigned dispatches no event. To remove them all, `syncRoles([])` and `syncPermissions([])` dispatch a single `RoleSynced` or `PermissionSynced` event.
 :::
 
 ## Listening to the events

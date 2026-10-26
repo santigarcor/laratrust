@@ -9,9 +9,12 @@ use Illuminate\Contracts\Support\Arrayable;
 /**
  * The roles and direct permissions assigned to a user, as stored in the database.
  *
+ * Roles are kept by key only: their names and permissions are cached per role,
+ * so renaming or deleting a role refreshes every user that has it.
+ *
  * @internal
  *
- * @phpstan-type StoredRole array{id: int|string, name: string, team: int|string|null}
+ * @phpstan-type StoredRole array{id: int|string, team: int|string|null}
  * @phpstan-type StoredPermission array{name: string, team: int|string|null}
  *
  * @implements Arrayable<string, array<int, array<string, int|string|null>>>
@@ -60,14 +63,13 @@ final readonly class StoredAssignments implements Arrayable
     private static function roleFromArray(mixed $data): ?array
     {
         $id = is_array($data) ? ($data['id'] ?? null) : null;
-        $name = is_array($data) ? ($data['name'] ?? null) : null;
         $team = is_array($data) ? ($data['team'] ?? null) : null;
 
-        if ((! is_int($id) && ! is_string($id)) || ! is_string($name) || ! self::isTeam($team)) {
+        if ((! is_int($id) && ! is_string($id)) || ! self::isTeam($team)) {
             return null;
         }
 
-        return ['id' => $id, 'name' => $name, 'team' => $team];
+        return ['id' => $id, 'team' => $team];
     }
 
     /**

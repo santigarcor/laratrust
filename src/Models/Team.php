@@ -67,16 +67,21 @@ class Team extends Model implements TeamContract
 
     /**
      * Flush the cache of the users that have roles or permissions within the team.
+     *
+     * They're loaded with only their key, which is all laratrustCacheKey() uses by default.
      */
     public function flushLaratrustCache(): void
     {
-        $roleUserTeam = Config::get('laratrust.tables.role_user').'.'.static::modelForeignKey();
-        $permissionUserTeam = Config::get('laratrust.tables.permission_user').'.'.static::modelForeignKey();
-
         foreach (ModelClasses::userRelationships() as $key) {
-            ModelClasses::user($key)::query()
-                ->whereHas('roles', fn (Builder $roles): Builder => $roles->where($roleUserTeam, $this->getKey()))
-                ->orWhereHas('permissions', fn (Builder $permissions): Builder => $permissions->where($permissionUserTeam, $this->getKey()))
+            $user = new (ModelClasses::user($key));
+            $roleUserTeam = $user->roles()->qualifyPivotColumn(static::modelForeignKey());
+            $permissionUserTeam = $user->permissions()->qualifyPivotColumn(static::modelForeignKey());
+
+            $user->newQuery()
+                ->select($user->getQualifiedKeyName())
+                ->where(fn (Builder $users): Builder => $users
+                    ->whereHas('roles', fn (Builder $roles): Builder => $roles->where($roleUserTeam, $this->getKey()))
+                    ->orWhereHas('permissions', fn (Builder $permissions): Builder => $permissions->where($permissionUserTeam, $this->getKey())))
                 ->each(fn (Model&LaratrustUser $user) => $user->flushLaratrustCache());
         }
     }

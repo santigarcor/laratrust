@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests;
 
+use Illuminate\Support\Facades\Schema;
 use Laratrust\LaratrustFacade;
 use Laratrust\LaratrustServiceProvider;
 use Laratrust\Tests\Migrations\LaratrustSetupTables;
@@ -30,7 +31,18 @@ class LaratrustTestCase extends TestCase
     {
         $app['config']->set('cache.default', 'array');
         $app['config']->set('database.default', 'testing');
-        $app['config']->set('database.connections.testing', [
+        // CI also runs the tests on MySQL, with DB_CONNECTION=mysql and the other DB_* variables.
+        $app['config']->set('database.connections.testing', env('DB_CONNECTION') === 'mysql' ? [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'laratrust'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+        ] : [
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',
@@ -42,6 +54,14 @@ class LaratrustTestCase extends TestCase
             'permission' => Permission::class,
             'team' => Team::class,
         ]);
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // A MySQL database keeps the tables of the previous test.
+        Schema::dropAllTables();
     }
 
     public function migrate(): void

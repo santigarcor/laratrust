@@ -23,6 +23,8 @@ use UnexpectedValueException;
  * queue jobs and Octane requests. Lookups go memory -> cache (when enabled) -> database.
  *
  * @internal
+ *
+ * @phpstan-import-type RoleData from PermissionLookup
  */
 final class PermissionRegistry
 {
@@ -32,8 +34,8 @@ final class PermissionRegistry
     /** @var array<string, StoredAssignments> */
     private array $stored = [];
 
-    /** @var array<array-key, array<array-key, true>> Permission sets, keyed by role cache key. */
-    private array $rolePermissions = [];
+    /** @var array<array-key, RoleData> The roles' names and permission sets, keyed by role cache key. */
+    private array $roles = [];
 
     /** @var array<string, array<string, int|string>> */
     private array $ids = [];
@@ -54,9 +56,9 @@ final class PermissionRegistry
      */
     public function permissionsForRole(Model&Role $role): array
     {
-        $this->loadRolePermissions([$role]);
+        $this->loadRoles([$role]);
 
-        return $this->rolePermissions[$role->laratrustCacheKey()];
+        return $this->roles[$role->laratrustCacheKey()]['permissions'];
     }
 
     public function forgetUser(Model&LaratrustUser $user): void
@@ -71,8 +73,8 @@ final class PermissionRegistry
     {
         $key = $role->laratrustCacheKey();
 
-        unset($this->rolePermissions[$key], $this->ids['role']);
-        // Any user's lookup may contain this role's permissions.
+        unset($this->roles[$key], $this->ids['role']);
+        // Any user's lookup may reference this role.
         $this->lookups = [];
         $this->cache->forget($key);
     }
@@ -83,6 +85,17 @@ final class PermissionRegistry
     public function forgetIds(string $type): void
     {
         unset($this->ids[$type]);
+    }
+
+    /**
+     * Forget everything memoized, so the next checks read the cache or the database again.
+     */
+    public function reset(): void
+    {
+        $this->lookups = [];
+        $this->stored = [];
+        $this->roles = [];
+        $this->ids = [];
     }
 
     /**
@@ -121,11 +134,11 @@ final class PermissionRegistry
         return match (true) {
             $object instanceof UuidInterface => $object->toString(),
             $object instanceof Model => $object->getKey(),
-            is_array($object) => $object['id'],
+            is_array($object) => $this->idFromArray($object, $type),
             is_int($object), is_numeric($object) => $object,
             is_string($object) => $this->ids[$type][$object] ??= $this->findIdByName($object, $type),
             default => throw new InvalidArgumentException(
-                'The given value must be a Model, BackedEnum, UuidInterface, array{id: int|string}, int or string.'
+                "The {$type} must be a Model, BackedEnum, UuidInterface, array{id: int|string}, int or string."
             ),
         };
     }
@@ -153,40 +166,34 @@ final class PermissionRegistry
 
     private function buildLookup(StoredAssignments $assignments): PermissionLookup
     {
-        /** @var class-string<Model&Role> $roleClass */
-        $roleClass = Config::get('laratrust.models.role');
-        $prototype = new $roleClass;
+        $prototype = new (ModelClasses::role());
 
-        // A role can be assigned more than once (in different teams), but its permissions are loaded once.
+        // A role can be assigned more than once (in different teams), but it's loaded once.
         $uniqueRoles = collect($assignments->roles)
             ->unique('id')
-            ->map(fn (array $role) => $prototype->newFromBuilder([
-                $prototype->getKeyName() => $role['id'],
-                'name' => $role['name'],
-            ]))
+            ->map(fn (array $role) => $prototype->newFromBuilder([$prototype->getKeyName() => $role['id']]))
             ->values()
             ->all();
 
-        $this->loadRolePermissions($uniqueRoles);
+        $this->loadRoles($uniqueRoles);
 
         $roleCacheKeys = collect($uniqueRoles)
             ->mapWithKeys(fn (Model&Role $role): array => [(string) $role->getKey() => $role->laratrustCacheKey()])
             ->all();
 
-        // The lookup references the shared permission sets, it doesn't copy them.
         return PermissionLookup::build(
             $assignments,
             $roleCacheKeys,
-            array_intersect_key($this->rolePermissions, array_flip($roleCacheKeys)),
+            array_intersect_key($this->roles, array_flip($roleCacheKeys)),
         );
     }
 
     /**
-     * Make sure the roles' permissions are in memory: from the cache, otherwise from the database.
+     * Make sure the roles' names and permissions are in memory: from the cache, otherwise from the database.
      *
      * @param  array<int, Model&Role>  $roles
      */
-    private function loadRolePermissions(array $roles): void
+    private function loadRoles(array $roles): void
     {
         $missing = $this->rolesNotInMemory($roles);
 
@@ -207,33 +214,33 @@ final class PermissionRegistry
     {
         return collect($roles)
             ->keyBy(fn (Model&Role $role): string => $role->laratrustCacheKey())
-            ->reject(fn (Model&Role $role, string $key): bool => isset($this->rolePermissions[$key]))
+            ->reject(fn (Model&Role $role, string $key): bool => isset($this->roles[$key]))
             ->all();
     }
 
     /**
-     * Remember the roles' permissions found in the cache.
+     * Remember the roles found in the cache.
      *
      * @param  array<string, Model&Role>  $rolesByCacheKey
      * @return array<string, Model&Role> The roles that weren't in the cache, keyed by cache key.
      */
     private function recoverFromCache(array $rolesByCacheKey): array
     {
-        $cached = collect($this->cache->many(array_keys($rolesByCacheKey)))
-            ->filter(
-                fn (mixed $names): bool => is_array($names)
-                && array_is_list($names)
-                && Arr::every($names, fn ($name): bool => is_string($name))
-            );
+        $cached = [];
 
-        $this->rolePermissions = $cached->map(fn (array $names): array => array_fill_keys($names, true))->all()
-            + $this->rolePermissions;
+        foreach ($this->cache->many(array_keys($rolesByCacheKey)) as $cacheKey => $data) {
+            if (($role = $this->roleFromCache($data)) !== null) {
+                $cached[$cacheKey] = $role;
+            }
+        }
 
-        return collect($rolesByCacheKey)->diffKeys($cached)->all();
+        $this->roles = $cached + $this->roles;
+
+        return array_diff_key($rolesByCacheKey, $cached);
     }
 
     /**
-     * Load the roles' permissions from the database with eager loading,
+     * Load the roles' names and permissions from the database with eager loading,
      * remember them for this request and cache them (when enabled).
      *
      * @param  non-empty-array<string, Model&Role>  $rolesByCacheKey
@@ -246,25 +253,34 @@ final class PermissionRegistry
         $prototype = reset($rolesByCacheKey);
 
         // Only the keys and names are needed; the pivot keys used to match them are added by Eloquent.
-        $loaded = $prototype->newQuery()
+        $found = $prototype->newQuery()
             ->whereKey($roles->map(fn (Model&Role $role) => $role->getKey())->values())
             ->with(['permissions' => fn (BelongsToMany $permissions) => $permissions->select([
                 $permissions->getRelated()->getQualifiedKeyName(),
                 $permissions->getRelated()->qualifyColumn('name'),
             ])])
-            ->get([$prototype->getQualifiedKeyName()])
-            ->mapWithKeys(fn (Model $role): array => [
-                $cacheKeys[$role->getKey()] => $role->getRelation('permissions')->pluck('name')->all(),
-            ]);
+            ->get([$prototype->getQualifiedKeyName(), $prototype->qualifyColumn('name')])
+            ->keyBy(fn (Model $role): string => $cacheKeys[$role->getKey()]);
 
         // Roles the query doesn't return (deleted, or hidden by a global scope like SoftDeletes)
-        // are remembered as having no permissions, so they aren't queried again.
-        $loaded = $loaded->union($roles->map(fn (): array => []))->all();
+        // are remembered as missing, so they aren't queried again and count as not assigned.
+        $loaded = $roles
+            ->map(function (Model&Role $role, string $cacheKey) use ($found): array {
+                $model = $found->get($cacheKey);
 
-        $this->rolePermissions = array_map(fn (array $names): array => array_fill_keys($names, true), $loaded)
-            + $this->rolePermissions;
+                return $model === null ? ['name' => null, 'permissions' => []] : [
+                    'name' => (string) $model->getAttribute('name'),
+                    'permissions' => $model->getRelation('permissions')->pluck('name')->all(),
+                ];
+            })
+            ->all();
 
-        // The cache stores plain lists of names.
+        $this->roles = array_map(
+            fn (array $role): array => ['name' => $role['name'], 'permissions' => array_fill_keys($role['permissions'], true)],
+            $loaded,
+        ) + $this->roles;
+
+        // The cache stores the names as plain lists.
         if ($this->cacheEnabled()) {
             $this->cache->putMany($loaded, $this->ttl());
         }
@@ -279,10 +295,9 @@ final class PermissionRegistry
 
         return new StoredAssignments(
             roles: $roles
-                ->get([$roles->getRelated()->getQualifiedKeyName(), $roles->getRelated()->qualifyColumn('name')])
+                ->get([$roles->getRelated()->getQualifiedKeyName()])
                 ->map(fn (Model $role): array => [
                     'id' => $this->keyOf($role),
-                    'name' => (string) $role->getAttribute('name'),
                     'team' => $teamOf($role),
                 ])
                 ->all(),
@@ -296,6 +311,26 @@ final class PermissionRegistry
         );
     }
 
+    /**
+     * Restore a role from the cache, or null if the cached value isn't valid.
+     *
+     * @return RoleData|null
+     */
+    private function roleFromCache(mixed $data): ?array
+    {
+        if (! is_array($data) || ! array_key_exists('name', $data) || ! is_array($permissions = $data['permissions'] ?? null)) {
+            return null;
+        }
+
+        $name = $data['name'];
+
+        if (($name !== null && ! is_string($name)) || ! array_is_list($permissions) || ! Arr::every($permissions, fn (mixed $permission): bool => is_string($permission))) {
+            return null;
+        }
+
+        return ['name' => $name, 'permissions' => array_fill_keys($permissions, true)];
+    }
+
     private function keyOf(Model $model): int|string
     {
         $key = $model->getKey();
@@ -307,10 +342,28 @@ final class PermissionRegistry
         return $key;
     }
 
+    /**
+     * @param  array<array-key, mixed>  $object
+     */
+    private function idFromArray(array $object, string $type): int|string
+    {
+        $id = $object['id'] ?? null;
+
+        if (! is_int($id) && ! is_string($id)) {
+            throw new InvalidArgumentException("The {$type} given as an array must have an int or string \"id\".");
+        }
+
+        return $id;
+    }
+
     private function findIdByName(string $name, string $type): int|string
     {
-        /** @var class-string<Model> $class */
-        $class = Config::get("laratrust.models.{$type}");
+        $class = match ($type) {
+            'role' => ModelClasses::role(),
+            'permission' => ModelClasses::permission(),
+            'team' => ModelClasses::team(),
+            default => throw new InvalidArgumentException("Unknown Laratrust model type [{$type}]."),
+        };
 
         return $this->keyOf($class::query()->where('name', $name)->firstOrFail());
     }

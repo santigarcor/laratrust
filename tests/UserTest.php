@@ -7,7 +7,10 @@ namespace Laratrust\Test;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
+use Laratrust\Events\PermissionAdded;
+use Laratrust\Events\RoleAdded;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
@@ -159,6 +162,35 @@ class UserTest extends LaratrustTestCase
         $this->assertFalse($user->isNotAbleTo('manage_user'));
     }
 
+    public function test_adding_an_assignment_twice_does_nothing_the_second_time(): void
+    {
+        Event::fake([RoleAdded::class, PermissionAdded::class]);
+        $role = Role::create(['name' => 'role_a']);
+        $permission = Permission::create(['name' => 'permission_a']);
+        $team = Team::create(['name' => 'team_a']);
+
+        foreach ([false, true] as $teamsEnabled) {
+            $this->app['config']->set('laratrust.teams.enabled', $teamsEnabled);
+
+            $this->user->addRole($role)->addRole($role)->givePermission($permission)->givePermission($permission);
+            $this->assertSame(1, $this->user->roles()->count());
+            $this->assertSame(1, $this->user->permissions()->count());
+
+            $this->user->roles()->sync([]);
+            $this->user->permissions()->sync([]);
+        }
+
+        // In a team it's a different assignment.
+        $this->user->addRole($role)->addRole($role, $team)->addRole($role, $team);
+        $this->assertSame(2, $this->user->roles()->count());
+
+        $role->givePermission($permission)->givePermission($permission);
+        $this->assertSame(1, $role->permissions()->count());
+
+        Event::assertDispatchedTimes(RoleAdded::class, 4);
+        Event::assertDispatchedTimes(PermissionAdded::class, 3);
+    }
+
     public function test_add_role(): void
     {
         /*
@@ -282,10 +314,8 @@ class UserTest extends LaratrustTestCase
         | Expectation
         |------------------------------------------------------------
         */
-        $user->shouldReceive('syncRoles')
-            ->with([], null)
-            ->andReturn($user)
-            ->once();
+        // An empty list removes nothing.
+        $user->shouldNotReceive('syncRoles');
         $user
             ->shouldReceive('removeRole')
             ->with(m::anyOf(1, 2, 3), m::anyOf(null, 'TeamA'))
@@ -480,10 +510,8 @@ class UserTest extends LaratrustTestCase
     {
         $user = m::mock(User::class)->makePartial();
 
-        $user->shouldReceive('syncPermissions')
-            ->andReturn($user)
-            ->with([], null)
-            ->once();
+        // An empty list removes nothing.
+        $user->shouldNotReceive('syncPermissions');
         $user->shouldReceive('removePermission')
             ->with(m::anyOf(1, 2, 3), m::anyOf(null, 'TeamA'))
             ->times(6);

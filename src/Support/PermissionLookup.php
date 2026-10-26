@@ -14,11 +14,13 @@ use Illuminate\Support\Str;
  * - '' (NO_TEAM): only assignments without a team.
  * - a team key: only assignments in that team.
  *
- * A role's permissions aren't copied into each user: every scope only references the role
- * by its cache key, and the role's permission set is shared with the registry.
+ * A role's name and permissions aren't copied into each user: every scope only references the role
+ * by its cache key, and the role's data is shared with the registry. A role whose name is null
+ * doesn't exist anymore.
  *
  * @internal
  *
+ * @phpstan-type RoleData array{name: string|null, permissions: array<array-key, true>}
  * @phpstan-type Scope array{
  *     roles: array<array-key, true>,
  *     roleKeys: array<array-key, true>,
@@ -47,20 +49,28 @@ final readonly class PermissionLookup
 
     /**
      * @param  array<string, string>  $roleCacheKeys  Role cache keys, keyed by role key.
-     * @param  array<array-key, array<array-key, true>>  $rolePermissions  Permission sets, keyed by role cache key.
+     * @param  array<array-key, RoleData>  $roles  The roles' names and permissions, keyed by role cache key.
      */
-    public static function build(StoredAssignments $assignments, array $roleCacheKeys, array $rolePermissions): self
+    public static function build(StoredAssignments $assignments, array $roleCacheKeys, array $roles): self
     {
         $assignedRoles = [];
         $scopes = [];
 
         foreach ($assignments->roles as $role) {
+            $roleKey = $roleCacheKeys[(string) $role['id']];
+            $name = $roles[$roleKey]['name'] ?? null;
+
+            // The role was deleted, or a global scope (like SoftDeletes) hides it.
+            if ($name === null) {
+                continue;
+            }
+
             $teamScope = self::teamScopeFor($role['team']);
-            $assignedRoles[] = [$role['name'], $teamScope];
+            $assignedRoles[] = [$name, $teamScope];
 
             foreach ([$teamScope, self::ANY_TEAM] as $scope) {
-                $scopes[$scope]['roles'][$role['name']] = true;
-                $scopes[$scope]['roleKeys'][$roleCacheKeys[(string) $role['id']]] = true;
+                $scopes[$scope]['roles'][$name] = true;
+                $scopes[$scope]['roleKeys'][$roleKey] = true;
             }
         }
 
@@ -73,7 +83,8 @@ final readonly class PermissionLookup
         return new self(
             $assignedRoles,
             array_map(fn (array $scope): array => $scope + self::EMPTY_SCOPE, $scopes),
-            $rolePermissions,
+            // The permission sets are referenced, not copied.
+            array_map(fn (array $role): array => $role['permissions'], $roles),
         );
     }
 

@@ -110,17 +110,24 @@ class Permission extends Model implements PermissionContract
 
     /**
      * Flush the cache of the roles and users that have the permission.
+     *
+     * They're loaded with only their key, which is all laratrustCacheKey() uses by default.
      */
     public function flushLaratrustCache(): void
     {
         $withThisPermission = fn (Builder $permissions): Builder => $permissions->whereKey($this->getKey());
+        $role = new (ModelClasses::role());
 
-        ModelClasses::role()::query()
+        $role->newQuery()
+            ->select($role->getQualifiedKeyName())
             ->whereHas('permissions', $withThisPermission)
             ->each(fn (Model&RoleContract $role) => $role->flushLaratrustCache());
 
         foreach (ModelClasses::userRelationships() as $key) {
-            ModelClasses::user($key)::query()
+            $user = new (ModelClasses::user($key));
+
+            $user->newQuery()
+                ->select($user->getQualifiedKeyName())
                 ->whereHas('permissions', $withThisPermission)
                 ->each(fn (Model&LaratrustUser $user) => $user->flushLaratrustCache());
         }

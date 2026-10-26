@@ -14,6 +14,13 @@
 - Fix the ambiguous team column in `whereHasRole` and `whereHasPermission` (#695)
 - Fix `allPermissions($team)` and `whereHasPermission` to apply the team to the pivot tables
 - Fix `whereDoesntHavePermissions` to return only the users without any permission
+- Cache each role's name with its permissions, so renaming, deleting or soft deleting a role refreshes all its users
+- Add `Laratrust::reset()` to forget the loaded roles and permissions in long-running processes
+- Only take team models, enums, uuids, ids and names as the team in the permissions-as-gates checks
+- Make `addRole()` and `givePermission()` idempotent
+- Make `removeRoles()` and `removePermissions()` require the list, and remove nothing when it's empty
+- Split pipe-separated names in `whereHasRole()` and `whereHasPermission()`
+- Use the exact class first for the user cache key, when a configured user model extends another
 - Translate the middleware abort and redirect messages (#650)
 - Support many guards in the middleware with `guard:web|admin` (#488)
 - Throw when a middleware parameter is in the wrong place
@@ -26,7 +33,11 @@
 - Remove `flushCache()`, `laratrust:add-trait`, `laratrust:upgrade` and `Laratrust\Helper`
 - Rebuild the admin panel with Tailwind CSS v4 and Alpine.js v3, with dark mode, a mobile menu and filters, and no assets to publish
 - Enforce the `panel.create_permissions` option on the panel routes
+- Protect the panel with the `viewLaratrust` gate, which only allows the `local` environment by default
+- Assign roles and permissions within each team in the panel
+- Enforce the `not_removable` role restriction and validate the submitted keys in the panel
 - Add PHPStan (level 7), Pint and Rector
+- Run the tests on MySQL in CI
 
 ## 6.1.0 (mayo 29, 2020)
   - Merge branch 'limit-roles-in-panel' into 6.x

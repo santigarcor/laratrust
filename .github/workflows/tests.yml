@@ -43,6 +43,45 @@ jobs:
       - name: Execute tests
         run: vendor/bin/phpunit
 
+  mysql:
+    runs-on: ubuntu-latest
+
+    name: MySQL 8.4 - PHP 8.4
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: laratrust
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, pdo_mysql
+          coverage: none
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Execute tests
+        run: vendor/bin/phpunit
+        env:
+          DB_CONNECTION: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: laratrust
+          DB_USERNAME: root
+          DB_PASSWORD: ''
+
   code-style:
     runs-on: ubuntu-latest
 

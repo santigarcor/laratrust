@@ -4,7 +4,26 @@
 
 @section('content')
     <x-laratrust::card>
-        <form method="POST" action="{{ route('laratrust.roles-assignment.update', ['roles_assignment' => $user->getKey(), 'model' => $modelKey]) }}" class="space-y-8 p-4 sm:p-6">
+        @if ($teams !== null)
+            {{-- Each team has its own assignments: the form shows and saves the ones of the chosen team. --}}
+            <div class="flex flex-wrap items-center gap-3 border-b border-gray-200 px-4 py-3 dark:border-white/10">
+                <label for="team" class="text-sm text-gray-600 dark:text-gray-400">Team</label>
+                <select
+                    id="team"
+                    class="lt-input w-auto py-1.5 pr-8"
+                    x-data
+                    x-on:change="window.location = @js(route('laratrust.roles-assignment.edit', ['roles_assignment' => $user->getKey(), 'model' => $modelKey])) + '&team=' + encodeURIComponent($event.target.value)"
+                >
+                    <option value="">No team</option>
+                    @foreach ($teams as $option)
+                        <option value="{{ $option->getKey() }}" @selected((string) $team?->getKey() === (string) $option->getKey())>{{ $option->display_name ?? $option->name }}</option>
+                    @endforeach
+                </select>
+                <span class="text-xs text-gray-500 dark:text-gray-400">The roles and permissions below are the ones {{ $team === null ? 'assigned without a team' : 'assigned in this team' }}.</span>
+            </div>
+        @endif
+
+        <form method="POST" action="{{ route('laratrust.roles-assignment.update', ['roles_assignment' => $user->getKey(), 'model' => $modelKey, 'team' => $team?->getKey()]) }}" class="space-y-8 p-4 sm:p-6">
             @csrf
             @method('PUT')
 

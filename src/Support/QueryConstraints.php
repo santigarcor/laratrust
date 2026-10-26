@@ -21,6 +21,8 @@ use Laratrust\Models\Team;
 final class QueryConstraints
 {
     /**
+     * Match the names like the checks do: "admin|editor" is either of them. Wildcards aren't supported.
+     *
      * @template TBuilder of Builder<*>
      *
      * @param  TBuilder  $query
@@ -29,9 +31,7 @@ final class QueryConstraints
      */
     public static function whereNameIs(Builder $query, string|array|BackedEnum $name): Builder
     {
-        $column = $query->qualifyColumn('name');
-
-        return is_array($name) ? $query->whereIn($column, $name) : $query->where($column, $name);
+        return $query->whereIn($query->qualifyColumn('name'), app(PermissionRegistry::class)->names($name));
     }
 
     /**

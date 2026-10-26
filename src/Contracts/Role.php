@@ -66,11 +66,11 @@ interface Role
     public function givePermissions(iterable $permissions): static;
 
     /**
-     * Detach multiple permissions from current role.
+     * Detach multiple permissions from current role. An empty list removes nothing.
      *
-     * @param  iterable<Assignable>|null  $permissions
+     * @param  iterable<Assignable>  $permissions
      */
-    public function removePermissions(?iterable $permissions = null): static;
+    public function removePermissions(iterable $permissions): static;
 
     /**
      * Flush the role's cached permissions.

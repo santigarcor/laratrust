@@ -111,12 +111,12 @@ interface LaratrustUser
     ): static;
 
     /**
-     * Remove multiple roles from a user.
+     * Remove multiple roles from a user. An empty list removes nothing.
      *
      * @param  array<array-key, Assignable>  $roles
      */
     public function removeRoles(
-        array $roles = [],
+        array $roles,
         mixed $team = null
     ): static;
 
@@ -162,12 +162,12 @@ interface LaratrustUser
     ): static;
 
     /**
-     * Remove multiple permissions from the user.
+     * Remove multiple permissions from the user. An empty list removes nothing.
      *
      * @param  array<array-key, Assignable>  $permissions
      */
     public function removePermissions(
-        array $permissions = [],
+        array $permissions,
         mixed $team = null
     ): static;
 

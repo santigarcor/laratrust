@@ -10,6 +10,7 @@ use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Laratrust\LaratrustFacade;
 use Laratrust\Support\PermissionRegistry;
 use Laratrust\Tests\Enums\Permission as EnumsPermission;
 use Laratrust\Tests\Enums\Role as EnumsRole;
@@ -114,20 +115,26 @@ class PermissionRegistryTest extends LaratrustTestCase
     public function test_invalid_cached_assignments_are_treated_as_a_cache_miss(): void
     {
         $this->app['config']->set('laratrust.cache.enabled', true);
-        Cache::put($this->user->laratrustCacheKey(), ['roles' => [['name' => 'role_a']], 'permissions' => []]);
+        Cache::put($this->user->laratrustCacheKey(), ['roles' => [['team' => null]], 'permissions' => []]);
 
         $this->assertTrue($this->user->hasRole('role_b'));
-        $this->assertSame(['role_a', 'role_b', 'role_c'], array_column(Cache::get($this->user->laratrustCacheKey())['roles'], 'name'));
+        $this->assertSame(
+            Role::whereIn('name', ['role_a', 'role_b', 'role_c'])->pluck('id')->all(),
+            array_column(Cache::get($this->user->laratrustCacheKey())['roles'], 'id'),
+        );
     }
 
     public function test_invalid_cached_role_permissions_are_treated_as_a_cache_miss(): void
     {
         $this->app['config']->set('laratrust.cache.enabled', true);
         $roleA = Role::where('name', 'role_a')->first();
-        Cache::put($roleA->laratrustCacheKey(), ['role_a.permission_a', 42]);
+        Cache::put($roleA->laratrustCacheKey(), ['name' => 'role_a', 'permissions' => ['role_a.permission_a', 42]]);
 
         $this->assertTrue($this->user->isAbleTo('role_a.permission_b'));
-        $this->assertSame(['role_a.permission_a', 'role_a.permission_b'], Cache::get($roleA->laratrustCacheKey()));
+        $this->assertSame(
+            ['name' => 'role_a', 'permissions' => ['role_a.permission_a', 'role_a.permission_b']],
+            Cache::get($roleA->laratrustCacheKey()),
+        );
     }
 
     public function test_a_role_deleted_after_being_cached_has_no_permissions(): void
@@ -143,8 +150,54 @@ class PermissionRegistryTest extends LaratrustTestCase
 
         $this->assertFalse($this->user->isAbleTo('role_b.permission_a'));
         $this->assertTrue($this->user->isAbleTo('role_a.permission_a'));
-        $this->assertSame([], Cache::get($roleB->laratrustCacheKey()));
+        $this->assertSame(['name' => null, 'permissions' => []], Cache::get($roleB->laratrustCacheKey()));
         $this->assertSame(0, $this->countQueries(fn (): bool => $this->user->isAbleTo('role_b.permission_b')));
+    }
+
+    public function test_renaming_a_role_refreshes_the_users_that_have_it(): void
+    {
+        $this->app['config']->set('laratrust.cache.enabled', true);
+        $this->assertTrue($this->user->hasRole('role_a'));
+
+        $this->simulateNewRequest();
+        Role::where('name', 'role_a')->first()->update(['name' => 'renamed']);
+        $this->simulateNewRequest();
+
+        $this->assertFalse($this->user->hasRole('role_a'));
+        $this->assertTrue($this->user->hasRole('renamed'));
+        $this->assertSame(['renamed', 'role_b', 'role_c'], $this->user->getRoles());
+        $this->assertTrue(Cache::has($this->user->laratrustCacheKey()));
+    }
+
+    public function test_deleting_a_role_refreshes_the_users_that_had_it(): void
+    {
+        $this->app['config']->set('laratrust.cache.enabled', true);
+        $this->assertTrue($this->user->hasRole(['role_a', 'role_b'], requireAll: true));
+
+        $this->simulateNewRequest();
+        Role::where('name', 'role_a')->first()->delete();
+        Role::where('name', 'role_b')->first()->forceDelete();
+        $this->simulateNewRequest();
+
+        $this->assertFalse($this->user->hasRole('role_a'));
+        $this->assertFalse($this->user->isAbleTo('role_a.permission_a'));
+        $this->assertFalse($this->user->hasRole('role_b'));
+        $this->assertSame(['role_c'], $this->user->getRoles());
+
+        Role::withTrashed()->where('name', 'role_a')->first()->restore();
+        $this->simulateNewRequest();
+        $this->assertTrue($this->user->hasRole('role_a'));
+    }
+
+    public function test_the_memoized_data_can_be_reset(): void
+    {
+        $this->assertFalse($this->user->hasRole('role_d'));
+
+        $this->user->roles()->attach(Role::create(['name' => 'role_d'])->id);
+        $this->assertFalse($this->user->hasRole('role_d'));
+
+        LaratrustFacade::reset();
+        $this->assertTrue($this->user->hasRole('role_d'));
     }
 
     public function test_the_memoized_data_does_not_survive_the_request(): void
@@ -184,7 +237,7 @@ class PermissionRegistryTest extends LaratrustTestCase
     {
         $teamQueries = 0;
         DB::listen(function ($query) use (&$teamQueries): void {
-            $teamQueries += str_contains($query->sql, 'from "teams"') ? 1 : 0;
+            $teamQueries += str_contains($query->sql, 'from '.DB::getQueryGrammar()->wrapTable('teams')) ? 1 : 0;
         });
 
         $this->user->hasRole('role_c', 'team_a');
@@ -315,6 +368,16 @@ class PermissionRegistryTest extends LaratrustTestCase
         $this->assertSame(0, DB::table('permission_user')->whereNotNull('team_id')->count());
     }
 
+    public function test_a_user_model_extending_another_one_has_its_own_cache_key(): void
+    {
+        $this->app['config']->set('laratrust.user_models', ['users' => User::class, 'admins' => AdminUser::class]);
+
+        $this->assertSame("laratrust_user_users_{$this->user->id}", $this->user->laratrustCacheKey());
+        $this->assertSame("laratrust_user_admins_{$this->user->id}", AdminUser::find($this->user->id)->laratrustCacheKey());
+        // A subclass that isn't configured uses its parent's key.
+        $this->assertSame("laratrust_user_users_{$this->user->id}", UnlistedUser::find($this->user->id)->laratrustCacheKey());
+    }
+
     public function test_the_cache_keys_can_be_customized(): void
     {
         $this->app['config']->set('laratrust.cache.enabled', true);
@@ -375,8 +438,8 @@ class PermissionRegistryTest extends LaratrustTestCase
         $roleId = Role::where('name', 'role_a')->value('id');
 
         // Same role id, different tenants: each tenant caches its own permissions for it.
-        Cache::put("tenant_a_role_{$roleId}", ['tenant_a.permission']);
-        Cache::put("tenant_b_role_{$roleId}", ['tenant_b.permission']);
+        Cache::put("tenant_a_role_{$roleId}", ['name' => 'role_a', 'permissions' => ['tenant_a.permission']]);
+        Cache::put("tenant_b_role_{$roleId}", ['name' => 'role_a', 'permissions' => ['tenant_b.permission']]);
 
         $this->app['config']->set('laratrust.models.role', TenantARole::class);
         $this->assertTrue($this->user->isAbleTo('tenant_a.permission'));
@@ -506,3 +569,9 @@ class TenantBUser extends User
         return "tenant_b_user_{$this->getKey()}";
     }
 }
+
+#[Table(name: 'users')]
+class AdminUser extends User {}
+
+#[Table(name: 'users')]
+class UnlistedUser extends User {}

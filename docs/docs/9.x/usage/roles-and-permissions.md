@@ -69,6 +69,8 @@ $owner->removePermissions([$createPost, $editUser]); // parameter can be a Permi
 // equivalent to $owner->permissions()->detach([$createPost->id, $editUser->id]);
 ```
 
+Giving a role a permission it already has does nothing. `removePermissions([])` removes nothing: to remove all the permissions, use `$owner->syncPermissions([])`.
+
 ## User Roles Assignment & Removal
 
 With both roles created let's assign them to the users.
@@ -99,6 +101,8 @@ $user->removeRoles([$admin, $owner]); // parameter can be a Role object, BackedE
 // equivalent to $user->roles()->detach([$admin->id, $owner->id]);
 ```
 
+Adding a role the user already has does nothing, and dispatches no event. `removeRoles([])` removes nothing: to remove all the roles, use `$user->syncRoles([])`.
+
 ## User Permissions Assignment & Removal
 
 You can give single permissions to a user, so in order to do it you only have to make:
@@ -128,6 +132,8 @@ $user->removePermission($createPost); // parameter can be a Permission object, a
 $user->removePermissions([$createPost, $editUser]); // parameter can be a Permission object, array, id or the permission string name
 // equivalent to $user->permissions()->detach([$createPost->id, $editUser->id]);
 ```
+
+Like with the roles, giving a permission the user already has does nothing, and `removePermissions([])` removes nothing: to remove them all, use `$user->syncPermissions([])`.
 
 ## Checking for Roles & Permissions
 
@@ -228,9 +234,12 @@ If you set the `permissions_as_gates` value to `true` in your `config/laratrust.
 ```php
 $user->can('edit-user');
 $user->can('edit-user', 'my-awesome-team'); // With a team.
+$user->can('edit-user', [$team, true]); // With a team and requireAll.
 ```
 
 When the user doesn't have the permission, Laravel goes on with your gates and policies, so they keep working.
+
+The team is the first argument that is a team model, a backed enum, a uuid, an id or a name. Other models are what your policies check, so they're never taken for the team: `$user->can('edit-post', $post)` checks the `edit-post` permission without a team, never in the team whose id is `$post->id`.
 
 ## User ability
 
@@ -315,7 +324,7 @@ When the cache is enabled, Laratrust also stores the roles and permissions in yo
 ],
 ```
 
-The permissions of each role are cached once, not copied into each user. When you change the permissions of a role, all the users with that role see the change.
+The name and the permissions of each role are cached once, not copied into each user. When you rename a role, delete it or change its permissions, all the users with that role see the change.
 
 ### Flushing the cache
 
@@ -338,6 +347,24 @@ $admin->flushLaratrustCache();
 ::: tip NOTE
 You have to flush also when the cache is disabled, because the roles and permissions are kept for the current request.
 :::
+
+::: warning
+A request that reads the roles and permissions from the database while another one changes them can put the old ones back in the cache, right after the change flushed it. They stay there until they expire (`expiration_time`), or until the next change of that user or role flushes them again. This window is very short, but if a revoked permission must never be used again, keep `expiration_time` low, or flush the user again a moment after the change, e.g. from a delayed job.
+:::
+
+### Long-running processes
+
+Laravel forgets the loaded roles and permissions between requests, queue jobs and Octane requests. A process that doesn't go through any of them, e.g. a daemon command that loops, keeps them until it calls `Laratrust::reset()`:
+
+```php
+use Laratrust\LaratrustFacade as Laratrust;
+
+while (true) {
+    Laratrust::reset(); // The next checks read the cache or the database again.
+
+    // ...
+}
+```
 
 ### Cache keys
 
@@ -363,3 +390,7 @@ class Role extends RoleModel
     }
 }
 ```
+
+::: warning
+Use only the model's key and your application's context (like the current tenant) in `laratrustCacheKey()`, not other attributes. To flush them, Laratrust loads the users and roles with only their key.
+:::

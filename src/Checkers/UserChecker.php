@@ -93,7 +93,7 @@ final readonly class UserChecker
 
         $options = $this->validateAndSetDefaults($options);
 
-        if ($options['return_type'] == 'boolean') {
+        if ($options['return_type'] === 'boolean') {
             $hasRoles = $this->hasRole($roles, $team, $options['validate_all']);
             $hasPermissions = $this->hasPermission($permissions, $team, $options['validate_all']);
 
@@ -113,10 +113,10 @@ final readonly class UserChecker
 
         // If validate all, there should not be any false; otherwise there must be at least one true.
         $passes = $options['validate_all']
-            ? ! in_array(false, $checkedRoles) && ! in_array(false, $checkedPermissions)
-            : in_array(true, $checkedRoles) || in_array(true, $checkedPermissions);
+            ? ! in_array(false, $checkedRoles, true) && ! in_array(false, $checkedPermissions, true)
+            : in_array(true, $checkedRoles, true) || in_array(true, $checkedPermissions, true);
 
-        if ($options['return_type'] == 'array') {
+        if ($options['return_type'] === 'array') {
             return ['roles' => $checkedRoles, 'permissions' => $checkedPermissions];
         }
 
@@ -206,8 +206,12 @@ final readonly class UserChecker
         $validateAll = $options['validate_all'] ?? false;
         $returnType = $options['return_type'] ?? 'boolean';
 
-        if (! is_bool($validateAll) || ! in_array($returnType, ['boolean', 'array', 'both'], true)) {
-            throw new InvalidArgumentException;
+        if (! is_bool($validateAll)) {
+            throw new InvalidArgumentException('The ability() "validate_all" option must be a boolean.');
+        }
+
+        if (! in_array($returnType, ['boolean', 'array', 'both'], true)) {
+            throw new InvalidArgumentException('The ability() "return_type" option must be "boolean", "array" or "both".');
         }
 
         return ['validate_all' => $validateAll, 'return_type' => $returnType];

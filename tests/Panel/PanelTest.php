@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Panel;
 
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Js;
 use Laratrust\Tests\LaratrustTestCase;
 use Laratrust\Tests\Models\Permission;
 use Laratrust\Tests\Models\Role;
+use Laratrust\Tests\Models\Team;
 use Laratrust\Tests\Models\User;
 
 class PanelTest extends LaratrustTestCase
@@ -29,6 +31,7 @@ class PanelTest extends LaratrustTestCase
 
         $this->migrate();
         $this->user = User::create(['name' => 'test', 'email' => 'test@test.com']);
+        Gate::define('viewLaratrust', fn (?User $user = null): bool => true);
     }
 
     public function test_the_pages_render(): void
@@ -165,6 +168,79 @@ class PanelTest extends LaratrustTestCase
 
         $this->assertTrue($this->user->hasRole('locked'));
         $this->assertFalse($this->user->hasRole('other'));
+
+        // Without the hidden input, e.g. a crafted request, the role is kept too.
+        $this->put('/laratrust/roles-assignment/'.$this->user->id.'?model=users', ['roles' => []]);
+        $this->assertTrue($this->user->hasRole('locked'));
+    }
+
+    public function test_the_panel_is_only_open_in_the_local_environment_by_default(): void
+    {
+        // The gate defined by Laratrust, as if the application didn't define its own.
+        Gate::define('viewLaratrust', fn (?User $user = null): bool => $this->app->environment('local'));
+
+        $this->get('/laratrust/roles')->assertForbidden();
+
+        $this->app['env'] = 'local';
+        $this->get('/laratrust/roles')->assertOk();
+    }
+
+    public function test_the_application_defines_who_can_open_the_panel(): void
+    {
+        Gate::define('viewLaratrust', fn (?User $user = null): bool => $user?->hasRole('admin') ?? false);
+        $this->user->addRole(Role::create(['name' => 'admin']));
+
+        $this->get('/laratrust/roles')->assertForbidden();
+        $this->actingAs(User::create(['name' => 'other', 'email' => 'other@test.com']))->get('/laratrust/roles')->assertForbidden();
+        $this->actingAs($this->user)->get('/laratrust/roles')->assertOk();
+    }
+
+    public function test_the_submitted_keys_are_validated(): void
+    {
+        $role = Role::create(['name' => 'role_a']);
+        $this->user->addRole($role);
+        $url = '/laratrust/roles-assignment/'.$this->user->id.'?model=users';
+
+        $this->put($url, ['roles' => 'role_a'])->assertSessionHasErrors('roles');
+        $this->put($url, ['roles' => [['id' => $role->id]]])->assertSessionHasErrors('roles.0');
+        $this->put($url, ['roles' => [999]])->assertSessionHasErrors('roles.0');
+        $this->post('/laratrust/roles', ['name' => 'role_b', 'permissions' => [999]])->assertSessionHasErrors('permissions.0');
+
+        $this->assertTrue($this->user->hasRole('role_a'));
+        $this->assertFalse(Role::where('name', 'role_b')->exists());
+    }
+
+    public function test_the_assignments_are_edited_per_team(): void
+    {
+        $this->app['config']->set('laratrust.teams.enabled', true);
+        $this->app['config']->set('laratrust.teams.strict_check', true);
+        $team = Team::create(['name' => 'team_a', 'display_name' => 'Team A']);
+        $admin = Role::create(['name' => 'admin', 'display_name' => 'Admin']);
+        $editor = Role::create(['name' => 'editor', 'display_name' => 'Editor']);
+        $permission = Permission::create(['name' => 'permission_a']);
+        $this->user->addRole($admin, $team);
+        $edit = '/laratrust/roles-assignment/'.$this->user->id.'/edit?model=users';
+        $update = '/laratrust/roles-assignment/'.$this->user->id.'?model=users';
+
+        // Without a team, the role assigned in the team isn't shown as assigned.
+        $this->get($edit)->assertOk()->assertSee('Team A')->assertDontSeeHtml('value="'.$admin->id.'" checked');
+        $this->get($edit.'&team='.$team->id)->assertOk()->assertSeeHtml('value="'.$admin->id.'" checked');
+        $this->get($edit.'&team=999')->assertNotFound();
+
+        // Saving without a team never turns the team's role into one without a team.
+        $this->put($update, ['roles' => [$editor->id]])->assertRedirect('/laratrust/roles-assignment?model=users');
+        $this->assertTrue($this->user->hasRole('admin', $team));
+        $this->assertFalse($this->user->hasRole('admin'));
+        $this->assertTrue($this->user->hasRole('editor'));
+        $this->assertFalse($this->user->hasRole('editor', $team));
+
+        // Saving in the team only changes the team's assignments.
+        $this->put($update.'&team='.$team->id, ['roles' => [$editor->id], 'permissions' => [$permission->id]]);
+        $this->assertFalse($this->user->hasRole('admin', $team));
+        $this->assertTrue($this->user->hasRole('editor', $team));
+        $this->assertTrue($this->user->isAbleTo('permission_a', $team));
+        $this->assertFalse($this->user->isAbleTo('permission_a'));
+        $this->assertTrue($this->user->hasRole('editor'));
     }
 
     public function test_values_reach_alpine_without_html_escaping(): void

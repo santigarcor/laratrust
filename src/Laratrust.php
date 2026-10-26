@@ -8,6 +8,7 @@ use BackedEnum;
 use Illuminate\Contracts\Auth\Factory as AuthFactory;
 use Illuminate\Contracts\Foundation\Application;
 use Laratrust\Contracts\LaratrustUser;
+use Laratrust\Support\PermissionRegistry;
 
 /**
  * Checks for the authenticated user, used by the Laratrust facade and the Blade directives.
@@ -110,6 +111,17 @@ class Laratrust
         }
 
         return false;
+    }
+
+    /**
+     * Forget the roles and permissions loaded in this process, so the next checks read them again.
+     *
+     * Laravel already does it between requests and queue jobs. Call it in long-running processes
+     * that don't, e.g. a daemon command, after the roles or permissions changed.
+     */
+    public function reset(): void
+    {
+        $this->app->make(PermissionRegistry::class)->reset();
     }
 
     /**

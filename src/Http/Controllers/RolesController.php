@@ -8,11 +8,14 @@ use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
+use Illuminate\Validation\Rule;
 use Laratrust\Panel\RoleRestrictions;
+use Laratrust\Panel\SubmittedKeys;
 use Laratrust\Support\ModelClasses;
 
 class RolesController
@@ -42,8 +45,10 @@ class RolesController
 
     public function show(string $id): ViewContract
     {
+        $permission = new (ModelClasses::permission());
+
         $role = ModelClasses::role()::query()
-            ->with(['permissions' => fn ($query) => $query->select($query->getRelated()->qualifyColumns(['id', 'name', 'display_name']))])
+            ->with(['permissions' => fn ($query) => $query->select($permission->qualifyColumns([$permission->getKeyName(), 'name', 'display_name']))])
             ->findOrFail($id);
 
         return View::make('laratrust::panel.roles.show', ['role' => $role]);
@@ -52,12 +57,15 @@ class RolesController
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name' => ['required', 'string', 'unique:'.Config::get('laratrust.tables.roles').',name'],
+            'name' => ['required', 'string', Rule::unique(ModelClasses::role(), 'name')],
             'display_name' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
+            ...SubmittedKeys::rules('permissions', ModelClasses::permission()),
         ]);
 
-        ModelClasses::role()::query()->create($data)->syncPermissions($request->input('permissions', []));
+        ModelClasses::role()::query()
+            ->create(Arr::except($data, 'permissions'))
+            ->syncPermissions(SubmittedKeys::assignable($data['permissions'] ?? []));
 
         Session::flash('laratrust-success', 'Role created successfully');
 
@@ -98,11 +106,14 @@ class RolesController
             return back();
         }
 
-        $role->update($request->validate([
+        $data = $request->validate([
             'display_name' => ['nullable', 'string'],
             'description' => ['nullable', 'string'],
-        ]));
-        $role->syncPermissions($request->input('permissions', []));
+            ...SubmittedKeys::rules('permissions', ModelClasses::permission()),
+        ]);
+
+        $role->update(Arr::except($data, 'permissions'));
+        $role->syncPermissions(SubmittedKeys::assignable($data['permissions'] ?? []));
 
         Session::flash('laratrust-success', 'Role updated successfully');
 

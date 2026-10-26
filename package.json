@@ -1,6 +1,6 @@
 {
   "name": "laratrust",
-  "version": "5.1.0",
+  "version": "9.0.0",
   "description": "Laratrust docs and admin panel assets",
   "directories": {
     "doc": "docs",

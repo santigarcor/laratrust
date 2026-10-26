@@ -69,7 +69,14 @@ To get all the users with a set of roles, you can pass an array to the scope:
 ```php
 // This acts as a whereIn check in the database.
 $users = User::whereHasRole(['admin', 'regular-user'])->get();
+
+// Like in the checks, pipes separate the names.
+$users = User::whereHasRole('admin|regular-user')->get();
 ```
+
+::: tip NOTE
+The scopes don't support wildcards: `whereHasPermission('admin.*')` looks for a permission named `admin.*`.
+:::
 
 With the teams feature, you can pass the team as the second argument. The team is the one the role was added within:
 

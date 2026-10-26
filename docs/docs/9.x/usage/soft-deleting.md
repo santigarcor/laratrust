@@ -14,3 +14,5 @@ $role->restore();
 // Force delete: the role's users and permissions are removed from the pivot tables.
 $role->forceDelete();
 ```
+
+While a role is soft deleted, the checks ignore it: its users don't have it nor its permissions until it's restored.

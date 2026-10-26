@@ -12,6 +12,8 @@ seeders:
   - Workbench\Database\Seeders\DatabaseSeeder
 
 env:
+  # "local" opens the panel: its "viewLaratrust" gate only allows the local environment by default.
+  - APP_ENV=local
   - APP_KEY="base64:R3Lx2Zl4X0W2m7v8b8cQ1p0yQ9mYb0b8j5mZ2n1e3gA="
   - DB_CONNECTION=sqlite
   - SESSION_DRIVER=file

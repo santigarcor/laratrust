@@ -135,7 +135,12 @@ class RoleModelTest extends LaratrustTestCase
         ];
         $this->role->givePermissions($perms);
 
-        $this->assertInstanceOf(Role::class, $this->role->removePermissions());
+        // An empty list removes nothing, syncing an empty list removes them all.
+        $this->assertInstanceOf(Role::class, $this->role->removePermissions([]));
+        $this->assertInstanceOf(Role::class, $this->role->removePermissions(collect()));
+        $this->assertCount(3, $this->role->permissions()->get()->toArray());
+
+        $this->role->syncPermissions([]);
         $this->assertCount(0, $this->role->permissions()->get()->toArray());
     }
 

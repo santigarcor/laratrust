@@ -52,7 +52,7 @@ class Role extends Model implements RoleContract
             $role->flushLaratrustCache();
         };
 
-        // If the role doesn't use SoftDeletes.
+        // If the role uses SoftDeletes.
         if (method_exists(static::class, 'restored')) {
             static::restored($flushLaratrustCache);
         }
@@ -131,10 +131,11 @@ class Role extends Model implements RoleContract
      */
     public function syncPermissions(iterable $permissions): static
     {
+        $registry = app(PermissionRegistry::class);
         $mappedPermissions = [];
 
         foreach ($permissions as $permission) {
-            $mappedPermissions[] = app(PermissionRegistry::class)->idFor($permission, 'permission');
+            $mappedPermissions[] = $registry->idFor($permission, 'permission');
         }
 
         $changes = $this->permissions()->sync($mappedPermissions);
@@ -150,6 +151,11 @@ class Role extends Model implements RoleContract
     public function givePermission(array|string|int|Model|UuidInterface|BackedEnum $permission): static
     {
         $permission = app(PermissionRegistry::class)->idFor($permission, 'permission');
+
+        // Giving a permission the role already has does nothing.
+        if ($this->permissions()->newPivotStatementForId($permission)->exists()) {
+            return $this;
+        }
 
         $this->permissions()->attach($permission);
         $this->flushLaratrustCache();
@@ -185,16 +191,12 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @param  iterable<Assignable>|null  $permissions
+     * Remove the given permissions. An empty list removes nothing: to remove them all, use syncPermissions([]).
+     *
+     * @param  iterable<Assignable>  $permissions
      */
-    public function removePermissions(?iterable $permissions = null): static
+    public function removePermissions(iterable $permissions): static
     {
-        if (! $permissions) {
-            $this->syncPermissions([]);
-
-            return $this;
-        }
-
         foreach ($permissions as $permission) {
             $this->removePermission($permission);
         }
