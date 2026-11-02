@@ -53,7 +53,7 @@ trait HasRolesAndPermissions
 
         static::deleting(function (self $user): void {
             // Soft deleting keeps the assignments, so the user can be restored with them.
-            if (method_exists($user, 'isForceDeleting') && ! $user->isForceDeleting()) {
+            if (method_exists($user, 'isForceDeleting') && !$user->isForceDeleting()) {
                 return;
             }
 
@@ -91,7 +91,7 @@ trait HasRolesAndPermissions
      */
     public function rolesTeams(): ?MorphToMany
     {
-        if (! Config::get('laratrust.teams.enabled')) {
+        if (!Config::get('laratrust.teams.enabled')) {
             return null;
         }
 
@@ -112,7 +112,7 @@ trait HasRolesAndPermissions
      */
     public function permissionsTeams(): ?MorphToMany
     {
-        if (! Config::get('laratrust.teams.enabled')) {
+        if (!Config::get('laratrust.teams.enabled')) {
             return null;
         }
 
@@ -129,12 +129,13 @@ trait HasRolesAndPermissions
     /**
      * Get the teams the user has a role or a permission in.
      *
-     * @param  array<int, string>|null  $columns
+     * @param array<int, string>|null $columns
+     *
      * @return Collection<int, Model>
      */
     public function allTeams(?array $columns = null): Collection
     {
-        if (! Config::get('laratrust.teams.enabled')) {
+        if (!Config::get('laratrust.teams.enabled')) {
             return Collection::make();
         }
 
@@ -195,7 +196,7 @@ trait HasRolesAndPermissions
     /**
      * Checks if the user has a role by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $name
+     * @param string|array<string|BackedEnum>|BackedEnum $name
      */
     public function hasRole(
         string|array|BackedEnum $name,
@@ -212,7 +213,7 @@ trait HasRolesAndPermissions
     /**
      * Check if user has a permission by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function hasPermission(
         string|array|BackedEnum $permission,
@@ -229,20 +230,20 @@ trait HasRolesAndPermissions
     /**
      * Check if user does not have a permission by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function doesntHavePermission(
         string|array|BackedEnum $permission,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
-        return ! $this->hasPermission($permission, $team, $requireAll);
+        return !$this->hasPermission($permission, $team, $requireAll);
     }
 
     /**
      * Check if user has a permission by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function isAbleTo(
         string|array|BackedEnum $permission,
@@ -255,26 +256,27 @@ trait HasRolesAndPermissions
     /**
      * Check if user does not have a permission by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function isNotAbleTo(
         string|array|BackedEnum $permission,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
-        return ! $this->isAbleTo($permission, $team, $requireAll);
+        return !$this->isAbleTo($permission, $team, $requireAll);
     }
 
     /**
      * Checks role(s) and permission(s).
      *
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $roles
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permissions
-     * @param  array{validate_all?: bool, return_type?: 'boolean'|'array'|'both'}  $options
-     * @return bool|array{roles: array<string, bool>, permissions: array<string, bool>}|array{bool, array{roles: array<string, bool>, permissions: array<string, bool>}}
+     * @param string|array<string|BackedEnum>|BackedEnum                         $roles
+     * @param string|array<string|BackedEnum>|BackedEnum                         $permissions
+     * @param array{validate_all?: bool, return_type?: 'boolean'|'array'|'both'} $options
      *
      * @throws InvalidArgumentException
+     *
+     * @return bool|array{roles: array<string, bool>, permissions: array<string, bool>}|array{bool, array{roles: array<string, bool>, permissions: array<string, bool>}}
      */
     public function ability(
         string|array|BackedEnum $roles,
@@ -293,8 +295,8 @@ trait HasRolesAndPermissions
     /**
      * Alias to eloquent many-to-many relation's attach() method.
      *
-     * @param  Assignable  $object
-     * @param  Assignable|null  $team
+     * @param Assignable      $object
+     * @param Assignable|null $team
      */
     private function attachLaratrustModel(
         string $relationship,
@@ -331,8 +333,8 @@ trait HasRolesAndPermissions
     /**
      * Alias to eloquent many-to-many relation's detach() method.
      *
-     * @param  Assignable  $object
-     * @param  Assignable|null  $team
+     * @param Assignable      $object
+     * @param Assignable|null $team
      */
     private function detachLaratrustModel(
         string $relationship,
@@ -366,8 +368,8 @@ trait HasRolesAndPermissions
     /**
      * Alias to eloquent many-to-many relation's sync() method.
      *
-     * @param  array<array-key, Assignable>  $objects
-     * @param  Assignable|null  $team
+     * @param array<array-key, Assignable> $objects
+     * @param Assignable|null              $team
      */
     private function syncLaratrustModels(
         string $relationship,
@@ -408,7 +410,7 @@ trait HasRolesAndPermissions
     /**
      * Add a role to the user.
      *
-     * @param  Assignable  $role
+     * @param Assignable $role
      */
     public function addRole(
         array|string|int|Model|UuidInterface|BackedEnum $role,
@@ -420,7 +422,7 @@ trait HasRolesAndPermissions
     /**
      * Remove a role from the user.
      *
-     * @param  Assignable  $role
+     * @param Assignable $role
      */
     public function removeRole(
         array|string|int|Model|UuidInterface|BackedEnum $role,
@@ -432,7 +434,7 @@ trait HasRolesAndPermissions
     /**
      * Add multiple roles to a user.
      *
-     * @param  array<array-key, Assignable>  $roles
+     * @param array<array-key, Assignable> $roles
      */
     public function addRoles(
         array $roles = [],
@@ -448,7 +450,7 @@ trait HasRolesAndPermissions
     /**
      * Remove multiple roles from a user. An empty list removes nothing: to remove them all, use syncRoles([]).
      *
-     * @param  array<array-key, Assignable>  $roles
+     * @param array<array-key, Assignable> $roles
      */
     public function removeRoles(
         array $roles,
@@ -464,7 +466,7 @@ trait HasRolesAndPermissions
     /**
      * Sync roles to the user.
      *
-     * @param  array<array-key, Assignable>  $roles
+     * @param array<array-key, Assignable> $roles
      */
     public function syncRoles(
         array $roles = [],
@@ -477,7 +479,7 @@ trait HasRolesAndPermissions
     /**
      * Sync roles to the user without detaching.
      *
-     * @param  array<array-key, Assignable>  $roles
+     * @param array<array-key, Assignable> $roles
      */
     public function syncRolesWithoutDetaching(
         array $roles = [],
@@ -489,7 +491,7 @@ trait HasRolesAndPermissions
     /**
      * Add direct permissions to the user.
      *
-     * @param  Assignable  $permission
+     * @param Assignable $permission
      */
     public function givePermission(
         array|string|int|Model|UuidInterface|BackedEnum $permission,
@@ -501,7 +503,7 @@ trait HasRolesAndPermissions
     /**
      * Remove direct permissions from the user.
      *
-     * @param  Assignable  $permission
+     * @param Assignable $permission
      */
     public function removePermission(
         array|string|int|Model|UuidInterface|BackedEnum $permission,
@@ -513,7 +515,7 @@ trait HasRolesAndPermissions
     /**
      * Add multiple permissions to the user.
      *
-     * @param  array<array-key, Assignable>  $permissions
+     * @param array<array-key, Assignable> $permissions
      */
     public function givePermissions(
         array $permissions = [],
@@ -529,7 +531,7 @@ trait HasRolesAndPermissions
     /**
      * Remove multiple permissions from the user. An empty list removes nothing: to remove them all, use syncPermissions([]).
      *
-     * @param  array<array-key, Assignable>  $permissions
+     * @param array<array-key, Assignable> $permissions
      */
     public function removePermissions(
         array $permissions,
@@ -545,7 +547,7 @@ trait HasRolesAndPermissions
     /**
      * Sync permissions to the user.
      *
-     * @param  array<array-key, Assignable>  $permissions
+     * @param array<array-key, Assignable> $permissions
      */
     public function syncPermissions(
         array $permissions = [],
@@ -558,7 +560,7 @@ trait HasRolesAndPermissions
     /**
      * Sync permissions to the user without detaching.
      *
-     * @param  array<array-key, Assignable>  $permissions
+     * @param array<array-key, Assignable> $permissions
      */
     public function syncPermissionsWithoutDetaching(
         array $permissions = [],
@@ -571,7 +573,8 @@ trait HasRolesAndPermissions
      * Return all the user permissions.
      *
      *
-     * @param  array<int, string>|null  $columns
+     * @param array<int, string>|null $columns
+     *
      * @return Collection<int, Model>
      */
     public function allPermissions(?array $columns = null, mixed $team = false): Collection

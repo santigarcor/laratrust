@@ -15,8 +15,8 @@ use Laratrust\Support\ModelClasses;
 use Laratrust\Support\PermissionRegistry;
 
 /**
- * @property int|string $id
- * @property string $name
+ * @property int|string  $id
+ * @property string      $name
  * @property string|null $display_name
  * @property string|null $description
  * @property Carbon|null $created_at
@@ -51,7 +51,7 @@ class Team extends Model implements TeamContract
 
         static::deleting(function (self $team): void {
             // Soft deleting keeps the assignments, so the model can be restored with them.
-            if (method_exists($team, 'isForceDeleting') && ! $team->isForceDeleting()) {
+            if (method_exists($team, 'isForceDeleting') && !$team->isForceDeleting()) {
                 return;
             }
 

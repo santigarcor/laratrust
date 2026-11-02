@@ -13,8 +13,8 @@ class Permission extends LaratrustMiddleware
     /**
      * Build the middleware string, e.g. Permission::using('a|b', team: 'my-team', requireAll: true, guards: ['api']).
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permissions
-     * @param  string|list<string>  $guards
+     * @param string|array<string|BackedEnum>|BackedEnum $permissions
+     * @param string|list<string>                        $guards
      */
     public static function using(
         string|array|BackedEnum $permissions,
@@ -34,7 +34,7 @@ class Permission extends LaratrustMiddleware
         string $permissions,
         string ...$parameters
     ): mixed {
-        if (! $this->authorization('permissions', $permissions, $parameters)) {
+        if (!$this->authorization('permissions', $permissions, $parameters)) {
             return $this->unauthorized();
         }
 

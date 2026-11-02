@@ -55,7 +55,7 @@ class MigrationCommand extends Command
 
         $this->line('');
 
-        if (! $this->confirm('Proceed with the migration creation?', $defaultAnswer)) {
+        if (!$this->confirm('Proceed with the migration creation?', $defaultAnswer)) {
             return;
         }
 
@@ -83,7 +83,7 @@ class MigrationCommand extends Command
     protected function generateMigrationMessage(): string
     {
         $tables = Collection::make(Config::array('laratrust.tables'))
-            ->reject(fn (string $table, string $key): bool => $key === 'teams' && ! Config::get('laratrust.teams.enabled'))
+            ->reject(fn (string $table, string $key): bool => $key === 'teams' && !Config::get('laratrust.teams.enabled'))
             ->sort();
 
         return "A migration that creates {$tables->implode(', ')} "

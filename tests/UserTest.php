@@ -135,7 +135,6 @@ class UserTest extends LaratrustTestCase
         $this->assertArrayHasKey('id', $onlySomeColumns);
         $this->assertArrayHasKey('name', $onlySomeColumns);
         $this->assertArrayNotHasKey('displayName', $onlySomeColumns);
-
     }
 
     public function test_is_able_to(): void
@@ -714,7 +713,6 @@ class UserTest extends LaratrustTestCase
             ['permission_d'],
             $this->user->allPermissions(null, 'team_b')->sortBy('name')->pluck('name')->all()
         );
-
     }
 
     public function test_many_to_many_records_are_removed(): void

@@ -102,7 +102,7 @@ class MiddlewareRequestsTest extends LaratrustTestCase
     {
         $this->app['config']->set('laratrust.middleware.handling', 'redirect');
         $this->app['config']->set('laratrust.middleware.handlers.redirect.message', [
-            'key' => 'error',
+            'key'     => 'error',
             'content' => 'laratrust.unauthorized',
         ]);
         $this->app['translator']->addLines(['laratrust.unauthorized' => 'No tienes acceso.'], 'es');
@@ -164,22 +164,22 @@ class MiddlewareRequestsTest extends LaratrustTestCase
     public static function parameters(): array
     {
         return [
-            'nothing' => [[], ['team' => null, 'require_all' => false, 'guards' => ['web']]],
-            'team' => [['team_a'], ['team' => 'team_a', 'require_all' => false, 'guards' => ['web']]],
-            'guards' => [['guard:web|admin'], ['team' => null, 'require_all' => false, 'guards' => ['web', 'admin']]],
-            'team, require all, guards' => [['team_a', 'require_all', 'guard:web|admin'], ['team' => 'team_a', 'require_all' => true, 'guards' => ['web', 'admin']]],
-            'guards with commas' => [['guard:web', 'admin'], ['team' => null, 'require_all' => false, 'guards' => ['web', 'admin']]],
+            'nothing'                          => [[], ['team' => null, 'require_all' => false, 'guards' => ['web']]],
+            'team'                             => [['team_a'], ['team' => 'team_a', 'require_all' => false, 'guards' => ['web']]],
+            'guards'                           => [['guard:web|admin'], ['team' => null, 'require_all' => false, 'guards' => ['web', 'admin']]],
+            'team, require all, guards'        => [['team_a', 'require_all', 'guard:web|admin'], ['team' => 'team_a', 'require_all' => true, 'guards' => ['web', 'admin']]],
+            'guards with commas'               => [['guard:web', 'admin'], ['team' => null, 'require_all' => false, 'guards' => ['web', 'admin']]],
             '8.x: everything in one parameter' => [['team_a', 'require_all|guard:web|admin'], ['team' => 'team_a', 'require_all' => true, 'guards' => ['web', 'admin']]],
-            'guards, then require all' => [['guard:web', 'admin', 'require_all'], ['team' => null, 'require_all' => true, 'guards' => ['web', 'admin']]],
-            '8.x: options in the team slot' => [['require_all|guard:api'], ['team' => null, 'require_all' => true, 'guards' => ['api']]],
-            '8.x: team and options' => [['team_a', 'guard:api|require_all'], ['team' => 'team_a', 'require_all' => true, 'guards' => ['api']]],
-            '8.x: pipe-separated guards' => [['guard:web|guard:admin'], ['team' => null, 'require_all' => false, 'guards' => ['web', 'admin']]],
+            'guards, then require all'         => [['guard:web', 'admin', 'require_all'], ['team' => null, 'require_all' => true, 'guards' => ['web', 'admin']]],
+            '8.x: options in the team slot'    => [['require_all|guard:api'], ['team' => null, 'require_all' => true, 'guards' => ['api']]],
+            '8.x: team and options'            => [['team_a', 'guard:api|require_all'], ['team' => 'team_a', 'require_all' => true, 'guards' => ['api']]],
+            '8.x: pipe-separated guards'       => [['guard:web|guard:admin'], ['team' => null, 'require_all' => false, 'guards' => ['web', 'admin']]],
         ];
     }
 
     /**
-     * @param  list<string>  $parameters
-     * @param  array{team: string|null, require_all: bool, guards: array<int, string|null>}  $expected
+     * @param list<string>                                                                 $parameters
+     * @param array{team: string|null, require_all: bool, guards: array<int, string|null>} $expected
      */
     #[DataProvider('parameters')]
     public function test_the_parameters_are_parsed(array $parameters, array $expected): void
@@ -200,15 +200,16 @@ class MiddlewareRequestsTest extends LaratrustTestCase
     }
 
     /**
-     * @param  list<string>  $parameters
+     * @param list<string> $parameters
+     *
      * @return array{team: string|null, require_all: bool, guards: array<int, string|null>}
      */
     protected function parse(array $parameters): array
     {
-        return (new class extends RoleMiddleware
-        {
+        return (new class() extends RoleMiddleware {
             /**
-             * @param  list<string>  $parameters
+             * @param list<string> $parameters
+             *
              * @return array{team: string|null, require_all: bool, guards: array<int, string|null>}
              */
             public function parse(array $parameters): array

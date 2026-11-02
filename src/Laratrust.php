@@ -19,12 +19,14 @@ class Laratrust
     /**
      * Create a new Laratrust instance.
      */
-    public function __construct(public Application $app) {}
+    public function __construct(public Application $app)
+    {
+    }
 
     /**
      * Check if the current user has a role by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $role
+     * @param string|array<string|BackedEnum>|BackedEnum $role
      */
     public function hasRole(
         string|array|BackedEnum $role,
@@ -41,7 +43,7 @@ class Laratrust
     /**
      * Check if the current user has a permission by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function hasPermission(
         string|array|BackedEnum $permission,
@@ -58,21 +60,21 @@ class Laratrust
     /**
      * Check if the current user does not have a permission by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function doesntHavePermission(
         string|array|BackedEnum $permission,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
-        return ! $this->hasPermission($permission, $team, $requireAll);
+        return !$this->hasPermission($permission, $team, $requireAll);
     }
 
     /**
      * Check if the current user has a permission by its name.
      * Alias to hasPermission.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function isAbleTo(
         string|array|BackedEnum $permission,
@@ -86,7 +88,7 @@ class Laratrust
      * Check if the current user does not have a permission by its name.
      * Alias to doesntHavePermission.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function isNotAbleTo(
         string|array|BackedEnum $permission,
@@ -99,9 +101,10 @@ class Laratrust
     /**
      * Check if the current user has a role or permission by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $roles
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permissions
-     * @param  array{validate_all?: bool, return_type?: 'boolean'|'array'|'both'}  $options
+     * @param string|array<string|BackedEnum>|BackedEnum                         $roles
+     * @param string|array<string|BackedEnum>|BackedEnum                         $permissions
+     * @param array{validate_all?: bool, return_type?: 'boolean'|'array'|'both'} $options
+     *
      * @return bool|array{roles: array<string, bool>, permissions: array<string, bool>}|array{bool, array{roles: array<string, bool>, permissions: array<string, bool>}}
      */
     public function ability(string|array|BackedEnum $roles, string|array|BackedEnum $permissions, mixed $team = null, array $options = []): bool|array

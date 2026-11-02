@@ -28,7 +28,7 @@ class MultipleUserModelsTest extends LaratrustTestCase
 
         $this->app['config']->set('laratrust.use_morph_map', true);
         $this->app['config']->set('laratrust.user_models', [
-            'users' => User::class,
+            'users'  => User::class,
             'others' => Other::class,
         ]);
 
@@ -99,7 +99,7 @@ class MultipleUserModelsTest extends LaratrustTestCase
         ];
 
         foreach ($migrations as $migration) {
-            (new $migration)->up();
+            (new $migration())->up();
         }
     }
 }

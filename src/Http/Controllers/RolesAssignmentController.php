@@ -33,9 +33,9 @@ class RolesAssignmentController
         abort_unless(in_array($modelKey, $models, true), 404);
 
         return View::make('laratrust::panel.roles-assignment.index', [
-            'models' => $models,
+            'models'   => $models,
             'modelKey' => $modelKey,
-            'users' => ModelClasses::user($modelKey)::query()
+            'users'    => ModelClasses::user($modelKey)::query()
                 ->withCount(['roles', 'permissions'])
                 ->simplePaginate(10),
         ]);
@@ -45,7 +45,7 @@ class RolesAssignmentController
     {
         $modelKey = $request->string('model')->toString();
 
-        if (! in_array($modelKey, ModelClasses::userRelationships(), true)) {
+        if (!in_array($modelKey, ModelClasses::userRelationships(), true)) {
             Session::flash('laratrust-error', 'Model was not specified in the request');
 
             return to_route('laratrust.roles-assignment.index');
@@ -80,12 +80,12 @@ class RolesAssignmentController
         }
 
         return View::make('laratrust::panel.roles-assignment.edit', [
-            'modelKey' => $modelKey,
-            'roles' => $roles,
+            'modelKey'    => $modelKey,
+            'roles'       => $roles,
             'permissions' => $permissions,
-            'teams' => $teams,
-            'team' => $team,
-            'user' => $user,
+            'teams'       => $teams,
+            'team'        => $team,
+            'user'        => $user,
         ]);
     }
 
@@ -93,7 +93,7 @@ class RolesAssignmentController
     {
         $modelKey = $request->string('model')->toString();
 
-        if (! in_array($modelKey, ModelClasses::userRelationships(), true)) {
+        if (!in_array($modelKey, ModelClasses::userRelationships(), true)) {
             Session::flash('laratrust-error', 'Model was not specified in the request');
 
             return back();
@@ -125,7 +125,7 @@ class RolesAssignmentController
      */
     private function team(Request $request): ?Model
     {
-        if (! Config::get('laratrust.teams.enabled') || ! $request->filled('team')) {
+        if (!Config::get('laratrust.teams.enabled') || !$request->filled('team')) {
             return null;
         }
 
@@ -136,6 +136,7 @@ class RolesAssignmentController
      * The user's roles or permissions, only the ones assigned in the team when teams are enabled.
      *
      * @param  MorphToMany<covariant Model, covariant Model>  $relation
+     *
      * @return Collection<int, Model>
      */
     private function assignedIn(MorphToMany $relation, ?Model $team): Collection

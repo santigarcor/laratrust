@@ -13,8 +13,8 @@ class Role extends LaratrustMiddleware
     /**
      * Build the middleware string, e.g. Role::using('a|b', team: 'my-team', requireAll: true, guards: ['api']).
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $roles
-     * @param  string|list<string>  $guards
+     * @param string|array<string|BackedEnum>|BackedEnum $roles
+     * @param string|list<string>                        $guards
      */
     public static function using(
         string|array|BackedEnum $roles,
@@ -34,7 +34,7 @@ class Role extends LaratrustMiddleware
         string $roles,
         string ...$parameters
     ): mixed {
-        if (! $this->authorization('roles', $roles, $parameters)) {
+        if (!$this->authorization('roles', $roles, $parameters)) {
             return $this->unauthorized();
         }
 

@@ -22,8 +22,8 @@ use Laratrust\Support\PermissionRegistry;
 use Ramsey\Uuid\UuidInterface;
 
 /**
- * @property int|string $id
- * @property string $name
+ * @property int|string  $id
+ * @property string      $name
  * @property string|null $display_name
  * @property string|null $description
  * @property Carbon|null $created_at
@@ -63,7 +63,7 @@ class Role extends Model implements RoleContract
 
         static::deleting(function (self $role): void {
             // Soft deleting keeps the assignments, so the model can be restored with them.
-            if (method_exists($role, 'isForceDeleting') && ! $role->isForceDeleting()) {
+            if (method_exists($role, 'isForceDeleting') && !$role->isForceDeleting()) {
                 return;
             }
 
@@ -113,7 +113,7 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function hasPermission(string|array|BackedEnum $permission, bool $requireAll = false): bool
     {
@@ -122,15 +122,15 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function doesntHavePermission(string|array|BackedEnum $permission, bool $requireAll = false): bool
     {
-        return ! $this->hasPermission($permission, $requireAll);
+        return !$this->hasPermission($permission, $requireAll);
     }
 
     /**
-     * @param  iterable<Assignable>  $permissions
+     * @param iterable<Assignable> $permissions
      */
     public function syncPermissions(iterable $permissions): static
     {
@@ -149,7 +149,7 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @param  Assignable  $permission
+     * @param Assignable $permission
      */
     public function givePermission(array|string|int|Model|UuidInterface|BackedEnum $permission): static
     {
@@ -168,7 +168,7 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @param  Assignable  $permission
+     * @param Assignable $permission
      */
     public function removePermission(array|string|int|Model|UuidInterface|BackedEnum $permission): static
     {
@@ -186,7 +186,7 @@ class Role extends Model implements RoleContract
     }
 
     /**
-     * @param  iterable<Assignable>  $permissions
+     * @param iterable<Assignable> $permissions
      */
     public function givePermissions(iterable $permissions): static
     {
@@ -200,7 +200,7 @@ class Role extends Model implements RoleContract
     /**
      * Remove the given permissions. An empty list removes nothing: to remove them all, use syncPermissions([]).
      *
-     * @param  iterable<Assignable>  $permissions
+     * @param iterable<Assignable> $permissions
      */
     public function removePermissions(iterable $permissions): static
     {

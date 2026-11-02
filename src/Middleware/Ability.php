@@ -14,9 +14,9 @@ class Ability extends LaratrustMiddleware
     /**
      * Build the middleware string, e.g. Ability::using('admin', 'posts.edit', team: 'my-team', validateAll: true).
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $roles
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permissions
-     * @param  string|list<string>  $guards
+     * @param string|array<string|BackedEnum>|BackedEnum $roles
+     * @param string|array<string|BackedEnum>|BackedEnum $permissions
+     * @param string|list<string>                        $guards
      */
     public static function using(
         string|array|BackedEnum $roles,
@@ -39,14 +39,14 @@ class Ability extends LaratrustMiddleware
         string ...$parameters
     ): mixed {
         [
-            'team' => $team,
+            'team'        => $team,
             'require_all' => $validateAll,
-            'guards' => $guards,
+            'guards'      => $guards,
         ] = $this->getValuesFromParameters($parameters);
 
         $user = $this->authenticatedUser($guards);
 
-        if (! $user instanceof LaratrustUser || ! $user->ability(explode('|', $roles), explode('|', $permissions), $team, ['validate_all' => $validateAll])) {
+        if (!$user instanceof LaratrustUser || !$user->ability(explode('|', $roles), explode('|', $permissions), $team, ['validate_all' => $validateAll])) {
             return $this->unauthorized();
         }
 

@@ -467,9 +467,9 @@ class PermissionRegistryTest extends LaratrustTestCase
         foreach ($teams as $team) {
             DB::table('permission_user')->insert($permissionIds->map(fn ($id): array => [
                 'permission_id' => $id,
-                'user_id' => $this->user->id,
-                'user_type' => $this->user->getMorphClass(),
-                'team_id' => $team->id,
+                'user_id'       => $this->user->id,
+                'user_type'     => $this->user->getMorphClass(),
+                'team_id'       => $team->id,
             ])->all());
         }
         $this->user->flushLaratrustCache();
@@ -529,10 +529,10 @@ class PermissionRegistryTest extends LaratrustTestCase
         $teams = collect(range(1, 3))->map(fn ($i) => Team::create(['name' => "{$prefix}_team_{$i}"]));
         $users = collect(range(1, 300))->map(fn ($i) => User::create(['name' => "{$prefix}{$i}", 'email' => "{$prefix}{$i}@test.com"]));
         DB::table('role_user')->insert($users->crossJoin($teams)->map(fn ($pair): array => [
-            'role_id' => $role->id,
-            'user_id' => $pair[0]->id,
+            'role_id'   => $role->id,
+            'user_id'   => $pair[0]->id,
             'user_type' => $pair[0]->getMorphClass(),
-            'team_id' => $pair[1]->id,
+            'team_id'   => $pair[1]->id,
         ])->all());
 
         // Load the shared role set first, so only the per-user cost is measured.
@@ -624,7 +624,11 @@ class TenantBUser extends User
 }
 
 #[Table(name: 'users')]
-class AdminUser extends User {}
+class AdminUser extends User
+{
+}
 
 #[Table(name: 'users')]
-class UnlistedUser extends User {}
+class UnlistedUser extends User
+{
+}

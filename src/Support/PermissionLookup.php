@@ -40,19 +40,20 @@ final readonly class PermissionLookup
     private const array EMPTY_SCOPE = ['roles' => [], 'roleKeys' => [], 'permissions' => []];
 
     /**
-     * @param  list<array{string, string}>  $assignedRoles  [name, team scope] pairs, in assignment order.
-     * @param  array<string, Scope>  $scopes  Role names, role cache keys and direct permissions per team scope.
-     * @param  array<array-key, array<array-key, true>>  $rolePermissions  Shared permission sets, keyed by role cache key.
+     * @param list<array{string, string}>              $assignedRoles   [name, team scope] pairs, in assignment order.
+     * @param array<string, Scope>                     $scopes          Role names, role cache keys and direct permissions per team scope.
+     * @param array<array-key, array<array-key, true>> $rolePermissions Shared permission sets, keyed by role cache key.
      */
     private function __construct(
         private array $assignedRoles,
         private array $scopes,
         private array $rolePermissions,
-    ) {}
+    ) {
+    }
 
     /**
-     * @param  array<string, string>  $roleCacheKeys  Role cache keys, keyed by role key.
-     * @param  array<array-key, RoleData>  $roles  The roles' names and permissions, keyed by role cache key.
+     * @param array<string, string>      $roleCacheKeys Role cache keys, keyed by role key.
+     * @param array<array-key, RoleData> $roles         The roles' names and permissions, keyed by role cache key.
      */
     public static function build(StoredAssignments $assignments, array $roleCacheKeys, array $roles): self
     {
@@ -102,11 +103,11 @@ final readonly class PermissionLookup
      * An exact name is a hash lookup. Wildcards are only supported in the
      * requested name ("posts.*"), which is matched against the granted names.
      *
-     * @param  array<array-key, true>  $granted
+     * @param array<array-key, true> $granted
      */
     public static function grants(array $granted, string $permission): bool
     {
-        if (! str_contains($permission, '*')) {
+        if (!str_contains($permission, '*')) {
             return isset($granted[$permission]);
         }
 

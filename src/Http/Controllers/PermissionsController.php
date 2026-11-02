@@ -27,9 +27,9 @@ class PermissionsController
         $this->ensurePermissionsCanBeCreated();
 
         return View::make('laratrust::panel.edit', [
-            'model' => null,
+            'model'       => null,
             'permissions' => null,
-            'type' => 'permission',
+            'type'        => 'permission',
         ]);
     }
 
@@ -38,9 +38,9 @@ class PermissionsController
         $this->ensurePermissionsCanBeCreated();
 
         $data = $request->validate([
-            'name' => ['required', 'string', Rule::unique(ModelClasses::permission(), 'name')],
+            'name'         => ['required', 'string', Rule::unique(ModelClasses::permission(), 'name')],
             'display_name' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
+            'description'  => ['nullable', 'string'],
         ]);
 
         ModelClasses::permission()::query()->create($data);
@@ -54,7 +54,7 @@ class PermissionsController
     {
         return View::make('laratrust::panel.edit', [
             'model' => ModelClasses::permission()::query()->findOrFail($id),
-            'type' => 'permission',
+            'type'  => 'permission',
         ]);
     }
 
@@ -64,7 +64,7 @@ class PermissionsController
 
         $permission->update($request->validate([
             'display_name' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
+            'description'  => ['nullable', 'string'],
         ]));
 
         Session::flash('laratrust-success', 'Permission updated successfully');

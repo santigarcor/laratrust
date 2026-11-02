@@ -32,7 +32,7 @@ interface LaratrustUser
     /**
      * Checks if the user has a role by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $name
+     * @param string|array<string|BackedEnum>|BackedEnum $name
      */
     public function hasRole(
         string|array|BackedEnum $name,
@@ -43,7 +43,7 @@ interface LaratrustUser
     /**
      * Check if user has a permission by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function hasPermission(
         string|array|BackedEnum $permission,
@@ -54,7 +54,7 @@ interface LaratrustUser
     /**
      * Check if user has a permission by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function isAbleTo(
         string|array|BackedEnum $permission,
@@ -66,12 +66,13 @@ interface LaratrustUser
      * Checks role(s) and permission(s).
      *
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $roles
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permissions
-     * @param  array{validate_all?: bool, return_type?: 'boolean'|'array'|'both'}  $options
-     * @return bool|array{roles: array<string, bool>, permissions: array<string, bool>}|array{bool, array{roles: array<string, bool>, permissions: array<string, bool>}}
+     * @param string|array<string|BackedEnum>|BackedEnum                         $roles
+     * @param string|array<string|BackedEnum>|BackedEnum                         $permissions
+     * @param array{validate_all?: bool, return_type?: 'boolean'|'array'|'both'} $options
      *
      * @throws \InvalidArgumentException
+     *
+     * @return bool|array{roles: array<string, bool>, permissions: array<string, bool>}|array{bool, array{roles: array<string, bool>, permissions: array<string, bool>}}
      */
     public function ability(
         string|array|BackedEnum $roles,
@@ -83,7 +84,7 @@ interface LaratrustUser
     /**
      * Add a role to the user.
      *
-     * @param  Assignable  $role
+     * @param Assignable $role
      */
     public function addRole(
         array|string|int|Model|UuidInterface|BackedEnum $role,
@@ -93,7 +94,7 @@ interface LaratrustUser
     /**
      * Remove a role from the user.
      *
-     * @param  Assignable  $role
+     * @param Assignable $role
      */
     public function removeRole(
         array|string|int|Model|UuidInterface|BackedEnum $role,
@@ -103,7 +104,7 @@ interface LaratrustUser
     /**
      * Add multiple roles to a user.
      *
-     * @param  array<array-key, Assignable>  $roles
+     * @param array<array-key, Assignable> $roles
      */
     public function addRoles(
         array $roles = [],
@@ -113,7 +114,7 @@ interface LaratrustUser
     /**
      * Remove multiple roles from a user. An empty list removes nothing.
      *
-     * @param  array<array-key, Assignable>  $roles
+     * @param array<array-key, Assignable> $roles
      */
     public function removeRoles(
         array $roles,
@@ -123,7 +124,7 @@ interface LaratrustUser
     /**
      * Sync roles to the user.
      *
-     * @param  array<array-key, Assignable>  $roles
+     * @param array<array-key, Assignable> $roles
      */
     public function syncRoles(
         array $roles = [],
@@ -134,7 +135,7 @@ interface LaratrustUser
     /**
      * Add direct permissions to the user.
      *
-     * @param  Assignable  $permission
+     * @param Assignable $permission
      */
     public function givePermission(
         array|string|int|Model|UuidInterface|BackedEnum $permission,
@@ -144,7 +145,7 @@ interface LaratrustUser
     /**
      * Remove direct permissions from the user.
      *
-     * @param  Assignable  $permission
+     * @param Assignable $permission
      */
     public function removePermission(
         array|string|int|Model|UuidInterface|BackedEnum $permission,
@@ -154,7 +155,7 @@ interface LaratrustUser
     /**
      * Add multiple permissions to the user.
      *
-     * @param  array<array-key, Assignable>  $permissions
+     * @param array<array-key, Assignable> $permissions
      */
     public function givePermissions(
         array $permissions = [],
@@ -164,7 +165,7 @@ interface LaratrustUser
     /**
      * Remove multiple permissions from the user. An empty list removes nothing.
      *
-     * @param  array<array-key, Assignable>  $permissions
+     * @param array<array-key, Assignable> $permissions
      */
     public function removePermissions(
         array $permissions,
@@ -174,7 +175,7 @@ interface LaratrustUser
     /**
      * Sync permissions to the user.
      *
-     * @param  array<array-key, Assignable>  $permissions
+     * @param array<array-key, Assignable> $permissions
      */
     public function syncPermissions(
         array $permissions = [],
@@ -186,7 +187,8 @@ interface LaratrustUser
      * Return all the user permissions.
      *
      *
-     * @param  array<int, string>|null  $columns
+     * @param array<int, string>|null $columns
+     *
      * @return Collection<int, Model>
      */
     public function allPermissions(?array $columns = null, mixed $team = false): Collection;

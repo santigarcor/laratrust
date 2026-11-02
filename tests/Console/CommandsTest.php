@@ -30,9 +30,9 @@ class CommandsTest extends LaratrustTestCase
 
         $this->app['config']->set('laratrust.user_models', ['users' => 'App\Models\User']);
         $this->app['config']->set('laratrust.models', [
-            'role' => 'App\Models\Role',
+            'role'       => 'App\Models\Role',
             'permission' => 'App\Models\Permission',
-            'team' => 'App\Models\Team',
+            'team'       => 'App\Models\Team',
         ]);
     }
 
@@ -49,13 +49,13 @@ class CommandsTest extends LaratrustTestCase
     public static function commands(): array
     {
         return array_map(fn (string $name): array => [$name], [
-            'laratrust:migration' => 'laratrust:migration',
-            'laratrust:permission' => 'laratrust:permission',
-            'laratrust:role' => 'laratrust:role',
-            'laratrust:seeder' => 'laratrust:seeder',
-            'laratrust:setup' => 'laratrust:setup',
+            'laratrust:migration'   => 'laratrust:migration',
+            'laratrust:permission'  => 'laratrust:permission',
+            'laratrust:role'        => 'laratrust:role',
+            'laratrust:seeder'      => 'laratrust:seeder',
+            'laratrust:setup'       => 'laratrust:setup',
             'laratrust:setup-teams' => 'laratrust:setup-teams',
-            'laratrust:team' => 'laratrust:team',
+            'laratrust:team'        => 'laratrust:team',
         ]);
     }
 
@@ -103,9 +103,9 @@ class CommandsTest extends LaratrustTestCase
     public static function modelCommands(): array
     {
         return [
-            'role' => ['laratrust:role', 'Role'],
+            'role'       => ['laratrust:role', 'Role'],
             'permission' => ['laratrust:permission', 'Permission'],
-            'team' => ['laratrust:team', 'Team'],
+            'team'       => ['laratrust:team', 'Team'],
         ];
     }
 

@@ -24,8 +24,8 @@ class SetupCommand extends Command
      * @var array<string, string>
      */
     protected $calls = [
-        'laratrust:migration' => 'Creating migration',
-        'laratrust:role' => 'Creating Role model',
+        'laratrust:migration'  => 'Creating migration',
+        'laratrust:role'       => 'Creating Role model',
         'laratrust:permission' => 'Creating Permission model',
     ];
 

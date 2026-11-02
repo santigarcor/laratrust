@@ -37,9 +37,9 @@ class RolesController
         $permission = new (ModelClasses::permission());
 
         return View::make('laratrust::panel.edit', [
-            'model' => null,
+            'model'       => null,
             'permissions' => $permission->newQuery()->orderBy('name')->get([$permission->getKeyName(), 'name', 'display_name']),
-            'type' => 'role',
+            'type'        => 'role',
         ]);
     }
 
@@ -57,9 +57,9 @@ class RolesController
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'name' => ['required', 'string', Rule::unique(ModelClasses::role(), 'name')],
+            'name'         => ['required', 'string', Rule::unique(ModelClasses::role(), 'name')],
             'display_name' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
+            'description'  => ['nullable', 'string'],
             ...SubmittedKeys::rules('permissions', ModelClasses::permission()),
         ]);
 
@@ -76,7 +76,7 @@ class RolesController
     {
         $role = ModelClasses::role()::query()->with('permissions')->findOrFail($id);
 
-        if (! RoleRestrictions::isEditable($role)) {
+        if (!RoleRestrictions::isEditable($role)) {
             Session::flash('laratrust-error', 'The role is not editable');
 
             return back();
@@ -90,9 +90,9 @@ class RolesController
             ->each(fn (Model $permission) => $permission->setAttribute('assigned', in_array($permission->getKey(), $assigned, true)));
 
         return View::make('laratrust::panel.edit', [
-            'model' => $role,
+            'model'       => $role,
             'permissions' => $permissions,
-            'type' => 'role',
+            'type'        => 'role',
         ]);
     }
 
@@ -100,7 +100,7 @@ class RolesController
     {
         $role = ModelClasses::role()::query()->findOrFail($id);
 
-        if (! RoleRestrictions::isEditable($role)) {
+        if (!RoleRestrictions::isEditable($role)) {
             Session::flash('laratrust-error', 'The role is not editable');
 
             return back();
@@ -108,7 +108,7 @@ class RolesController
 
         $data = $request->validate([
             'display_name' => ['nullable', 'string'],
-            'description' => ['nullable', 'string'],
+            'description'  => ['nullable', 'string'],
             ...SubmittedKeys::rules('permissions', ModelClasses::permission()),
         ]);
 
@@ -124,7 +124,7 @@ class RolesController
     {
         $role = ModelClasses::role()::query()->findOrFail($id);
 
-        if (! RoleRestrictions::isDeletable($role)) {
+        if (!RoleRestrictions::isDeletable($role)) {
             Session::flash('laratrust-error', 'The role is not deletable');
 
             return back();

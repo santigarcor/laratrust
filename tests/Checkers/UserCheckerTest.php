@@ -235,7 +235,7 @@ class UserCheckerTest extends LaratrustTestCase
         $this->user->roles()->attach($role->id);
 
         $this->user->permissions()->attach([
-            Permission::create(['name' => 'config.things'])->id => ['team_id' => $team->id],
+            Permission::create(['name' => 'config.things'])->id         => ['team_id' => $team->id],
             Permission::create(['name' => 'config.another_things'])->id => ['team_id' => $team->id],
         ]);
 
@@ -306,14 +306,14 @@ class UserCheckerTest extends LaratrustTestCase
     public function test_relationship_is_unset_when_a_role_or_permission_is_modified(): void
     {
         Role::query()->create([
-            'name' => 'test',
+            'name'         => 'test',
             'display_name' => 'test',
-            'description' => 'test',
+            'description'  => 'test',
         ]);
         Permission::query()->create([
-            'name' => 'test_permission',
+            'name'         => 'test_permission',
             'display_name' => 'test_permission',
-            'description' => 'test_permission',
+            'description'  => 'test_permission',
         ]);
 
         $this->user->roles;

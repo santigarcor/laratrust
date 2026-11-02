@@ -83,7 +83,7 @@ class PanelTest extends LaratrustTestCase
     public function test_the_role_restrictions_are_enforced(): void
     {
         $this->app['config']->set('laratrust.panel.roles_restrictions', [
-            'not_editable' => ['locked'],
+            'not_editable'  => ['locked'],
             'not_deletable' => ['locked'],
             'not_removable' => [],
         ]);
@@ -112,7 +112,7 @@ class PanelTest extends LaratrustTestCase
         $permission = Permission::create(['name' => 'permission_a']);
 
         $this->put('/laratrust/roles-assignment/'.$this->user->id.'?model=users', [
-            'roles' => [$role->id],
+            'roles'       => [$role->id],
             'permissions' => [$permission->id],
         ])->assertRedirect('/laratrust/roles-assignment?model=users');
 

@@ -41,7 +41,9 @@ final class PermissionRegistry
     /** @var array<string, array<string, int|string|false>> Keys by name, false for the names no model has. */
     private array $ids = [];
 
-    public function __construct(private readonly Cache $cache) {}
+    public function __construct(private readonly Cache $cache)
+    {
+    }
 
     public function lookupFor(Model&LaratrustUser $user): PermissionLookup
     {
@@ -104,7 +106,8 @@ final class PermissionRegistry
      *
      * A string is split by "|" ("admin|editor"), enums are turned into their values.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $names
+     * @param string|array<string|BackedEnum>|BackedEnum $names
+     *
      * @return list<string>
      */
     public function names(string|array|BackedEnum $names): array
@@ -129,7 +132,7 @@ final class PermissionRegistry
         $id = $this->findIdFor($object, $type);
 
         if ($id === false) {
-            throw (new ModelNotFoundException)->setModel($this->modelClass($type));
+            throw (new ModelNotFoundException())->setModel($this->modelClass($type));
         }
 
         return $id;
@@ -140,7 +143,7 @@ final class PermissionRegistry
      */
     public function findIdFor(mixed $object, string $type): int|string|false|null
     {
-        if ($object === null || ($type === 'team' && ! Config::get('laratrust.teams.enabled'))) {
+        if ($object === null || ($type === 'team' && !Config::get('laratrust.teams.enabled'))) {
             return null;
         }
 
@@ -150,11 +153,11 @@ final class PermissionRegistry
 
         return match (true) {
             $object instanceof UuidInterface => $object->toString(),
-            $object instanceof Model => $object->getKey(),
-            is_array($object) => $this->idFromArray($object, $type),
+            $object instanceof Model         => $object->getKey(),
+            is_array($object)                => $this->idFromArray($object, $type),
             is_int($object), is_numeric($object) => $object,
             is_string($object) => $this->idForName($object, $type),
-            default => throw new InvalidArgumentException(
+            default            => throw new InvalidArgumentException(
                 "The {$type} must be a Model, BackedEnum, UuidInterface, array{id: int|string}, int or string."
             ),
         };
@@ -166,7 +169,7 @@ final class PermissionRegistry
             return $this->stored[$key];
         }
 
-        if (! $this->cacheEnabled()) {
+        if (!$this->cacheEnabled()) {
             return $this->stored[$key] = $this->loadAssignments($user);
         }
 
@@ -208,7 +211,7 @@ final class PermissionRegistry
     /**
      * Make sure the roles' names and permissions are in memory: from the cache, otherwise from the database.
      *
-     * @param  array<int, Model&Role>  $roles
+     * @param array<int, Model&Role> $roles
      */
     private function loadRoles(array $roles): void
     {
@@ -224,7 +227,8 @@ final class PermissionRegistry
     }
 
     /**
-     * @param  array<int, Model&Role>  $roles
+     * @param array<int, Model&Role> $roles
+     *
      * @return array<string, Model&Role> The roles not loaded yet in this request, keyed by cache key.
      */
     private function rolesNotInMemory(array $roles): array
@@ -238,7 +242,8 @@ final class PermissionRegistry
     /**
      * Remember the roles found in the cache.
      *
-     * @param  array<string, Model&Role>  $rolesByCacheKey
+     * @param array<string, Model&Role> $rolesByCacheKey
+     *
      * @return array<string, Model&Role> The roles that weren't in the cache, keyed by cache key.
      */
     private function recoverFromCache(array $rolesByCacheKey): array
@@ -260,7 +265,7 @@ final class PermissionRegistry
      * Load the roles' names and permissions from the database with eager loading,
      * remember them for this request and cache them (when enabled).
      *
-     * @param  non-empty-array<string, Model&Role>  $rolesByCacheKey
+     * @param non-empty-array<string, Model&Role> $rolesByCacheKey
      */
     private function recoverFromDatabase(array $rolesByCacheKey): void
     {
@@ -286,7 +291,7 @@ final class PermissionRegistry
                 $model = $found->get($cacheKey);
 
                 return $model === null ? ['name' => null, 'permissions' => []] : [
-                    'name' => (string) $model->getAttribute('name'),
+                    'name'        => (string) $model->getAttribute('name'),
                     'permissions' => $model->getRelation('permissions')->pluck('name')->all(),
                 ];
             })
@@ -317,7 +322,7 @@ final class PermissionRegistry
                 ->withoutGlobalScopes()
                 ->get([$roles->getRelated()->getQualifiedKeyName()])
                 ->map(fn (Model $role): array => [
-                    'id' => $this->keyOf($role),
+                    'id'   => $this->keyOf($role),
                     'team' => $teamOf($role),
                 ])
                 ->all(),
@@ -338,13 +343,13 @@ final class PermissionRegistry
      */
     private function roleFromCache(mixed $data): ?array
     {
-        if (! is_array($data) || ! array_key_exists('name', $data) || ! is_array($permissions = $data['permissions'] ?? null)) {
+        if (!is_array($data) || !array_key_exists('name', $data) || !is_array($permissions = $data['permissions'] ?? null)) {
             return null;
         }
 
         $name = $data['name'];
 
-        if (($name !== null && ! is_string($name)) || ! array_is_list($permissions) || ! Arr::every($permissions, fn (mixed $permission): bool => is_string($permission))) {
+        if (($name !== null && !is_string($name)) || !array_is_list($permissions) || !Arr::every($permissions, fn (mixed $permission): bool => is_string($permission))) {
             return null;
         }
 
@@ -355,7 +360,7 @@ final class PermissionRegistry
     {
         $key = $model->getKey();
 
-        if (! is_int($key) && ! is_string($key)) {
+        if (!is_int($key) && !is_string($key)) {
             throw new UnexpectedValueException('Laratrust models must have an int or string primary key.');
         }
 
@@ -363,13 +368,13 @@ final class PermissionRegistry
     }
 
     /**
-     * @param  array<array-key, mixed>  $object
+     * @param array<array-key, mixed> $object
      */
     private function idFromArray(array $object, string $type): int|string
     {
         $id = $object['id'] ?? null;
 
-        if (! is_int($id) && ! is_string($id)) {
+        if (!is_int($id) && !is_string($id)) {
             throw new InvalidArgumentException("The {$type} given as an array must have an int or string \"id\".");
         }
 
@@ -381,7 +386,7 @@ final class PermissionRegistry
      */
     private function idForName(string $name, string $type): int|string|false
     {
-        if (! array_key_exists($name, $this->ids[$type] ?? [])) {
+        if (!array_key_exists($name, $this->ids[$type] ?? [])) {
             $model = $this->modelClass($type)::query()->where('name', $name)->first();
             $this->ids[$type][$name] = $model === null ? false : $this->keyOf($model);
         }
@@ -395,10 +400,10 @@ final class PermissionRegistry
     private function modelClass(string $type): string
     {
         return match ($type) {
-            'role' => ModelClasses::role(),
+            'role'       => ModelClasses::role(),
             'permission' => ModelClasses::permission(),
-            'team' => ModelClasses::team(),
-            default => throw new InvalidArgumentException("Unknown Laratrust model type [{$type}]."),
+            'team'       => ModelClasses::team(),
+            default      => throw new InvalidArgumentException("Unknown Laratrust model type [{$type}]."),
         };
     }
 

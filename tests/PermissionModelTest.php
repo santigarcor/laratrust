@@ -21,7 +21,7 @@ class PermissionModelTest extends LaratrustTestCase
         parent::setUp();
 
         $this->migrate();
-        $this->permission = new Permission;
+        $this->permission = new Permission();
     }
 
     public function test_users_relationship(): void

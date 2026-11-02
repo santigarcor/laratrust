@@ -26,7 +26,7 @@ final readonly class RoleChecker
     /**
      * Check if the role has a permission by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function hasPermission(string|array|BackedEnum $permission, bool $requireAll = false): bool
     {

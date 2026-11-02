@@ -19,22 +19,22 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $permissions = collect([
-            'users-create' => 'Create users',
-            'users-read' => 'Read users',
-            'users-update' => 'Update users',
-            'users-delete' => 'Delete users',
-            'posts-create' => 'Create posts',
-            'posts-read' => 'Read posts',
-            'posts-update' => 'Update posts',
-            'posts-delete' => 'Delete posts',
-            'billing-manage' => 'Manage billing',
-            'reports-export' => 'Export reports',
+            'users-create'    => 'Create users',
+            'users-read'      => 'Read users',
+            'users-update'    => 'Update users',
+            'users-delete'    => 'Delete users',
+            'posts-create'    => 'Create posts',
+            'posts-read'      => 'Read posts',
+            'posts-update'    => 'Update posts',
+            'posts-delete'    => 'Delete posts',
+            'billing-manage'  => 'Manage billing',
+            'reports-export'  => 'Export reports',
             'settings-update' => 'Update settings',
-            'audit-read' => 'Read the audit log',
+            'audit-read'      => 'Read the audit log',
         ])->map(fn (string $displayName, string $name) => Permission::create([
-            'name' => $name,
+            'name'         => $name,
             'display_name' => $displayName,
-            'description' => "Allows to {$displayName}.",
+            'description'  => "Allows to {$displayName}.",
         ]));
 
         // Locked in workbench/config/laratrust.php: it can't be edited, deleted or removed.

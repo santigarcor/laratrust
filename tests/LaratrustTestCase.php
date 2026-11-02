@@ -33,26 +33,26 @@ class LaratrustTestCase extends TestCase
         $app['config']->set('database.default', 'testing');
         // CI also runs the tests on MySQL, with DB_CONNECTION=mysql and the other DB_* variables.
         $app['config']->set('database.connections.testing', env('DB_CONNECTION') === 'mysql' ? [
-            'driver' => 'mysql',
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'laratrust'),
-            'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => 'utf8mb4',
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST', '127.0.0.1'),
+            'port'      => env('DB_PORT', '3306'),
+            'database'  => env('DB_DATABASE', 'laratrust'),
+            'username'  => env('DB_USERNAME', 'root'),
+            'password'  => env('DB_PASSWORD', ''),
+            'charset'   => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
+            'prefix'    => '',
         ] : [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => ':memory:',
-            'prefix' => '',
+            'prefix'   => '',
         ]);
         $app['config']->set('laratrust.user_models.users', User::class);
         $app['config']->set('laratrust.panel.register', true);
         $app['config']->set('laratrust.models', [
-            'role' => Role::class,
+            'role'       => Role::class,
             'permission' => Permission::class,
-            'team' => Team::class,
+            'team'       => Team::class,
         ]);
     }
 
@@ -72,7 +72,7 @@ class LaratrustTestCase extends TestCase
         ];
 
         foreach ($migrations as $migration) {
-            (new $migration)->up();
+            (new $migration())->up();
         }
     }
 }

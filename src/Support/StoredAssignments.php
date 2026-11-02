@@ -22,20 +22,21 @@ use Illuminate\Contracts\Support\Arrayable;
 final readonly class StoredAssignments implements Arrayable
 {
     /**
-     * @param  array<int, StoredRole>  $roles
-     * @param  array<int, StoredPermission>  $permissions
+     * @param array<int, StoredRole>       $roles
+     * @param array<int, StoredPermission> $permissions
      */
     public function __construct(
         public array $roles = [],
         public array $permissions = [],
-    ) {}
+    ) {
+    }
 
     /**
      * Restore the assignments from the cache, or null if the cached value isn't valid.
      */
     public static function fromArray(mixed $data): ?self
     {
-        if (! is_array($data) || ! is_array($data['roles'] ?? null) || ! is_array($data['permissions'] ?? null)) {
+        if (!is_array($data) || !is_array($data['roles'] ?? null) || !is_array($data['permissions'] ?? null)) {
             return null;
         }
 
@@ -65,7 +66,7 @@ final readonly class StoredAssignments implements Arrayable
         $id = is_array($data) ? ($data['id'] ?? null) : null;
         $team = is_array($data) ? ($data['team'] ?? null) : null;
 
-        if ((! is_int($id) && ! is_string($id)) || ! self::isTeam($team)) {
+        if ((!is_int($id) && !is_string($id)) || !self::isTeam($team)) {
             return null;
         }
 
@@ -80,7 +81,7 @@ final readonly class StoredAssignments implements Arrayable
         $name = is_array($data) ? ($data['name'] ?? null) : null;
         $team = is_array($data) ? ($data['team'] ?? null) : null;
 
-        if (! is_string($name) || ! self::isTeam($team)) {
+        if (!is_string($name) || !self::isTeam($team)) {
             return null;
         }
 

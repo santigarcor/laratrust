@@ -12,13 +12,14 @@ use Illuminate\Database\Eloquent\Model;
 final readonly class PermissionSynced
 {
     /**
-     * @param  Model  $model  The user or the role.
-     * @param  array{attached: array<int, int|string>, detached: array<int, int|string>, updated: array<int, int|string>}  $changes  The changes made by the sync.
-     * @param  int|string|null  $team  The team key, or null when teams are disabled or no team was given.
+     * @param Model                                                                                                      $model   The user or the role.
+     * @param array{attached: array<int, int|string>, detached: array<int, int|string>, updated: array<int, int|string>} $changes The changes made by the sync.
+     * @param int|string|null                                                                                            $team    The team key, or null when teams are disabled or no team was given.
      */
     public function __construct(
         public Model $model,
         public array $changes,
         public int|string|null $team = null,
-    ) {}
+    ) {
+    }
 }

@@ -33,7 +33,7 @@ class SetupTeamsCommand extends Command
      */
     public function handle(): void
     {
-        if (! Config::get('laratrust.teams.enabled')) {
+        if (!Config::get('laratrust.teams.enabled')) {
             $this->error('Not using teams in your Laratrust configuration file.');
             $this->warn('Please enable the teams usage in your configuration.');
 
@@ -53,7 +53,7 @@ class SetupTeamsCommand extends Command
 
         $this->line('');
 
-        if (! $this->confirm('Proceed with the migration creation?', true)) {
+        if (!$this->confirm('Proceed with the migration creation?', true)) {
             return;
         }
 

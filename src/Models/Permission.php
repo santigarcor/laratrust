@@ -17,8 +17,8 @@ use Laratrust\Support\ModelClasses;
 use Laratrust\Support\PermissionRegistry;
 
 /**
- * @property int|string $id
- * @property string $name
+ * @property int|string  $id
+ * @property string      $name
  * @property string|null $display_name
  * @property string|null $description
  * @property Carbon|null $created_at
@@ -65,7 +65,7 @@ class Permission extends Model implements PermissionContract
             $permission->flushLaratrustCache();
 
             // Soft deleting keeps the assignments, so the model can be restored with them.
-            if (method_exists($permission, 'isForceDeleting') && ! $permission->isForceDeleting()) {
+            if (method_exists($permission, 'isForceDeleting') && !$permission->isForceDeleting()) {
                 return;
             }
 

@@ -174,7 +174,7 @@ return [
              * Aborts the execution with a 403 code and allows you to provide the response text.
              */
             'abort' => [
-                'code' => 403,
+                'code'    => 403,
                 'message' => 'User does not have any of the necessary access rights.',
             ],
 
@@ -185,9 +185,9 @@ return [
              * If the message content is empty it won't be added to the redirection.
              */
             'redirect' => [
-                'url' => '/home',
+                'url'     => '/home',
                 'message' => [
-                    'key' => 'error',
+                    'key'     => 'error',
                     'content' => '',
                 ],
             ],

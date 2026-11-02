@@ -21,7 +21,7 @@ use Laratrust\Contracts\LaratrustUser;
  * After the names come an optional team and the options: "require_all" and "guard:{name}|{name}".
  * For example:
  * - "role:admin|editor,my-team,require_all,guard:web|admin"
- * - "permission:posts.edit,guard:web|admin"
+ * - "permission:posts.edit,guard:web|admin".
  *
  * The 8.x forms also work: "require_all|guard:web|guard:admin".
  */
@@ -31,7 +31,7 @@ class LaratrustMiddleware
      * Check if the request has authorization to continue.
      */
     /**
-     * @param  array<array-key, string>  $parameters  The middleware parameters after the names.
+     * @param array<array-key, string> $parameters The middleware parameters after the names.
      */
     protected function authorization(string $type, string $rolesPermissions, array $parameters): bool
     {
@@ -56,7 +56,7 @@ class LaratrustMiddleware
         }
 
         $redirect = Redirect::to($handler['url']);
-        if (! empty($handler['message']['content'])) {
+        if (!empty($handler['message']['content'])) {
             $redirect->with($handler['message']['key'], __($handler['message']['content']));
         }
 
@@ -66,14 +66,14 @@ class LaratrustMiddleware
     /**
      * Get the user of the first given guard that is authenticated, like Laravel's "auth" middleware.
      *
-     * @param  array<int, string|null>  $guards
+     * @param array<int, string|null> $guards
      */
     protected function authenticatedUser(array $guards): ?LaratrustUser
     {
         foreach ($guards as $guard) {
             $auth = Auth::guard($guard);
 
-            if (! $auth->guest()) {
+            if (!$auth->guest()) {
                 $user = $auth->user();
 
                 return $user instanceof LaratrustUser ? $user : null;
@@ -86,10 +86,11 @@ class LaratrustMiddleware
     /**
      * Get the team, requireAll and guards from the middleware parameters after the names.
      *
-     * @param  array<array-key, string>  $parameters
-     * @return array{team: string|null, require_all: bool, guards: array<int, string|null>}
+     * @param array<array-key, string> $parameters
      *
      * @throws InvalidArgumentException When a parameter doesn't fit, so a mistyped team is never ignored.
+     *
+     * @return array{team: string|null, require_all: bool, guards: array<int, string|null>}
      */
     protected function getValuesFromParameters(array $parameters): array
     {
@@ -112,7 +113,7 @@ class LaratrustMiddleware
                     [$inOptions, $inGuards] = [true, true];
                 } elseif ($inGuards) {
                     $guards[] = $option;
-                } elseif (! $inOptions && $team === null) {
+                } elseif (!$inOptions && $team === null) {
                     $team = $option;
                 } else {
                     throw new InvalidArgumentException(
@@ -123,17 +124,17 @@ class LaratrustMiddleware
         }
 
         return [
-            'team' => $team,
+            'team'        => $team,
             'require_all' => $requireAll,
-            'guards' => $guards === [] ? [Config::get('auth.defaults.guard')] : $guards,
+            'guards'      => $guards === [] ? [Config::get('auth.defaults.guard')] : $guards,
         ];
     }
 
     /**
      * Build the "names,team,options" parameters string, used by the using() helpers.
      *
-     * @param  array<int, string|array<string|BackedEnum>|BackedEnum>  $names  Each one is a parameter.
-     * @param  string|list<string>  $guards
+     * @param array<int, string|array<string|BackedEnum>|BackedEnum> $names  Each one is a parameter.
+     * @param string|list<string>                                    $guards
      */
     protected static function parameters(
         array $names,
@@ -147,9 +148,9 @@ class LaratrustMiddleware
             ->implode(',');
 
         $team = match (true) {
-            $team instanceof Model => $team->getKey(),
+            $team instanceof Model      => $team->getKey(),
             $team instanceof BackedEnum => $team->value,
-            default => $team,
+            default                     => $team,
         };
 
         return Collection::make($names)

@@ -22,8 +22,9 @@ trait HasLaratrustScopes
     /**
      * Get the users with the given role(s).
      *
-     * @param  Builder<static>  $query
-     * @param  string|array<string|BackedEnum>|BackedEnum  $role
+     * @param Builder<static>                            $query
+     * @param string|array<string|BackedEnum>|BackedEnum $role
+     *
      * @return Builder<static>
      */
     #[Scope]
@@ -49,8 +50,9 @@ trait HasLaratrustScopes
     /**
      * Get the users with the given role(s), as an "or" condition.
      *
-     * @param  Builder<static>  $query
-     * @param  string|array<string|BackedEnum>|BackedEnum  $role
+     * @param Builder<static>                            $query
+     * @param string|array<string|BackedEnum>|BackedEnum $role
+     *
      * @return Builder<static>
      */
     #[Scope]
@@ -65,8 +67,9 @@ trait HasLaratrustScopes
     /**
      * Get the users with the given permission(s), given directly or through their roles.
      *
-     * @param  Builder<static>  $query
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param Builder<static>                            $query
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
+     *
      * @return Builder<static>
      */
     #[Scope]
@@ -100,8 +103,9 @@ trait HasLaratrustScopes
     /**
      * Get the users with the given permission(s), as an "or" condition.
      *
-     * @param  Builder<static>  $query
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param Builder<static>                            $query
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
+     *
      * @return Builder<static>
      */
     #[Scope]
@@ -116,7 +120,8 @@ trait HasLaratrustScopes
     /**
      * Get the users without any role.
      *
-     * @param  Builder<static>  $query
+     * @param Builder<static> $query
+     *
      * @return Builder<static>
      */
     #[Scope]
@@ -128,7 +133,8 @@ trait HasLaratrustScopes
     /**
      * Get the users without any permission: neither given directly nor through their roles.
      *
-     * @param  Builder<static>  $query
+     * @param Builder<static> $query
+     *
      * @return Builder<static>
      */
     #[Scope]

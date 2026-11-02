@@ -113,7 +113,7 @@ class UserAbilityTest extends LaratrustTestCase
         // Case: User has everything.
         $this->assertSame(
             [
-                'roles' => ['role_a' => true, 'role_b' => true],
+                'roles'       => ['role_a' => true, 'role_b' => true],
                 'permissions' => ['permission_a' => true, 'permission_b' => true],
             ],
             $this->user->ability(
@@ -124,7 +124,7 @@ class UserAbilityTest extends LaratrustTestCase
         );
         $this->assertSame(
             [
-                'roles' => ['role_a' => false, 'role_b' => true],
+                'roles'       => ['role_a' => false, 'role_b' => true],
                 'permissions' => ['permission_a' => false, 'permission_b' => true],
             ],
             $this->user->ability(
@@ -136,7 +136,7 @@ class UserAbilityTest extends LaratrustTestCase
         );
         $this->assertSame(
             [
-                'roles' => ['role_a' => true],
+                'roles'       => ['role_a' => true],
                 'permissions' => ['permission_a' => true],
             ],
             $this->user->ability(
@@ -153,7 +153,7 @@ class UserAbilityTest extends LaratrustTestCase
             [
                 true,
                 [
-                    'roles' => ['role_a' => true, 'role_b' => true],
+                    'roles'       => ['role_a' => true, 'role_b' => true],
                     'permissions' => ['permission_a' => true, 'permission_b' => true],
                 ],
             ],
@@ -167,7 +167,7 @@ class UserAbilityTest extends LaratrustTestCase
             [
                 true,
                 [
-                    'roles' => ['role_a' => false, 'role_b' => true],
+                    'roles'       => ['role_a' => false, 'role_b' => true],
                     'permissions' => ['permission_a' => false, 'permission_b' => true],
                 ],
             ],
@@ -182,7 +182,7 @@ class UserAbilityTest extends LaratrustTestCase
             [
                 true,
                 [
-                    'roles' => ['role_a' => true, 'role_b' => true],
+                    'roles'       => ['role_a' => true, 'role_b' => true],
                     'permissions' => ['permission_a' => true, 'permission_b' => true],
                 ],
             ],
@@ -285,7 +285,7 @@ class UserAbilityTest extends LaratrustTestCase
     }
 
     /**
-     * Check if an exception is thrown when checking the user ability
+     * Check if an exception is thrown when checking the user ability.
      */
     public function isExceptionThrown(User $user, array $roles, array $perms, array $options): bool
     {

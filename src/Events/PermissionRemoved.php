@@ -12,13 +12,14 @@ use Illuminate\Database\Eloquent\Model;
 final readonly class PermissionRemoved
 {
     /**
-     * @param  Model  $model  The user or the role.
-     * @param  int|string  $permission  The removed permission key.
-     * @param  int|string|null  $team  The team key, or null when teams are disabled or no team was given.
+     * @param Model           $model      The user or the role.
+     * @param int|string      $permission The removed permission key.
+     * @param int|string|null $team       The team key, or null when teams are disabled or no team was given.
      */
     public function __construct(
         public Model $model,
         public int|string $permission,
         public int|string|null $team = null,
-    ) {}
+    ) {
+    }
 }

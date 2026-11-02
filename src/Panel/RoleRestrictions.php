@@ -20,7 +20,7 @@ final class RoleRestrictions
      */
     public static function isEditable(string|(Model&Role) $role): bool
     {
-        return ! self::isRestricted('not_editable', $role);
+        return !self::isRestricted('not_editable', $role);
     }
 
     /**
@@ -28,7 +28,7 @@ final class RoleRestrictions
      */
     public static function isDeletable(string|(Model&Role) $role): bool
     {
-        return ! self::isRestricted('not_deletable', $role);
+        return !self::isRestricted('not_deletable', $role);
     }
 
     /**
@@ -36,7 +36,7 @@ final class RoleRestrictions
      */
     public static function isRemovable(string|(Model&Role) $role): bool
     {
-        return ! self::isRestricted('not_removable', $role);
+        return !self::isRestricted('not_removable', $role);
     }
 
     private static function isRestricted(string $restriction, string|(Model&Role) $role): bool

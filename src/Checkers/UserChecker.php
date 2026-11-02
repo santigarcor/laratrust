@@ -38,7 +38,7 @@ final readonly class UserChecker
     /**
      * Check if the user has a role by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $name
+     * @param string|array<string|BackedEnum>|BackedEnum $name
      */
     public function hasRole(string|array|BackedEnum $name, mixed $team = null, bool $requireAll = false): bool
     {
@@ -56,7 +56,7 @@ final readonly class UserChecker
     /**
      * Check if the user has a permission by its name.
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function hasPermission(string|array|BackedEnum $permission, mixed $team = null, bool $requireAll = false): bool
     {
@@ -74,12 +74,13 @@ final readonly class UserChecker
     /**
      * Check role(s) and permission(s).
      *
-     * @param  string|array<string|BackedEnum>|BackedEnum  $roles
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permissions
-     * @param  array{validate_all?: bool, return_type?: 'boolean'|'array'|'both'}  $options
-     * @return bool|array{roles: array<string, bool>, permissions: array<string, bool>}|array{bool, array{roles: array<string, bool>, permissions: array<string, bool>}}
+     * @param string|array<string|BackedEnum>|BackedEnum                         $roles
+     * @param string|array<string|BackedEnum>|BackedEnum                         $permissions
+     * @param array{validate_all?: bool, return_type?: 'boolean'|'array'|'both'} $options
      *
      * @throws InvalidArgumentException
+     *
+     * @return bool|array{roles: array<string, bool>, permissions: array<string, bool>}|array{bool, array{roles: array<string, bool>, permissions: array<string, bool>}}
      */
     public function ability(
         string|array|BackedEnum $roles,
@@ -113,7 +114,7 @@ final readonly class UserChecker
 
         // If validate all, there should not be any false; otherwise there must be at least one true.
         $passes = $options['validate_all']
-            ? ! in_array(false, $checkedRoles, true) && ! in_array(false, $checkedPermissions, true)
+            ? !in_array(false, $checkedRoles, true) && !in_array(false, $checkedPermissions, true)
             : in_array(true, $checkedRoles, true) || in_array(true, $checkedPermissions, true);
 
         if ($options['return_type'] === 'array') {
@@ -141,7 +142,7 @@ final readonly class UserChecker
      */
     private function teamScope(mixed $team): ?string
     {
-        if (! Config::get('laratrust.teams.enabled')) {
+        if (!Config::get('laratrust.teams.enabled')) {
             return null;
         }
 
@@ -171,7 +172,8 @@ final readonly class UserChecker
     /**
      * The team can be skipped: ability($roles, $permissions, ['validate_all' => true]) means the options.
      *
-     * @param  array<string, mixed>  $options
+     * @param array<string, mixed> $options
+     *
      * @return array{mixed, array<string, mixed>}
      */
     private function teamOrOptions(mixed $team, array $options): array
@@ -186,8 +188,8 @@ final readonly class UserChecker
      * enough. Both stop at the first result that decides the outcome. An empty
      * list of names always passes.
      *
-     * @param  list<string>  $names  Role or permission names to check.
-     * @param  callable(string): bool  $check  Tells if the user has a single name.
+     * @param list<string>           $names Role or permission names to check.
+     * @param callable(string): bool $check Tells if the user has a single name.
      */
     private function checkAnyOrAll(array $names, bool $requireAll, callable $check): bool
     {
@@ -201,21 +203,22 @@ final readonly class UserChecker
      *
      * validate_all defaults to false and return_type to 'boolean'.
      *
-     * @param  array<string, mixed>  $options
-     * @return array{validate_all: bool, return_type: 'boolean'|'array'|'both'}
+     * @param array<string, mixed> $options
      *
      * @throws InvalidArgumentException When an option has a value that isn't allowed.
+     *
+     * @return array{validate_all: bool, return_type: 'boolean'|'array'|'both'}
      */
     private function validateAndSetDefaults(array $options): array
     {
         $validateAll = $options['validate_all'] ?? false;
         $returnType = $options['return_type'] ?? 'boolean';
 
-        if (! is_bool($validateAll)) {
+        if (!is_bool($validateAll)) {
             throw new InvalidArgumentException('The ability() "validate_all" option must be a boolean.');
         }
 
-        if (! in_array($returnType, ['boolean', 'array', 'both'], true)) {
+        if (!in_array($returnType, ['boolean', 'array', 'both'], true)) {
             throw new InvalidArgumentException('The ability() "return_type" option must be "boolean", "array" or "both".');
         }
 

@@ -6,4 +6,6 @@ namespace Workbench\App\Models;
 
 use Laratrust\Models\Permission as LaratrustPermission;
 
-class Permission extends LaratrustPermission {}
+class Permission extends LaratrustPermission
+{
+}

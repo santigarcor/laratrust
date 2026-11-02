@@ -35,7 +35,7 @@ class UserRelationshipsTest extends LaratrustTestCase
         // The relationships are registered at boot, so both user models are configured before it.
         $app['config']->set('laratrust.teams.enabled', true);
         $app['config']->set('laratrust.user_models', [
-            'users' => User::class,
+            'users'  => User::class,
             'others' => Other::class,
         ]);
     }
@@ -45,7 +45,7 @@ class UserRelationshipsTest extends LaratrustTestCase
         parent::setUp();
 
         foreach ([UsersMigration::class, OthersMigration::class, LaratrustSetupTables::class] as $migration) {
-            (new $migration)->up();
+            (new $migration())->up();
         }
 
         $this->user = User::create(['name' => 'user', 'email' => 'user@test.com']);
@@ -59,19 +59,19 @@ class UserRelationshipsTest extends LaratrustTestCase
     public static function modelsAndRelationships(): array
     {
         return [
-            'role users' => [Role::class, 'users'],
-            'role others' => [Role::class, 'others'],
-            'permission users' => [Permission::class, 'users'],
+            'role users'        => [Role::class, 'users'],
+            'role others'       => [Role::class, 'others'],
+            'permission users'  => [Permission::class, 'users'],
             'permission others' => [Permission::class, 'others'],
-            'team users' => [Team::class, 'users'],
-            'team others' => [Team::class, 'others'],
+            'team users'        => [Team::class, 'users'],
+            'team others'       => [Team::class, 'others'],
         ];
     }
 
     #[DataProvider('modelsAndRelationships')]
     public function test_the_relationship_is_available_as_method_and_attribute(string $class, string $relationship): void
     {
-        $model = new $class;
+        $model = new $class();
 
         $this->assertInstanceOf(MorphToMany::class, $model->{$relationship}());
         $this->assertTrue($model->{$relationship}->isEmpty());

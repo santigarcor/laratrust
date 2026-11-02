@@ -32,43 +32,43 @@ interface Role
     /**
      * Checks if the role has a permission by its name.
      *
-     * @param  bool  $requireAll  All permissions in the array are required.
-     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @param bool                                       $requireAll All permissions in the array are required.
+     * @param string|array<string|BackedEnum>|BackedEnum $permission
      */
     public function hasPermission(string|array|BackedEnum $permission, bool $requireAll = false): bool;
 
     /**
      * Save the given permissions.
      *
-     * @param  iterable<Assignable>  $permissions
+     * @param iterable<Assignable> $permissions
      */
     public function syncPermissions(iterable $permissions): static;
 
     /**
      * Give permission to the role.
      *
-     * @param  Assignable  $permission
+     * @param Assignable $permission
      */
     public function givePermission(array|string|int|Model|UuidInterface|BackedEnum $permission): static;
 
     /**
      * Remove the permission from the role.
      *
-     * @param  Assignable  $permission
+     * @param Assignable $permission
      */
     public function removePermission(array|string|int|Model|UuidInterface|BackedEnum $permission): static;
 
     /**
      * Give multiple permissions to the role.
      *
-     * @param  iterable<Assignable>  $permissions
+     * @param iterable<Assignable> $permissions
      */
     public function givePermissions(iterable $permissions): static;
 
     /**
      * Detach multiple permissions from current role. An empty list removes nothing.
      *
-     * @param  iterable<Assignable>  $permissions
+     * @param iterable<Assignable> $permissions
      */
     public function removePermissions(iterable $permissions): static;
 

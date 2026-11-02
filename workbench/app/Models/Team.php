@@ -6,4 +6,6 @@ namespace Workbench\App\Models;
 
 use Laratrust\Models\Team as LaratrustTeam;
 
-class Team extends LaratrustTeam {}
+class Team extends LaratrustTeam
+{
+}

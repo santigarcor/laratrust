@@ -25,8 +25,9 @@ final class QueryConstraints
      *
      * @template TBuilder of Builder<*>
      *
-     * @param  TBuilder  $query
-     * @param  string|array<string|BackedEnum>|BackedEnum  $name
+     * @param TBuilder                                   $query
+     * @param string|array<string|BackedEnum>|BackedEnum $name
+     *
      * @return TBuilder
      */
     public static function whereNameIs(Builder $query, string|array|BackedEnum $name): Builder
@@ -41,13 +42,14 @@ final class QueryConstraints
      *
      * @template TBuilder of Builder<*>
      *
-     * @param  TBuilder  $query
+     * @param TBuilder $query
      * @param  BelongsToMany<*, *, *, *>  $relation  The relation whose pivot holds the team.
+     *
      * @return TBuilder
      */
     public static function constrainToTeam(Builder $query, BelongsToMany $relation, mixed $team): Builder
     {
-        if (! Config::get('laratrust.teams.enabled') || ($team === null && ! Config::get('laratrust.teams.strict_check'))) {
+        if (!Config::get('laratrust.teams.enabled') || ($team === null && !Config::get('laratrust.teams.strict_check'))) {
             return $query;
         }
 

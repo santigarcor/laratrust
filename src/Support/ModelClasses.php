@@ -67,14 +67,15 @@ final class ModelClasses
     /**
      * @template TContract of object
      *
-     * @param  class-string<TContract>  $contract
+     * @param class-string<TContract> $contract
+     *
      * @return class-string<Model&TContract>
      */
     private static function resolve(string $key, string $contract): string
     {
         $class = Config::get($key);
 
-        if (! is_string($class) || ! is_subclass_of($class, Model::class) || ! is_subclass_of($class, $contract)) {
+        if (!is_string($class) || !is_subclass_of($class, Model::class) || !is_subclass_of($class, $contract)) {
             throw new InvalidArgumentException("The [{$key}] config must be an Eloquent model class that implements {$contract}.");
         }
 

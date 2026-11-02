@@ -47,14 +47,14 @@ class MakeSeederCommand extends Command
         $userModels = Config::get('laratrust.user_models');
 
         return strtr($stub, [
-            '{{roleConfiguredModelClass}}' => $this->fullyQualified(Config::get('laratrust.models.role')),
-            '{{permissionConfiguredModelClass}}' => $this->fullyQualified(Config::get('laratrust.models.permission')),
-            '{{userConfiguredModelClass}}' => $this->fullyQualified(reset($userModels)),
+            '{{roleConfiguredModelClass}}'           => $this->fullyQualified(Config::get('laratrust.models.role')),
+            '{{permissionConfiguredModelClass}}'     => $this->fullyQualified(Config::get('laratrust.models.permission')),
+            '{{userConfiguredModelClass}}'           => $this->fullyQualified(reset($userModels)),
             '{{permission_roleConfiguredTableName}}' => Config::get('laratrust.tables.permission_role'),
             '{{permission_userConfiguredTableName}}' => Config::get('laratrust.tables.permission_user'),
-            '{{role_userConfiguredTableName}}' => Config::get('laratrust.tables.role_user'),
-            '{{rolesTableName}}' => Config::get('laratrust.tables.roles'),
-            '{{permissionsTableName}}' => Config::get('laratrust.tables.permissions'),
+            '{{role_userConfiguredTableName}}'       => Config::get('laratrust.tables.role_user'),
+            '{{rolesTableName}}'                     => Config::get('laratrust.tables.roles'),
+            '{{permissionsTableName}}'               => Config::get('laratrust.tables.permissions'),
         ]);
     }
 

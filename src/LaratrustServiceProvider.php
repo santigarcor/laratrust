@@ -74,7 +74,7 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     protected function offerPublishing(): void
     {
-        if (! $this->app->runningInConsole()) {
+        if (!$this->app->runningInConsole()) {
             return;
         }
 
@@ -99,7 +99,7 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        if (! $this->app->runningInConsole()) {
+        if (!$this->app->runningInConsole()) {
             return;
         }
 
@@ -133,7 +133,7 @@ class LaratrustServiceProvider extends ServiceProvider
         foreach (['role', 'permission', 'team'] as $type) {
             $model = Config::get("laratrust.models.{$type}");
 
-            if (! is_string($model) || ! class_exists($model)) {
+            if (!is_string($model) || !class_exists($model)) {
                 continue;
             }
 
@@ -151,7 +151,7 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     protected function registerMiddlewares(): void
     {
-        if (! Config::get('laratrust.middleware.register')) {
+        if (!Config::get('laratrust.middleware.register')) {
             return;
         }
 
@@ -176,19 +176,19 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     protected function registerRoutes(): void
     {
-        if (! Config::get('laratrust.panel.register')) {
+        if (!Config::get('laratrust.panel.register')) {
             return;
         }
 
         // Only local by default: the application defines the gate to open the panel elsewhere.
-        if (! Gate::has('viewLaratrust')) {
+        if (!Gate::has('viewLaratrust')) {
             Gate::define('viewLaratrust', fn (?Authorizable $user = null): bool => $this->app->environment('local'));
         }
 
         Route::group([
             // Null means any domain.
-            'domain' => Config::get('laratrust.panel.domain'),
-            'prefix' => Config::get('laratrust.panel.path'),
+            'domain'     => Config::get('laratrust.panel.domain'),
+            'prefix'     => Config::get('laratrust.panel.path'),
             'middleware' => [...Arr::wrap(Config::get('laratrust.panel.middleware', 'web')), AuthorizePanel::class],
         ], function (): void {
             Route::redirect('/', '/'.Config::get('laratrust.panel.path').'/roles-assignment');
@@ -209,12 +209,12 @@ class LaratrustServiceProvider extends ServiceProvider
      */
     protected function registerPermissionsToGate(): void
     {
-        if (! Config::get('laratrust.permissions_as_gates')) {
+        if (!Config::get('laratrust.permissions_as_gates')) {
             return;
         }
 
         Gate::before(function (Authorizable $user, string $ability, array $arguments): ?bool {
-            if (! $user instanceof LaratrustUser) {
+            if (!$user instanceof LaratrustUser) {
                 return null;
             }
 
@@ -225,7 +225,7 @@ class LaratrustServiceProvider extends ServiceProvider
                 || $argument instanceof BackedEnum
                 || $argument instanceof UuidInterface
                 || is_int($argument)
-                || (is_string($argument) && ! class_exists($argument)));
+                || (is_string($argument) && !class_exists($argument)));
             $requireAll = Arr::first($arguments, fn (mixed $argument): bool => is_bool($argument)) ?? false;
 
             // Null lets the policies and the other gates decide.

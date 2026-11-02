@@ -37,7 +37,7 @@ trait CreatesLaratrustMigrations
     /**
      * Build a warning about the existing migrations, which could be duplicated.
      *
-     * @param  non-empty-list<string>  $existingMigrations
+     * @param non-empty-list<string> $existingMigrations
      */
     protected function getExistingMigrationsWarning(array $existingMigrations): string
     {
