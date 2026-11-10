@@ -1,4 +1,4 @@
-## 9.0.0 (unreleased)
+## 9.0.0 (noviembre 10, 2026)
 - Require Laravel 13 and PHP 8.3 or higher
 - Remove the `query` checkers, the custom checkers and the `checkers` configuration
 - Load a user's roles and permissions with at most 4 queries and memoize them per request, queue job and Octane request (#681)
