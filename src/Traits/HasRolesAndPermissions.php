@@ -11,15 +11,25 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
-use Laratrust\Checkers\CheckersManager;
-use Laratrust\Checkers\User\UserChecker;
-use Laratrust\Helper;
+use Laratrust\Checkers\UserChecker;
+use Laratrust\Contracts\LaratrustUser;
+use Laratrust\Events\PermissionAdded;
+use Laratrust\Events\PermissionRemoved;
+use Laratrust\Events\PermissionSynced;
+use Laratrust\Events\RoleAdded;
+use Laratrust\Events\RoleRemoved;
+use Laratrust\Events\RoleSynced;
 use Laratrust\Models\Team;
+use Laratrust\Support\ModelClasses;
+use Laratrust\Support\PermissionRegistry;
 use Ramsey\Uuid\UuidInterface;
+use UnexpectedValueException;
 
+/**
+ * @phpstan-import-type Assignable from LaratrustUser
+ */
 trait HasRolesAndPermissions
 {
-    use HasLaratrustEvents;
     use HasLaratrustScopes;
 
     /**
@@ -29,11 +39,11 @@ trait HasRolesAndPermissions
      */
     public static function bootHasRolesAndPermissions(): void
     {
-        $flushLaratrustCache = function ($user) {
+        $flushLaratrustCache = function (self $user): void {
             $user->flushLaratrustCache();
         };
 
-        // If the user doesn't use SoftDeletes.
+        // If the user uses SoftDeletes.
         if (method_exists(static::class, 'restored')) {
             static::restored($flushLaratrustCache);
         }
@@ -41,8 +51,9 @@ trait HasRolesAndPermissions
         static::deleted($flushLaratrustCache);
         static::saved($flushLaratrustCache);
 
-        static::deleting(function ($user) {
-            if (method_exists($user, 'bootSoftDeletes') && ! $user->forceDeleting) {
+        static::deleting(function (self $user): void {
+            // Soft deleting keeps the assignments, so the user can be restored with them.
+            if (method_exists($user, 'isForceDeleting') && ! $user->isForceDeleting()) {
                 return;
             }
 
@@ -53,11 +64,13 @@ trait HasRolesAndPermissions
 
     /**
      * Many-to-Many relations with Role.
+     *
+     * @return MorphToMany<covariant Model, $this>
      */
     public function roles(): MorphToMany
     {
         $roles = $this->morphToMany(
-            Config::get('laratrust.models.role'),
+            ModelClasses::role(),
             'user',
             Config::get('laratrust.tables.role_user'),
             Config::get('laratrust.foreign_keys.user'),
@@ -73,6 +86,8 @@ trait HasRolesAndPermissions
 
     /**
      * Many-to-Many relations with Team associated through the roles.
+     *
+     * @return MorphToMany<covariant Model, $this>|null
      */
     public function rolesTeams(): ?MorphToMany
     {
@@ -81,7 +96,7 @@ trait HasRolesAndPermissions
         }
 
         return $this->morphToMany(
-            Config::get('laratrust.models.team'),
+            ModelClasses::team(),
             'user',
             Config::get('laratrust.tables.role_user'),
             Config::get('laratrust.foreign_keys.user'),
@@ -92,6 +107,8 @@ trait HasRolesAndPermissions
 
     /**
      * Many-to-Many relations with Team associated through the permissions user is given.
+     *
+     * @return MorphToMany<covariant Model, $this>|null
      */
     public function permissionsTeams(): ?MorphToMany
     {
@@ -100,7 +117,7 @@ trait HasRolesAndPermissions
         }
 
         return $this->morphToMany(
-            Config::get('laratrust.models.team'),
+            ModelClasses::team(),
             'user',
             Config::get('laratrust.tables.permission_user'),
             Config::get('laratrust.foreign_keys.user'),
@@ -110,32 +127,40 @@ trait HasRolesAndPermissions
     }
 
     /**
-     * Get a collection of all user teams.
+     * Get the teams the user has a role or a permission in.
+     *
+     * @param  array<int, string>|null  $columns
+     * @return Collection<int, Model>
      */
     public function allTeams(?array $columns = null): Collection
     {
-        $columns = is_array($columns) ? $columns : ['*'];
-        if ($columns) {
-            $columns[] = 'id';
-            $columns = array_unique($columns);
-        }
-
         if (! Config::get('laratrust.teams.enabled')) {
-            return collect([]);
+            return Collection::make();
         }
-        $permissionTeams = $this->permissionsTeams()->get($columns);
-        $roleTeams = $this->rolesTeams()->get($columns);
 
-        return $roleTeams->merge($permissionTeams)->unique('id');
+        $team = new (ModelClasses::team());
+        // Qualified, so they're never ambiguous with the pivot table's columns.
+        $select = $columns === null ? ['*'] : Collection::make($columns)
+            ->push($team->getKeyName())
+            ->unique()
+            ->map(fn (string $column): string => $team->qualifyColumn($column))
+            ->all();
+
+        return $this->rolesTeams()?->get($select)
+            ->merge($this->permissionsTeams()?->get($select) ?? [])
+            ->unique($team->getKeyName())
+            ->values() ?? Collection::make();
     }
 
     /**
      * Many-to-Many relations with Permission.
+     *
+     * @return MorphToMany<covariant Model, $this>
      */
     public function permissions(): MorphToMany
     {
         $permissions = $this->morphToMany(
-            Config::get('laratrust.models.permission'),
+            ModelClasses::permission(),
             'user',
             Config::get('laratrust.tables.permission_user'),
             Config::get('laratrust.foreign_keys.user'),
@@ -154,26 +179,30 @@ trait HasRolesAndPermissions
      */
     protected function laratrustUserChecker(): UserChecker
     {
-        return (new CheckersManager($this))->getUserChecker();
+        return new UserChecker($this);
     }
 
     /**
-     * Get the the names of the user's roles.
+     * Get the names of the user's roles.
+     *
+     * @return list<string>
      */
     public function getRoles(mixed $team = null): array
     {
-        return $this->laratrustUserChecker()->getCurrentUserRoles($team);
+        return $this->laratrustUserChecker()->roles($team);
     }
 
     /**
      * Checks if the user has a role by its name.
+     *
+     * @param  string|array<string|BackedEnum>|BackedEnum  $name
      */
     public function hasRole(
         string|array|BackedEnum $name,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
-        return $this->laratrustUserChecker()->currentUserHasRole(
+        return $this->laratrustUserChecker()->hasRole(
             $name,
             $team,
             $requireAll
@@ -182,13 +211,15 @@ trait HasRolesAndPermissions
 
     /**
      * Check if user has a permission by its name.
+     *
+     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
      */
     public function hasPermission(
         string|array|BackedEnum $permission,
         mixed $team = null,
         bool $requireAll = false
     ): bool {
-        return $this->laratrustUserChecker()->currentUserHasPermission(
+        return $this->laratrustUserChecker()->hasPermission(
             $permission,
             $team,
             $requireAll
@@ -197,6 +228,8 @@ trait HasRolesAndPermissions
 
     /**
      * Check if user does not have a permission by its name.
+     *
+     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
      */
     public function doesntHavePermission(
         string|array|BackedEnum $permission,
@@ -208,6 +241,8 @@ trait HasRolesAndPermissions
 
     /**
      * Check if user has a permission by its name.
+     *
+     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
      */
     public function isAbleTo(
         string|array|BackedEnum $permission,
@@ -219,6 +254,8 @@ trait HasRolesAndPermissions
 
     /**
      * Check if user does not have a permission by its name.
+     *
+     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
      */
     public function isNotAbleTo(
         string|array|BackedEnum $permission,
@@ -231,9 +268,13 @@ trait HasRolesAndPermissions
     /**
      * Checks role(s) and permission(s).
      *
-     * @param  array  $options  validate_all{true|false} or return_type{boolean|array|both}
      *
-     * @throws \InvalidArgumentException
+     * @param  string|array<string|BackedEnum>|BackedEnum  $roles
+     * @param  string|array<string|BackedEnum>|BackedEnum  $permissions
+     * @param  array{validate_all?: bool, return_type?: 'boolean'|'array'|'both'}  $options
+     * @return bool|array{roles: array<string, bool>, permissions: array<string, bool>}|array{bool, array{roles: array<string, bool>, permissions: array<string, bool>}}
+     *
+     * @throws InvalidArgumentException
      */
     public function ability(
         string|array|BackedEnum $roles,
@@ -241,7 +282,7 @@ trait HasRolesAndPermissions
         mixed $team = null,
         array $options = []
     ): array|bool {
-        return $this->laratrustUserChecker()->currentUserHasAbility(
+        return $this->laratrustUserChecker()->ability(
             $roles,
             $permissions,
             $team,
@@ -250,108 +291,101 @@ trait HasRolesAndPermissions
     }
 
     /**
-     * Check if the given relationship is a valid laratrust relationship.
-     */
-    private function isValidRelationship(string $relationship): bool
-    {
-        return in_array($relationship, ['roles', 'permissions']);
-    }
-
-    /**
      * Alias to eloquent many-to-many relation's attach() method.
+     *
+     * @param  Assignable  $object
+     * @param  Assignable|null  $team
      */
-    private function attachModel(
+    private function attachLaratrustModel(
         string $relationship,
         array|string|int|Model|UuidInterface|BackedEnum $object,
-        array|string|int|Model|UuidInterface|null $team
+        array|string|int|Model|UuidInterface|BackedEnum|null $team
     ): static {
-        if (! $this->isValidRelationship($relationship)) {
-            throw new InvalidArgumentException;
-        }
-
-        $attributes = [];
+        $registry = app(PermissionRegistry::class);
         $objectType = Str::singular($relationship);
-        $object = Helper::getIdFor($object, $objectType);
+        $object = $registry->idFor($object, $objectType);
+        // Null when teams are disabled.
+        $team = $registry->idFor($team, 'team');
+        $relation = $this->$relationship();
+        $attributes = [];
 
         if (Config::get('laratrust.teams.enabled')) {
-            $team = Helper::getIdFor($team, 'team');
-
-            if (
-                $this->$relationship()
-                ->wherePivot(Team::modelForeignKey(), $team)
-                ->wherePivot(Config::get("laratrust.foreign_keys.{$objectType}"), $object)
-                ->count()
-            ) {
-                return $this;
-            }
-
+            $relation->wherePivot(Team::modelForeignKey(), $team);
             $attributes[Team::modelForeignKey()] = $team;
         }
 
-        $this->$relationship()->attach(
-            $object,
-            $attributes
-        );
+        // Adding an assignment the user already has (in that team) does nothing.
+        if ($relation->newPivotStatementForId($object)->exists()) {
+            return $this;
+        }
+
+        $relation->attach($object, $attributes);
         $this->flushLaratrustCache();
-        $this->fireLaratrustEvent("{$objectType}.added", [$this, $object, $team]);
+        event($objectType === 'role'
+            ? new RoleAdded($this, $object, $team)
+            : new PermissionAdded($this, $object, $team));
 
         return $this;
     }
 
     /**
      * Alias to eloquent many-to-many relation's detach() method.
+     *
+     * @param  Assignable  $object
+     * @param  Assignable|null  $team
      */
-    private function detachModel(
+    private function detachLaratrustModel(
         string $relationship,
         array|string|int|Model|UuidInterface|BackedEnum $object,
-        array|string|int|Model|UuidInterface|null $team
+        array|string|int|Model|UuidInterface|BackedEnum|null $team
     ): static {
-        if (! $this->isValidRelationship($relationship)) {
-            throw new InvalidArgumentException;
-        }
-
+        $registry = app(PermissionRegistry::class);
         $objectType = Str::singular($relationship);
         $relationshipQuery = $this->$relationship();
+        $team = $registry->idFor($team, 'team');
 
         if (Config::get('laratrust.teams.enabled')) {
-            $relationshipQuery->wherePivot(
-                Team::modelForeignKey(),
-                Helper::getIdFor($team, 'team')
-            );
+            $relationshipQuery->wherePivot(Team::modelForeignKey(), $team);
         }
 
-        $object = Helper::getIdFor($object, $objectType);
-        $relationshipQuery->detach($object);
+        $object = $registry->idFor($object, $objectType);
+
+        // Removing an assignment the user doesn't have (in that team) does nothing.
+        if ($relationshipQuery->detach($object) === 0) {
+            return $this;
+        }
 
         $this->flushLaratrustCache();
-        $this->fireLaratrustEvent("{$objectType}.removed", [$this, $object, $team]);
+        event($objectType === 'role'
+            ? new RoleRemoved($this, $object, $team)
+            : new PermissionRemoved($this, $object, $team));
 
         return $this;
     }
 
     /**
      * Alias to eloquent many-to-many relation's sync() method.
+     *
+     * @param  array<array-key, Assignable>  $objects
+     * @param  Assignable|null  $team
      */
-    private function syncModels(
+    private function syncLaratrustModels(
         string $relationship,
-        array|string|int|Model|UuidInterface|BackedEnum $objects,
-        array|string|int|Model|UuidInterface|null $team,
+        array $objects,
+        array|string|int|Model|UuidInterface|BackedEnum|null $team,
         bool $detaching
     ): static {
-        if (! $this->isValidRelationship($relationship)) {
-            throw new InvalidArgumentException;
-        }
-
+        $registry = app(PermissionRegistry::class);
         $objectType = Str::singular($relationship);
         $mappedObjects = [];
         $useTeams = Config::get('laratrust.teams.enabled');
-        $team = $useTeams ? Helper::getIdFor($team, 'team') : null;
+        $team = $useTeams ? $registry->idFor($team, 'team') : null;
 
         foreach ($objects as $object) {
-            if ($useTeams && $team) {
-                $mappedObjects[Helper::getIdFor($object, $objectType)] = [Team::modelForeignKey() => $team];
+            if ($useTeams && $team !== null) {
+                $mappedObjects[$registry->idFor($object, $objectType)] = [Team::modelForeignKey() => $team];
             } else {
-                $mappedObjects[] = Helper::getIdFor($object, $objectType);
+                $mappedObjects[] = $registry->idFor($object, $objectType);
             }
         }
 
@@ -364,33 +398,41 @@ trait HasRolesAndPermissions
         $result = $relationshipToSync->sync($mappedObjects, $detaching);
 
         $this->flushLaratrustCache();
-        $this->fireLaratrustEvent("{$objectType}.synced", [$this, $result, $team]);
+        event($objectType === 'role'
+            ? new RoleSynced($this, $result, $team)
+            : new PermissionSynced($this, $result, $team));
 
         return $this;
     }
 
     /**
      * Add a role to the user.
+     *
+     * @param  Assignable  $role
      */
     public function addRole(
         array|string|int|Model|UuidInterface|BackedEnum $role,
         mixed $team = null
     ): static {
-        return $this->attachModel('roles', $role, $team);
+        return $this->attachLaratrustModel('roles', $role, $team);
     }
 
     /**
      * Remove a role from the user.
+     *
+     * @param  Assignable  $role
      */
     public function removeRole(
         array|string|int|Model|UuidInterface|BackedEnum $role,
         mixed $team = null
     ): static {
-        return $this->detachModel('roles', $role, $team);
+        return $this->detachLaratrustModel('roles', $role, $team);
     }
 
     /**
      * Add multiple roles to a user.
+     *
+     * @param  array<array-key, Assignable>  $roles
      */
     public function addRoles(
         array $roles = [],
@@ -404,16 +446,14 @@ trait HasRolesAndPermissions
     }
 
     /**
-     * Remove multiple roles from a user.
+     * Remove multiple roles from a user. An empty list removes nothing: to remove them all, use syncRoles([]).
+     *
+     * @param  array<array-key, Assignable>  $roles
      */
     public function removeRoles(
-        array $roles = [],
+        array $roles,
         mixed $team = null
     ): static {
-        if (empty($roles)) {
-            return $this->syncRoles([], $team);
-        }
-
         foreach ($roles as $role) {
             $this->removeRole($role, $team);
         }
@@ -423,17 +463,21 @@ trait HasRolesAndPermissions
 
     /**
      * Sync roles to the user.
+     *
+     * @param  array<array-key, Assignable>  $roles
      */
     public function syncRoles(
         array $roles = [],
         mixed $team = null,
         bool $detaching = true
     ): static {
-        return $this->syncModels('roles', $roles, $team, $detaching);
+        return $this->syncLaratrustModels('roles', $roles, $team, $detaching);
     }
 
     /**
      * Sync roles to the user without detaching.
+     *
+     * @param  array<array-key, Assignable>  $roles
      */
     public function syncRolesWithoutDetaching(
         array $roles = [],
@@ -444,26 +488,32 @@ trait HasRolesAndPermissions
 
     /**
      * Add direct permissions to the user.
+     *
+     * @param  Assignable  $permission
      */
     public function givePermission(
         array|string|int|Model|UuidInterface|BackedEnum $permission,
         mixed $team = null
     ): static {
-        return $this->attachModel('permissions', $permission, $team);
+        return $this->attachLaratrustModel('permissions', $permission, $team);
     }
 
     /**
      * Remove direct permissions from the user.
+     *
+     * @param  Assignable  $permission
      */
     public function removePermission(
         array|string|int|Model|UuidInterface|BackedEnum $permission,
         mixed $team = null
     ): static {
-        return $this->detachModel('permissions', $permission, $team);
+        return $this->detachLaratrustModel('permissions', $permission, $team);
     }
 
     /**
      * Add multiple permissions to the user.
+     *
+     * @param  array<array-key, Assignable>  $permissions
      */
     public function givePermissions(
         array $permissions = [],
@@ -477,16 +527,14 @@ trait HasRolesAndPermissions
     }
 
     /**
-     * Remove multiple permissions from the user.
+     * Remove multiple permissions from the user. An empty list removes nothing: to remove them all, use syncPermissions([]).
+     *
+     * @param  array<array-key, Assignable>  $permissions
      */
     public function removePermissions(
-        array $permissions = [],
+        array $permissions,
         mixed $team = null
     ): static {
-        if (! $permissions) {
-            return $this->syncPermissions([], $team);
-        }
-
         foreach ($permissions as $permission) {
             $this->removePermission($permission, $team);
         }
@@ -496,17 +544,21 @@ trait HasRolesAndPermissions
 
     /**
      * Sync permissions to the user.
+     *
+     * @param  array<array-key, Assignable>  $permissions
      */
     public function syncPermissions(
         array $permissions = [],
         mixed $team = null,
         bool $detaching = true
     ): static {
-        return $this->syncModels('permissions', $permissions, $team, $detaching);
+        return $this->syncLaratrustModels('permissions', $permissions, $team, $detaching);
     }
 
     /**
      * Sync permissions to the user without detaching.
+     *
+     * @param  array<array-key, Assignable>  $permissions
      */
     public function syncPermissionsWithoutDetaching(
         array $permissions = [],
@@ -518,47 +570,48 @@ trait HasRolesAndPermissions
     /**
      * Return all the user permissions.
      *
-     * @return Collection<\Laratrust\Contracts\Permission>
+     *
+     * @param  array<int, string>|null  $columns
+     * @return Collection<int, Model>
      */
     public function allPermissions(?array $columns = null, mixed $team = false): Collection
     {
-        $columns = is_array($columns) ? $columns : null;
-        if ($columns) {
-            $columns[] = 'id';
-            $columns = array_unique($columns);
+        $roles = $this->roles();
+        $permissions = $this->permissions();
+        $permission = $permissions->getRelated();
+
+        // false means any team; otherwise only the assignments made in that team (null = without a team).
+        if (Config::get('laratrust.teams.enabled') && $team !== false) {
+            $teamId = app(PermissionRegistry::class)->findIdFor($team, 'team');
+
+            // A team name that doesn't exist has no permissions.
+            if ($teamId === false) {
+                return $permission->newCollection();
+            }
+
+            $roles->where($roles->qualifyPivotColumn(Team::modelForeignKey()), $teamId);
+            $permissions->where($permissions->qualifyPivotColumn(Team::modelForeignKey()), $teamId);
         }
-        $withColumns = $columns ? ':'.implode(',', $columns) : '';
 
-        $roles = $this->roles()
-            ->when(
-                Config::get('laratrust.teams.enabled') && $team !== false,
-                fn ($query) => $query->whereHas('permissions', function ($permissionQuery) use ($team) {
-                    $permissionQuery->where(
-                        Config::get('laratrust.foreign_keys.team'),
-                        Helper::getIdFor($team, 'team')
-                    );
-                })
-            )
-            ->with("permissions{$withColumns}")
-            ->get();
+        // Qualified, so they're never ambiguous with the pivot table's columns.
+        $select = $columns === null ? null : collect($columns)
+            ->push($permission->getKeyName())
+            ->unique()
+            ->map(fn (string $column) => $permission->qualifyColumn($column))
+            ->all();
 
-        $rolesPermissions = $roles->flatMap(function ($role) {
-            return $role->permissions;
-        });
+        $rolesPermissions = [];
 
-        $directPermissions = $this->permissions()
-            ->when(
-                Config::get('laratrust.teams.enabled') && $team !== false,
-                fn ($query) => $query->where(
-                    config('laratrust.foreign_keys.team'),
-                    Helper::getIdFor($team, 'team')
-                )
-            );
+        foreach ($roles->with(['permissions' => fn ($query) => $select ? $query->select($select) : $query])->get() as $role) {
+            foreach ($role->getRelation('permissions') as $rolePermission) {
+                $rolesPermissions[] = $rolePermission;
+            }
+        }
 
-        return $directPermissions
-            ->get($columns ?? ['*'])
+        return $permissions
+            ->get($select ?? ['*'])
             ->merge($rolesPermissions)
-            ->unique('id');
+            ->unique($permission->getKeyName());
     }
 
     /**
@@ -566,16 +619,29 @@ trait HasRolesAndPermissions
      */
     public function flushLaratrustCache(): void
     {
-        $this->laratrustUserChecker()->currentUserFlushCache();
+        $this->laratrustUserChecker()->flush();
     }
 
     /**
-     * Flush the user's cache.
+     * Get the key used to cache the user's roles and permissions.
      *
-     * @deprecated Use flushLaratrustCache() instead. Will be removed in 9.0.
+     * Override it to scope the cache, e.g. per tenant in multi-tenant applications.
      */
-    public function flushCache(): void
+    public function laratrustCacheKey(): string
     {
-        $this->flushLaratrustCache();
+        $userModels = Config::array('laratrust.user_models');
+
+        // The exact class first: a configured model can extend another configured one.
+        $key = array_search(static::class, $userModels, true);
+
+        if ($key === false) {
+            $key = Collection::make($userModels)->search(fn (mixed $model): bool => is_string($model) && $this instanceof $model);
+        }
+
+        if ($key === false) {
+            throw new UnexpectedValueException('Class '.static::class.' is not defined in the laratrust.user_models');
+        }
+
+        return "laratrust_user_{$key}_{$this->getKey()}";
     }
 }

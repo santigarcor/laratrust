@@ -1,42 +1,39 @@
 @extends('laratrust::panel.layout')
 
-@section('title', "Role details")
+@section('title', $role->display_name ?? $role->name)
+
+@section('actions')
+    <x-laratrust::button variant="secondary" :href="route('laratrust.roles.index')">Back</x-laratrust::button>
+@endsection
 
 @section('content')
-  <div class="flex flex-col">
-    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-32">
-      <div
-        class="align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200 p-8"
-      >
-        <label class="flex justify-between w-4/12">
-          <span class="text-gray-900 font-bold">Name/Code:</span>
-          <span class="ml-4 text-gray-800">{{$role->name}}</span>
-        </label>
+    <x-laratrust::card class="p-4 sm:p-6">
+        <p class="mb-6 rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-600 dark:bg-white/5 dark:text-gray-400">This role can't be edited.</p>
 
-        <label class="flex justify-between w-4/12 my-4">
-          <span class="text-gray-900 font-bold">Display Name:</span>
-          <span class="ml-4 text-gray-800">{{$role->display_name}}</span>
-        </label>
+        <dl class="grid gap-6 sm:grid-cols-3">
+            <div>
+                <dt class="text-sm text-gray-500 dark:text-gray-400">Name</dt>
+                <dd class="mt-1 font-mono text-sm">{{ $role->name }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm text-gray-500 dark:text-gray-400">Display name</dt>
+                <dd class="mt-1 text-sm">{{ $role->display_name ?? '—' }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm text-gray-500 dark:text-gray-400">Description</dt>
+                <dd class="mt-1 text-sm">{{ $role->description ?? '—' }}</dd>
+            </div>
+        </dl>
 
-        <label class="flex justify-between w-4/12 my-4">
-          <span class="text-gray-900 font-bold">Description:</span>
-          <span class="ml-4 text-gray-800">{{$role->description}}</span>
-        </label>
-        <span class="text-gray-900 font-bold">Permissions:</span>
-        <ul class="grid grid-cols-1 md:grid-cols-4 list-inside">
-          @foreach ($role->permissions as $permission)
-            <li class="text-gray-800 list-disc" >{{$permission->display_name ?? $permission->name}}</li>
-          @endforeach
+        <h2 class="mt-8 text-sm font-semibold">Permissions</h2>
+        <ul class="mt-3 flex flex-wrap gap-2">
+            @forelse ($role->permissions as $permission)
+                <li class="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 ring-1 ring-indigo-600/20 ring-inset dark:bg-indigo-500/10 dark:text-indigo-300">
+                    {{ $permission->display_name ?? $permission->name }}
+                </li>
+            @empty
+                <li class="text-sm text-gray-500 dark:text-gray-400">No permissions.</li>
+            @endforelse
         </ul>
-        <div class="flex justify-end">
-          <a
-            href="{{route("laratrust.roles.index")}}"
-            class="text-blue-600 hover:text-blue-900"
-          >
-            Back
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
+    </x-laratrust::card>
 @endsection

@@ -11,6 +11,138 @@
   <priority>1.00</priority>
 </url>
 <url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.85</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/upgrade.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.85</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/installation.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.85</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/the-basics/migrations.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/the-basics/teams.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/the-basics/models/role.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/the-basics/models/permission.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/the-basics/models/team.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/the-basics/models/user.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/usage/roles-and-permissions.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/usage/querying-relationships.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/usage/teams.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/usage/multiple-users.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/usage/events.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/usage/middleware.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/usage/soft-deleting.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/usage/blade-templates.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/usage/seeder.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/usage/admin-panel.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/troubleshooting.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/license.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
+  <loc>https://laratrust.santigarcor.me/docs/9.x/contributing.html</loc>
+  <lastmod>2026-10-23T00:00:00+00:00</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.69</priority>
+</url>
+<url>
   <loc>https://laratrust.santigarcor.me/docs/6.x/</loc>
   <lastmod>2020-05-07T18:38:56+00:00</lastmod>
   <changefreq>yearly</changefreq>

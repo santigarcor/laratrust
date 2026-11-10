@@ -1,0 +1,12 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "declare_strict_types": true
+    },
+    "exclude": [
+        "config",
+        "docs",
+        "dist",
+        "node_modules"
+    ]
+}

@@ -4,201 +4,42 @@ declare(strict_types=1);
 
 namespace Laratrust;
 
+use BackedEnum;
 use Illuminate\Contracts\Auth\Access\Authorizable;
-use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laratrust\Console\MakePermissionCommand;
+use Laratrust\Console\MakeRoleCommand;
+use Laratrust\Console\MakeSeederCommand;
+use Laratrust\Console\MakeTeamCommand;
+use Laratrust\Console\MigrationCommand;
+use Laratrust\Console\SetupCommand;
+use Laratrust\Console\SetupTeamsCommand;
+use Laratrust\Contracts\LaratrustUser;
+use Laratrust\Contracts\Permission as PermissionContract;
+use Laratrust\Contracts\Role as RoleContract;
+use Laratrust\Contracts\Team as TeamContract;
+use Laratrust\Http\Middleware\AuthorizePanel;
+use Laratrust\Middleware\Ability;
+use Laratrust\Middleware\Permission;
+use Laratrust\Middleware\Role;
+use Laratrust\Support\ModelClasses;
+use Laratrust\Support\PermissionRegistry;
+use Ramsey\Uuid\UuidInterface;
 
 class LaratrustServiceProvider extends ServiceProvider
 {
     /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
-    /**
-     * Bootstrap any application services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        $this->useMorphMapForRelationships();
-        $this->registerMiddlewares();
-        $this->registerBladeDirectives();
-        $this->registerRoutes();
-        $this->registerResources();
-        $this->registerPermissionsToGate();
-        $this->defineAssetPublishing();
-    }
-
-    /**
-     * If the user wants to use the morphMap it uses the morphMap.
-     *
-     * @return void
-     */
-    protected function useMorphMapForRelationships()
-    {
-        if ($this->app['config']->get('laratrust.use_morph_map')) {
-            Relation::morphMap($this->app['config']->get('laratrust.user_models'));
-        }
-    }
-
-    /**
-     * Register the middlewares automatically.
-     *
-     * @return void
-     */
-    protected function registerMiddlewares()
-    {
-        if (! $this->app['config']->get('laratrust.middleware.register')) {
-            return;
-        }
-
-        $router = $this->app['router'];
-
-        if (method_exists($router, 'middleware')) {
-            $registerMethod = 'middleware';
-        } elseif (method_exists($router, 'aliasMiddleware')) {
-            $registerMethod = 'aliasMiddleware';
-        } else {
-            return;
-        }
-
-        $middlewares = [
-            'role' => \Laratrust\Middleware\Role::class,
-            'permission' => \Laratrust\Middleware\Permission::class,
-            'ability' => \Laratrust\Middleware\Ability::class,
-        ];
-
-        foreach ($middlewares as $key => $class) {
-            $router->$registerMethod($key, $class);
-        }
-    }
-
-    /**
-     * Register the blade directives.
-     *
-     * @return void
-     */
-    private function registerBladeDirectives()
-    {
-        if (! class_exists('\Blade')) {
-            return;
-        }
-
-        // Call to Laratrust::hasRole.
-        Blade::directive('role', function ($expression) {
-            return "<?php if (app('laratrust')->hasRole({$expression})) : ?>";
-        });
-
-        // Call to Laratrust::permission.
-        Blade::directive('permission', function ($expression) {
-            return "<?php if (app('laratrust')->hasPermission({$expression})) : ?>";
-        });
-
-        // Call to Laratrust::ability.
-        Blade::directive('ability', function ($expression) {
-            return "<?php if (app('laratrust')->ability({$expression})) : ?>";
-        });
-
-        Blade::directive('endrole', function () {
-            return "<?php endif; // app('laratrust')->hasRole ?>";
-        });
-
-        Blade::directive('endpermission', function () {
-            return "<?php endif; // app('laratrust')->permission ?>";
-        });
-
-        Blade::directive('endability', function () {
-            return "<?php endif; // app('laratrust')->ability ?>";
-        });
-    }
-
-    /**
-     * Register the routes used by the Laratrust admin panel.
-     *
-     * @return void
-     */
-    protected function registerRoutes()
-    {
-        if (! $this->app['config']->get('laratrust.panel.register')) {
-            return;
-        }
-
-        Route::group([
-            'domain' => config('laratrust.panel.domain', (app()->runningInConsole() === false) ? request()->getHost() : 'localhost'),
-            'prefix' => config('laratrust.panel.path'),
-            'namespace' => 'Laratrust\Http\Controllers',
-            'middleware' => config('laratrust.panel.middleware', 'web'),
-        ], function () {
-            Route::redirect('/', '/'.config('laratrust.panel.path').'/roles-assignment');
-            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-        });
-    }
-
-    /**
-     * Register all the possible views used by Laratrust.
-     *
-     * @return void
-     */
-    protected function registerResources()
-    {
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'laratrust');
-    }
-
-    /**
-     * Register permissions to Laravel Gate.
-     *
-     * @return void
-     */
-    protected function registerPermissionsToGate()
-    {
-        if (! $this->app['config']->get('laratrust.permissions_as_gates')) {
-            return;
-        }
-
-        app(Gate::class)->before(function (Authorizable $user, mixed $ability, $attributes) {
-            if (method_exists($user, 'hasPermission')) {
-                $team = Collection::make($attributes)
-                    ->filter(fn ($attr) => ! is_bool($attr))
-                    ->first();
-                $requireAll = Collection::make($attributes)
-                    ->filter(fn ($attr) => is_bool($attr))
-                    ->first() || false;
-
-                return $user->hasPermission($ability, $team, $requireAll) ?: null;
-            }
-        });
-    }
-
-    /**
-     * Register the assets that are publishable for the admin panel to work.
-     *
-     * @return void
-     */
-    protected function defineAssetPublishing()
-    {
-        if (! $this->app['config']->get('laratrust.panel.register')) {
-            return;
-        }
-
-        $this->publishes([
-            __DIR__.'/../public' => public_path('vendor/laratrust'),
-        ], 'laratrust-assets');
-    }
-
-    /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->configure();
         $this->offerPublishing();
@@ -207,70 +48,188 @@ class LaratrustServiceProvider extends ServiceProvider
     }
 
     /**
-     * Setup the configuration for Laratrust.
-     *
-     * @return void
+     * Bootstrap any application services.
      */
-    protected function configure()
+    public function boot(): void
+    {
+        $this->useMorphMapForRelationships();
+        $this->registerUserRelationships();
+        $this->registerMiddlewares();
+        $this->registerBladeDirectives();
+        $this->registerRoutes();
+        $this->registerResources();
+        $this->registerPermissionsToGate();
+    }
+
+    /**
+     * Merge the package configuration.
+     */
+    protected function configure(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/laratrust.php', 'laratrust');
     }
 
     /**
-     * Setup the resource publishing group for Laratrust.
-     *
-     * @return void
+     * Setup the resource publishing groups for Laratrust.
      */
-    protected function offerPublishing()
+    protected function offerPublishing(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishes([
-                __DIR__.'/../config/laratrust.php' => config_path('laratrust.php'),
-            ], 'laratrust');
-
-            $this->publishes([
-                __DIR__.'/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php'),
-            ], 'laratrust-seeder');
-
-            $this->publishes([
-                __DIR__.'/../resources/views/panel' => resource_path('views/vendor/laratrust/panel'),
-            ], 'laratrust-views');
+        if (! $this->app->runningInConsole()) {
+            return;
         }
+
+        $this->publishes([__DIR__.'/../config/laratrust.php' => config_path('laratrust.php')], 'laratrust');
+        $this->publishes([__DIR__.'/../config/laratrust_seeder.php' => config_path('laratrust_seeder.php')], 'laratrust-seeder');
+        $this->publishes([__DIR__.'/../resources/views/panel' => resource_path('views/vendor/laratrust/panel')], 'laratrust-views');
     }
 
     /**
      * Register the application bindings.
-     *
-     * @return void
      */
-    protected function registerLaratrust()
+    protected function registerLaratrust(): void
     {
-        $this->app->bind('laratrust', function ($app) {
-            return new Laratrust($app);
-        });
-
-        $this->app->alias('laratrust', 'Laratrust\Laratrust');
+        $this->app->scoped(PermissionRegistry::class);
+        // Scoped too, so long-running workers (Octane) never keep a stale application.
+        $this->app->scoped('laratrust', fn (Application $app): Laratrust => new Laratrust($app));
+        $this->app->alias('laratrust', Laratrust::class);
     }
 
     /**
-     * Register the Laratrusts commands.
-     *
-     * @return void
+     * Register the Laratrust commands.
      */
-    protected function registerCommands()
+    protected function registerCommands(): void
     {
-        if ($this->app->runningInConsole()) {
-            $this->commands([
-                Console\AddLaratrustUserTraitUseCommand::class,
-                Console\MakePermissionCommand::class,
-                Console\MakeRoleCommand::class,
-                Console\MakeSeederCommand::class,
-                Console\MakeTeamCommand::class,
-                Console\MigrationCommand::class,
-                Console\SetupCommand::class,
-                Console\SetupTeamsCommand::class,
-                Console\UpgradeCommand::class,
-            ]);
+        if (! $this->app->runningInConsole()) {
+            return;
         }
+
+        $this->commands([
+            MakePermissionCommand::class,
+            MakeRoleCommand::class,
+            MakeSeederCommand::class,
+            MakeTeamCommand::class,
+            MigrationCommand::class,
+            SetupCommand::class,
+            SetupTeamsCommand::class,
+        ]);
+    }
+
+    /**
+     * Use the "laratrust.user_models" keys as the morph map, when enabled.
+     */
+    protected function useMorphMapForRelationships(): void
+    {
+        if (Config::get('laratrust.use_morph_map')) {
+            Relation::morphMap(Config::get('laratrust.user_models'));
+        }
+    }
+
+    /**
+     * Register a relationship to each user model on the role, permission and team models,
+     * named after its key in "laratrust.user_models", e.g. $role->users or Role::with('users').
+     */
+    protected function registerUserRelationships(): void
+    {
+        foreach (['role', 'permission', 'team'] as $type) {
+            $model = Config::get("laratrust.models.{$type}");
+
+            if (! is_string($model) || ! class_exists($model)) {
+                continue;
+            }
+
+            foreach (ModelClasses::userRelationships() as $relationship) {
+                $model::resolveRelationUsing(
+                    $relationship,
+                    fn (RoleContract|PermissionContract|TeamContract $model): MorphToMany => $model->getMorphByUserRelation($relationship)
+                );
+            }
+        }
+    }
+
+    /**
+     * Register the "role", "permission" and "ability" middleware aliases, when enabled.
+     */
+    protected function registerMiddlewares(): void
+    {
+        if (! Config::get('laratrust.middleware.register')) {
+            return;
+        }
+
+        Route::aliasMiddleware('role', Role::class);
+        Route::aliasMiddleware('permission', Permission::class);
+        Route::aliasMiddleware('ability', Ability::class);
+    }
+
+    /**
+     * Register the Blade directives.
+     */
+    protected function registerBladeDirectives(): void
+    {
+        // Each one also defines @else{name}, @unless{name} and @end{name}, e.g. @elserole and @endrole.
+        Blade::if('role', fn (mixed ...$arguments) => app(Laratrust::class)->hasRole(...$arguments));
+        Blade::if('permission', fn (mixed ...$arguments) => app(Laratrust::class)->hasPermission(...$arguments));
+        Blade::if('ability', fn (mixed ...$arguments) => app(Laratrust::class)->ability(...$arguments));
+    }
+
+    /**
+     * Register the routes used by the Laratrust admin panel and its "viewLaratrust" gate, when enabled.
+     */
+    protected function registerRoutes(): void
+    {
+        if (! Config::get('laratrust.panel.register')) {
+            return;
+        }
+
+        // Only local by default: the application defines the gate to open the panel elsewhere.
+        if (! Gate::has('viewLaratrust')) {
+            Gate::define('viewLaratrust', fn (?Authorizable $user = null): bool => $this->app->environment('local'));
+        }
+
+        Route::group([
+            // Null means any domain.
+            'domain' => Config::get('laratrust.panel.domain'),
+            'prefix' => Config::get('laratrust.panel.path'),
+            'middleware' => [...Arr::wrap(Config::get('laratrust.panel.middleware', 'web')), AuthorizePanel::class],
+        ], function (): void {
+            Route::redirect('/', '/'.Config::get('laratrust.panel.path').'/roles-assignment');
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
+    }
+
+    /**
+     * Register the views used by Laratrust.
+     */
+    protected function registerResources(): void
+    {
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'laratrust');
+    }
+
+    /**
+     * Let Gate checks like $user->can('posts.edit') check the Laratrust permissions, when enabled.
+     */
+    protected function registerPermissionsToGate(): void
+    {
+        if (! Config::get('laratrust.permissions_as_gates')) {
+            return;
+        }
+
+        Gate::before(function (Authorizable $user, string $ability, array $arguments): ?bool {
+            if (! $user instanceof LaratrustUser) {
+                return null;
+            }
+
+            // A boolean argument is requireAll. The team is a Team model, an enum, a uuid or a key/name:
+            // other models and class names, like can('create', Post::class), are what the check is about
+            // (e.g. a policy's model), never the team.
+            $team = Arr::first($arguments, fn (mixed $argument): bool => $argument instanceof TeamContract
+                || $argument instanceof BackedEnum
+                || $argument instanceof UuidInterface
+                || is_int($argument)
+                || (is_string($argument) && ! class_exists($argument)));
+            $requireAll = Arr::first($arguments, fn (mixed $argument): bool => is_bool($argument)) ?? false;
+
+            // Null lets the policies and the other gates decide.
+            return $user->hasPermission($ability, $team, $requireAll) ?: null;
+        });
     }
 }

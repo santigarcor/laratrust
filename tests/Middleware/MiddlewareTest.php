@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Laratrust\Tests\Middleware;
 
-use Mockery as m;
-use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\Request;
 use Laratrust\Tests\LaratrustTestCase;
+use Mockery as m;
 
 abstract class MiddlewareTest extends LaratrustTestCase
 {
     protected $request;
+
     protected $guard;
+
     const ABORT_MESSAGE = 'User does not have any of the necessary access rights.';
 
     protected function setUp(): void

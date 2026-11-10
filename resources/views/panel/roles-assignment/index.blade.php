@@ -1,68 +1,61 @@
 @extends('laratrust::panel.layout')
 
-@section('title', 'Roles Assignment')
+@section('title', 'Assignments')
 
 @section('content')
-  <div class="flex flex-col">
-    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-      <div
-        x-data="{ model: @if($modelKey) '{{$modelKey}}' @else 'initial' @endif }"
-        x-init="$watch('model', value => value != 'initial' ? window.location = `?model=${value}` : '')"
-        class="mt-4 align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg border-b border-gray-200 p-4"
-      >
-        <span class="text-gray-700">User model to assign roles/permissions</span>
-        <label class="block w-3/12">
-          <select class="form-select block w-full mt-1" x-model="model">
-            <option value="initial" disabled selected>Select a user model</option>
-            @foreach ($models as $model)
-              <option value="{{$model}}">{{ucwords($model)}}</option>
-            @endforeach
-          </select>
-        </label>
-        <div class="flex mt-4 align-middle inline-block min-w-full shadow overflow-hidden sm:rounded-lg ">
-          <table class="min-w-full">
-            <thead>
-              <tr>
-                <th class="th">Id</th>
-                <th class="th">Name</th>
-                <th class="th"># Roles</th>
-                @if(config('laratrust.panel.assign_permissions_to_user'))<th class="th"># Permissions</th>@endif
-                <th class="th"></th>
-              </tr>
-            </thead>
-            <tbody class="bg-white">
-              @foreach ($users as $user)
-              <tr>
-                <td class="td text-sm leading-5 text-gray-900">
-                  {{$user->getKey()}}
-                </td>
-                <td class="td text-sm leading-5 text-gray-900">
-                  {{$user->name ?? 'The model doesn\'t have a `name` attribute'}}
-                </td>
-                <td class="td text-sm leading-5 text-gray-900">
-                  {{$user->roles_count}}
-                </td>
-                @if(config('laratrust.panel.assign_permissions_to_user'))
-                <td class="td text-sm leading-5 text-gray-900">
-                  {{$user->permissions_count}}
-                </td>
-                @endif
-                <td class="flex justify-end px-6 py-4 whitespace-no-wrap text-right border-b border-gray-200 text-sm leading-5 font-medium">
-                  <a
-                    href="{{route('laratrust.roles-assignment.edit', ['roles_assignment' => $user->getKey(), 'model' => $modelKey])}}"
-                    class="text-blue-600 hover:text-blue-900"
-                  >Edit</a>
-                </td>
-              </tr>
-              @endforeach
-            </tbody>
-          </table>
-        </div>
-        @if ($modelKey)
-          {{ $users->appends(['model' => $modelKey])->links('laratrust::panel.pagination') }}
+    <x-laratrust::card>
+        @if (count($models) > 1)
+            <div class="flex flex-wrap items-center gap-3 border-b border-gray-200 px-4 py-3 dark:border-white/10">
+                <label for="model" class="text-sm text-gray-600 dark:text-gray-400">User model</label>
+                <select id="model" class="lt-input w-auto py-1.5 pr-8" x-data x-on:change="window.location = '?model=' + encodeURIComponent($event.target.value)">
+                    @foreach ($models as $model)
+                        <option value="{{ $model }}" @selected($model === $modelKey)>{{ \Illuminate\Support\Str::headline($model) }}</option>
+                    @endforeach
+                </select>
+            </div>
         @endif
 
-      </div>
-    </div>
-  </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-white/10">
+                <thead class="bg-gray-50 dark:bg-white/5">
+                    <tr>
+                        <th class="lt-th">Name</th>
+                        <th class="lt-th">Roles</th>
+                        @if (config('laratrust.panel.assign_permissions_to_user'))
+                            <th class="lt-th">Permissions</th>
+                        @endif
+                        <th class="lt-th"><span class="sr-only">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 dark:divide-white/5">
+                    @forelse ($users as $user)
+                        <tr class="hover:bg-gray-50 dark:hover:bg-white/5">
+                            <td class="lt-td">
+                                <span class="font-medium text-gray-900 dark:text-white">{{ $user->name ?? $user->email ?? '#'.$user->getKey() }}</span>
+                                @isset($user->name, $user->email)
+                                    <span class="block text-xs text-gray-500 dark:text-gray-400">{{ $user->email }}</span>
+                                @endisset
+                            </td>
+                            <td class="lt-td">
+                                <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700 dark:bg-white/10 dark:text-gray-300">{{ $user->roles_count }}</span>
+                            </td>
+                            @if (config('laratrust.panel.assign_permissions_to_user'))
+                                <td class="lt-td">
+                                    <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700 dark:bg-white/10 dark:text-gray-300">{{ $user->permissions_count }}</span>
+                                </td>
+                            @endif
+                            <td class="lt-td text-right">
+                                <a href="{{ route('laratrust.roles-assignment.edit', ['roles_assignment' => $user->getKey(), 'model' => $modelKey]) }}" class="lt-link">Edit</a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="lt-td py-10 text-center text-gray-500">There are no users yet.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <x-laratrust::pagination :paginator="$users->appends(['model' => $modelKey])" />
+    </x-laratrust::card>
 @endsection

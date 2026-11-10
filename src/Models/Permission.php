@@ -4,24 +4,28 @@ declare(strict_types=1);
 
 namespace Laratrust\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Config;
+use Laratrust\Contracts\LaratrustUser;
 use Laratrust\Contracts\Permission as PermissionContract;
-use Laratrust\Traits\DynamicUserRelationshipCalls;
+use Laratrust\Contracts\Role as RoleContract;
+use Laratrust\Support\ModelClasses;
+use Laratrust\Support\PermissionRegistry;
 
+/**
+ * @property int|string $id
+ * @property string $name
+ * @property string|null $display_name
+ * @property string|null $description
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ */
 class Permission extends Model implements PermissionContract
 {
-    use DynamicUserRelationshipCalls;
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table;
-
     protected $fillable = [
         'name',
         'display_name',
@@ -29,24 +33,45 @@ class Permission extends Model implements PermissionContract
     ];
 
     /**
-     * Creates a new instance of the model.
+     * Get the table from "laratrust.tables.permissions", unless the model sets its own.
      */
-    public function __construct(array $attributes = [])
+    public function getTable(): string
     {
-        parent::__construct($attributes);
-        $this->table = Config::get('laratrust.tables.permissions');
+        return $this->table ?? Config::get('laratrust.tables.permissions');
     }
 
     protected static function booted(): void
     {
-        static::deleting(function ($permission) {
-            if (method_exists($permission, 'bootSoftDeletes') && ! $permission->forceDeleting) {
+        $forgetIds = fn () => app(PermissionRegistry::class)->forgetIds('permission');
+        static::saved($forgetIds);
+        static::deleted($forgetIds);
+
+        // The roles and users cache the permission by its name.
+        static::saved(function (self $permission): void {
+            if ($permission->wasChanged('name')) {
+                $permission->flushLaratrustCache();
+            }
+        });
+
+        // If the permission uses SoftDeletes.
+        if (method_exists(static::class, 'restored')) {
+            static::restored(function (self $permission): void {
+                $permission->flushLaratrustCache();
+            });
+        }
+
+        static::deleting(function (self $permission): void {
+            // Soft deleted permissions are left out too. Flushed first, as the pivot rows tell who has the permission.
+            $permission->flushLaratrustCache();
+
+            // Soft deleting keeps the assignments, so the model can be restored with them.
+            if (method_exists($permission, 'isForceDeleting') && ! $permission->isForceDeleting()) {
                 return;
             }
 
             $permission->roles()->detach();
 
-            foreach (array_keys(Config::get('laratrust.user_models')) as $key) {
+            foreach (ModelClasses::userRelationships() as $key) {
                 $permission->getMorphByUserRelation($key)->detach();
             }
         });
@@ -54,11 +79,13 @@ class Permission extends Model implements PermissionContract
 
     /**
      * Many-to-Many relations with role model.
+     *
+     * @return BelongsToMany<covariant Model, $this>
      */
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(
-            Config::get('laratrust.models.role'),
+            ModelClasses::role(),
             Config::get('laratrust.tables.permission_role'),
             Config::get('laratrust.foreign_keys.permission'),
             Config::get('laratrust.foreign_keys.role')
@@ -67,15 +94,42 @@ class Permission extends Model implements PermissionContract
 
     /**
      * Morph by Many relationship between the permission and the one of the possible user models.
+     *
+     * @return MorphToMany<covariant Model, $this>
      */
     public function getMorphByUserRelation(string $relationship): MorphToMany
     {
         return $this->morphedByMany(
-            Config::get('laratrust.user_models')[$relationship],
+            ModelClasses::user($relationship),
             'user',
             Config::get('laratrust.tables.permission_user'),
             Config::get('laratrust.foreign_keys.permission'),
             Config::get('laratrust.foreign_keys.user')
         );
+    }
+
+    /**
+     * Flush the cache of the roles and users that have the permission.
+     *
+     * They're loaded with only their key, which is all laratrustCacheKey() uses by default.
+     */
+    public function flushLaratrustCache(): void
+    {
+        $withThisPermission = fn (Builder $permissions): Builder => $permissions->whereKey($this->getKey());
+        $role = new (ModelClasses::role());
+
+        $role->newQuery()
+            ->select($role->getQualifiedKeyName())
+            ->whereHas('permissions', $withThisPermission)
+            ->each(fn (Model&RoleContract $role) => $role->flushLaratrustCache());
+
+        foreach (ModelClasses::userRelationships() as $key) {
+            $user = new (ModelClasses::user($key));
+
+            $user->newQuery()
+                ->select($user->getQualifiedKeyName())
+                ->whereHas('permissions', $withThisPermission)
+                ->each(fn (Model&LaratrustUser $user) => $user->flushLaratrustCache());
+        }
     }
 }

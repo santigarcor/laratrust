@@ -1,18 +1,19 @@
 <?php
-{{namespace}}
-use Illuminate\Support\Facades\Schema;
+
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 
 class LaratrustSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $this->truncateLaratrustTables();
 
@@ -21,7 +22,8 @@ class LaratrustSeeder extends Seeder
         if ($config === null) {
             $this->command->error("The configuration has not been published. Did you run `php artisan vendor:publish --tag=\"laratrust-seeder\"`");
             $this->command->line('');
-            return false;
+
+            return;
         }
 
         $mapPermission = collect(config('laratrust_seeder.permissions_map'));
@@ -64,7 +66,7 @@ class LaratrustSeeder extends Seeder
                 $user = {{userConfiguredModelClass}}::create([
                     'name' => ucwords(str_replace('_', ' ', $key)),
                     'email' => $key.'@app.com',
-                    'password' => bcrypt('password')
+                    'password' => Hash::make('password'),
                 ]);
                 $user->addRole($role);
             }
@@ -73,11 +75,9 @@ class LaratrustSeeder extends Seeder
     }
 
     /**
-     * Truncates all the laratrust tables and the users table
-     *
-     * @return  void
+     * Truncate the Laratrust tables and, when creating users, the users table.
      */
-    public function truncateLaratrustTables()
+    protected function truncateLaratrustTables(): void
     {
         $this->command->info('Truncating User, Role and Permission tables');
         Schema::disableForeignKeyConstraints();

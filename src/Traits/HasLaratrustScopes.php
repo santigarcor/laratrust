@@ -5,135 +5,139 @@ declare(strict_types=1);
 namespace Laratrust\Traits;
 
 use BackedEnum;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Config;
-use Laratrust\Helper;
-use Laratrust\Models\Team;
+use Laratrust\Support\QueryConstraints;
 
 /**
- * @method Builder whereHasRole(string|array|BackedEnum $role = '', mixed $team = null, string $boolean = 'and')
- * @method Builder orWhereHasRole(string|array|BackedEnum $role = '', mixed $team = null)
- * @method Builder whereHasPermission(string|array|BackedEnum $permission = '', string $boolean = 'and')
- * @method Builder orWhereHasPermission(string|array|BackedEnum $permission = '')
- * @method Builder whereDoesntHaveRoles()
- * @method Builder whereDoesntHavePermissions()
- * @method static Builder whereHasRole(string|array|BackedEnum $role = '', mixed $team = null, string $boolean = 'and')
- * @method static Builder orWhereHasRole(string|array|BackedEnum $role = '', mixed $team = null)
- * @method static Builder whereHasPermission(string|array|BackedEnum $permission = '', string $boolean = 'and')
- * @method static Builder orWhereHasPermission(string|array|BackedEnum $permission = '')
- * @method static Builder whereDoesntHaveRoles()
- * @method static Builder whereDoesntHavePermissions()
+ * @method static Builder<static> whereHasRole(string|array<string|BackedEnum>|BackedEnum $role = '', mixed $team = null, string $boolean = 'and')
+ * @method static Builder<static> orWhereHasRole(string|array<string|BackedEnum>|BackedEnum $role = '', mixed $team = null)
+ * @method static Builder<static> whereHasPermission(string|array<string|BackedEnum>|BackedEnum $permission = '', mixed $team = null, string $boolean = 'and')
+ * @method static Builder<static> orWhereHasPermission(string|array<string|BackedEnum>|BackedEnum $permission = '', mixed $team = null)
+ * @method static Builder<static> whereDoesntHaveRoles()
+ * @method static Builder<static> whereDoesntHavePermissions()
  */
 trait HasLaratrustScopes
 {
     /**
-     * This scope allows to retrive the users with a specific role.
+     * Get the users with the given role(s).
+     *
+     * @param  Builder<static>  $query
+     * @param  string|array<string|BackedEnum>|BackedEnum  $role
+     * @return Builder<static>
      */
-    public function scopeWhereHasRole(
+    #[Scope]
+    protected function whereHasRole(
         Builder $query,
         string|array|BackedEnum $role = '',
         mixed $team = null,
         string $boolean = 'and'
     ): Builder {
-        $method = $boolean == 'and' ? 'whereHas' : 'orWhereHas';
+        $roles = $this->roles();
 
-        return $query->$method('roles', function ($roleQuery) use ($role, $team) {
-            $teamsStrictCheck = Config::get('laratrust.teams.strict_check');
-            $method = is_array($role) ? 'whereIn' : 'where';
-
-            $roleQuery
-                ->$method('name', $role)
-                ->when(
-                    $team || $teamsStrictCheck,
-                    fn ($q) => $q->where(
-                        Team::modelForeignKey(),
-                        Helper::getIdFor($team, 'team')
-                    )
-                );
-        });
+        return $query->has(
+            'roles',
+            boolean: $boolean,
+            callback: fn (Builder $roleQuery): Builder => QueryConstraints::constrainToTeam(
+                QueryConstraints::whereNameIs($roleQuery, $role),
+                $roles,
+                $team,
+            )
+        );
     }
 
     /**
-     * This scope allows to retrive the users with a specific role.
+     * Get the users with the given role(s), as an "or" condition.
+     *
+     * @param  Builder<static>  $query
+     * @param  string|array<string|BackedEnum>|BackedEnum  $role
+     * @return Builder<static>
      */
-    public function scopeOrWhereHasRole(
+    #[Scope]
+    protected function orWhereHasRole(
         Builder $query,
         string|array|BackedEnum $role = '',
         mixed $team = null
     ): Builder {
-        return $this->scopeWhereHasRole($query, $role, $team, 'or');
+        return $query->whereHasRole($role, $team, 'or');
     }
 
     /**
-     * This scope allows to retrieve the users with a specific permission.
+     * Get the users with the given permission(s), given directly or through their roles.
+     *
+     * @param  Builder<static>  $query
+     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @return Builder<static>
      */
-    public function scopeWhereHasPermission(
+    #[Scope]
+    protected function whereHasPermission(
         Builder $query,
         string|array|BackedEnum $permission = '',
         mixed $team = null,
         string $boolean = 'and'
     ): Builder {
-        $method = $boolean == 'and' ? 'where' : 'orWhere';
+        $roles = $this->roles();
+        $permissions = $this->permissions();
 
-        return $query->$method(function ($query) use ($permission, $team) {
-            $teamsStrictCheck = Config::get('laratrust.teams.strict_check');
-            $method = is_array($permission) ? 'whereIn' : 'where';
-
-            $query
+        return $query->where(fn (Builder $query) => $query
+            // Through a role: the team is the one the role was assigned in.
             ->whereHas(
-                'roles.permissions',
-                fn ($permissionQuery) => $permissionQuery
-                    ->$method('name', $permission)
-                    ->when(
-                        $team || $teamsStrictCheck,
-                        fn ($q) => $q->where(
-                            Team::modelForeignKey(),
-                            Helper::getIdFor($team, 'team')
-                        )
-                    )
+                'roles',
+                fn (Builder $roleQuery) => QueryConstraints::constrainToTeam($roleQuery, $roles, $team)
+                    ->whereHas('permissions', fn (Builder $permissionQuery): Builder => QueryConstraints::whereNameIs($permissionQuery, $permission))
             )
+            // Directly: the team is the one the permission was given in.
             ->orWhereHas(
                 'permissions',
-                fn ($permissionQuery) => $permissionQuery
-                    ->$method('name', $permission)
-                    ->when(
-                        $team || $teamsStrictCheck,
-                        fn ($q) => $q->where(
-                            Team::modelForeignKey(),
-                            Helper::getIdFor($team, 'team')
-                        )
-                    )
-            );
-        });
+                fn (Builder $permissionQuery): Builder => QueryConstraints::constrainToTeam(
+                    QueryConstraints::whereNameIs($permissionQuery, $permission),
+                    $permissions,
+                    $team,
+                )
+            ), boolean: $boolean);
     }
 
     /**
-     * This scope allows to retrive the users with a specific permission.
+     * Get the users with the given permission(s), as an "or" condition.
+     *
+     * @param  Builder<static>  $query
+     * @param  string|array<string|BackedEnum>|BackedEnum  $permission
+     * @return Builder<static>
      */
-    public function scopeOrWhereHasPermission(
+    #[Scope]
+    protected function orWhereHasPermission(
         Builder $query,
         string|array|BackedEnum $permission = '',
         mixed $team = null
     ): Builder {
-        return $this->scopeWhereHasPermission($query, $permission, $team, 'or');
+        return $query->whereHasPermission($permission, $team, 'or');
     }
 
     /**
-     * Filter by the users that don't have roles assigned.
+     * Get the users without any role.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
-    public function scopeWhereDoesntHaveRoles(Builder $query): Builder
+    #[Scope]
+    protected function whereDoesntHaveRoles(Builder $query): Builder
     {
         return $query->doesntHave('roles');
     }
 
     /**
-     * Filter by the users that don't have permissions assigned.
+     * Get the users without any permission: neither given directly nor through their roles.
+     *
+     * @param  Builder<static>  $query
+     * @return Builder<static>
      */
-    public function scopeWhereDoesntHavePermissions(Builder $query): Builder
+    #[Scope]
+    protected function whereDoesntHavePermissions(Builder $query): Builder
     {
-        return $query->where(function ($query) {
-            $query->doesntHave('permissions')
-                ->orDoesntHave('roles.permissions');
-        });
+        return $query->where(
+            fn (Builder $query) => $query
+                ->doesntHave('permissions')
+                ->doesntHave('roles.permissions')
+        );
     }
 }

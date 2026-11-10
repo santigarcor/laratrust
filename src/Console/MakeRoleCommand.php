@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Console;
 
+use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\GeneratorCommand;
 use Illuminate\Support\Facades\Config;
 
+#[Description('Create Role model if it does not exist')]
 class MakeRoleCommand extends GeneratorCommand
 {
     /**
@@ -13,13 +17,6 @@ class MakeRoleCommand extends GeneratorCommand
      * @var string
      */
     protected $name = 'laratrust:role';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Create Role model if it does not exist';
 
     /**
      * The type of class being generated.
@@ -60,11 +57,11 @@ class MakeRoleCommand extends GeneratorCommand
     }
 
     /**
-     * Get the console command arguments.
+     * The class name comes from the config, so the generator's "name" argument isn't needed.
      *
-     * @return array
+     * @return array<int, mixed>
      */
-    protected function getArguments()
+    protected function getArguments(): array
     {
         return [];
     }

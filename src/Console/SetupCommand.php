@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Laratrust\Console;
 
+use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 
+#[Description('Setup migration and models for Laratrust')]
 class SetupCommand extends Command
 {
     /**
@@ -15,28 +19,18 @@ class SetupCommand extends Command
     protected $name = 'laratrust:setup';
 
     /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Setup migration and models for Laratrust';
-
-    /**
      * Commands to call with their description.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $calls = [
         'laratrust:migration' => 'Creating migration',
         'laratrust:role' => 'Creating Role model',
         'laratrust:permission' => 'Creating Permission model',
-        // 'laratrust:add-trait' => 'Adding LaratrustUserTrait to User model'
     ];
 
     /**
      * Create a new command instance.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -49,10 +43,8 @@ class SetupCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         foreach ($this->calls as $command => $info) {
             $this->line(PHP_EOL.$info);
